@@ -4,3 +4,5 @@ def add(*numbers):
     for number in numbers:
         sum += number
     return sum
+
+add(2, 3, 5, 10)
