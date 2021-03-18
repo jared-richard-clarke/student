@@ -1,4 +1,4 @@
-# Adds variable number of arguments.
+# Python
 def add(*numbers):
     sum = 0
     for number in numbers:
