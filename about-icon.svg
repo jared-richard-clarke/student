@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <title>about-icon</title>
+    <!-- 24x24 grid -->
+    <image href="24x24-grid.svg" height="24" width="24"></image>
+    <!-- icon -->
+    <mask id="icon-mask">
+        <rect width="24" height="24" fill="white"></rect>
+        <g fill="black">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path 
+                d="M 4,20 
+                   h 16 
+                   v -2 
+                   Q 20,14 16,14 
+                   h -8 
+                   Q 4,14 4,18 Z">
+            </path>
+        </g>
+    </mask>
+    <rect 
+          width="20" height="20" 
+          x="2" y="2" 
+          rx="2" 
+          mask="url(#icon-mask">
+    </rect>
+</svg>
