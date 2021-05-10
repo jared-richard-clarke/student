@@ -9,4 +9,4 @@ result_one = list(map(square, [3, 4, 5]))
 def map_list(action, numbers):
     return [action(number) for number in numbers]
 
-result = map_list(lambda x: x * x, [1, 2, 3])
+result_two = map_list(lambda x: x * x, [1, 2, 3])
