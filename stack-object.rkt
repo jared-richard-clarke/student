@@ -1,5 +1,5 @@
 #lang racket
-
+; === constructor ===
 (define (new-stack)
   ; === object instance ===
   (define stack '())
