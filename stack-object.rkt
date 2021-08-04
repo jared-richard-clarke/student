@@ -7,10 +7,9 @@
   ; empty?: empty stack? true or false
   (define (empty?)
     (null? stack))
-  ; push!: adds one or more elements to the end of stack and returns the new length of stack.
+  ; push!: adds one or more elements to the end of stack.
   (define (push! args)
-    (set! stack (foldr cons stack args))
-    (length stack))
+    (set! stack (foldr cons stack args)))
   ; peek: shows last element added to stack.
   (define (peek)
     (car stack))
