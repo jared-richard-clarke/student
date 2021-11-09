@@ -10,4 +10,3 @@
               result
               (iter (* result counter) (+ counter 1))))))
      "init")))
-(factorial 4)
