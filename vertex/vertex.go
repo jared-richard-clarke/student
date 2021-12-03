@@ -10,8 +10,8 @@ type Vertex struct {
 	x, y float64
 }
 
-func (vertex Vertex) Magnitude() float64 {
-	return math.Sqrt(vertex.x*vertex.x + vertex.y*vertex.y)
+func (v Vertex) Magnitude() float64 {
+	return math.Sqrt(v.x*v.x + v.y*v.y)
 }
 
 func main() {
