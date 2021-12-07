@@ -1,3 +1,6 @@
+;; The first example of a LISP interpreter written in LISP,
+;; according to Michael Fogus
+
 (label eval (lambda (expr binds)
               (cond
                 ((atom expr) (assoc expr binds))
