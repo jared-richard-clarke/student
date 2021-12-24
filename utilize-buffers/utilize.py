@@ -24,4 +24,7 @@ def match(mo):
 
 
 def replace_utilize(text):
-    return re_object.sub(match, text)
+    if type(text) != str:
+        raise TypeError("argument must be of type string")
+    else:
+        return re_object.sub(match, text)
