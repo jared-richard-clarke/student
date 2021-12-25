@@ -15,7 +15,7 @@ const replace_utilize = (function () {
     };
     return function (text) {
         if (typeof text !== "string") {
-            raise "argument must be type string";
+            throw "argument must be type string";
         }
         return text.replace(/[uU]tili([zs]e|[zs]ed|[zs]ing)/g, function (match) {
             return dictionary[match];
