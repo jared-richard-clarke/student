@@ -28,3 +28,17 @@ def replace_utilize(text):
         raise TypeError("argument must be of type string")
     else:
         return re_object.sub(match, text)
+    
+# 1. collect user input
+if __name__ == "__main__":
+    file = input("Input .txt file: ")
+    root, ext = os.path.splitext(file)
+    if not os.path.exists(file):
+        print("file does not exist")
+        sys.exit(1)
+    if not ext == ".txt":
+        print("file must have .txt extension")
+        sys.exit(1)
+# 2. open files
+    with open(file, buffering=1, encoding="utf-8") as text:
+        print(replace_utilize(text.read()))
