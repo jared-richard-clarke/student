@@ -5,7 +5,6 @@ import re
 
 def create():
     """Compose replace function."""
-    # lookup table for 'utilize' and replacements
     dictionary = {
         "utilize": "use",
         "utilise": "use",
@@ -22,15 +21,15 @@ def create():
     }
     # helper functions in regular expressions take match objects, not strings
     lookup = lambda mo: dictionary[mo.group(0)]
-    # compile regular expression for repeated use
+
     re_object = re.compile(r"[uU]tili([zs]e|[zs]ed|[zs]ing)")
-    # composite function
+
     def replacer(text):
         if type(text) != str:
             raise TypeError("argument must be of type string")
         else:
             return re_object.sub(lookup, text)
-    # return composited function for use
+
     return replacer
 
 replace = create()
