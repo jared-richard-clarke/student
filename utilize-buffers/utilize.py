@@ -21,7 +21,7 @@ def create():
         "Utilising": "Using"
     }
     # helper functions in regular expressions take match objects, not strings
-    match = lambda mo: dictionary[mo.group(0)]
+    lookup = lambda mo: dictionary[mo.group(0)]
     # compile regular expression for repeated use
     re_object = re.compile(r"[uU]tili([zs]e|[zs]ed|[zs]ing)")
     # composite function
@@ -29,7 +29,7 @@ def create():
         if type(text) != str:
             raise TypeError("argument must be of type string")
         else:
-            return re_object.sub(match, text)
+            return re_object.sub(lookup, text)
     # return composited function for use
     return replacer
 
