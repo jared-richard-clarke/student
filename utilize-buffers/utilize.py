@@ -1,50 +1,53 @@
-import sys
-import os
-import io
-import re
+import sys, os, io, re
 
 def create():
-    """Compose replace function."""
+    # convert to byte strings for fast file processing.
     dictionary = {
-        "utilize": "use",
-        "utilise": "use",
-        "Utilize": "Use",
-        "Utilise": "Use",
-        "utilizes": "uses",
-        "utilises": "uses",
-        "utilized": "used",
-        "utilised": "used",
-        "utilizing": "using",
-        "utilising": "using",
-        "Utilizing": "Using",
-        "Utilising": "Using"
+        b"utilize": b"use",
+        b"utilise": b"use",
+        b"Utilize": b"Use",
+        b"Utilise": b"Use",
+        b"utilizes": b"uses",
+        b"utilises": b"uses",
+        b"utilized": b"used",
+        b"utilised": b"used",
+        b"utilizing": b"using",
+        b"utilising": b"using",
+        b"Utilizing": b"Using",
+        b"Utilising": b"Using"
     }
-    # helper functions in regular expressions take match objects, not strings
+    # helper functions in regular expressions take match objects, not strings or bytes
     lookup = lambda mo: dictionary[mo.group(0)]
 
-    re_object = re.compile(r"[uU]tili([zs]e|[zs]ed|[zs]ing)")
+    pattern = re.compile(rb"[uU]tili([zs]e|[zs]ed|[zs]ing)")
 
     def replacer(text):
-        if type(text) != str:
-            raise TypeError("argument must be of type string")
+        if type(text) != bytes:
+            raise TypeError("argument must be of type bytes")
         else:
-            return re_object.sub(lookup, text)
+            return pattern.sub(lookup, text)
 
     return replacer
 
 replace = create()
-"""Scan string literal, replacing 'utilize' and its variants with 'use' and its variants."""
+"""Scan byte string, replacing 'utilize' and its variants with 'use' and its variants."""
 
-# 1. collect user input
+# 1. collect and validate user input
 if __name__ == "__main__":
-    file = input("Input .txt file: ")
+
+    file = input("Input <plain>.txt file: ")
     root, ext = os.path.splitext(file)
+
     if not os.path.exists(file):
-        print("file does not exist")
+        print(f"file {root} does not exist")
         sys.exit(1)
+
     if not ext == ".txt":
-        print("file must have .txt extension")
+        print(f"file {root} must have '.txt' extension")
         sys.exit(1)
-# 2. open files
-    with io.open(file, buffering=1, encoding="utf-8") as text:
-        print(replace(text.read()))
+
+# 2. open files / buffer and transform data / close files
+    with io.open(file, mode="rb") as text:
+        with io.open("re-"+file, mode="wb") as newtext:
+            n = newtext.write(replace(text.read()))
+            print(f"{n} bytes written")
