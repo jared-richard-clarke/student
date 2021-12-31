@@ -20,3 +20,8 @@
                    text
                    (lambda (match other)
                      (hash-ref dictionary match))))
+
+(define file-contents
+  (port->string (open-input-file "text.txt") #:close? #t))
+
+(print (replace file-contents))
