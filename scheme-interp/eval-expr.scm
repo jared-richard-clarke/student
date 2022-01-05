@@ -12,6 +12,6 @@
                                      (if (eq? x y)
                                          arg
                                          (env y)))))]
-            [(,rator ,rand)
-             ((eval-expr rator env)
-              (eval-expr rand env))])))
+            [(,operator ,operand)
+             ((eval-expr operator env)
+              (eval-expr operand env))])))
