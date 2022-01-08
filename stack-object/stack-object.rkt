@@ -9,7 +9,7 @@
     (null? stack))
   ; push!: adds one or more elements to the end of stack.
   (define (push! args)
-    (set! stack (foldr cons stack args)))
+    (set! stack (append args stack)))
   ; peek: shows last element added to stack.
   (define (peek)
     (car stack))
@@ -22,7 +22,7 @@
   (lambda (message . arguments)
     (cond
       [(eqv? message 'empty?) (empty?)]
-      [(eqv? message 'push!) (push! arguments)]
-      [(eqv? message 'peek) (peek)]
-      [(eqv? message 'pop!) (pop!)]
+      [(eqv? message 'push!)  (push! arguments)]
+      [(eqv? message 'peek)   (peek)]
+      [(eqv? message 'pop!)   (pop!)]
       [else (error "invalid input")])))
