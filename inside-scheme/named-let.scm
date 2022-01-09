@@ -1,38 +1,40 @@
 ; named let
-(let sum ([x 5])
-  (if (zero? x)
-      0
-      (+ x (sum (- x 1)))))
+(let range ([number 11]
+            [lst '()])
+  (if (= number 0)
+      lst
+      (range (- number 1) (cons number lst))))
 
 ; expanded to letrec
-((letrec ([sum (lambda (x)
-                 (if (zero? x)
-                     0
-                     (+ x (sum (- x 1)))))])
-   sum)
- 5)
+((letrec ([range (lambda (number lst)
+                   (if (= number 0)
+                       lst
+                       (range (- number 1) (cons number lst))))])
+   range)
+ 11 '())
 
 ; expanded to nested let expressions
-(let ([x 5])
-  (let ([sum #f])
-    (let ([temp (lambda (x)
-                  (if (zero? x)
-                      0
-                      (+ x (sum (- x 1)))))])
-      (set! sum temp)
+(let ([number 11]
+      [lst '()])
+  (let ([range #f])
+    (let ([temp (lambda (number lst)
+                  (if (= number 0)
+                      lst
+                      (range (- number 1) (cons number lst))))])
+      (set! range temp)
       (let ()
-        (sum x)))))
+        (range number lst)))))
 
 ; expanded to lambda expressions
-((lambda (x)
-   ((lambda (sum)
+((lambda (number lst)
+   ((lambda (range)
       ((lambda (temp)
-         (set! sum temp)
+         (set! range temp)
          ((lambda ()
-            (sum x))))
-       (lambda (x)
-         (if (zero? x)
-             0
-             (+ x (sum (- x 1)))))))
+            (range number lst))))
+       (lambda (number lst)
+         (if (= number 0)
+             lst
+             (range (- number 1) (cons number lst))))))
     #f))
- 5)
+ 11 '())
