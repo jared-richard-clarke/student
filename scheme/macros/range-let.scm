@@ -12,6 +12,7 @@
    range)
  11
  '())
+
 ; let expansion
 ((let ((range #f))
    (set! range
@@ -19,6 +20,7 @@
    (let () range))
  11
  '())
+
 ; lambda expansion
 (((lambda (range)
     (set! range
