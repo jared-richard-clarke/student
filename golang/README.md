@@ -1,2 +1,2 @@
 # Go
-A collection of program examples exclusive to the Go programming language.
+A collection of Go programs.
