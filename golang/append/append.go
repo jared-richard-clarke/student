@@ -19,6 +19,6 @@ func Append(slice []int, elements ...int) []int {
 }
 func main() {
 	data := []int{1, 2, 3}
-	data = append(data, 4, 5, 6, 7)
+	data = Append(data, 4, 5, 6, 7)
 	fmt.Println(data) // -> [1 2 3 4 5 6 7]
 }
