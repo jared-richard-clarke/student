@@ -1,4 +1,13 @@
-const replace_utilize = (function () {
+// TODO: add shebang line?
+const { createReadStream, createWriteStream } = require("fs");
+const { Transform } = require("stream");
+
+const readStream = createReadStream("test.txt");
+const writeStream = createWriteStream("outfile.txt");
+
+// replace(string) -> string
+// replaces 'utilize' and its variants with 'use' and its variants.
+const replace = (function () {
     const dictionary = {
         utilize: "use",
         utilise: "use",
@@ -22,3 +31,10 @@ const replace_utilize = (function () {
         });
     };
 }());
+
+const transform_text = new Transform({
+    transform(chunk, encoding, callback) {
+        callback(null, replace(chunk.toString()));
+    }
+});
+readStream.pipe(transform_text).pipe(writeStream).on("error", console.error);
