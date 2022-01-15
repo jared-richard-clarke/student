@@ -2,7 +2,7 @@
 const { createReadStream, createWriteStream } = require("fs");
 const { Transform } = require("stream");
 
-const readStream = createReadStream("test.txt");
+const readStream = createReadStream("test.txt", "utf-8");
 const writeStream = createWriteStream("outfile.txt");
 
 // replace(string) -> string
@@ -20,21 +20,26 @@ const replace = (function () {
         utilizing: "using",
         utilising: "using",
         Utilizing: "Using",
-        Utilising: "Using"
+        Utilising: "Using",
     };
     return function (text) {
         if (typeof text !== "string") {
             throw "argument must be type string";
         }
-        return text.replace(/[uU]tili([zs]e|[zs]ed|[zs]ing)/g, function (match) {
-            return dictionary[match];
-        });
+        return text.replace(
+            /[uU]tili([zs]e|[zs]ed|[zs]ing)/g,
+            function (match) {
+                return dictionary[match];
+            }
+        );
     };
-}());
-
+})();
+// Simplified constructor approach. Alternative: ES6-style constructor
+// Second argument to callback function will be forwarded to the transform.push() method.
 const transform_text = new Transform({
-    transform(chunk, encoding, callback) {
-        callback(null, replace(chunk.toString()));
-    }
+    transform: function (chunk, encoding, callback) {
+        callback(null, replace(String(chunk)));
+    },
 });
+
 readStream.pipe(transform_text).pipe(writeStream).on("error", console.error);
