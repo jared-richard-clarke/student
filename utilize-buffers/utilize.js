@@ -37,6 +37,7 @@ const replace = (function () {
 // Simplified constructor approach. Alternative: ES6-style constructor
 // Second argument to callback function will be forwarded to the transform.push() method.
 const transform_text = new Transform({
+    // TODO: setup error handler
     transform: function (chunk, encoding, callback) {
         callback(null, replace(String(chunk)));
     },
