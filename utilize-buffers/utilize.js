@@ -5,11 +5,11 @@ const { createReadStream, createWriteStream } = require("fs");
 const { Transform } = require("stream");
 
 const infile = "test.txt";
-const outfile = "outtest.txt"
+const outfile = "re-" + infile;
 
 // 1. Check user input.
-if (path.extname(infile) !== ".txt" || path.extname(outfile) !== ".txt") {
-    console.error("input and output must be plain text files -> [file].txt");
+if (path.extname(infile) !== ".txt") {
+    console.error("input must be plain text file -> [file].txt");
     process.exit(1);
 }
 const readStream = createReadStream(infile, "utf-8");
