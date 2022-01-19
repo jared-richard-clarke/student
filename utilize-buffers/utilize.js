@@ -58,4 +58,7 @@ const transform_text = new Transform({
     },
 });
 // 4. Pipe read stream through transformer, then write to file.
-readStream.pipe(transform_text).pipe(writeStream).on("error", console.error);
+readStream
+    .pipe(transform_text)
+    .pipe(writeStream)
+    .on("error", (err) => console.error(err));
