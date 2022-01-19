@@ -7,7 +7,7 @@ const { Transform } = require("stream");
 const infile = "test.txt";
 const outfile = "outtest.txt"
 
-// 1. Check user input. TODO: throw error or use process.exit?
+// 1. Check user input.
 if (path.extname(infile) !== ".txt" || path.extname(outfile) !== ".txt") {
     console.error("input and output must be plain text files -> [file].txt");
     process.exit(1);
@@ -15,7 +15,6 @@ if (path.extname(infile) !== ".txt" || path.extname(outfile) !== ".txt") {
 const readStream = createReadStream(infile, "utf-8");
 readStream.on("error", (err) => {
     console.error(err);
-    process.exit(1);
 });
 const writeStream = createWriteStream(outfile);
 
