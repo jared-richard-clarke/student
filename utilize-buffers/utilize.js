@@ -1,9 +1,23 @@
-// TODO: add shebang line?
+#!/usr/bin/env node
+
+const path = require("path");
 const { createReadStream, createWriteStream } = require("fs");
 const { Transform } = require("stream");
 
-const readStream = createReadStream("test.txt", "utf-8");
-const writeStream = createWriteStream("outfile.txt");
+const infile = "test.txt";
+const outfile = "outtest.txt"
+
+// 1. Check user input. TODO: throw error or use process.exit?
+if (path.extname(infile) !== ".txt" || path.extname(outfile) !== ".txt") {
+    console.error("input and output must be plain text files -> [file].txt");
+    process.exit(1);
+}
+const readStream = createReadStream(infile, "utf-8");
+readStream.on("error", (err) => {
+    console.error(err);
+    process.exit(1);
+});
+const writeStream = createWriteStream(outfile);
 
 // replace(string) -> string
 // replaces 'utilize' and its variants with 'use' and its variants.
@@ -34,13 +48,14 @@ const replace = (function () {
         );
     };
 })();
+
 // Simplified constructor approach. Alternative: ES6-style constructor
+// First argument to callback function is ignored for buffers.
 // Second argument to callback function will be forwarded to the transform.push() method.
 const transform_text = new Transform({
-    // TODO: setup error handler
     transform: function (chunk, encoding, callback) {
         callback(null, replace(String(chunk)));
     },
 });
-
+// 4. Pipe read stream through transformer, then write to file.
 readStream.pipe(transform_text).pipe(writeStream).on("error", console.error);
