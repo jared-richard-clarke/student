@@ -1,11 +1,16 @@
 // new Vector(number, number) -> Vector{x, y}
-// properties { coordinates -> array, magnitude -> number, scale -> void }
+// static { isVector(any) -> boolean}
+// properties { coordinates -> array }
+// methods { magnitude() -> number, scale(number) -> void }
 
 // === ES6 ===
 class Vector_ES6 {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+    }
+    static isVector(value) {
+        return value instanceof Vector_ES6;
     }
     get coordinates() {
         return [this.x, this.y];
@@ -26,6 +31,9 @@ var Vector_ES5 = (function () {
         this.x = x;
         this.y = y;
     }
+    Vector_ES5.isVector = function (value) {
+        return value instanceof Vector_ES5;
+    };
     Object.defineProperty(Vector_ES5.prototype, "coordinates", {
         get: function () {
             return [this.x, this.y];
