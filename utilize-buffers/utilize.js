@@ -53,8 +53,9 @@ const replace = (function () {
 // Second argument to callback function will be forwarded to the transform.push() method.
 const transform_text = new Transform({
     transform: function (chunk, encoding, callback) {
-        callback(null, replace(String(chunk)));
+        callback(null, replace(chunk));
     },
+    decodeStrings: false,
 });
 // 4. Pipe read stream through transformer, then write to file.
 readStream
