@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 const path = require("path");
-const { createReadStream, createWriteStream } = require("fs");
-const { Transform } = require("stream");
+const fs = require("fs");
+const stream = require("stream");
 
 const infile = "test.txt";
 const outfile = "re-" + infile;
@@ -11,7 +11,7 @@ if (path.extname(infile) !== ".txt") {
     throw new Error("input must be a plain text file -> [file].txt");
 }
 
-const readStream = createReadStream(infile, "utf-8");
+const readStream = fs.createReadStream(infile, "utf-8");
 
 readStream.on("ready", function () {
     // replace(string) -> string
@@ -47,14 +47,14 @@ readStream.on("ready", function () {
     // Simplified constructor approach. Alternative: ES6-style constructor
     // First argument to callback function is ignored for buffers.
     // Second argument to callback function will be forwarded to the transform.push() method.
-    const transform_text = new Transform({
+    const transform_text = new stream.Transform({
         decodeStrings: false,
         transform: function (chunk, encoding, callback) {
             callback(null, replace(chunk));
         },
     });
 
-    const writeStream = createWriteStream(outfile);
+    const writeStream = fs.createWriteStream(outfile);
     
     writeStream.on("ready", function () {
         readStream
