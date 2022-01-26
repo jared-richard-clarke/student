@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 const path = require("path");
 const { createReadStream, createWriteStream } = require("fs");
 const { Transform } = require("stream");
@@ -7,8 +8,7 @@ const infile = "test.txt";
 const outfile = "re-" + infile;
 
 if (path.extname(infile) !== ".txt") {
-    console.error("input must be a plain text file -> [file].txt");
-    process.exit(1);
+    throw new Error("input must be a plain text file -> [file].txt");
 }
 
 const readStream = createReadStream(infile, "utf-8");
