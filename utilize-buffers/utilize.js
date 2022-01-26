@@ -12,9 +12,7 @@ if (path.extname(infile) !== ".txt") {
 }
 
 const readStream = createReadStream(infile, "utf-8");
-readStream.on("error", function (err) {
-    console.error(err);
-});
+
 readStream.on("ready", function () {
     // replace(string) -> string
     // replaces 'utilize' and its variants with 'use' and its variants.
@@ -35,7 +33,7 @@ readStream.on("ready", function () {
         };
         return function (text) {
             if (typeof text !== "string") {
-                throw "argument must be type string";
+                throw new TypeError("argument must be of type string");
             }
             return text.replace(
                 /[uU]tili([zs]e|[zs]ed|[zs]ing)/g,
@@ -50,16 +48,20 @@ readStream.on("ready", function () {
     // First argument to callback function is ignored for buffers.
     // Second argument to callback function will be forwarded to the transform.push() method.
     const transform_text = new Transform({
+        decodeStrings: false,
         transform: function (chunk, encoding, callback) {
             callback(null, replace(chunk));
         },
-        decodeStrings: false,
     });
+
     const writeStream = createWriteStream(outfile);
+    
     writeStream.on("ready", function () {
         readStream
+            .on("error", (err) => console.error(err))
             .pipe(transform_text)
+            .on("error", (err) => console.error(err))
             .pipe(writeStream)
-            .on("error", (err) => console.error(err));
+            .on("error", (err) => console.error(err))
     });
 });
