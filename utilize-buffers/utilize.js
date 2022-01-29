@@ -15,7 +15,9 @@ if (path.extname(infile) !== ".txt") {
 }
 
 const readStream = fs.createReadStream(infile, "utf-8");
-readStream.on("error", (err) => console.error(err));
+readStream.on("error", function (err) {
+    console.error(err);
+});
 readStream.on("ready", function () {
     // replace(string) -> string
     // replaces 'utilize' and its variants with 'use' and its variants.
@@ -57,11 +59,13 @@ readStream.on("ready", function () {
     });
 
     const writeStream = fs.createWriteStream(outfile);
-    writeStream.on("error", (err) => console.error(err));
+    writeStream.on("error", function (err) {
+        console.error(err);
+    });
     writeStream.on("ready", function () {
         readStream.pipe(transform_text).pipe(writeStream);
     });
-    writeStream.on("finish", function() {
-        console.log(`Text transformation complete. Check file ${infile}`);
+    writeStream.on("finish", function () {
+        console.log(`Text transformation complete. Check file ${outfile}`);
     });
 });
