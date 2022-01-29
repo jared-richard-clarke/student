@@ -62,6 +62,6 @@ readStream.on("ready", function () {
         readStream.pipe(transform_text).pipe(writeStream);
     });
     writeStream.on("finish", function() {
-        console.log("Text transformation complete. Check file %s", outfile);
+        console.log(`Text transformation complete. Check file ${infile}`);
     });
 });
