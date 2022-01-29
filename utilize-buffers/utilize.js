@@ -9,7 +9,9 @@ const infile = process.argv[2];
 const outfile = "re-" + infile;
 
 if (path.extname(infile) !== ".txt") {
-    throw new Error("input must be a plain text file -> [file].txt");
+    const err = new Error("input must be a plain text file -> [file].txt");
+    err.evidence = infile;
+    throw err;
 }
 
 const readStream = fs.createReadStream(infile, "utf-8");
