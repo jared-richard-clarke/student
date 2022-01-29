@@ -13,7 +13,7 @@ if (path.extname(infile) !== ".txt") {
     err.evidence = infile;
     throw err;
 }
-
+// Create read stream. Add event listeners.
 const readStream = fs.createReadStream(infile, "utf-8");
 readStream.on("error", function (err) {
     console.error(err);
@@ -57,7 +57,7 @@ readStream.on("ready", function () {
             callback(null, replace(chunk));
         },
     });
-
+    // Create writestream. Add event listeners.
     const writeStream = fs.createWriteStream(outfile);
     writeStream.on("error", function (err) {
         console.error(err);
