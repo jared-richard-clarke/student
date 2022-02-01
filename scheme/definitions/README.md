@@ -1,2 +1,2 @@
-# Scheme Procedure Definitions
+# Scheme Procedures
 Definitions for common Scheme procedures.
