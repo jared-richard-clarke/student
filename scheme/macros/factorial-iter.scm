@@ -8,7 +8,8 @@
              [number n])
     (if (< number 1)
         result
-        (loop (* result number) (- number 1)))))
+        (loop (* result number) 
+              (- number 1)))))
 
 ; === letrec expansion ===
 (define factorial-letrec
