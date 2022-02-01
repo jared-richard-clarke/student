@@ -8,7 +8,7 @@
     (cond
       [(null? ls) #f]
       [(equal? (caar ls) x) (car ls)]
-      [else (assq x (cdr ls))])))
+      [else (assoc x (cdr ls))])))
 
 (define assq
   (lambda (x ls)
@@ -22,4 +22,4 @@
     (cond
       [(null? ls) #f]
       [(eqv? (caar ls) x) (car ls)]
-      [else (assq x (cdr ls))])))
+      [else (assv x (cdr ls))])))
