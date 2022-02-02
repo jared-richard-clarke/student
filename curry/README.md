@@ -1,2 +1,2 @@
 # Curried Functions
-Examples of curried functions in JavaScript, Python, and Scheme.
+Examples of curried functions written in JavaScript, Python, and Scheme.
