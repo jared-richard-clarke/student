@@ -21,8 +21,8 @@
   ; === interface === 
   (lambda (message . arguments)
     (cond
-      [(eqv? message 'empty?) (empty?)]
-      [(eqv? message 'push!)  (push! arguments)]
-      [(eqv? message 'peek)   (peek)]
-      [(eqv? message 'pop!)   (pop!)]
+      [(eq? message 'empty?) (empty?)]
+      [(eq? message 'push!)  (push! arguments)]
+      [(eq? message 'peek)   (peek)]
+      [(eq? message 'pop!)   (pop!)]
       [else (error "invalid input")])))
