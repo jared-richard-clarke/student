@@ -10,9 +10,9 @@
   (lambda (n)
     (letrec ([loop (lambda (number result)
                      (if (zero? number)
-                         result
-                         (loop (- number 1)
-                               (* result number))))])
+                         result                        ; (begin (if #f #f #f) result)
+                         (loop (- number 1)            ; (begin (loop (do "step" number (- number 1))
+                               (* result number))))])  ;              (do "step" result (* result number))))))])
       (loop n 1))))
 
 ; === let expansion ===
@@ -21,9 +21,9 @@
     (let ([loop #f])
       (let ([temp (lambda (number result)
                     (if (zero? number)
-                        result
-                        (loop (- number 1)
-                              (* result number))))])
+                        result                          ; (begin (if #f #f #f) result)
+                        (loop (- number 1)              ; (begin (loop (do "step" number (- number 1))
+                              (* result number))))])    ;              (do "step" result (* result number))))))])
         (set! loop temp)
         (loop n 1)))))
 
