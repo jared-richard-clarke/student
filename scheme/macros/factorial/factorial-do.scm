@@ -3,13 +3,13 @@
 
 (define (factorial n)
   (do ([number n (- number 1)] [result 1 (* result number)])
-    ((zero? number) result)))
+    ((< number 1) result)))
 
 ; === letrec expansion ===
 (define factorial-letrec
   (lambda (n)
     (letrec ([loop (lambda (number result)
-                     (if (zero? number)
+                     (if (< number 1)
                          result                        ; (begin (if #f #f #f) result)
                          (loop (- number 1)            ; (begin (loop (do "step" number (- number 1))
                                (* result number))))])  ;              (do "step" result (* result number))))))])
@@ -20,7 +20,7 @@
   (lambda (n)
     (let ([loop #f])
       (let ([temp (lambda (number result)
-                    (if (zero? number)
+                    (if (< number 1)
                         result                          ; (begin (if #f #f #f) result)
                         (loop (- number 1)              ; (begin (loop (do "step" number (- number 1))
                               (* result number))))])    ;              (do "step" result (* result number))))))])
@@ -35,7 +35,7 @@
           (set! loop temp)
           (loop n 1))
         (lambda (number result)
-          (if (zero? number)
+          (if (< number 1)
               result
               (loop (- number 1)
                     (* result number))))))
