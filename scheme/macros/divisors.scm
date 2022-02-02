@@ -1,5 +1,6 @@
 ; (divisors 10) -> '(5 2)
 ; do syntax: (do ((var init update) ...) (test result ...) expr ...)
+; simplified macro expansion
 
 (define divisors
   (lambda (n)
