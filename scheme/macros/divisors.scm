@@ -1,6 +1,5 @@
 ; (divisors 10) -> '(5 2)
 ; do syntax: (do ((var init update) ...) (test result ...) expr ...)
-; simplified macro expansion
 
 (define divisors
   (lambda (n)
@@ -16,11 +15,11 @@
   (lambda (n)
     (letrec ([loop (lambda (i lst)
                      (if (>= i n)
-                         lst
-                         (loop (+ i 1)
-                               (if (integer? (/ n i))
-                                   (cons i lst)
-                                   lst))))])
+                         lst                          ; (begin (if #f #f #f) lst)
+                         (loop (+ i 1)                ; (begin (loop (+ i 1)
+                               (if (integer? (/ n i)) ;              (if (integer? (/ n i))
+                                   (cons i lst)       ;                  (cons i lst)
+                                   lst))))])          ;                  lst)))))])
       (loop 2 (quote ())))))
 
 ; === let expansion ===
@@ -29,11 +28,11 @@
     (let ((loop #f))
       (let ([temp (lambda (i lst)
                     (if (>= i n)
-                        lst
-                        (loop (+ i 1)
-                              (if (integer? (/ n i))
-                                  (cons i lst)
-                                  lst))))])
+                        lst                           ; (begin (if #f #f #f) lst)
+                        (loop (+ i 1)                 ; (begin (loop (+ i 1)
+                              (if (integer? (/ n i))  ;              (if (integer? (/ n i))
+                                  (cons i lst)        ;                  (cons i lst)
+                                  lst))))])           ;                  lst)))))])
         (set! loop temp)
         (loop 2 (quote ()))))))
 
@@ -46,9 +45,9 @@
           (loop 2 (quote ())))
         (lambda (i lst)
           (if (>= i n)
-              lst
-              (loop (+ i 1)
-                    (if (integer? (/ n i))
-                        (cons i lst)
-                        lst))))))
+              lst                                     ; (begin (if #f #f #f) lst)
+              (loop (+ i 1)                           ; (begin (loop (+ i 1)
+                    (if (integer? (/ n i))            ;              (if (integer? (/ n i))
+                        (cons i lst)                  ;                  (cons i lst)
+                        lst))))))                     ;                  lst)))))])
      #f)))
