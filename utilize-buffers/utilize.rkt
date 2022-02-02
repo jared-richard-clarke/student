@@ -21,7 +21,15 @@
                    (lambda (match other)
                      (hash-ref dictionary match))))
 
-(define file-contents
-  (port->string (open-input-file "text.txt") #:close? #t))
+(define IN "text.txt")
+(define OUT (string-append "re-" IN))
 
-(print (replace file-contents))
+; === write file ===
+(call-with-input-file IN
+  (lambda (input)
+    (call-with-output-file OUT
+      (lambda (output)
+        (let loop ([line (read-line input 'any)])
+          (unless (eof-object? line)
+            (write (replace line) output))))
+      #:exists 'truncate)))
