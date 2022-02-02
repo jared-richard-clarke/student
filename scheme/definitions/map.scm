@@ -1,4 +1,3 @@
-; Definition according to "The Scheme Programming Language" by R. Kent Dybvig
 (define map
   (lambda (func lst . more)
     (if (null? more)
