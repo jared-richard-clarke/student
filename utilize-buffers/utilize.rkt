@@ -37,3 +37,6 @@
 
 (close-input-port IN)
 (close-output-port OUT)
+
+(when (and (port-closed? IN) (port-closed? OUT))
+  (print "Stream complete. Files closed."))
