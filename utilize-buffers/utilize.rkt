@@ -26,11 +26,11 @@
 (define OUT (open-output-file "re-text.txt" #:exists 'truncate))
 
 (define (stream input output)
-  (define (scan in)
-    (let ([line (read-line in 'any)])
+  (define (scan ln)
+    (let ([line (read-line ln 'any)])
       (unless (eof-object? line)
         (write (replace line) output)
-        (scan in))))
+        (scan ln))))
   (scan input))
 
 (stream IN OUT)
