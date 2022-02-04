@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-
-import sys, os, io, re
+import sys, os, io, re, resource
 
 def create():
     # convert to byte strings for fast file processing.
@@ -19,15 +18,15 @@ def create():
         b"Utilising": b"Using"
     }
     # helper functions in regular expressions take match objects, not strings or bytes
-    lookup = lambda mo: dictionary[mo.group(0)]
+    matcher = lambda mo: dictionary[mo.group(0)]
 
-    pattern = re.compile(rb"[uU]tili([zs]e|[zs]ed|[zs]ing)")
+    pattern = re.compile(rb"[uU]tili(?:[zs]e|[zs]ed|[zs]ing)")
 
     def replacer(text):
         if type(text) != bytes:
             raise TypeError("argument must be of type bytes")
         else:
-            return pattern.sub(lookup, text)
+            return pattern.sub(matcher, text)
 
     return replacer
 
