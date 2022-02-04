@@ -1,5 +1,4 @@
-// user replaces variations of "utilize" with variations of "use", writing the content of one plain text file into the body of another. 
-// Call program with commands -input "old.txt" -output "new.txt". Files must be plain text.
+// utilize replaces variations of "utilize" with variations of "use", writing the content of one plain text file into the body of another. Call program with commands -input "old.txt" -output "new.txt". Files must be plain text.
 package main
 
 import (
@@ -24,6 +23,7 @@ var (
 	errMissedFlag = errors.New("must call program with input and output flags")
 	errPlainText  = errors.New("input and output files must be plain text")
 )
+
 // replacers for "utilize" and variants
 var (
 	dictionary = map[string]string{
@@ -40,8 +40,8 @@ var (
 		"Utilizing": "Using",
 		"Utilising": "Using",
 	}
-	re = regexp.MustCompile(`[uU]tili([zs]e|[zs]ed|[zs]ing)`)
-	match = func(s string) string { return dictionary[s] }
+	re    = regexp.MustCompile(`[uU]tili(?:[zs]e|[zs]ed|[zs]ing)`)
+	matcher = func(s string) string { return dictionary[s] }
 )
 
 func main() {
@@ -62,7 +62,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// 3. initialize writer and scanner
+	// 3. initialize writer and reader
 	writer := bufio.NewWriter(newfile)
 	reader := bufio.NewReader(file)
 	// 4. scan file, periodically flushing writer to disk when buffer surpasses limit
@@ -74,7 +74,7 @@ func main() {
 		if err != nil {
 			log.Println(err)
 		}
-		_, err = writer.WriteString(re.ReplaceAllStringFunc(line, match))
+		_, err = writer.WriteString(re.ReplaceAllStringFunc(line, matcher))
 		if err != nil {
 			log.Println(err)
 		}
