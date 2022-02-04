@@ -1,5 +1,5 @@
 #lang racket
-(define pattern #rx"[uU]tili([zs]e|[zs]ed|[zs]ing)")
+(define pattern #rx"[uU]tili(?:[zs]e|[zs]ed|[zs]ing)")
 
 (define dictionary
   #hash(["utilize" . "use"]
@@ -18,7 +18,7 @@
 (define (replace text) 
   (regexp-replace* pattern
                    text
-                   (lambda (match other)
+                   (lambda (match)
                      (hash-ref dictionary match))))
 
 ; === write file ===
@@ -26,11 +26,11 @@
 (define OUT (open-output-file "re-text.txt" #:exists 'truncate))
 
 (define (stream input output)
-  (define (scan ln)
-    (let ([line (read-line ln 'any)])
+  (define (scan in)
+    (let ([line (read-line in 'any)])
       (unless (eof-object? line)
         (write (replace line) output)
-        (scan ln))))
+        (scan in))))
   (scan input))
 
 (stream IN OUT)
