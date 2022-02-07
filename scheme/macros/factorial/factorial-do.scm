@@ -2,7 +2,8 @@
 ; simplified macro expansion for clarity.
 
 (define (factorial n)
-  (do ([number n (- number 1)] [result 1 (* result number)])
+  (do ([number n (- number 1)]
+       [result 1 (* result number)])
     ((< number 1) result)))
 
 ; === letrec expansion ===
