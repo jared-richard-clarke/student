@@ -5,10 +5,9 @@
 (define divisors
   (lambda (n)
     (do ([i 2 (+ i 1)]
-         [lst '()
-              (if (integer? (/ n i))
-                  (cons i lst)
-                  lst)])
+         [lst '() (if (integer? (/ n i))
+                      (cons i lst)
+                      lst)])
       ((>= i n) lst))))
 
 ; === letrec expansion ===
@@ -52,3 +51,4 @@
                         (cons i lst)                  ;                  (cons i lst)
                         lst))))))                     ;                  lst)))))])
      #f)))
+
