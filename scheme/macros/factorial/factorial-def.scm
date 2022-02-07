@@ -25,17 +25,18 @@
                        result
                        (iter (* result number)
                              (- number 1)))))
-      (let () (iter 1 n)))))
+      (let ()
+        (iter 1 n)))))
 
 ; === lambda expansion ===
 (define factorial-lambda
   (lambda (n)
     ((lambda (iter)
-       (set! iter
-             (lambda (result number)
-               (if (< number 1)
-                   result
-                   (iter (* result number)
-                         (- number 1)))))
-       ((lambda () (iter 1 n))))
+       (set! iter (lambda (result number)
+                    (if (< number 1)
+                        result
+                        (iter (* result number)
+                              (- number 1)))))
+       ((lambda ()
+          (iter 1 n))))
      #f)))
