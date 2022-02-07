@@ -1,2 +1,2 @@
 # Interfaces
-I examine Go interfaces through examples.
+I examine Go interfaces.
