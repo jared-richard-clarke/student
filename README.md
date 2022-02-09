@@ -1,2 +1,2 @@
 # Didact
-A general repository for programs that I find informative and interesting.
+I'm teaching myself how to program. This repository is a collection of programs I use to improve my learning.
