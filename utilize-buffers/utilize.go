@@ -20,8 +20,8 @@ var (
 	input  = flag.String("input", "", "Input plain text file: -input [old].txt")
 	output = flag.String("output", "", "Output plain text file: -output [new].txt]")
 	// errors
-	errMissedFlag = errors.New("must call program with input and output flags")
-	errPlainText  = errors.New("input and output files must be plain text")
+	errMissedFlag = errors.New("utilize: must call program with input and output flags")
+	errPlainText  = errors.New("utilize: input and output files must be plain text")
 )
 
 // replacers for "utilize" and variants
