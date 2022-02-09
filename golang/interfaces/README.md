@@ -1,2 +1,2 @@
 # Interfaces
-I examine Go interfaces through my own examples and articles pulled from [go.dev](https://go.dev/).
+I examine Go interfaces through my own code and examples pulled from [go.dev](https://go.dev/).
