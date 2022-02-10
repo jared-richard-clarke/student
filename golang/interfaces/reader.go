@@ -1,5 +1,5 @@
 // strings.NewReader implements the io.Reader interface, which represents the read end of a stream of data.
-// io.Reader wraps the Read method. Read fills a given byte slice with data. 
+// io.Reader wraps the Read method. Read fills a given byte slice with data.
 // Read returns the number of bytes pushed to the slice and an error value. Returns io.EOF when the stream ends.
 // Example pulled from https://go.dev/tour/methods/21
 
@@ -12,9 +12,9 @@ import (
 )
 
 func main() {
-	r := strings.NewReader("Hello, Reader!")
+	r := strings.NewReader("Hello, Reader!") // &{ s: "Hello, Reader!", i: 0, prevRune: -1 }
 
-	b := make([]byte, 8)
+	b := make([]byte, 8) // []byte{ 0, 0, 0, 0, 0, 0, 0, 0 }
 	for {
 		n, err := r.Read(b)
 		fmt.Printf("n = %v err = %v b = %v\n", n, err, b)
