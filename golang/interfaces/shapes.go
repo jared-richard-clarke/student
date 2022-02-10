@@ -1,4 +1,4 @@
-package main
+package shapes
 
 import (
 	"fmt"
@@ -27,14 +27,4 @@ func TotalArea(s ...Shape) float64 {
 		total += v.Area()
 	}
 	return total
-}
-func main() {
-	rectangle := Rectangle{2, 5}
-	square := Rectangle{2, 2}
-	triangle := Triangle{3, 4}
-
-	fmt.Println(rectangle.Area())                       // -> 10
-	fmt.Println(square.Area())                          // -> 4
-	fmt.Println(triangle.Area())                        // -> 6
-	fmt.Println(TotalArea(rectangle, square, triangle)) // -> 20
 }
