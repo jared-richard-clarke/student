@@ -12,9 +12,9 @@ import (
 )
 
 func main() {
-	r := strings.NewReader("Hello, Reader!") // &{ s: "Hello, Reader!", i: 0, prevRune: -1 }
+	r := strings.NewReader("Hello, Reader!") // &{s:Hello, Reader! i:0 prevRune:-1}
 
-	b := make([]byte, 8) // []byte{ 0, 0, 0, 0, 0, 0, 0, 0 }
+	b := make([]byte, 8) // [0 0 0 0 0 0 0 0]
 	for {
 		n, err := r.Read(b)
 		fmt.Printf("n = %v err = %v b = %v\n", n, err, b)
