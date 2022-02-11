@@ -1,9 +1,5 @@
 package shapes
 
-import (
-	"fmt"
-)
-
 type Rectangle struct {
 	Length, Width float64
 }
