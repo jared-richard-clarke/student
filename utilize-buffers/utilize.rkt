@@ -1,4 +1,6 @@
+#! /usr/bin/env racket
 #lang racket
+
 (define pattern #rx"[uU]tili(?:[zs]e|[zs]ed|[zs]ing)")
 
 (define dictionary
