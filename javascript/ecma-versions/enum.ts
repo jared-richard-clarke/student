@@ -1,5 +1,4 @@
 // Numbered enums are auto-incremented collections of related but distinct values.
-
 enum DirectionTS {
   Up,
   Down,
@@ -8,7 +7,6 @@ enum DirectionTS {
 }
 
 // === Compiled, numbered enum ===
-
 "use strict";
 let DirectionJS;
 (function (Direction) {
@@ -19,14 +17,13 @@ let DirectionJS;
 })(DirectionJS || (DirectionJS = {}));
 
 // === Enum value ===
-
-// Direction = {
-//     0: "Up",
-//     1: "Down",
-//     2: "Left",
-//     3: "Right",
-//     Up: 0,
-//     Down: 1,
-//     Left: 2,
-//     Right: 3,
-// };
+let Direction = {
+    0: "Up",
+    1: "Down",
+    2: "Left",
+    3: "Right",
+    Up: 0,
+    Down: 1,
+    Left: 2,
+    Right: 3,
+};
