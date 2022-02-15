@@ -1,9 +1,13 @@
+// Numbered enums are auto-incremented collections of related but distinct values.
+
 enum DirectionTS {
   Up,
   Down,
   Left,
   Right,
 }
+
+// === Compiled, numbered enum ===
 
 "use strict";
 let DirectionJS;
@@ -14,7 +18,9 @@ let DirectionJS;
     Direction[(Direction["Right"] = 3)] = "Right";
 })(DirectionJS || (DirectionJS = {}));
 
-// DirectionJS = {
+// === Enum value ===
+
+// Direction = {
 //     0: "Up",
 //     1: "Down",
 //     2: "Left",
