@@ -27,13 +27,13 @@
 (define IN (open-input-file "text.txt"))
 (define OUT (open-output-file "re-text.txt" #:exists 'truncate))
 
-(define (stream input output)
+(define (stream input output edit)
   (let ([line (read-line input 'any)])
     (unless (eof-object? line)
-      (write (replace line) output)
-      (stream input output))))
+      (write (edit line) output)
+      (stream input output edit))))
 
-(stream IN OUT)
+(stream IN OUT replace)
 
 (close-input-port IN)
 (close-output-port OUT)
