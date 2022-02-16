@@ -19,7 +19,7 @@ const cdr = function (list) {
 };
 // === List Construction ===
 const list = node(1, node(2, node(3)));
-// === list value ===
+// === value ===
 // {
 //     data: 3,
 //     node: {
