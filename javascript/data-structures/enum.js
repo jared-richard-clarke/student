@@ -1,12 +1,13 @@
 // === Enumeration: numeric ===
-// A series of related but distinct values associated 
+// A series of related but distinct values associated
 // with a number that is auto-incremented from 0.
 
 const enumerate = function (...values) {
     const result = {};
     let number = 0;
     values.forEach(function (value) {
-        result[(result[value] = number)] = value;
+        result[value] = number;
+        result[number] = value;
         number += 1;
     });
     return result;
