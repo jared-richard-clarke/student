@@ -1,5 +1,5 @@
 ; In order to use a recursive function with let, I must pass the function to itself.
-; Normally, I would use either a letrec or letrec* expression for recursive functions.
+; Normally, I would use either letrec or letrec* syntax for recursive functions.
 ; I include this awkward example to help me better understand variable binding in Scheme.
 
 ; === let expression ===
