@@ -1,5 +1,5 @@
 # Scheme Macros
-To better understand Scheme, I expand macros from arbitrary procedures into Scheme's core forms.
+To better understand Scheme, I expand macros into Scheme's core forms.
 ## Core Forms
 Table of core forms pulled from [The Scheme Programming Language: Fourth Edition](https://www.scheme.com/tspl4/) by R. Kent Dybvig.
 | Body                | Composition |
