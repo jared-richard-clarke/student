@@ -1,10 +1,22 @@
-# Scheme
-To better understand Scheme, I expand arbitrary procedures into Scheme's core forms.
-1. `define`
-2. `lambda`
-3. `quote`
-4. `if`
-5. `set!`
-6. constant (symbol | boolean | number | character | string)
-7. variable
-8. application
+# Scheme Macros
+To better understand Scheme, I expand macros from arbitrary procedures into Scheme's core forms.
+## Core Forms
+Table of core forms pulled from [The Scheme Programming Language: Fourth Edition](https://www.scheme.com/tspl4/) by R. Kent Dybvig.
+| Body                | Composition |
+| ------------------- | ----------- |
+| program             | form\* |
+| form                | definition \| expression |
+| definition          | variable definition \| (`begin` definition\*) |
+| variable definition | (`define` variable expression) |
+| expression          | constant |
+|                     | variable |
+|                     | (`quote` datum) |
+|                     | (`lambda` formals expression expression\*) |
+|                     | (`if` expression expression expression) |
+|                     | (`set!` variable expression) |
+|                     | application |
+| constant            | boolean \| number \| character \| string |
+| formals             | variable |
+|                     | (variable\*) |
+|                     | (variable variable\* . variable) |
+| application         | (expression expression\*) |
