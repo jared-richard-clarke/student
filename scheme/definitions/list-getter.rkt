@@ -1,6 +1,7 @@
 #lang racket
 
 ; Copied from the Racket Library's list.rkt module.
+; (define-lgetter second 2) -> (define (second l0) ...)
 (define-syntax define-lgetter
   (syntax-rules ()
     [(_ name npos)
@@ -29,6 +30,7 @@
 (define-lgetter tenth   10)
 
 ; I rewrote these definitions using functional composition.
+; (create-getter '2nd 2) -> (lambda (lst) ...)
 (define (create-getter name npos)
   (lambda (lst)
     (if (list? lst)
