@@ -28,7 +28,7 @@
 (define-lgetter ninth   9)
 (define-lgetter tenth   10)
 
-; My functional rewrite.
+; I rewrote these definitions using functional composition.
 (define (create-getter name npos)
   (lambda (lst)
     (if (list? lst)
