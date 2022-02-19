@@ -10,7 +10,7 @@ const enumerate = function (...values) {
         result[number] = value;
         number += 1;
     });
-    return result;
+    return Object.freeze(result);
 };
 
 const traffic_light = enumerate("green", "yellow", "red");
