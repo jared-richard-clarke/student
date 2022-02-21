@@ -1,22 +1,11 @@
 // === Linked List ===
-// Defined using LISP terminology.
 const node = function (data, node = null) {
     return {
-        data: data,
-        node: node,
+        data,
+        node,
     };
 };
 
-const cons = function (node, list) {
-    node.node = list;
-    return node;
-};
-const car = function (list) {
-    return list.data;
-};
-const cdr = function (list) {
-    return list.node;
-};
 // === List Construction ===
 const list = node(1, node(2, node(3)));
 // === value ===
