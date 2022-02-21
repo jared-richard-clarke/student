@@ -1,24 +1,24 @@
 // === stack object ===
 
 // factory
-const create_stack = function () {
+function create_stack() {
     // object instance
     const stack = [];
     // methods
-    const is_empty = function () {
+    function is_empty() {
         return stack.length === 0;
-    };
-    const push = function (...values) {
+    }
+    function push(...values) {
         values.forEach(function (value) {
             stack.push(value);
         });
-    };
-    const peek = function () {
+    }
+    function peek() {
         return stack[stack.length - 1];
-    };
-    const pop = function () {
+    }
+    function pop() {
         return stack.pop();
-    };
+    }
     // interface
     return Object.freeze({
         is_empty,
@@ -26,7 +26,7 @@ const create_stack = function () {
         peek,
         pop,
     });
-};
+}
 
 // === example ===
 // const stack = create_stack();
