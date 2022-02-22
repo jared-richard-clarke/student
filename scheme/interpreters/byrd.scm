@@ -1,5 +1,6 @@
-;; A minimal interpretor, written in Scheme
+;; A minimal Scheme interpretor written in Scheme
 ;; Presented by William Byrd
+
 (load "pmatch.scm")
 (define eval-expr
     (lambda (expr env)
