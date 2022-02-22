@@ -1,7 +1,8 @@
-// new Vector(number, number) -> Vector{x, y}
-// static { isVector(any) -> boolean}
-// properties { coordinates -> array }
-// methods { magnitude() -> number, scale(number) -> void }
+// === Vector ===
+// Three patterns for creating Vector objects:
+// 1. ES6 class syntax.
+// 2. ES5 prototype syntax.
+// 3. Factory function.
 
 // === ES6 ===
 class Vector_ES6 {
@@ -50,3 +51,21 @@ var Vector_ES5 = (function () {
     };
     return Vector_ES5;
 })();
+
+// === factory function ===
+// A simpler, functional approach to creating vector objects.
+
+function vector(x, y) {
+    return Object.freeze({
+        get coordinates() {
+            return [x, y];
+        },
+        get magnitude() {
+            return Math.sqrt(x * x + y * y);
+        },
+        scale(factor) {
+            x *= factor;
+            y *= factor;
+        },
+    });
+}
