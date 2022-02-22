@@ -54,7 +54,6 @@ var Vector_ES5 = (function () {
 
 // === factory function ===
 // A simpler, functional approach to creating vector objects.
-
 function vector(x, y) {
     return Object.freeze({
         get coordinates() {
