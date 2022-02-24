@@ -3,7 +3,7 @@
 // with a number that is auto-incremented from 0.
 
 const enumerate = function (...values) {
-    const result = {};
+    const result = Object.create(null);
     let number = 0;
     values.forEach(function (value) {
         result[value] = number;
