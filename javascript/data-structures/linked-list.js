@@ -1,13 +1,13 @@
 // === Linked List ===
-const node = function (data, node = null) {
-    return {
-        data,
-        node,
-    };
-};
+function link(data, node = null) {
+    const list = Object.create(null);
+    list["data"] = data;
+    list["node"] = node;
+    return list;
+}
 
-// === List Construction ===
-const list = node(1, node(2, node(3)));
+// === Link Construction ===
+const linked_list = link(1, link(2, link(3)));
 // === value ===
 // {
 //     data: 1,
