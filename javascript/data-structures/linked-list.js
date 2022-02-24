@@ -1,8 +1,8 @@
 // === Linked List ===
-function link(data, node = null) {
+function link(first, rest = null) {
     const list = Object.create(null);
-    list["data"] = data;
-    list["node"] = node;
+    list["first"] = first;
+    list["rest"] = rest;
     return list;
 }
 
@@ -10,12 +10,12 @@ function link(data, node = null) {
 const linked_list = link(1, link(2, link(3)));
 // === value ===
 // {
-//     data: 1,
-//     node: {
-//         data: 2,
-//         node: {
-//             data: 3,
-//             node: null,
+//     first: 1,
+//     rest: {
+//         first: 2,
+//         rest: {
+//             first: 3,
+//             rest: null,
 //         },
 //     },
 // };
