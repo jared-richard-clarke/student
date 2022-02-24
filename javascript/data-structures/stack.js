@@ -1,6 +1,6 @@
 // === stack object ===
 
-// factory
+// constructor
 function create_stack() {
     // object instance
     const stack = [];
