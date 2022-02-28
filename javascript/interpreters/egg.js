@@ -106,10 +106,8 @@ const interpret = (function () {
             case "string":
                 return expr.value;
             case "number":
-                // Make sure "number" gets turned into a Number!
                 return Number(expr.value);
             case "word":
-                // Get the function/variable from the current context ("word")
                 if (expr.value in env) {
                     return env[expr.value];
                 } else {
@@ -177,7 +175,6 @@ const interpret = (function () {
         if (!args.length) {
             throw new SyntaxError("Functions need a body");
         }
-        // Get all args except for last, which is function body
         let argNames = args.slice(0, args.length - 1).map((expr) => {
             if (expr.type !== "word") {
                 throw new SyntaxError("Arg names must be a word");
