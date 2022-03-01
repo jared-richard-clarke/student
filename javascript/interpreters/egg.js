@@ -18,7 +18,7 @@ const interpret = (function () {
     // }
     const parse = (function () {
         // trim(string) -> string
-        // helper function: removes whitespace from the beginning string.
+        // helper function: removes whitespace from the beginning of a string.
         // trim(`  +(1, 2)`) -> "+(1, 2)"
         function trim(program) {
             const firstChar = program.search(/\S/);
