@@ -211,7 +211,7 @@ const interpret = (function () {
     top_env["false"] = false;
     ["+", "-", "/", "*", "%", "===", "!==", ">", "<", ">=", "<="].forEach(
         function (operator) {
-            top_env[operator] = new Function(
+            top_env[operator] = Function(
                 "x",
                 "y",
                 "return x " + operator + " y;"
