@@ -1,6 +1,6 @@
 // My interpreter for the Egg programming language.
 // Egg was created by Marijn Haverbeke for "Eloquent Javascript" (https://eloquentjavascript.net/12_language.html) 
-// This implmentation closely follows Haverbeke's original implementation. However,
+// This implmentation closely follows Haverbeke's original implementation.
 // I made my code more modular. I also added extensive inline documentation.
 
 // interpret(string) -> number | string | boolean | void
@@ -8,8 +8,8 @@
 // interpret(`+(1, 2)`) -> 3
 const interpret = (function () {
     // parse(string) -> object
-    // parse() wraps parseExpression and parseApply — mutually-recursive functions that parse
-    // nested expressions and procedure applications. parse() consumes program string, returns syntax object.
+    // wraps parse_expression and parse_apply — mutually-recursive functions that parse
+    // nested expressions and procedure applications. Consumes program string, returns syntax object.
     // parse(`+(1, 2)`) ->
     // { type: "apply",
     //   operator: { type: "word", name: "+" },
@@ -18,18 +18,18 @@ const interpret = (function () {
     // }
     const parse = (function () {
         // trim(string) -> string
-        // helper function: removes whitespace from the beginning of a string.
+        // helper function: removes whitespace from the beginning string.
         // trim(`  +(1, 2)`) -> "+(1, 2)"
         function trim(program) {
-            const firstChar = program.search(/\S/);
-            if (firstChar === -1) {
+            const first_char = program.search(/\S/);
+            if (first_char === -1) {
                 program = "";
             } else {
-                program = program.slice(firstChar);
+                program = program.slice(first_char);
             }
             return program;
         }
-        function parseExpression(program) {
+        function parse_expression(program) {
             program = trim(program);
             let expr, val, match;
             match = /^"([^"]*)"/.exec(program);
@@ -39,7 +39,7 @@ const interpret = (function () {
                     type: "string",
                     value: val,
                 };
-                return parseApply(expr, program.slice(match[0].length));
+                return parse_apply(expr, program.slice(match[0].length));
             }
             match = /^\d+\b/.exec(program);
             if (match) {
@@ -48,7 +48,7 @@ const interpret = (function () {
                     type: "number",
                     value: val,
                 };
-                return parseApply(expr, program.slice(match[0].length));
+                return parse_apply(expr, program.slice(match[0].length));
             }
             match = /^[^\s(),"]+/.exec(program);
             if (match) {
@@ -57,12 +57,12 @@ const interpret = (function () {
                     type: "word",
                     value: val,
                 };
-                return parseApply(expr, program.slice(match[0].length));
+                return parse_apply(expr, program.slice(match[0].length));
             }
             throw new SyntaxError("Unexpected syntax: " + program);
         }
 
-        function parseApply(expr, program) {
+        function parse_apply(expr, program) {
             program = trim(program);
             if (program[0] !== "(") {
                 return {
@@ -77,7 +77,7 @@ const interpret = (function () {
                 args: [],
             };
             while (program[0] !== ")") {
-                let arg = parseExpression(program);
+                const arg = parse_expression(program);
                 expr.args.push(arg.expr);
                 program = trim(arg.rest);
                 if (program[0] === ",") {
@@ -86,11 +86,11 @@ const interpret = (function () {
                     throw new SyntaxError("Expected ',' or ')'");
                 }
             }
-            return parseApply(expr, program.slice(1));
+            return parse_apply(expr, program.slice(1));
         }
         // === parse: interface ===
         return function (program) {
-            const result = parseExpression(program);
+            const result = parse_expression(program);
             if (trim(result.rest).length > 0) {
                 throw new SyntaxError("Unexpected text after program");
             }
@@ -106,8 +106,10 @@ const interpret = (function () {
             case "string":
                 return expr.value;
             case "number":
+                // Make sure "number" gets turned into a Number!
                 return Number(expr.value);
             case "word":
+                // Get the function/variable from the current context ("word")
                 if (expr.value in env) {
                     return env[expr.value];
                 } else {
@@ -118,9 +120,9 @@ const interpret = (function () {
             case "apply":
                 if (
                     expr.operator.type == "word" &&
-                    expr.operator.value in specials
+                    expr.operator.value in special_forms
                 ) {
-                    return specials[expr.operator.value](expr.args, env);
+                    return special_forms[expr.operator.value](expr.args, env);
                 }
                 let operator = evaluate(expr.operator, env);
                 if (typeof operator !== "function") {
@@ -135,9 +137,9 @@ const interpret = (function () {
         }
     }
     // === special forms ===
-    const specials = Object.create(null);
+    const special_forms = Object.create(null);
 
-    specials["if"] = function (args, env) {
+    special_forms["if"] = function (args, env) {
         if (args.length !== 3) {
             throw new SyntaxError("Bad number of args to if");
         }
@@ -147,7 +149,7 @@ const interpret = (function () {
             return evaluate(args[2], env);
         }
     };
-    specials["while"] = function (args, env) {
+    special_forms["while"] = function (args, env) {
         if (args.length !== 2) {
             throw new SyntaxError("Bad number of args to while");
         }
@@ -156,14 +158,14 @@ const interpret = (function () {
         }
         return false;
     };
-    specials["do"] = function (args, env) {
+    special_forms["do"] = function (args, env) {
         let value = false;
         args.forEach((arg) => {
             value = evaluate(arg, env);
         });
         return value;
     };
-    specials["define"] = function (args, env) {
+    special_forms["define"] = function (args, env) {
         if (args.length !== 2 || args[0].type !== "word") {
             throw new SyntaxError("Bad use of define");
         }
@@ -171,10 +173,11 @@ const interpret = (function () {
         env[args[0].value] = value;
         return value;
     };
-    specials["func"] = function (args, env) {
+    special_forms["fun"] = function (args, env) {
         if (!args.length) {
             throw new SyntaxError("Functions need a body");
         }
+        // Get all args except for last, which is function body
         let argNames = args.slice(0, args.length - 1).map((expr) => {
             if (expr.type !== "word") {
                 throw new SyntaxError("Arg names must be a word");
@@ -187,14 +190,14 @@ const interpret = (function () {
             if (arguments.length !== argNames.length) {
                 throw new TypeError("Wrong number of arguments");
             }
-            const localEnv = Object.create(env);
+            const local_env = Object.create(env);
             for (let i = 0; i < arguments.length; i += 1) {
-                localEnv[argNames[i]] = arguments[i];
+                local_env[argNames[i]] = arguments[i];
             }
-            return evaluate(body, localEnv);
+            return evaluate(body, local_env);
         };
     };
-    specials["array"] = function (args) {
+    special_forms["array"] = function (args) {
         let arr = [];
         args.forEach((arg) => {
             arr.push(arg.value);
@@ -203,31 +206,31 @@ const interpret = (function () {
     };
 
     // === top-level environment ===
-    const env = Object.create(null);
-    env["true"] = true;
-    env["false"] = false;
+    const top_env = Object.create(null);
+    top_env["true"] = true;
+    top_env["false"] = false;
     ["+", "-", "/", "*", "%", "===", "!==", ">", "<", ">=", "<="].forEach(
         function (operator) {
-            env[operator] = new Function(
+            top_env[operator] = new Function(
                 "x",
                 "y",
                 "return x " + operator + " y;"
             );
         }
     );
-    env["print"] = function (value) {
+    top_env["print"] = function (value) {
         console.log(value);
         return value;
     };
-    env["length"] = function (arg) {
+    top_env["length"] = function (arg) {
         return arg.length;
     };
-    env["nth"] = function (i, arg) {
+    top_env["nth"] = function (i, arg) {
         return arg[i];
     };
     // === interpret: interface ===
     function interpreter(program) {
-        return evaluate(parse(program), env);
+        return evaluate(parse(program), top_env);
     }
     return interpreter;
 })();
