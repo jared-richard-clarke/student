@@ -106,10 +106,8 @@ const interpret = (function () {
             case "string":
                 return expr.value;
             case "number":
-                // Make sure "number" gets turned into a Number!
                 return Number(expr.value);
             case "word":
-                // Get the function/variable from the current context ("word")
                 if (expr.value in env) {
                     return env[expr.value];
                 } else {
@@ -177,14 +175,13 @@ const interpret = (function () {
         if (!args.length) {
             throw new SyntaxError("Functions need a body");
         }
-        // Get all args except for last, which is function body
-        let parameters = args.slice(0, args.length - 1).map((expr) => {
+        const parameters = args.slice(0, args.length - 1).map(function (expr) {
             if (expr.type !== "word") {
-                throw new SyntaxError("Parameter names must be a word");
+                throw new SyntaxError("Parameter names must be words");
             }
             return expr.value;
         });
-        let body = args[args.length - 1];
+        const body = args[args.length - 1];
 
         return function () {
             if (arguments.length !== parameters.length) {
@@ -196,13 +193,6 @@ const interpret = (function () {
             }
             return evaluate(body, local_env);
         };
-    };
-    special_forms["array"] = function (args) {
-        let arr = [];
-        args.forEach((arg) => {
-            arr.push(arg.value);
-        });
-        return arr;
     };
 
     // === top-level environment ===
@@ -222,12 +212,7 @@ const interpret = (function () {
         console.log(value);
         return value;
     };
-    top_env["length"] = function (arg) {
-        return arg.length;
-    };
-    top_env["nth"] = function (i, arg) {
-        return arg[i];
-    };
+
     // === interpret: interface ===
     function interpreter(program) {
         return evaluate(parse(program), top_env);
