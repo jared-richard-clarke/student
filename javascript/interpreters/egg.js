@@ -141,7 +141,7 @@ const interpret = (function () {
 
     special_forms["if"] = function (args, env) {
         if (args.length !== 3) {
-            throw new SyntaxError("Bad number of args to if");
+            throw new SyntaxError("Incorrect number of args to if");
         }
         if (evaluate(args[0], env) !== false) {
             return evaluate(args[1], env);
@@ -151,7 +151,7 @@ const interpret = (function () {
     };
     special_forms["while"] = function (args, env) {
         if (args.length !== 2) {
-            throw new SyntaxError("Bad number of args to while");
+            throw new SyntaxError("Incorrect number of args to while");
         }
         while (evaluate(args[0], env) !== false) {
             evaluate(args[1], env);
@@ -167,7 +167,7 @@ const interpret = (function () {
     };
     special_forms["define"] = function (args, env) {
         if (args.length !== 2 || args[0].type !== "word") {
-            throw new SyntaxError("Bad use of define");
+            throw new SyntaxError("Incorrect use of define");
         }
         let value = evaluate(args[1], env);
         env[args[0].value] = value;
@@ -178,21 +178,21 @@ const interpret = (function () {
             throw new SyntaxError("Functions need a body");
         }
         // Get all args except for last, which is function body
-        let argNames = args.slice(0, args.length - 1).map((expr) => {
+        let parameters = args.slice(0, args.length - 1).map((expr) => {
             if (expr.type !== "word") {
-                throw new SyntaxError("Arg names must be a word");
+                throw new SyntaxError("Parameter names must be a word");
             }
             return expr.value;
         });
         let body = args[args.length - 1];
 
         return function () {
-            if (arguments.length !== argNames.length) {
-                throw new TypeError("Wrong number of arguments");
+            if (arguments.length !== parameters.length) {
+                throw new TypeError("Incorrect number of arguments");
             }
             const local_env = Object.create(env);
             for (let i = 0; i < arguments.length; i += 1) {
-                local_env[argNames[i]] = arguments[i];
+                local_env[parameters[i]] = arguments[i];
             }
             return evaluate(body, local_env);
         };
