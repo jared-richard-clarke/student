@@ -1,5 +1,5 @@
 // My interpreter for the Egg programming language.
-// Egg was created by Marijn Haverbeke for "Eloquent Javascript" (https://eloquentjavascript.net/12_language.html) 
+// Egg was created by Marijn Haverbeke for "Eloquent Javascript" (https://eloquentjavascript.net/12_language.html)
 // This implmentation closely follows Haverbeke's original implementation.
 // I made my code more modular. I also added extensive inline documentation.
 
@@ -118,19 +118,19 @@ const interpret = (function () {
                     );
                 }
             case "apply":
+                const { operator, args } = expr;
                 if (
-                    expr.operator.type == "word" &&
-                    expr.operator.value in special_forms
+                    operator.type == "word" &&
+                    operator.value in special_forms
                 ) {
-                    return special_forms[expr.operator.value](expr.args, env);
+                    return special_forms[operator.value](args, env);
                 }
-                let operator = evaluate(expr.operator, env);
-                if (typeof operator !== "function") {
+                const operation = evaluate(operator, env);
+                if (typeof operation !== "function") {
                     throw new TypeError("Applying a non-function");
                 }
-                return operator.apply(
-                    null,
-                    expr.args.map((arg) => {
+                return operation(
+                    ...args.map(function (arg) {
                         return evaluate(arg, env);
                     })
                 );
