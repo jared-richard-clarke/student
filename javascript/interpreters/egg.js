@@ -8,7 +8,7 @@
 // interpret(`+(1, 2)`) -> 3
 const interpret = (function () {
     // parse(string) -> object
-    // wraps parse_expression and parse_apply — mutually-recursive functions that parse
+    // wraps parse_expression and parse_application — mutually-recursive functions that parse
     // nested expressions and procedure applications. Consumes program string, returns syntax object.
     // parse(`+(1, 2)`) ->
     // { type: "apply",
@@ -39,7 +39,7 @@ const interpret = (function () {
                     type: "string",
                     value: val,
                 };
-                return parse_apply(expr, program.slice(match[0].length));
+                return parse_application(expr, program.slice(match[0].length));
             }
             match = /^\d+\b/.exec(program);
             if (match) {
@@ -48,7 +48,7 @@ const interpret = (function () {
                     type: "number",
                     value: val,
                 };
-                return parse_apply(expr, program.slice(match[0].length));
+                return parse_application(expr, program.slice(match[0].length));
             }
             match = /^[^\s(),"]+/.exec(program);
             if (match) {
@@ -57,12 +57,12 @@ const interpret = (function () {
                     type: "word",
                     value: val,
                 };
-                return parse_apply(expr, program.slice(match[0].length));
+                return parse_application(expr, program.slice(match[0].length));
             }
             throw new SyntaxError("Unexpected syntax: " + program);
         }
 
-        function parse_apply(expr, program) {
+        function parse_application(expr, program) {
             program = trim(program);
             if (program[0] !== "(") {
                 return {
@@ -86,7 +86,7 @@ const interpret = (function () {
                     throw new SyntaxError("Expected ',' or ')'");
                 }
             }
-            return parse_apply(expr, program.slice(1));
+            return parse_application(expr, program.slice(1));
         }
         // === parse: interface ===
         return function (program) {
