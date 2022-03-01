@@ -1,6 +1,6 @@
 // My interpreter for the Egg programming language.
 // Egg was created by Marijn Haverbeke for "Eloquent Javascript" (https://eloquentjavascript.net/12_language.html) 
-// This implmentation closely follows Haverbeke's original implementation.
+// This implmentation closely follows Haverbeke's original implementation. However,
 // I made my code more modular. I also added extensive inline documentation.
 
 // interpret(string) -> number | string | boolean | void
@@ -8,8 +8,8 @@
 // interpret(`+(1, 2)`) -> 3
 const interpret = (function () {
     // parse(string) -> object
-    // wraps parseExpression and parseApply — mutually-recursive functions that parse
-    // nested expressions and procedure applications. Consumes program string, returns syntax object.
+    // parse() wraps parseExpression and parseApply — mutually-recursive functions that parse
+    // nested expressions and procedure applications. parse() consumes program string, returns syntax object.
     // parse(`+(1, 2)`) ->
     // { type: "apply",
     //   operator: { type: "word", name: "+" },
