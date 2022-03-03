@@ -43,7 +43,7 @@ var (
 		"Utilizing": "Using",
 		"Utilising": "Using",
 	}
-	re    = regexp.MustCompile(`[uU]tili(?:[zs]e|[zs]ed|[zs]ing)`)
+	re    = regexp.MustCompile(`[uU]tili(?:[zs]ed|[zs]e|[zs]ing)`)
 	matcher = func(s string) string { return dictionary[s] }
 )
 
