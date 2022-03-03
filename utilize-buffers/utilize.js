@@ -41,7 +41,7 @@ readStream.on("ready", function () {
                 throw new TypeError("argument must be of type string");
             }
             return text.replace(
-                /[uU]tili(?:[zs]e|[zs]ed|[zs]ing)/g,
+                /[uU]tili(?:[zs]ed|[zs]e|[zs]ing)/g,
                 function (match) {
                     return dictionary[match];
                 }
