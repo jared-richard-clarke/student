@@ -1,27 +1,30 @@
 // === Linked List ===
+const proto_link = {
+    traverse: function (action) {
+        this.head = action(this.head);
+        if (this.tail !== null) {
+            this.tail.traverse(action);
+        }
+    },
+};
+
 function link(head, tail = null) {
-    const list = Object.create(null);
+    const list = Object.create(proto_link);
     list["head"] = head;
     list["tail"] = tail;
     return list;
 }
 
-function traverse(list, action) {
-  list.head = action(list.head);
-  if (list.tail !== null) {
-    traverse(list.tail, action);
-  }
-}
-
-// === Link Construction ===
-const linked_list = link(1, link(2, link(3)));
+// === Linked List Construction ===
+const list = link(1, link(2, link(3)));
+list.traverse((x) => x * x);
 // === value ===
 // {
 //     head: 1,
 //     tail: {
-//         head: 2,
+//         head: 4,
 //         tail: {
-//             head: 3,
+//             head: 9,
 //             tail: null,
 //         },
 //     },
