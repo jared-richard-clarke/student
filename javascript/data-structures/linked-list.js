@@ -1,4 +1,5 @@
-// === Linked List ===
+// === Linked List Prototype ===
+// Use prototypal inheritance. Every link in the list need not have its own methods.
 const proto_link = {
     traverse: function (action) {
         this.head = action(this.head);
@@ -8,6 +9,7 @@ const proto_link = {
     },
 };
 
+// === Linked List ===
 function link(head, tail = null) {
     const list = Object.create(proto_link);
     list["head"] = head;
