@@ -20,7 +20,7 @@ def create():
     # helper functions in regular expressions take match objects, not strings or bytes
     matcher = lambda mo: dictionary[mo.group(0)]
 
-    pattern = re.compile(rb"[uU]tili(?:[zs]e|[zs]ed|[zs]ing)")
+    pattern = re.compile(rb"[uU]tili(?:[zs]ed|[zs]e|[zs]ing)")
 
     def replacer(text):
         if type(text) != bytes:
