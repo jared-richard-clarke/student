@@ -1,7 +1,7 @@
 #! /usr/bin/env racket
 #lang racket
 
-(define pattern #rx"[uU]tili(?:[zs]e|[zs]ed|[zs]ing)")
+(define pattern #rx"[uU]tili(?:[zs]ed|[zs]e|[zs]ing)")
 
 (define dictionary
   #hash(["utilize" . "use"]
