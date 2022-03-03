@@ -156,7 +156,7 @@ const interpret = (function () {
         }
         return false;
     };
-    special_forms["do"] = function (args, env) {
+    special_forms["begin"] = function (args, env) {
         let value = false;
         args.forEach((arg) => {
             value = evaluate(arg, env);
