@@ -9,12 +9,16 @@
 const interpret = (function () {
     // parse(string) -> object
     // wraps parse_expression and parse_application — mutually-recursive functions that parse
-    // nested expressions and procedure applications. Consumes program string, returns syntax object.
+    // nested expressions and procedure applications.
     // parse(`+(1, 2)`) ->
-    // { type: "apply",
-    //   operator: { type: "word", name: "+" },
-    //   args: [ {type: "number", value: 1 },
-    //           {type: "number", value: 2 } ]
+    // { 
+    //   expr: { 
+    //     type: "apply",
+    //     operator: { type: "word", value: "+" },
+    //     args: [ { type: "number", value: 1 },
+    //             { type: "number", value: 2 } ]
+    //     },
+    //   rest: ""
     // }
     const parse = (function () {
         // trim(string) -> string
