@@ -61,7 +61,7 @@ function prolink(head, tail = null) {
 // === Linked List Construction ===
 const prolist = prolink(1, prolink(2, prolink(3)));
 prolist.traverse((x) => x * x);
-// === prolist ===
+// === prolist: post-traversal ===
 // {
 //     head: 1,
 //     tail: {
