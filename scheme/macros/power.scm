@@ -3,8 +3,8 @@
 ; === base ===
 (define (power base exponent)
   (let loop ([result 1]
-             [count 0])
-    (if (>= count exponent)
+             [count 1])
+    (if (> count exponent)
         result
         (loop (* result base)
               (+ 1 count)))))
@@ -13,25 +13,25 @@
 (define power-letrec
   (lambda (base exponent)
     ((letrec ([loop (lambda (result count)
-                      (if (>= count exponent)
+                      (if (> count exponent)
                           result
                           (loop (* result base)
                                 (+ 1 count))))])
        loop)
-     1 0)))
+     1 1)))
 
 ; === let expansion ===
 (define power-let
   (lambda (base exponent)
     ((let ([loop #f])
        (let ([temp (lambda (result count)
-                        (if (>= count exponent)
+                        (if (> count exponent)
                             result
                             (loop (* result base)
                                   (+ 1 count))))])
          (set! loop temp)
          loop))
-     1 0)))
+     1 1)))
 
 ; === lambda expansion ===
 (define power-lambda
@@ -41,9 +41,9 @@
            (set! loop temp)
            loop)
          (lambda (result count)
-           (if (>= count exponent)
+           (if (> count exponent)
                result
                (loop (* result base)
                      (+ 1 count))))))
       #f)
-     1 0)))
+     1 1)))
