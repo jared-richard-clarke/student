@@ -3,10 +3,10 @@ const lowercase = function (text) {
 };
 const strip_whitespace = function (text) {
     // whitespace before tab deliberate.
-    return text.replace(/[ \t\n\r\v\f]/g, "");
+    return text.replace(/[ \t\n\r\v\f]+/g, "");
 };
 const strip_punctuation = function (text) {
-    return text.replace(/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g, "");
+    return text.replace(/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+/g, "");
 };
 const reverse = function (text) {
     return text.split("").reverse().join("");
@@ -14,6 +14,7 @@ const reverse = function (text) {
 const is_equal = function (x, y) {
     return x === y;
 };
+
 const pipe = function (...actions) {
     return function (input) {
         return actions.reduce(function (accum, action) {
@@ -21,7 +22,7 @@ const pipe = function (...actions) {
         }, input);
     };
 };
-// composite function
+
 const clean = pipe(lowercase, strip_whitespace, strip_punctuation);
 
 // is_palindrome(string) -> boolean
@@ -32,3 +33,4 @@ const is_palindrome = function (corpus) {
     const txet = reverse(text);
     return is_equal(text, txet);
 };
+
