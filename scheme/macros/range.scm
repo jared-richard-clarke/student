@@ -2,21 +2,21 @@
 
 ; === base ===
 (define (range start stop)
-  (let loop ([number stop]
+  (let loop ([count stop]
              [result '()])
-    (if (< number start)
+    (if (> start count)
         result
-        (loop (- number 1)
-              (cons number result)))))
+        (loop (- count 1)
+              (cons count result)))))
 
 ; === letrec expansion ===
 (define range-letrec
   (lambda (start stop)
-    ((letrec ([loop (lambda (number result)
-                      (if (< number start)
+    ((letrec ([loop (lambda (count result)
+                      (if (> start count)
                           result
-                          (loop (- number 1)
-                                (cons number result))))])
+                          (loop (- count 1)
+                                (cons count result))))])
        loop)
      stop '())))
 
@@ -24,11 +24,11 @@
 (define range-let
   (lambda (start stop)
     ((let ([loop #f])
-       (let ([temp (lambda (number result)
-                     (if (< number start)
+       (let ([temp (lambda (count result)
+                     (if (> start count)
                          result
-                         (loop (- number 1)
-                               (cons number result))))])
+                         (loop (- count 1)
+                               (cons count result))))])
          (set! loop temp)
          loop))
      stop '())))
@@ -40,10 +40,10 @@
         ((lambda (temp)
            (set! loop temp)
            loop)
-         (lambda (number result)
-           (if (< number start)
+         (lambda (count result)
+           (if (> start count)
                result
-               (loop (- number 1)
-                     (cons number result))))))
+               (loop (- count 1)
+                     (cons count result))))))
       #f)
      stop '())))
