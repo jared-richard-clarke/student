@@ -6,7 +6,7 @@ My growing collection of small interpreters implemented in JavaScript.
 I included **Egg** because of its simplicity and similarity to **LISP**.
 
 ## Lexemes vs. Syntax
-| Terminology | Lexical Grammar | Syntactic Grammer |
+| Terminology | Lexical Grammar | Syntactic Grammar |
 | ----------- | --------------- | ----------------- |
 | alphabet    | characters      | tokens            |
 | string      | lexeme or token | expression        |
