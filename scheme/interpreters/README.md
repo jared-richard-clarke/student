@@ -1,7 +1,7 @@
 # LISP Interpreters
 
 ## Lexemes vs. Syntax
-| Terminology | Lexical Grammar | Syntactic Grammer |
+| Terminology | Lexical Grammar | Syntactic Grammar |
 | ----------- | --------------- | ----------------- |
 | alphabet    | characters      | tokens            |
 | string      | lexeme or token | expression        |
