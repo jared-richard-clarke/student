@@ -1,5 +1,4 @@
-# Interpreters
-My growing collection of small interpreters implemented in JavaScript.
+# JavaScript Interpreters
 
 ## Table of Contents
 - `egg.js`: **Egg** is a language implemented by Marijn Haverbeke for his book *Eloquent JavaScript*. 
@@ -19,4 +18,6 @@ I included **Egg** because of its simplicity and similarity to **LISP**.
 - **body**: description of what a production generates.
 - **terminal**: tokens from the scanner — "end points" for the grammar.
 - **nonterminal**: a named reference to another rule in the grammar. A few rules containing multiple productions can produce combinatorially larger sets of strings. Recursively-defined rules can produce potentially infinite sets of strings.
-- **parser**: maps tokens to terminals in the grammar to figure out which rules could have generated that string.
+
+## Parser 
+A parser maps tokens to terminals in the grammar to figure out which rules could have generated that string.
