@@ -18,4 +18,4 @@ I included **Egg** because of its simplicity and similarity to **LISP**.
 - **head**: name of production.
 - **body**: description of what a production generates.
 - **terminal**: tokens from the scanner — "end points" in that they lead to no further moves in the game.
-- **nonterminal**: a named reference to another rule in the grammar. Few rules containing multiple productions can produce combinatorially larger sets of strings. Recursively-defined rules can produce potentially infinite sets strings.
+- **nonterminal**: a named reference to another rule in the grammar. Few rules containing multiple productions can produce combinatorially larger sets of strings. Recursively-defined rules can produce potentially infinite sets of strings.
