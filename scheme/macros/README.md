@@ -1,9 +1,6 @@
 # Scheme Macros
 I expand macros into Scheme's core forms.
 
-## Grammar
-**LISP** is defined in terms of the evaluation of data structures, **not** in terms of the syntax of character streams or files.
-
 ## Core Forms
 Table of core forms pulled from [The Scheme Programming Language: Fourth Edition](https://www.scheme.com/tspl4/) by R. Kent Dybvig.
 | Head                | Body        |
