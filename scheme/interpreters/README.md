@@ -1,5 +1,10 @@
 # LISP Interpreters
 
+## Table of Contents
+- `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
+- `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
+- `mccarthy.lisp`: a LISP interpreter as defined by John McCarthy.
+
 ## REPL
 
 Being one of the first high-level programming languages, **LISP** pioneered the **REPL**, the **Read-Evaluate-Print Loop**.
