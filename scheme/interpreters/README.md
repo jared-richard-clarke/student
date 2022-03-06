@@ -7,6 +7,8 @@
 
 ## Grammar
 **LISP** is defined in terms of the evaluation of data structures, **not** in terms of the syntax of character streams or files.
+Most **LISP** programs begin life as text files. The reader parses text and produces the data structures for the interpreter or compiler. 
+**LISP** data is, in many ways, like **JSON** or **XML**.
 
 ## REPL
 
