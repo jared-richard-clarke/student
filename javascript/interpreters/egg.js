@@ -25,11 +25,11 @@ const interpret = (function () {
         // helper function: removes whitespace from the beginning string.
         // trim(`  +(1, 2)`) -> "+(1, 2)"
         function trim(program) {
-            const token = program.search(/\S/);
-            if (token === -1) {
+            const token_index = program.search(/\S/);
+            if (token_index === -1) {
                 program = "";
             } else {
-                program = program.slice(token);
+                program = program.slice(token_index);
             }
             return program;
         }
