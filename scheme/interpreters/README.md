@@ -1,12 +1,5 @@
 # LISP Interpreters
 
-## Lexemes vs. Syntax
-| Terminology | Lexical Grammar | Syntactic Grammar |
-| ----------- | --------------- | ----------------- |
-| alphabet    | characters      | tokens            |
-| string      | lexeme or token | expression        |
-| application | scanner         | parser            |
-
 ## Context-Free Grammar
 - **derivations**: strings derived from rules of the grammar.
 - **productions**: rules that produce strings.
