@@ -17,7 +17,7 @@
 
 ## Scheme's Core Forms
 Table of core forms pulled from [The Scheme Programming Language: Fourth Edition](https://www.scheme.com/tspl4/) by R. Kent Dybvig.
-| Body                | Composition |
+| Head                | Body        |
 | ------------------- | ----------- |
 | program             | form\* |
 | form                | definition \| expression |
