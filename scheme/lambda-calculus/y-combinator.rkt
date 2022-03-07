@@ -2,10 +2,24 @@
 #|
     The applicative-order Y combinator
 
-    Y = λƒ. (λx.ƒ (x x)) (λx.ƒ (x x))
-    
-    ----------------------------------
-    
+    Y = λƒ. (λx.ƒ (x x)) (λx.ƒ (x x)) 
+|#
+
+; Scheme implementation as defined in The Little Schemer.
+(define Y-scm
+  (lambda (le)
+    ((lambda (f) (f f))
+     (lambda (f)
+       (le (lambda (x) ((f f) x)))))))
+
+; Racket implementation with notational conveniences.
+(define Y
+  (λ (le)
+    ((λ (ƒ) (ƒ ƒ))
+     (λ (ƒ)
+       (le (λ (x) ((ƒ ƒ) x)))))))
+
+#|
     The applicative order Y combinator as defined by Douglas Crockford in JavaScript.
     
     function Y(le) {
@@ -24,17 +38,3 @@
         };
     });
 |#
-
-; Scheme implementation as defined in The Little Schemer.
-(define Y-scm
-  (lambda (le)
-    ((lambda (f) (f f))
-     (lambda (f)
-       (le (lambda (x) ((f f) x)))))))
-
-; Racket implementation with notational conveniences.
-(define Y
-  (λ (le)
-    ((λ (ƒ) (ƒ ƒ))
-     (λ (ƒ)
-       (le (λ (x) ((ƒ ƒ) x)))))))
