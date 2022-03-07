@@ -19,5 +19,6 @@ I included **Egg** because of its simplicity and similarity to **LISP**.
 - **terminal**: tokens from the scanner — "end points" for the grammar.
 - **nonterminal**: a named reference to another rule in the grammar. A few rules containing multiple productions can produce combinatorially larger sets of strings. Recursively-defined rules can produce potentially infinite sets of strings.
 
-## Parser 
-A parser maps tokens to terminals in the grammar to figure out which rules could have generated that string.
+## Miscellaneous Definitions
+- **parser**: maps tokens to terminals in the grammar to figure out which rules could have generated that string.
+- **post-order traversal**: Each node evaluates its children before evaluating itself.
