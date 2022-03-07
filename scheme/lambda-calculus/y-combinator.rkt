@@ -25,12 +25,14 @@
     });
 |#
 
+; Scheme implementation as defined in The Little Schemer.
 (define Y-scm
   (lambda (le)
     ((lambda (f) (f f))
      (lambda (f)
        (le (lambda (x) ((f f) x)))))))
 
+; Racket implementation with notational conveniences.
 (define Y
   (λ (le)
     ((λ (ƒ) (ƒ ƒ))
