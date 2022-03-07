@@ -37,7 +37,7 @@ const interpret = (function () {
             program = trim(program);
             let expr, val, match;
             match = /^"([^"]*)"/.exec(program);
-            if (match) {
+            if (match !== null) {
                 val = match[1];
                 expr = {
                     type: "string",
@@ -46,7 +46,7 @@ const interpret = (function () {
                 return parse_application(expr, program.slice(match[0].length));
             }
             match = /^\d+\b/.exec(program);
-            if (match) {
+            if (match !== null) {
                 val = match[0];
                 expr = {
                     type: "number",
@@ -55,7 +55,7 @@ const interpret = (function () {
                 return parse_application(expr, program.slice(match[0].length));
             }
             match = /^[^\s(),"]+/.exec(program);
-            if (match) {
+            if (match !== null) {
                 val = match[0];
                 expr = {
                     type: "word",
