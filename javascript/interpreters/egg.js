@@ -8,8 +8,8 @@
 // interpret(`+(1, 2)`) -> 3
 const interpret = (function () {
     // parse(string) -> object
-    // wraps parse_expression and parse_application — mutually-recursive functions that parse
-    // nested expressions and procedure applications.
+    // wraps parse_expression and parse_application — mutually-recursive functions that build
+    // nested objects to represent nested expressions and procedure applications.
     // parse(`+(1, 2)`) ->
     // { 
     //   expr: { 
