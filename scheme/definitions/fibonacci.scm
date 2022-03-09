@@ -1,8 +1,8 @@
-#|        
-         |  0                       if n = 0
-  Fib(n) |  1                       if n = 1 
-         |  Fib(n - 1) + Fib(n - 2) otherwise 
-|#
+       
+;;          |  0                       if n = 0
+;;   Fib(n) |  1                       if n = 1 
+;;          |  Fib(n - 1) + Fib(n - 2) otherwise 
+
 
 ; === tree-recursion ===
 ; Space consumption is exponential. Process expands like a tree.
@@ -20,21 +20,20 @@
         (else (+ (fibonacci (- n 1))
                  (fibonacci (- n 2))))))
 
-#|
-  Depth: 3
-  Steps: 5
-                fibonacci 3
-                    /\
-                   /  \
-        fibonacci 2    fibonacci 1
-                 / \             |
-                /   \            1
-     fibonacci 1     fibonacci 0
-               |               |
-               1               0
-|#
 
-;; === iterative ===
+;;   Depth: 3
+;;   Steps: 5
+;;                 fibonacci 3
+;;                     /\
+;;                    /  \
+;;         fibonacci 2    fibonacci 1
+;;                  / \             |
+;;                 /   \            1
+;;      fibonacci 1     fibonacci 0
+;;                |               |
+;;                1               0
+
+;; fibonacci: iterative
 (define (fibonacci-iter n)
   (let loop ([x 1]
              [y 0]
