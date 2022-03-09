@@ -12,16 +12,16 @@ function traverse(list, action) {
     return link(action(list.head), traverse(list.tail, action));
 }
 // === Linked List Construction ===
-const list = link(1, link(2, link(3)));
+const list = link(3, link(2, link(1)));
 const square_list = traverse(list, (x) => x * x);
 
 // === list ===
 // {
-//     head: 1,
+//     head: 3,
 //     tail: {
 //         head: 2,
 //         tail: {
-//             head: 3,
+//             head: 1,
 //             tail: null,
 //         },
 //     },
@@ -29,11 +29,11 @@ const square_list = traverse(list, (x) => x * x);
 
 // === square_list ===
 // {
-//     head: 1,
+//     head: 9,
 //     tail: {
 //         head: 4,
 //         tail: {
-//             head: 9,
+//             head: 1,
 //             tail: null,
 //         },
 //     },
@@ -59,15 +59,15 @@ function prolink(head, tail = null) {
 }
 
 // === Linked List Construction ===
-const prolist = prolink(1, prolink(2, prolink(3)));
+const prolist = prolink(3, prolink(2, prolink(1)));
 prolist.traverse((x) => x * x);
 // === prolist: post-traversal ===
 // {
-//     head: 1,
+//     head: 9,
 //     tail: {
 //         head: 4,
 //         tail: {
-//             head: 9,
+//             head: 1,
 //             tail: null,
 //         },
 //     },
