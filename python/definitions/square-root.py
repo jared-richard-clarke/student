@@ -48,4 +48,3 @@ def average_damp(func):
 
 def square_root(x):
     return fixed_point(average_damp(lambda y: x / y), 1.0)
-
