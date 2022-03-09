@@ -10,6 +10,10 @@
 ; will be proportional to the number of nodes in the tree, while the space
 ; will be proportional to the maximum depth of the tree.
 
+;; (fibonacci number) -> number
+;; A series of numbers in which each number is the sum of the two preceding numbers.
+;; (fibonacci 4) -> 3 as in 1, 1, 2, 3
+
 (define (fibonacci n)
   (cond ((= n 0) 0)
         ((= n 1) 1)
@@ -30,7 +34,7 @@
                1               0
 |#
 
-; === iterative ===
+;; === iterative ===
 (define (fibonacci-iter n)
   (let loop ([x 1]
              [y 0]
