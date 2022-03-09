@@ -5,9 +5,12 @@
 # by beginning with an initial guess and applying ƒ repeatedly.
 
 def fixed_point(func, firstguess):
+    
     TOLERANCE = 0.00001
+    
     def is_close(x, y): 
         return abs(x - y) < TOLERANCE
+    
     def attempt(guess):
         next = func(guess)
         while True:
@@ -15,6 +18,7 @@ def fixed_point(func, firstguess):
                 return next
             guess = next
             next = func(next)
+            
     return attempt(firstguess)
 
 # === average-damp ===
@@ -22,10 +26,13 @@ def fixed_point(func, firstguess):
 # Average damping forces successive approximations to converge
 # where they might otherwise loop infinitely.
 def average_damp(func):
+    
     def average(a, b): 
         return (a + b) / 2
+    
     def damper(n): 
         return average(n, func(n))
+    
     return damper
 
 
@@ -40,3 +47,4 @@ def average_damp(func):
 
 def square_root(x):
     return fixed_point(average_damp(lambda y: x / y), 1.0)
+
