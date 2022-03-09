@@ -1,4 +1,4 @@
-package sandbox
+package mathsandbox
 
 // === Greatest Common Divisor ===
 // The greatest common divisor of x and y is the largest integer that divides both x and y with no remainder.
