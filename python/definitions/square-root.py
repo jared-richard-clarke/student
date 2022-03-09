@@ -13,11 +13,11 @@ def fixed_point(func, firstguess):
     
     def attempt(guess):
         next = func(guess)
-        while True:
-            if is_close(guess, next):
-                return next
+        while not is_close(guess, next):
             guess = next
             next = func(next)
+        else:
+            return next
             
     return attempt(firstguess)
 
