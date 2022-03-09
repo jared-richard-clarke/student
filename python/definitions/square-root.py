@@ -25,6 +25,7 @@ def fixed_point(func, firstguess):
 # average_damp(function) -> function(number) -> number
 # Average damping forces successive approximations to converge
 # where they might otherwise loop infinitely.
+
 def average_damp(func):
     
     def average(a, b): 
