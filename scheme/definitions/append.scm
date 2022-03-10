@@ -1,5 +1,5 @@
 ; function: (append list ... obj)
-; purpose: concatenates lists
+; purpose: concatenates lists. ("cons up" a list while "cdring" down another)
 ; (append '(1 2 3) '()) -> '(1 2 3)
 ; (append '(1 2) '(3 4)) -> '(1 2 3 4)
 
