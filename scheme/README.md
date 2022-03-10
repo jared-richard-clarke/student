@@ -4,3 +4,4 @@ To better understand Scheme, Racket, and other LISP dialects, I started a collec
 - Macro Expansions
 - Procedure definitions
 - Examples of The Lambda Calculus
+- Data structures
