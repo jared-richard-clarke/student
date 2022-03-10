@@ -1,5 +1,5 @@
 # Scheme Definitions
-Definitions for common Scheme and Racket procedures.
+Definitions for miscellaneous Scheme and Racket procedures.
 
 ## Primary sources: 
 - [The Scheme Programming Language](https://www.scheme.com/tspl4/) by R. Kent Dybvig.
