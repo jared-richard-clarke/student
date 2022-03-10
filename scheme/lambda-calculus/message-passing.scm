@@ -5,7 +5,7 @@
   (define (dispatch message)
     (cond ((= message 0) x)
           ((= message 1) y)
-          (else (error "Argument not 0 or 1 -- CONS" m))))
+          (else (error "Argument not 0 or 1 -- CONS" message))))
   dispatch)
 
 (define (car z) (z 0))
