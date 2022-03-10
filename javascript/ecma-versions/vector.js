@@ -13,7 +13,7 @@ class Vector_ES6 {
     static isVector(value) {
         return value instanceof Vector_ES6;
     }
-    get coordinates() {
+    get point() {
         return [this.x, this.y];
     }
     magnitude() {
@@ -35,7 +35,7 @@ var Vector_ES5 = (function () {
     Vector_ES5.isVector = function (value) {
         return value instanceof Vector_ES5;
     };
-    Object.defineProperty(Vector_ES5.prototype, "coordinates", {
+    Object.defineProperty(Vector_ES5.prototype, "point", {
         get: function () {
             return [this.x, this.y];
         },
@@ -56,7 +56,7 @@ var Vector_ES5 = (function () {
 // Simplest and most secure pattern for creating vector objects.
 function vector(x, y) {
     return Object.freeze({
-        get coordinates() {
+        get point() {
             return [x, y];
         },
         get magnitude() {
