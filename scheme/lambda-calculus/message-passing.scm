@@ -1,4 +1,5 @@
 ;; Message passing style as defined in The Structure and Interpretation of Computer Programs.
+;; Implementation of cons cell using procedures.
 
 (define (cons x y)
   (define (dispatch m)
