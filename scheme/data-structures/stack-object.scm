@@ -1,9 +1,9 @@
-#lang racket
-; === constructor ===
 (define (new-stack)
-  ; === object instance ===
+  ; === instance ===
   (define stack '())
   ; === methods ===
+  ; identifier
+  (define type 'stack)
   ; empty?: empty stack? true or false
   (define (empty?)
     (null? stack))
@@ -21,6 +21,7 @@
   ; === interface === 
   (lambda (message . arguments)
     (cond
+      [(eq? message 'type)    type]
       [(eq? message 'empty?) (empty?)]
       [(eq? message 'push!)  (push! arguments)]
       [(eq? message 'peek)   (peek)]
