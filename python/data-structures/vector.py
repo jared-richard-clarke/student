@@ -9,7 +9,7 @@ class Vector:
     def is_vector(data):
         return type(data) == Vector
 
-    def coordinates(self):
+    def point(self):
         return (self.x, self.y)
 
     def magnitude(self):
