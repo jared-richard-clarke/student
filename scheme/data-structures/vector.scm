@@ -2,7 +2,7 @@
   ; === instance ===
   (define point (cons x y))
   ; === methods ===
-  (define type 'vector)
+  (define type 'vector-object)
   
   (define (magnitude)
     (let ([x (car point)]
