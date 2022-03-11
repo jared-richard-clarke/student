@@ -3,21 +3,21 @@
 ;; Both definitions omit error handling for simplificity.
 
 (define map
-  (lambda (func lst . more)
+  (lambda (action seq . more)
     (if (null? more)
-        (let map1 ([lst lst])
-          (if (null? lst)
+        (let map-1 ([seq seq])
+          (if (null? seq)
               '()
-              (cons (func (car lst))
-                    (map1 (cdr lst)))))
-        (let map-more ([lst lst]
+              (cons (action (car seq))
+                    (map-1 (cdr seq)))))
+        (let map-more ([seq seq]
                        [more more])
-          (if (null? lst)
+          (if (null? seq)
               '()
-              (cons (apply func
-                           (car lst)
+              (cons (apply action
+                           (car seq)
                            (map car more))
-                    (map-more (cdr lst)
+                    (map-more (cdr seq)
                               (map cdr more))))))))
 
 ;; (map-simple function list) -> list
