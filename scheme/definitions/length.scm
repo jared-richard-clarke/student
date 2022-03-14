@@ -1,7 +1,7 @@
-; (length list) -> number
-; Counts elements in proper list.
-; (length '(1 2 3)) -> 3
-; (length '()) -> 0
+;; (length list) -> number
+;; Counts elements in proper list.
+;; (length '(1 2 3)) -> 3
+;; (length '()) -> 0
 
 (define (length lst)
   (define improper-list
