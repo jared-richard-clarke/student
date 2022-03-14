@@ -2,7 +2,7 @@
 // Wraps function in a function that stores previously-computed values. Eliminates redundant computation.
 // Works only with pure functions. Mutable values cannot be cached.
 // const add = memoize((x, y) => x + y)
-// add(1, 2) -> caches then returns 7
+// add(1, 6) -> caches then returns 7
 
 function memoize(func) {
     const cache = Object.create(null);
