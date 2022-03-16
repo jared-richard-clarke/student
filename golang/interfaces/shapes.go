@@ -1,4 +1,6 @@
-package interfaces
+package main
+
+import "fmt"
 
 type Rectangle struct {
 	Length, Width float64
@@ -23,4 +25,13 @@ func TotalArea(s ...Shape) float64 {
 		total += v.Area()
 	}
 	return total
+}
+
+func main() {
+	square := Rectangle{2.0, 2.0}
+	triangle := Triangle{3.0, 4.0}
+
+	fmt.Println(square.Area())               // -> 4
+	fmt.Println(triangle.Area())             // -> 6
+	fmt.Println(TotalArea(square, triangle)) // -> 10
 }
