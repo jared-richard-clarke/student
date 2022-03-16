@@ -1,4 +1,4 @@
-package shapes
+package interfaces
 
 type Rectangle struct {
 	Length, Width float64
