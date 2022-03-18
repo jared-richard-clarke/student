@@ -2,7 +2,7 @@
 
 UTF-8 uses 1, 2, 3, or 4 bytes depending on the code point. UTF-8 is a variable-length encoding.
 
-| code point | denary value | character | utf-8 encoding                        | utf-8(hex)    |
+| code point | decimal      | character | utf-8 encoding                        | utf-8(hex)    |
 | ---------- | ------------ | --------- | ------------------------------------- | ------------- |
 | U+0041     | 65           | A         | `01000001`                            | `41`          |
 | U+03BB     | 955          | λ         | `11001110 10111011`                   | `CE BB`       |
