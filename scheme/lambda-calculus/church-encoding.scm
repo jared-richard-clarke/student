@@ -1,14 +1,24 @@
-; Church Encoding
-; reimplementation of the cons cell using only functions
+;; Church Encoding
+;; reimplementation of the cons cell using only functions
 
-(define cons
-  (lambda (x y)
-    (lambda (m) (m x y))))
+(define (cons x y)
+  (lambda (message) (message x y)))
 
-(define car
-  (lambda (z)
-    (z (lambda (p q) p))))
+(define (car cons-cell)
+  (cons-cell (lambda (head tail) head)))
 
-(define cdr
-  (lambda (z)
-    (z (lambda (p q) q))))
+(define (cdr cons-cell)
+  (cons-cell (lambda (head tail) tail)))
+
+;; === expanded forms ===
+;; (define cons
+;;   (lambda (x y)
+;;     (lambda (message) (message x y))))
+
+;; (define car
+;;   (lambda (cons-cell)
+;;     (cons-cell (lambda (head tail) head))))
+
+;; (define cdr
+;;   (lambda (cons-cell)
+;;     (cons-cell (lambda (head tail) tail))))
