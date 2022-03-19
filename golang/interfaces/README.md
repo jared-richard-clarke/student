@@ -11,14 +11,14 @@ Conceptually, an interface is a tuple of a concrete type and a value.
 ## Type Assertion
 Type assertion provides access to an interface's underlying value. It returns 
 the underlying value and a boolean that reports whether the assertion succeeded.
-```
+```go
 var number interface{} = 7
-v, ok := number.(int)      // v == 7, ok == true 
+v, ok := number.(int) // v == 7, ok == true 
 ```
 
 ## Type Switch
 A type switch is a switch statement that performs a series of type assertions.
-```
+```go
 switch v := i.(type) {
 case int64:
     return v + 7
@@ -31,6 +31,6 @@ default:
 
 ## Alias Any
 The type `any` is an alias for any empty interface value. It is equal to `interface{}` in all ways.
-```
+```go
 type any interface{}
 ```
