@@ -1,4 +1,4 @@
-// example pulled from "https://go.dev/tour/methods/18"
+// Example pulled from "https://go.dev/tour/methods/18"
 package main
 
 import "fmt"
@@ -17,7 +17,6 @@ func main() {
 		fmt.Printf("%v: %v\n", name, ip)
 	}
 }
-
 
 // === without stringer method ===
 // loopback: [127 0 0 1]
