@@ -1,4 +1,5 @@
-// Goroutine "fibonacci" sends values to channel "c". "fibonacci" closes "c" at the end of its loop.
+// Goroutine "fibonacci" sends values to channel "c". 
+// "fibonacci", the sender, closes "c", the receiver, at the end of its loop.
 // Example pulled from "https://go.dev/tour/concurrency/4"
 
 package main
