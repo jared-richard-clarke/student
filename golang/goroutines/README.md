@@ -4,5 +4,5 @@
 ```go
 channel := make(chan int)
 channel <- value   // send value to channel
-value := <-channel // receive from channel and assign to value
+value := <-channel // receive from value channel and assign to variable
 ```
