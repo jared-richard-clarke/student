@@ -1,9 +1,9 @@
-// Example pulled from "https://go.dev/tour/methods/18"
 // The "fmt" package looks for the "Stringer" interface when printing values.
-//
+// The "Stringer" interface as defined in the "fmt" package:
 // type Stringer interface {
 // 	String() string
 // }
+// Example pulled from "https://go.dev/tour/methods/18"
 
 package main
 
