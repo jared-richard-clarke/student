@@ -1,4 +1,3 @@
-// Channels are typed conduits through which Goroutines send values.
 // Goroutine "fibonacci" sends values to channel "c". "fibonacci" closes "c" at the end of its loop.
 // Example pulled from "https://go.dev/tour/concurrency/4"
 
