@@ -1,6 +1,7 @@
 # Goroutines and Concurrency
 
 ## Channels
+Channels are typed conduits through which Goroutines send and receive values.
 ```go
 channel := make(chan int)
 channel <- value   // send value to channel
