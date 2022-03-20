@@ -12,7 +12,7 @@ The lambda calculus, in its simplest form, builds terms using the following rule
 | (*M N*)  | application | Applying a function to an argument. *M* and *N* are lambda terms.                          |
 
 ## Lambda Expression
-Lambda expression grammar as defined in [The Essentials of Programming Languages](https://en.wikipedia.org/wiki/Essentials_of_Programming_Languages) by Daniel P. Friedman and Mitchell Wand
+Lambda expression grammar as defined in [The Essentials of Programming Languages](https://en.wikipedia.org/wiki/Essentials_of_Programming_Languages) by Daniel P. Friedman and Mitchell Wand. This grammar defines lambda expressions as Scheme values.
 
 The lambda calculus is a language that consists only of variable references, single-argument procedures, and procedure calls.
 
