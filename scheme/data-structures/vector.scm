@@ -11,7 +11,7 @@
 
   (define (scale factor)
     (set! tip (cons (* factor (car tip))
-                      (* factor (cdr tip)))))
+                    (* factor (cdr tip)))))
   
   ; === interface ===
   (lambda (message . arguments)
