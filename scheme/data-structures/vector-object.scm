@@ -19,7 +19,7 @@
       (sqrt (+ (sqr x) (sqr y)))))
   
   ;; === interface ===
-  (lambda (message . arguments)
+  (lambda (message)
     (cond [(eq? message 'point) point]
           [(eq? message 'type) type]
           [(eq? message 'magnitude) (magnitude)]
