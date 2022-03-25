@@ -2,6 +2,9 @@
 // "fibonacci", the sender, closes "c", the receiver, at the end of its loop.
 // Example pulled from "https://go.dev/tour/concurrency/4"
 
+// Fibonacci sequence: a sequence in which each number is the sum of the preceding two.
+// (0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...)
+
 package main
 
 import (
