@@ -14,7 +14,10 @@ class Vector:
 
     def magnitude(self):
         return math.hypot(self.x, self.y)
-
-    def scale(self, factor):
-        self.x *= factor
-        self.y *= factor
+        
+def scale(v, factor):
+    if type(v) != Vector:
+        raise TypeError("First argument must be type Vector.")
+    x = v.x
+    y = v.y
+    return Vector((x * factor), (y * factor))
