@@ -14,16 +14,14 @@ func (v Vector) String() string {
 
 // Computes the distance of a 2d-vector's point from the origin.
 func (v Vector) Magnitude() float64 {
-	x := v.X
-	y := v.Y
-	return math.Hypot(x, y)
+	return hypot(v)
 }
 
 // Computes the unit vector of a 2d-vector. Unit vectors have a magnitude of 1.
 func (v Vector) UnitVector() Vector {
 	x := v.X
 	y := v.Y
-	m := math.Hypot(x, y)
+	m := hypot(v)
 	return Vector{x / m, y / m}
 }
 
@@ -45,3 +43,19 @@ func DotProduct(v1, v2 Vector) float64 {
 	y2 := v2.Y
 	return x1*x2 + y1*y2
 }
+
+type hypotenuse func(float64, float64) float64
+
+// Finding the hypotenuse is computationally expensive.
+// Function hypot caches results to reduce redundant computation.
+var hypot = func(h hypotenuse) func(v Vector) float64 {
+	cache := make(map[Vector]float64)
+	return func(v Vector) float64 {
+		if n, ok := cache[v]; ok {
+			return n
+		}
+		hypotenuse := h(v.X, v.Y)
+		cache[v] = hypotenuse
+		return hypotenuse
+	}
+}(math.Hypot)
