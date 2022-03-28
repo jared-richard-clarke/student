@@ -29,7 +29,7 @@
   
   (define type '2d-vector)
   
-  (define (mag)
+  (define (magn)
     (let ([x (car point)]
           [y (cdr point)])
       (sqrt (+ (sqr x) (sqr y)))))
