@@ -55,3 +55,16 @@
          [x (car p)]
          [y (cdr p)])
     (2d-vector (* x factor) (* y factor))))
+
+;; (dot-product 2d-vector 2d-vector) -> number
+;; Computes the dot product of two 2d-vectors.
+;; (dot-product (2d-vector 1 2) (2d-vector 3 4)) -> 11
+
+(define (dot-product v1 v2)
+  (let* ([p1 (v1 'point)]
+         [p2 (v2 'point)]
+         [x1 (car p1)]
+         [y1 (cdr p1)]
+         [x2 (car p2)]
+         [y2 (cdr p2)])
+    (+ (* x1 x2) (* y1 y2))))
