@@ -18,11 +18,18 @@
           [y (cdr point)])
       (sqrt (+ (sqr x) (sqr y)))))
   
+  (define (unit-vector)
+    (let* ([x (car point)]
+           [y (cdr point)]
+           [magnitude (sqrt (+ (sqr x) (sqr y)))])
+      (cons (/ x magnitude) (/ y magnitude))))
+  
   ;; === interface ===
   (lambda (message)
     (cond [(eq? message 'point) point]
           [(eq? message 'type) type]
           [(eq? message 'magnitude) (magnitude)]
+          [(eq? message 'unit-vector) (unit-vector)]
           [else (error "invalid input" message)])))
 
 ;; (add 2d-vector 2d-vector) -> 2d-vector
