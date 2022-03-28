@@ -1,6 +1,13 @@
 ;; Functional implementation of vectors and operations in linear vector space.
 ;; Vector renamed 2d-vector to avoid namespace clash with vector function.
 
+;; (hypotenuse number number) -> number
+;; Computes the longest side of a right triangle.
+;; (hypotenuse 3 4) -> 5
+
+(define (hypotenuse x y)
+  (sqrt (+ (sqr x) (sqr y))))
+
 ;; (2d-vector number number) -> pair
 ;; Returns two-dimensional coordinates as a number pair.
 ;; (2d-vector 3 4) -> '(3 . 4)
@@ -35,4 +42,17 @@
 (define (magnitude v)
   (let ([x (car v)]
         [y (cdr v)])
-    (sqrt (+ (sqr x) (sqr y)))))
+    (hypotenuse x y)))
+
+;; (unit-vector 2d-vector) -> 2d-vector
+;; Computes the unit vector for a given vector.
+;; Unit vectors have magnitudes of 1.
+;; (unit-vector (2d-vector 3 4)) -> '(3/5 . 4/5) -> mag 1
+;; (unit-vector (2d-vector 10 10)) -> '(0.7071067811865475 . 0.7071067811865475)
+;; -> mag 0.9999999999999999
+
+(define (unit-vector v)
+  (let* ([x (car v)]
+         [y (cdr v)]
+         [magnitude (hypotenuse x y)])
+    (cons (/ x magnitude) (/ y magnitude))))
