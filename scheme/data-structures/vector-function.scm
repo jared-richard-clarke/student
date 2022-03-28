@@ -28,9 +28,9 @@
         [y (cdr v)])
     (cons (* factor x) (* factor y))))
 
-;; (mag 2d-vector) -> number
+;; (magn 2d-vector) -> number
 ;; Returns the magnitude of a 2d vector.
-;; (mag (2d-vector 3 4)) -> 5
+;; (magn (2d-vector 3 4)) -> 5
 
 (define (magn v)
   (let ([x (car v)]
@@ -53,6 +53,6 @@
             result)
           (cdr cached)))))
 
-;; magnitude is magn except that it stores previously-computed values.
+;; magnitude is magn except that it caches previously-computed values.
 
 (define magnitude (memoize magn))
