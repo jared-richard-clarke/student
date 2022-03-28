@@ -28,11 +28,31 @@
         [y (cdr v)])
     (cons (* factor x) (* factor y))))
 
-;; (magnitude 2d-vector) -> number
+;; (mag 2d-vector) -> number
 ;; Returns the magnitude of a 2d vector.
-;; (magnitude (2d-vector 3 4)) -> 5
+;; (mag (2d-vector 3 4)) -> 5
 
-(define (magnitude v)
+(define (magn v)
   (let ([x (car v)]
         [y (cdr v)])
     (sqrt (+ (sqr x) (sqr y)))))
+
+;; (memoize function) -> function -> value
+;; Wraps function in a function that stores previously-computed values.
+;; Eliminates redundant computation.
+;; (define add (memoize (lambda (x y) (+ x y))))
+;; (add 1 6) -> caches then returns 7
+
+(define (memoize function)
+  (define cache '())
+  (lambda args
+    (let ([cached (assoc args cache)])
+      (if (not cached)
+          (let ([result (apply function args)])
+            (set! cache (cons (cons args result) cache))
+            result)
+          (cdr cached)))))
+
+;; magnitude is magn except that it stores previously-computed values.
+
+(define magnitude (memoize magn))
