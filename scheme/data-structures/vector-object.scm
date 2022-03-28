@@ -1,21 +1,5 @@
 ;; Object implementation of vectors and operations in linear vector space.
 
-;; (memoize function) -> function -> value
-;; Wraps function in a function that stores previously-computed values.
-;; Eliminates redundant computation.
-;; (define add (memoize (lambda (x y) (+ x y))))
-;; (add 1 6) -> caches then returns 7
-
-(define (memoize function)
-  (define cache '())
-  (lambda args
-    (let ([cached (assoc args cache)])
-      (if (not cached)
-          (let ([result (apply function args)])
-            (set! cache (cons (cons args result) cache))
-            result)
-          (cdr cached)))))
-
 ;; (2d-vector number number) -> 2d-vector
 ;; Creates 2d-vector object.
 ;; (define vector-object (2d-vector 3 4))
@@ -29,12 +13,10 @@
   
   (define type '2d-vector)
   
-  (define (magn)
+  (define (magnitude)
     (let ([x (car point)]
           [y (cdr point)])
       (sqrt (+ (sqr x) (sqr y)))))
-  ;; add caching
-  (define magnitude (memoize mag))
   
   ;; === interface ===
   (lambda (message)
