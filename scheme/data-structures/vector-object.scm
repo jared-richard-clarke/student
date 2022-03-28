@@ -2,10 +2,11 @@
 
 ;; (2d-vector number number) -> 2d-vector
 ;; Creates 2d-vector object.
-;; (define vector-object (2d-vector 3 4))
-;; (vector-object 'point) -> '(3 . 4)
-;; (vector-object 'type) -> '2d-vector
-;; (vector-object 'magnitude) -> 5
+;; (define v (2d-vector 3 4))
+;; (v 'point) -> '(3 . 4)
+;; (v 'type) -> '2d-vector
+;; (v 'magnitude) -> 5
+;; (v 'unit-vector) -> '(3/5 . 4/5)
 
 (define (2d-vector x y)
   ;; === properties ===
