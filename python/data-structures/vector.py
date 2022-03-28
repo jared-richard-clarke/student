@@ -32,3 +32,11 @@ def add(v1, v2):
     x1, y1 = v1.x, v1.y
     x2, y2 = v2.x, v2.y
     return Vector(x1 + x2, y1 + y2)
+
+def dot_product(v1, v2):
+    if type(v1) != Vector and type(v2) != Vector:
+        raise TypeError("Both arguments must be type Vector.")
+    x1, y1 = v1.x, v1.y
+    x2, y2 = v2.x, v2.y
+    return (x1 * x2) + (y1 * y2)
+
