@@ -44,11 +44,9 @@ func DotProduct(v1, v2 Vector) float64 {
 	return x1*x2 + y1*y2
 }
 
-type hypotenuse func(float64, float64) float64
-
 // Finding the hypotenuse is computationally expensive.
-// Function hypot caches results to reduce redundant computation.
-var hypot = func(h hypotenuse) func(v Vector) float64 {
+// Function hypot caches result to reduce redundant computation.
+var hypot = func(h func(float64, float64) float64) func(v Vector) float64 {
 	cache := make(map[Vector]float64)
 	return func(v Vector) float64 {
 		if n, ok := cache[v]; ok {
