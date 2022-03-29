@@ -45,3 +45,17 @@ func DotProduct(v1, v2 Vector) float64 {
 	y2 := v2.Y
 	return x1*x2 + y1*y2
 }
+
+// Removed memoized function because of its complexity.
+
+// var hypot = func(h func(float64, float64) float64) func(v Vector) float64 {
+// 	cache := make(map[Vector]float64)
+// 	return func(v Vector) float64 {
+// 		if n, ok := cache[v]; ok {
+// 			return n
+// 		}
+// 		hypotenuse := h(v.X, v.Y)
+// 		cache[v] = hypotenuse
+// 		return hypotenuse
+// 	}
+// }(math.Hypot)
