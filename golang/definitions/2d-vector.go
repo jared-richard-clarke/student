@@ -1,6 +1,9 @@
 package definitions
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 // A two-dimensional quantity that has direction and magnitude. Represented by coordinates X and Y.
 type Vector struct {
@@ -46,16 +49,16 @@ func DotProduct(v1, v2 Vector) float64 {
 	return x1*x2 + y1*y2
 }
 
-// Removed memoized function because of its complexity.
+// type hypotFunc func(float64, float64) float64
 
-// var hypot = func(h func(float64, float64) float64) func(v Vector) float64 {
-// 	cache := make(map[Vector]float64)
-// 	return func(v Vector) float64 {
-// 		if n, ok := cache[v]; ok {
-// 			return n
-// 		}
-// 		hypotenuse := h(v.X, v.Y)
-// 		cache[v] = hypotenuse
-// 		return hypotenuse
-// 	}
+// var hypotenuse = func(m hypotFunc) func(v Vector) float64 {
+//     cache := make(map[Vector]float64)
+//     return func(v Vector) float64 {
+//         if n, ok := cache[v]; ok {
+//             return n
+//         }
+//         magnitude := m(v.X, v.Y)
+//         cache[v] = magnitude
+//         return magnitude
+//     }
 // }(math.Hypot)
