@@ -29,7 +29,9 @@
 
 ;; 1. macro expansion
 (eq? (not (let ([x A])
-            (if x x B)))
+            (if x 
+                x 
+                B)))
      (if (not A)
          (not B)
          #f))
