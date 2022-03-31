@@ -21,7 +21,8 @@
 ;; 2. The negation of a conjunction is the disjunction of the negations
 ;; not (A and B) = (not A) or (not B)
 
-(define-values (A B) (values #t #t))
+(define A #t)
+(define B #t)
 
 ;; 1. not (A or B) = (not A) and (not B) -> #t
 (eq? (not (or A B))
