@@ -11,7 +11,7 @@
     [(or) #f]
     [(or test) test]
     [(or test1 test2 ...)
-     (let ((x test1))
+     (let ([x test1])
        (if x x (or test2 ...)))]))
 
 ;; === De Morgan's Laws ===
