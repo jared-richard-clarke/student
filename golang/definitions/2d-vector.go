@@ -12,7 +12,9 @@ type Vector struct {
 
 // Fulfills the Stringer interface for the fmt package.
 func (v Vector) String() string {
-	return fmt.Sprintf("(%.2f, %.2f)", v.X, v.Y)
+	x := v.X
+	y := v.Y
+	return fmt.Sprintf("(%.2f, %.2f)", x, y)
 }
 
 // Computes the distance of a 2d-vector's point from the origin.
@@ -32,12 +34,18 @@ func (v Vector) UnitVector() Vector {
 
 // Scales a 2d-vector by a factor of n.
 func Scale(v Vector, n float64) Vector {
-	return Vector{v.X * n, v.Y * n}
+	x := v.X
+	y := v.Y
+	return Vector{x * n, y * n}
 }
 
 // Computes the sum of two 2d-vectors.
 func Add(v1, v2 Vector) Vector {
-	return Vector{v1.X + v2.X, v1.Y + v2.Y}
+	x1 := v1.X
+	y1 := v1.Y
+	x2 := v2.X
+	y2 := v2.Y
+	return Vector{x1 + x2, y1 + y2}
 }
 
 // Computes the dot product of two 2d-vectors.
