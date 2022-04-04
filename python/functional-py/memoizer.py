@@ -5,10 +5,10 @@
 # add(1, 6) -> caches then returns 7
 
 def memoize(func):
-    cache = dict();
+    cache = dict()
     def memoizer (*args):
         if args in cache:
-            return cache[args];
+            return cache[args]
         else:
             result = func(*args)
             cache[args] = result
