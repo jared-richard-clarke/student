@@ -6,7 +6,7 @@
 ;; Sidenote: Although this particular interpreter is written in Scheme
 ;; its environment is embedded in the Racket runtime.
 
-;; primitive-environment contains a small number of primitive procedures;
+;; primitive-environment contains a small number of primitive procedures.
 ;; It can be extended easily with additional primitives.
 
 (define primitive-environment
