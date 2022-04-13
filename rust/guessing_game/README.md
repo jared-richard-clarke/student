@@ -1,2 +1,5 @@
-# Guessing Game
-The guessing game example from [The Rust Programming Language](https://doc.rust-lang.org/book/ch02-00-guessing-game-tutorial.html), chapter 2.
+# Programming a Guessing Game
+The guessing game program from [The Rust Programming Language](https://doc.rust-lang.org/book/ch02-00-guessing-game-tutorial.html), chapter 2.
+
+## Primary Source
+[The Rust Programming Language](https://doc.rust-lang.org/book/title-page.html) by Steve Klabnik, Carol Nichols and the Rust Community
