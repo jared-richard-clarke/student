@@ -1,7 +1,7 @@
 ;; === case syntax ===
 (define (infix expr)
-  (let ([op (cadr expr)]
-        [a (car expr)]
+  (let ([a (car expr)]
+        [op (cadr expr)]
         [b (caddr expr)])
     (case op
       [(+)     ((lambda (x y) (+ x y)) a b)]
@@ -12,8 +12,8 @@
 
 ;; === case-syntax expansion ===
 (define (infix-ex expr)
-  (let ([op (cadr expr)]
-        [a (car expr)]
+  (let ([a (car expr)]
+        [op (cadr expr)]
         [b (caddr expr)])
     (if (member op '(+))
         (begin ((lambda (x y) (+ x y)) a b))
