@@ -4,10 +4,10 @@
         [a (car expr)]
         [b (caddr expr)])
     (case op
-      [(+) ((lambda (x y) (+ x y)) a b)]
-      [(-) ((lambda (x y) (- x y)) a b)]
+      [(+)     ((lambda (x y) (+ x y)) a b)]
+      [(-)     ((lambda (x y) (- x y)) a b)]
       [(* ⋅ ×) ((lambda (x y) (* x y)) a b)]
-      [(/ ÷) ((lambda (x y) (/ x y)) a b)]
+      [(/ ÷)   ((lambda (x y) (/ x y)) a b)]
       [else (error "invalid operator:" op)])))
 
 ;; === case-syntax expansion ===
