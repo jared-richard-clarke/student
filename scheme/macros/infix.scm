@@ -1,3 +1,6 @@
+;; (infix expression) -> number | error
+;; Evaluates infix expression implemented as a list.
+;; (infix '(2 × 5)) -> 10
 (define (infix expr)
   (let ([a (car expr)]
         [op (cadr expr)]
