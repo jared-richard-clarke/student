@@ -12,25 +12,21 @@
   ;; === properties ===
   (define point (cons x y))
   
+  (define px (car point))
+  (define py (cdr point))
+  
   (define type '2d-vector)
   
-  (define (magnitude)
-    (let ([x (car point)]
-          [y (cdr point)])
-      (sqrt (+ (sqr x) (sqr y)))))
+  (define magnitude (sqrt (+ (sqr px) (sqr py))))
   
-  (define (unit-vector)
-    (let* ([x (car point)]
-           [y (cdr point)]
-           [magnitude (sqrt (+ (sqr x) (sqr y)))])
-      (cons (/ x magnitude) (/ y magnitude))))
+  (define unit-vector (cons (/ px magnitude) (/ py magnitude)))
   
   ;; === interface ===
   (lambda (message)
     (cond [(eq? message 'point) point]
           [(eq? message 'type) type]
-          [(eq? message 'magnitude) (magnitude)]
-          [(eq? message 'unit-vector) (unit-vector)]
+          [(eq? message 'magnitude) magnitude]
+          [(eq? message 'unit-vector) unit-vector]
           [else (error "invalid input" message)])))
 
 ;; (add 2d-vector 2d-vector) -> 2d-vector
@@ -68,3 +64,20 @@
          [x2 (car p2)]
          [y2 (cdr p2)])
     (+ (* x1 x2) (* y1 y2))))
+
+;; (create-comparison operator) -> function
+;; Generates functions for sequentially comparing the magnitudes of a list of 2d-vectors.
+;; (define vect-gt? (create-comparison >)) -> (vect-gt? (2d-vector 3 4) (2d-vector 1 2)) -> #t
+
+(define (create-comparison operator)
+  (lambda vectors
+    (if (< (length vectors) 2)
+        #t
+        (apply operator
+               (map (lambda (v) (v 'magnitude)) vectors)))))
+
+;; 2d-vector comparison functions
+
+(define vect-gt? (create-comparison >))
+(define vect-lt? (create-comparison <))
+(define vect-eq? (create-comparison =))
