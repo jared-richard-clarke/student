@@ -1,6 +1,11 @@
 ;; (infix expression) -> number | error
-;; Evaluates infix expression implemented as a list.
+;; Evaluates a single infix expression implemented as a list.
 ;; (infix '(2 × 5)) -> 10
+
+;; Side Note: This definition of an infix evaluator is not robust.
+;; A robust implementation would be recursive with exhaustive error handling.
+;; This definition instead focuses on the macro expansion of the case syntax.
+
 (define (infix expr)
   (let ([a (car expr)]
         [op (cadr expr)]
