@@ -65,5 +65,22 @@
 (define (unit-vector v)
   (let* ([x (car v)]
          [y (cdr v)]
-         [magnitude (hypotenuse x y)])
-    (cons (/ x magnitude) (/ y magnitude))))
+         [m (hypotenuse x y)])
+    (cons (/ x m) (/ y m))))
+
+;; (create-comparison operator) -> function
+;; Generates functions for sequentially comparing the magnitudes of a list of 2d-vectors.
+;; (define vect-gt? (create-comparison >)) -> (gt? (2d-vector 3 4) (2d-vector 1 2)) -> #t
+
+(define (create-comparison operator)
+  (lambda vectors
+    (if (< (length vectors) 2)
+        #t
+        (apply operator
+               (map magnitude vectors)))))
+
+;; 2d-vector comparison functions
+
+(define vect-gt? (create-comparison >))
+(define vect-lt? (create-comparison <))
+(define vect-eq? (create-comparison =))
