@@ -4,39 +4,35 @@ class Vector:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-
-    @staticmethod
-    def is_vector(data):
-        return type(data) == Vector
-
-    def point(self):
-        return (self.x, self.y)
-
-    def magnitude(self):
-        return math.hypot(self.x, self.y)
+        self.point = (x, y)
+        self.magnitude = math.hypot(x, y)
 
     def unit_vector(self):
-        mag = self.magnitude()
-        return (self.x / mag, self.y / mag)
+        x, y = self.point
+        mag = self.magnitude
+        return (x / mag, y / mag)
         
 def scale(v, factor):
-    if type(v) != Vector:
-        raise TypeError("First argument must be type Vector.")
-    x = v.x
-    y = v.y
+    x, y = v.point
     return Vector((x * factor), (y * factor))
 
 def add(v1, v2):
-    if type(v1) != Vector and type(v2) != Vector:
-        raise TypeError("Both arguments must be type Vector.")
-    x1, y1 = v1.x, v1.y
-    x2, y2 = v2.x, v2.y
+    x1, y1 = v1.point
+    x2, y2 = v2.point
     return Vector(x1 + x2, y1 + y2)
 
 def dot_product(v1, v2):
-    if type(v1) != Vector and type(v2) != Vector:
-        raise TypeError("Both arguments must be type Vector.")
-    x1, y1 = v1.x, v1.y
-    x2, y2 = v2.x, v2.y
+    x1, y1 = v1.point
+    x2, y2 = v2.point
     return (x1 * x2) + (y1 * y2)
 
+def compare(operation):
+    def operator(v1, v2):
+        m1 = v1.magnitude
+        m2 = v2.magnitude
+        return operation(m1, m2)
+    return operator
+
+gt = compare(lambda x, y: x > y)
+lt = compare(lambda x, y: x < y)
+eq = compare(lambda x, y: x == y)
