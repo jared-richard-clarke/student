@@ -12,8 +12,8 @@
   ;; === properties ===
   (define point (cons x y))
   
-  (define px (car point))
-  (define py (cdr point))
+  (define px x)
+  (define py y)
   
   (define type '2d-vector)
   
