@@ -4,6 +4,7 @@
 - `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
 - `mccarthy.lisp`: a LISP interpreter as defined by John McCarthy.
+- `compute.scm`: an arithmetic interpreter I built all by myself.
 
 ## Grammar
 **LISP** is defined in terms of the evaluation of data structures, **not** in terms of the syntax of character streams or files.
