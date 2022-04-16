@@ -57,6 +57,20 @@ func DotProduct(v1, v2 Vector) float64 {
 	return x1*x2 + y1*y2
 }
 
+// Generates functions for comparing the magnitudes of two 2d-vectors.
+func compare(op func(float64, float64) bool) func(Vector, Vector) bool {
+	return func(v1, v2 Vector) bool {
+		m1 := v1.Magnitude()
+		m2 := v2.Magnitude()
+		return op(m1, m2)
+	}
+}
+
+// 2d-Vector comparison functions
+var Gt = compare(func(x, y float64) bool { return x > y })
+var Lt = compare(func(x, y float64) bool { return x < y })
+var Eq = compare(func(x, y float64) bool { return x == y })
+
 // var hypotenuse = func() func(v Vector) float64 {
 //     cache := make(map[Vector]float64)
 //     return func(v Vector) float64 {
