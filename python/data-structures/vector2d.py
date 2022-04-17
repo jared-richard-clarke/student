@@ -26,6 +26,11 @@ def dot_product(v1, v2):
     x2, y2 = v2.point
     return (x1 * x2) + (y1 * y2)
 
+def cross_product(v1, v2):
+    x1, y1 = v1.point
+    x2, y2 = v2.point
+    return (x1 * y2) - (y1 * x2)
+
 def compare(operation):
     def operator(v1, v2):
         m1 = v1.magnitude
