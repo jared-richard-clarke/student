@@ -25,19 +25,3 @@
 
 (define (path . points)
   points)
-
-;; (path-length path) -> number
-;; Computes the path length of a series of points.
-;; (path-length (path (point 1 1) (point 5 1) (point 5 4) (point 1 1))) -> 12
-
-(define (path-length path)
-  (let loop ([sum 0]
-             [len (length path)]
-             [path path])
-    (if (= len 1)
-        sum
-        (let ([x (car path)]   ;; first
-              [y (cadr path)]) ;; second
-          (loop (+ sum (point-distance x y))
-                (- len 1)
-                (cdr path))))))
