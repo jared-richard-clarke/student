@@ -15,16 +15,21 @@
 (define (2d-vector x y)
   (cons x y))
 
-;; (add 2d-vector 2d-vector) -> 2d-vector
-;; Returns the sum of two vectors.
+;; (add 2d-vector ...) -> 2d-vector
+;; Computes the sum of a series of vectors.
 ;; (add (2d-vector 1 2) (2d-vector 1 2)) -> '(2 . 4)
 
-(define (add v1 v2)
-  (let ([x1 (car v1)]
-        [y1 (cdr v1)]
-        [x2 (car v2)]
-        [y2 (cdr v2)])
-    (cons (+ x1 x2) (+ y1 y2))))
+(define (add . vs)
+  (if (= (length vs) 1)
+      (car vs)
+      (foldl (lambda (v1 v2)
+               (let ([x1 (car v1)]
+                     [y1 (cdr v1)]
+                     [x2 (car v2)]
+                     [y2 (cdr v2)])
+                 (cons (+ x1 x2) (+ y1 y2))))
+             '(0 . 0)
+             vs)))
 
 ;; (scale 2d-vector number) -> vect
 ;; Returns a vector multiplied by a number.
