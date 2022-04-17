@@ -46,6 +46,17 @@
         [y2 (cdr v2)])
     (+ (* x1 x2) (* y1 y2))))
 
+;; (cross-product 2d-vector 2d-vector) -> number
+;; Computes the cross product of two 2d-vectors.
+;; (cross-product (2d-vector 1 2) (2d-vector 3 4)) -> -2
+
+(define (cross-product v1 v2)
+  (let ([x1 (car v1)]
+        [y1 (cdr v1)]
+        [x2 (car v2)]
+        [y2 (cdr v2)])
+    (- (* x1 y2) (* y1 x2))))
+
 ;; (magnitude 2d-vector) -> number
 ;; Returns the magnitude of a 2d vector.
 ;; (magnitude (2d-vector 3 4)) -> 5
