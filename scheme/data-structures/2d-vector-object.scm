@@ -65,6 +65,19 @@
          [y2 (cdr p2)])
     (+ (* x1 x2) (* y1 y2))))
 
+;; (cross-product 2d-vector 2d-vector) -> number
+;; Computes the cross product of two 2d-vectors.
+;; (cross-product (2d-vector 1 2) (2d-vector 3 4)) -> -2
+
+(define (cross-product v1 v2)
+  (let* ([p1 (v1 'point)]
+         [p2 (v2 'point)]
+         [x1 (car p1)]
+         [y1 (cdr p1)]
+         [x2 (car p2)]
+         [y2 (cdr p2)])
+    (- (* x1 y2) (* y1 x2))))
+
 ;; (create-comparison operator) -> function
 ;; Generates functions for sequentially comparing the magnitudes of a list of 2d-vectors.
 ;; (define vect-gt? (create-comparison >)) -> (vect-gt? (2d-vector 3 4) (2d-vector 1 2)) -> #t
