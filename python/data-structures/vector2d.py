@@ -1,6 +1,6 @@
 import math
 
-class Vector:
+class Vector2D:
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -14,12 +14,12 @@ class Vector:
         
 def scale(v, factor):
     x, y = v.point
-    return Vector((x * factor), (y * factor))
+    return Vector2D((x * factor), (y * factor))
 
 def add(v1, v2):
     x1, y1 = v1.point
     x2, y2 = v2.point
-    return Vector(x1 + x2, y1 + y2)
+    return Vector2D(x1 + x2, y1 + y2)
 
 def dot_product(v1, v2):
     x1, y1 = v1.point
