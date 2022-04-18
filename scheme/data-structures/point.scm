@@ -16,7 +16,7 @@
 ; Calculates the distance between two points.
 ; (point-distance (point 3 0) (point 2 0)) -> 1
 
-(define point-distance
+(define distance
   (lambda (p1 p2)
     (let ([x1 (car p1)]
           [y1 (cdr p1)]
@@ -32,7 +32,7 @@
 
 ;; (path-length path) -> number
 ;; Computes the length of a path.
-;; (path (point 2 0) (point 3 0) (point 4 0))
+;; (path-length (path (point 1 1) (point 5 1) (point 5 4) (point 1 1))) -> 12
 
 (define (path-length path)
   (let loop ([sum 0]
