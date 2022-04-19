@@ -1,6 +1,6 @@
 #lang racket
 
-(provide replace stream)
+(provide stream)
 
 (define pattern #rx"[uU]tili(?:[zs]e|[zs]ed|[zs]ing)")
 
@@ -24,8 +24,8 @@
                    (lambda (match)
                      (hash-ref dictionary match))))
 
-(define (stream input output edit)
+(define (stream input output)
   (let ([line (read-line input 'any)])
     (unless (eof-object? line)
-      (write (edit line) output)
-      (stream input output edit))))
+      (write (replace line) output)
+      (stream input output))))
