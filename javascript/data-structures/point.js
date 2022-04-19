@@ -33,7 +33,7 @@ function path_length(path) {
     // subtract 1 to prevent indexing out of bounds
     const length = path.length - 1;
     for (let i = 0; i < length; i += 1) {
-  	  const p1 = path[i];
+      const p1 = path[i];
       const p2 = path[i + 1];
       sum += distance(p1, p2);
     }
