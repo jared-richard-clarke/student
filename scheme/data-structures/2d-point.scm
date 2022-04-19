@@ -16,13 +16,12 @@
 ; Calculates the distance between two points.
 ; (point-distance (point 3 0) (point 2 0)) -> 1
 
-(define point-distance
-  (lambda (p1 p2)
-    (let ([x1 (car p1)]
-          [y1 (cdr p1)]
-          [x2 (car p2)]
-          [y2 (cdr p2)])
-      (hypotenuse (- x2 x1) (- y2 y1)))))
+(define (point-distance p1 p2)
+  (let ([x1 (car p1)]
+        [y1 (cdr p1)]
+        [x2 (car p2)]
+        [y2 (cdr p2)])
+    (hypotenuse (- x2 x1) (- y2 y1))))
 
 ;; (path points) -> list
 ;; Returns a list of points.
@@ -39,5 +38,5 @@
              [pth path])
     (if (<= (length pth) 1)
         sum
-        (loop (+ sum (distance (car pth) (cadr pth)))
+        (loop (+ sum (point-distance (car pth) (cadr pth)))
               (cdr pth)))))
