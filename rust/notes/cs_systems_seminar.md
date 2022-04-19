@@ -24,7 +24,7 @@ Primary Source: [Aaron Turon of Mozilla Colloquium on Computer Systems Seminar S
 - Allows simultaneous access to shared data.
 ### Mutable Borrow (&mut T)
 - Forbids aliasing, allows mutation.
-- Only one code block can borrow and mutate data at a time.
+- Only one code block can borrow and mutate data at a time. This prevents data races.
 - A `&mut T` is the only way to access the memory it points at ...
 
 ## Data Race = Aliasing + Mutation + No Ordering (no synchronization)
