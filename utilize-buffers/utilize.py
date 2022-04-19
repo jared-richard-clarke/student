@@ -49,6 +49,6 @@ if __name__ == "__main__":
 
 # 2. open files / buffer and transform data / close files
     with io.open(file, mode="rb") as text:
-        with io.open("re-"+file, mode="wb") as newtext:
+        with io.open("edit-"+file, mode="wb") as newtext:
             n = newtext.write(replace(text.read()))
             print(f"{n} bytes written")
