@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys, os, io, re
 
-def create():
+def init_replace():
     # convert to byte strings for faster processing.
     dictionary = {
         b"utilize": b"use",
@@ -30,7 +30,7 @@ def create():
 
     return replacer
 
-replace = create()
+replace = init_replace()
 """Scan byte string, replacing 'utilize' and its variants with 'use' and its variants."""
 
 # 1. collect and validate user input
