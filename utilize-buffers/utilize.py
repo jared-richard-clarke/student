@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-import sys, os, io, re, resource
+import sys, os, io, re
 
 def create():
-    # convert to byte strings for fast file processing.
+    # convert to byte strings for faster processing.
     dictionary = {
         b"utilize": b"use",
         b"utilise": b"use",
