@@ -31,7 +31,7 @@ def init_replace():
     return replacer
 
 replace = init_replace()
-"""Scan byte string, replacing 'utilize' and its variants with 'use' and its variants."""
+"""replace scans byte string, replacing 'utilize' and its variants with 'use' and its variants."""
 
 # 1. collect and validate user input
 if __name__ == "__main__":
