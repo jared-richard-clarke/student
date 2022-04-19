@@ -19,11 +19,11 @@
 
 ;; open input and output files
 (define IN (open-input-file file))
-(define OUT (open-output-file (string-append "re-" file)
+(define OUT (open-output-file (string-append "edit-" file)
                               #:exists 'truncate))
 
 ;; process text stream line by line
-(stream IN OUT replace)
+(stream IN OUT)
 
 ;; close files
 (close-input-port IN)
@@ -31,4 +31,4 @@
 
 ;; end program
 (when (and (port-closed? IN) (port-closed? OUT))
-  (println "Stream complete. Files closed."))
+  (println "Edit complete. Files closed."))
