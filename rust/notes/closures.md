@@ -8,4 +8,4 @@ To capture variables from their environment, closures are encoded by three `Fn` 
 
 ## Caveats
 
-Rust's memory model disallows regular functions and methods from capturing their environment.
+Rust's memory model disallows methods and regular functions from capturing their environment.
