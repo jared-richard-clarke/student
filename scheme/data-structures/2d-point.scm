@@ -16,7 +16,7 @@
 ; Calculates the distance between two points.
 ; (point-distance (point 3 0) (point 2 0)) -> 1
 
-(define distance
+(define point-distance
   (lambda (p1 p2)
     (let ([x1 (car p1)]
           [y1 (cdr p1)]
