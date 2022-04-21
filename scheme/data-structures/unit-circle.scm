@@ -1,6 +1,6 @@
 ;; (unit-circle symbol) -> list ...
 ;; For a unit circle, returns either one of four orthogonal points or a series of three intermediate points.
-;; Coordinates are implemented as improper lists.
+;; Points are implemented as improper lists.
 ;; (unit-circle '90deg)    -> '(0 . 1)
 ;; (unit-circle 'quad-one) -> '(0.866 . 0.5) '(0.707 . 0.707) '(0.5 . 0.866)
 
