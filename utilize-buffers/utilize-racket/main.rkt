@@ -15,7 +15,7 @@
 
 ;; check file type
 (when (not (path-has-extension? file ".txt"))
-  (raise-user-error "argument must be plain text file <example.txt>"))
+  (raise-user-error "argument must be plain text file: <example.txt>"))
 
 ;; open input and output files
 (define IN (open-input-file file))
