@@ -49,7 +49,7 @@
         (2d-vector (car sum) (cdr sum)))))
 
 ;; (scale 2d-vector number) -> 2d-vector
-;; Returns a scales 2d-vector that is the product of a 2d-vector and a number.
+;; Returns a scaled 2d-vector that is the product of a 2d-vector and a number.
 ;; (scale (2d-vector 3 4) 2) -> (2d-vector 'point) -> '(6 . 8)
 
 (define (scale v factor)
