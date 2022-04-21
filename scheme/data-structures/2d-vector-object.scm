@@ -36,8 +36,8 @@
 (define (add . vs)
   (if (= (length vs) 1)
       (car vs)
-      ;; To prevent memory consumption, add processes 2d-vectors as a series of points,
-      ;; converting only the sum to a 2d-vector object. 
+      ;; To prevent memory consumption, add processes 2d-vectors as a series of pairs,
+      ;; converting only the sum to a 2d-vector function with closures. 
       (let ([sum (foldl (lambda (v1 v2)
                           (let ([x1 (car v1)]
                                 [y1 (cdr v1)]
