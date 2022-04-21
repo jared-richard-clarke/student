@@ -1,7 +1,7 @@
 ;; Object implementation of vectors and operations in linear vector space.
 
 ;; (2d-vector number number) -> 2d-vector
-;; Creates 2d-vector object.
+;; Creates 2d-vector object implemented as a function. Captures values within its closure.
 ;; (define v (2d-vector 3 4))
 ;; (v 'point) -> '(3 . 4)
 ;; (v 'type) -> '2d-vector
@@ -37,7 +37,7 @@
   (if (= (length vs) 1)
       (car vs)
       ;; To prevent memory consumption, add processes 2d-vectors as a series of pairs,
-      ;; converting only the sum to a 2d-vector function with closures. 
+      ;; converting only the sum to a 2d-vector function with closure. 
       (let ([sum (foldl (lambda (v1 v2)
                           (let ([x1 (car v1)]
                                 [y1 (cdr v1)]
