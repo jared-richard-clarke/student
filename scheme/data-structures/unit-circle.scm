@@ -1,26 +1,33 @@
-;; (unit-circle symbol) -> list ...
+; (point number number) -> pair
+; Constructs a two-dimensional point represented as a pair.
+; (point 1 2) -> '(1 . 2)
+
+(define (point x y)
+  (cons x y))
+
+;; (unit-circle symbol) -> pair | list
 ;; For a unit circle, returns either one of four orthogonal points or a series of three intermediate points.
-;; Points are implemented as improper lists.
+;; Points are implemented as pairs. Point series are implemented as lists.
 ;; (unit-circle '90deg)    -> '(0 . 1)
 ;; (unit-circle 'quad-one) -> '((0.866 . 0.5) '(0.707 . 0.707) '(0.5 . 0.866))
 
 (define unit-circle
-  (let ([0deg   '(1 . 0)]
-        [30deg  '(0.866 . 0.5)]
-        [45deg  '(0.707 . 0.707)]
-        [60deg  '(0.5 . 0.866)]
-        [90deg  '(0 . 1)]
-        [120deg '(-0.5 . 0.866)]
-        [135deg '(-0.707 . 0.707)]
-        [150deg '(-0.866 . 0.5)]
-        [180deg '(-1 . 0)]
-        [210deg '(-0.866 . -0.5)]
-        [225deg '(-0.707 . -0.707)]
-        [240deg '(-0.5 . -0.866)]
-        [270deg '(0 . -1)]
-        [300deg '(0.5 . -0.866)]
-        [315deg '(0.707 . -0.707)]
-        [330deg '(0.866 . -0.5)])
+  (let ([0deg   (point 1 0)]
+        [30deg  (point 0.866 0.5)]
+        [45deg  (point 0.707 0.707)]
+        [60deg  (point 0.5 0.866)]
+        [90deg  (point 0 1)]
+        [120deg (point -0.5 0.866)]
+        [135deg (point -0.707 0.707)]
+        [150deg (point -0.866 0.5)]
+        [180deg (point -1 0)]
+        [210deg (point -0.866 -0.5)]
+        [225deg (point -0.707 -0.707)]
+        [240deg (point -0.5 -0.866)]
+        [270deg (point 0 -1)]
+        [300deg (point 0.5 -0.866)]
+        [315deg (point 0.707 -0.707)]
+        [330deg (point 0.866 -0.5)])
     (lambda (message)
       (case message
         [(0deg) 0deg]
