@@ -30,17 +30,23 @@
           [else (error "invalid input" message)])))
 
 ;; (add 2d-vector 2d-vector) -> 2d-vector
-;; Computes and returns a 2d-vector that is the sum of two 2d-vectors.
-;; (add (2d-vector 1 2) (2d-vector 3 4)) -> (2d-vector 'point) -> '(4 . 5)
+;; Returns a 2d-vector that is the sum of a series of 2d-vectors.
+;; (add (2d-vector 1 2) (2d-vector 3 4) (2d-vector 2 1)) -> (2d-vector 'point) -> '(6 . 7)
 
-(define (add v1 v2)
-  (let* ([p1 (v1 'point)]
-         [p2 (v2 'point)]
-         [x1 (car p1)]
-         [y1 (cdr p1)]
-         [x2 (car p2)]
-         [y2 (cdr p2)])
-    (2d-vector (+ x1 x2) (+ y1 y2))))
+(define (add . vs)
+  (if (= (length vs) 1)
+      (car vs)
+      ;; To prevent memory consumption, add processes 2d-vectors as a series of points,
+      ;; converting only the sum to a 2d-vector object. 
+      (let ([sum (foldl (lambda (v1 v2)
+                          (let ([x1 (car v1)]
+                                [y1 (cdr v1)]
+                                [x2 (car v2)]
+                                [y2 (cdr v2)])
+                            (cons (+ x1 x2) (+ y1 y2))))
+                        '(0 . 0)
+                        (map (lambda (v) (v 'point)) vs))])
+        (2d-vector (car sum) (cdr sum)))))
 
 ;; (scale 2d-vector number) -> 2d-vector
 ;; Returns a scales 2d-vector that is the product of a 2d-vector and a number.
@@ -84,7 +90,7 @@
 
 (define (create-comparison operator)
   (lambda vectors
-    (if (< (length vectors) 2)
+    (if (= (length vectors) 1)
         #t
         (apply operator
                (map (lambda (v) (v 'magnitude)) vectors)))))
