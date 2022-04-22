@@ -9,6 +9,12 @@ import (
 type Vector2d struct {
 	X, Y float64
 }
+// Ihat, Jhat
+// Mutually orthogonal unit vectors, forming the standard basis.
+var (
+	Ihat = Vector2d{float64(1), float64(0)}
+	Jhat = Vector2d{float64(0), float64(1)}
+)
 
 // Fulfills the Stringer interface for the fmt package.
 func (v Vector2d) String() string {
@@ -79,17 +85,3 @@ func compare(op func(float64, float64) bool) func(Vector2d, Vector2d) bool {
 var Gt = compare(func(x, y float64) bool { return x > y })
 var Lt = compare(func(x, y float64) bool { return x < y })
 var Eq = compare(func(x, y float64) bool { return x == y })
-
-
-// var hypotenuse = func() func(v Vector2d) float64 {
-//     cache := make(map[Vector2d]float64)
-//     return func(v Vector2d) float64 {
-//         if n, ok := cache[v]; ok {
-//             return n
-//         }
-//         h := math.Hypot(v.X, v.Y)
-//         cache[v] = h
-//         return h
-//     }
-// }()
-
