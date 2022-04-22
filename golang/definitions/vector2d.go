@@ -12,8 +12,8 @@ type Vector2d struct {
 // Ihat, Jhat
 // Mutually orthogonal unit vectors, forming the standard basis.
 var (
-	Ihat = Vector2d{float64(1), float64(0)}
-	Jhat = Vector2d{float64(0), float64(1)}
+	Ihat = Vector2d{1, 0}
+	Jhat = Vector2d{0, 1}
 )
 
 // Fulfills the Stringer interface for the fmt package.
@@ -37,13 +37,17 @@ func Scale(v Vector2d, n float64) Vector2d {
 	return Vector2d{x * n, y * n}
 }
 
-// Computes the sum of two 2d-vectors.
-func Add(v1, v2 Vector2d) Vector2d {
-	x1 := v1.X
-	y1 := v1.Y
-	x2 := v2.X
-	y2 := v2.Y
-	return Vector2d{x1 + x2, y1 + y2}
+// Returns the sum of a series of two-dimensional vectors.
+func Add(vs ...Vector2d) Vector2d {
+	sum := Vector2d{0, 0}
+	for _, v := range vs {
+		x1 := sum.X
+		y1 := sum.Y
+		x2 := v.X
+		y2 := v.Y
+		sum = Vector2d{x1 + x2, y1 + y2}
+	}
+	return sum
 }
 
 // Computes the dot product of two 2d-vectors.
