@@ -10,24 +10,27 @@
 
 (define (2d-vector x y)
   ;; === properties ===
-  (define point (cons x y))
-  
   (define px x)
   (define py y)
+
+  (define point (cons x y))
   
   (define type '2d-vector)
   
   (define magnitude (sqrt (+ (sqr px) (sqr py))))
-  
-  (define unit-vector (cons (/ px magnitude) (/ py magnitude)))
   
   ;; === interface ===
   (lambda (message)
     (cond [(eq? message 'point) point]
           [(eq? message 'type) type]
           [(eq? message 'magnitude) magnitude]
-          [(eq? message 'unit-vector) unit-vector]
           [else (error "invalid input" message)])))
+
+;; I-HAT, J-HAT
+;; Mutually orthogonal unit vectors, forming the standard basis.
+
+(define I-HAT (2d-vector 1 0))
+(define J-HAT (2d-vector 0 1))
 
 ;; (add 2d-vector 2d-vector) -> 2d-vector
 ;; Returns a 2d-vector that is the sum of a series of 2d-vectors.
