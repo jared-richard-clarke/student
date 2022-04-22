@@ -30,14 +30,6 @@ func (v Vector2d) Magnitude() float64 {
 	return math.Hypot(x, y)
 }
 
-// Computes the unit vector of a 2d-vector. Unit vectors have a magnitude of 1.
-func (v Vector2d) UnitVector() Vector2d {
-	x := v.X
-	y := v.Y
-	m := math.Hypot(x, y)
-	return Vector2d{x / m, y / m}
-}
-
 // Scales a 2d-vector by a factor of n.
 func Scale(v Vector2d, n float64) Vector2d {
 	x := v.X
