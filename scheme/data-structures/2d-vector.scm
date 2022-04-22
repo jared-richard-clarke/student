@@ -15,6 +15,12 @@
 (define (2d-vector x y)
   (cons x y))
 
+;; I-HAT, J-HAT
+;; Mutually orthogonal unit vectors, forming the standard basis.
+
+(define I-HAT (2d-vector 1 0))
+(define J-HAT (2d-vector 0 1))
+
 ;; (add 2d-vector ...) -> 2d-vector
 ;; Computes the sum of a series of vectors.
 ;; (add (2d-vector 1 2) (2d-vector 1 2)) -> '(2 . 4)
@@ -70,19 +76,6 @@
   (let ([x (car v)]
         [y (cdr v)])
     (hypotenuse x y)))
-
-;; (unit-vector 2d-vector) -> 2d-vector
-;; Computes the unit vector for a given vector.
-;; Unit vectors have magnitudes of 1.
-;; (unit-vector (2d-vector 3 4)) -> '(3/5 . 4/5) -> mag 1
-;; (unit-vector (2d-vector 10 10)) -> '(0.7071067811865475 . 0.7071067811865475)
-;; -> mag 0.9999999999999999
-
-(define (unit-vector v)
-  (let* ([x (car v)]
-         [y (cdr v)]
-         [m (hypotenuse x y)])
-    (cons (/ x m) (/ y m))))
 
 ;; (create-comparison operator) -> function
 ;; Generates functions for sequentially comparing the magnitudes of a list of 2d-vectors.
