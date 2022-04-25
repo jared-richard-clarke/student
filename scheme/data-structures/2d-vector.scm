@@ -8,26 +8,26 @@
 (define (hypotenuse x y)
   (sqrt (+ (sqr x) (sqr y))))
 
-;; (2d-vector number number) -> pair
+;; (vec2D number number) -> pair
 ;; Returns two-dimensional coordinates as a number pair.
-;; (2d-vector 3 4) -> '(3 . 4)
+;; (vec2D 3 4) -> '(3 . 4)
 
-(define (2d-vector x y)
+(define (vec2D x y)
   (cons x y))
 
 ;; I-HAT, J-HAT
 ;; Mutually orthogonal unit vectors, forming the standard basis.
 
-(define I-HAT (2d-vector 1 0))
-(define J-HAT (2d-vector 0 1))
+(define I-HAT (vec2D 1 0))
+(define J-HAT (vec2D 0 1))
 
-;; (add 2d-vector ...) -> 2d-vector
+;; (add vec2D ...) -> vec2D
 ;; Computes the sum of a series of vectors.
-;; (add (2d-vector 1 2) (2d-vector 1 2)) -> '(2 . 4)
+;; (add (vec2D 1 2) (vec2D 1 2)) -> '(2 . 4)
 
-(define (add . vs)
-  (if (= (length vs) 1)
-      (car vs)
+(define (add . vecs)
+  (if (= (length vecs) 1)
+      (car vecs)
       (foldl (lambda (v1 v2)
                (let ([x1 (car v1)]
                      [y1 (cdr v1)]
@@ -35,20 +35,20 @@
                      [y2 (cdr v2)])
                  (cons (+ x1 x2) (+ y1 y2))))
              '(0 . 0)
-             vs)))
+             vecs)))
 
-;; (scale 2d-vector number) -> vect
+;; (scale vec2D number) -> vec2D
 ;; Returns a vector multiplied by a number.
-;; (scale (2d-vector 1 2) 2) -> '(2 . 4)
+;; (scale (vec2D 1 2) 2) -> '(2 . 4)
 
-(define (scale v factor)
-  (let ([x (car v)]
-        [y (cdr v)])
+(define (scale vec factor)
+  (let ([x (car vec)]
+        [y (cdr vec)])
     (cons (* factor x) (* factor y))))
 
-;; (dot-product 2d-vector 2d-vector) -> number
-;; Computes the dot product of two 2d-vectors.
-;; (dot-product (2d-vector 1 2) (2d-vector 3 4)) -> 11
+;; (dot-product vec2D vec2D) -> number
+;; Computes the dot product of two two-dimensional vectors.
+;; (dot-product (vec2D 1 2) (vec2D 3 4)) -> 11
 
 (define (dot-product v1 v2)
   (let ([x1 (car v1)]
@@ -57,9 +57,9 @@
         [y2 (cdr v2)])
     (+ (* x1 x2) (* y1 y2))))
 
-;; (cross-product 2d-vector 2d-vector) -> number
-;; Computes the cross product of two 2d-vectors.
-;; (cross-product (2d-vector 1 2) (2d-vector 3 4)) -> -2
+;; (cross-product vec2D vec2D) -> number
+;; Computes the cross product of two two-dimensional vectors.
+;; (cross-product (vec2D 1 2) (vec2D 3 4)) -> -2
 
 (define (cross-product v1 v2)
   (let ([x1 (car v1)]
@@ -68,28 +68,28 @@
         [y2 (cdr v2)])
     (- (* x1 y2) (* y1 x2))))
 
-;; (magnitude 2d-vector) -> number
-;; Returns the magnitude of a 2d vector.
-;; (magnitude (2d-vector 3 4)) -> 5
+;; (magnitude vec2D) -> number
+;; Returns the magnitude of a two-dimensional vector.
+;; (magnitude (vec2D 3 4)) -> 5
 
-(define (magnitude v)
-  (let ([x (car v)]
-        [y (cdr v)])
+(define (magnitude vec)
+  (let ([x (car vec)]
+        [y (cdr vec)])
     (hypotenuse x y)))
 
 ;; (create-comparison operator) -> function
-;; Generates functions for sequentially comparing the magnitudes of a list of 2d-vectors.
-;; (define vect-gt? (create-comparison >)) -> (gt? (2d-vector 3 4) (2d-vector 1 2)) -> #t
+;; Generates functions for sequentially comparing the magnitudes of a list of two-dimensional vectors.
+;; (define vec-gt? (create-comparison >)) -> (vec-gt? (vec2D 3 4) (vec2D 1 2)) -> #t
 
 (define (create-comparison operator)
-  (lambda vectors
-    (if (< (length vectors) 2)
+  (lambda vecs
+    (if (< (length vecs) 2)
         #t
         (apply operator
-               (map magnitude vectors)))))
+               (map magnitude vecs)))))
 
 ;; 2d-vector comparison functions
 
-(define vect-gt? (create-comparison >))
-(define vect-lt? (create-comparison <))
-(define vect-eq? (create-comparison =))
+(define vec-gt? (create-comparison >))
+(define vec-lt? (create-comparison <))
+(define vec-eq? (create-comparison =))
