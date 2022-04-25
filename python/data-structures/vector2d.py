@@ -7,7 +7,6 @@ v.x -> 3
 v.y -> 4
 v.point -> (3, 4)
 v.magnitude -> 5
-v.unit_vector -> (0.6, 0.8)
 """
 class Vector2D:
     def __init__(self, x, y):
@@ -16,10 +15,13 @@ class Vector2D:
         self.point = (x, y)
         self.magnitude = math.hypot(x, y)
 
-    def unit_vector(self):
-        x, y = self.point
-        mag = self.magnitude
-        return (x / mag, y / mag)
+"""
+IHAT, JHAT
+Mutually orthogonal two-dimensional unit vectors, forming the standard basis.
+"""
+IHAT = Vector2D(1, 0)
+JHAT = Vector2D(0, 1)
+
 """    
 scale(Vector2D, number) -> Vector2D
 Returns a scaled two-dimensional vector that is the product of a vector and a number.
