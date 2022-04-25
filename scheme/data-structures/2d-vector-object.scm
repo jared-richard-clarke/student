@@ -1,46 +1,41 @@
 ;; Object implementation of vectors and operations in linear vector space.
 
-;; (2d-vector number number) -> 2d-vector
-;; Creates 2d-vector object implemented as a function. Captures values within its closure.
-;; (define v (2d-vector 3 4))
+;; (vec2D number number) -> vec2D
+;; Creates two-dimensional vector object implemented as a function. Captures values within its closure.
+;; (define v (vec2D 3 4))
 ;; (v 'point) -> '(3 . 4)
-;; (v 'type) -> '2d-vector
+;; (v 'type) -> 'vec2D
 ;; (v 'magnitude) -> 5
-;; (v 'unit-vector) -> '(3/5 . 4/5)
 
-(define (2d-vector x y)
+(define (vec2D x y)
   ;; === properties ===
-  (define px x)
-  (define py y)
-
-  (define point (cons x y))
-  
-  (define type '2d-vector)
-  
-  (define magnitude (sqrt (+ (sqr px) (sqr py))))
-  
+  (let* ([px x]
+         [py y]
+         [point (cons x y)]
+         [type 'vec2D]
+         [magnitude (sqrt (+ (sqr px) (sqr py)))])
   ;; === interface ===
   (lambda (message)
     (cond [(eq? message 'point) point]
           [(eq? message 'type) type]
           [(eq? message 'magnitude) magnitude]
-          [else (error "invalid input" message)])))
+          [else (error "invalid input" message)]))))
 
 ;; I-HAT, J-HAT
-;; Mutually orthogonal unit vectors, forming the standard basis.
+;; Mutually orthogonal two-dimensional unit vectors, forming the standard basis.
 
-(define I-HAT (2d-vector 1 0))
-(define J-HAT (2d-vector 0 1))
+(define I-HAT (vec2D 1 0))
+(define J-HAT (vec2D 0 1))
 
-;; (add 2d-vector 2d-vector) -> 2d-vector
-;; Returns a 2d-vector that is the sum of a series of 2d-vectors.
-;; (add (2d-vector 1 2) (2d-vector 3 4) (2d-vector 2 1)) -> (2d-vector 'point) -> '(6 . 7)
+;; (add vec2D vec2D) -> vec2D
+;; Returns a two-dimensional vector that is the sum of a series of two-dimensionsal vectors.
+;; (add (vec2D 1 2) (vec2D 3 4) (vec2D 2 1)) -> (vec2D 'point) -> '(6 . 7)
 
-(define (add . vs)
-  (if (= (length vs) 1)
-      (car vs)
-      ;; To prevent memory consumption, add processes 2d-vectors as a series of pairs,
-      ;; converting only the sum to a 2d-vector function with closure. 
+(define (add . vecs)
+  (if (= (length vecs) 1)
+      (car vecs)
+      ;; To prevent memory consumption, add processes vec2Ds as a series of pairs,
+      ;; converting only the sum to a vec2D function with closure. 
       (let ([sum (foldl (lambda (v1 v2)
                           (let ([x1 (car v1)]
                                 [y1 (cdr v1)]
@@ -48,22 +43,22 @@
                                 [y2 (cdr v2)])
                             (cons (+ x1 x2) (+ y1 y2))))
                         '(0 . 0)
-                        (map (lambda (v) (v 'point)) vs))])
-        (2d-vector (car sum) (cdr sum)))))
+                        (map (lambda (v) (v 'point)) vecs))])
+        (vec2D (car sum) (cdr sum)))))
 
-;; (scale 2d-vector number) -> 2d-vector
-;; Returns a scaled 2d-vector that is the product of a 2d-vector and a number.
-;; (scale (2d-vector 3 4) 2) -> (2d-vector 'point) -> '(6 . 8)
+;; (scale vec2D number) -> vec2D
+;; Returns a scaled two-dimensional vector that is the product of a two-dimensional vector and a number.
+;; (scale (vec2D 3 4) 2) -> (vec2D 'point) -> '(6 . 8)
 
-(define (scale v factor)
-  (let* ([p (v 'point)]
+(define (scale vec factor)
+  (let* ([p (vec 'point)]
          [x (car p)]
          [y (cdr p)])
-    (2d-vector (* x factor) (* y factor))))
+    (vec2D (* x factor) (* y factor))))
 
-;; (dot-product 2d-vector 2d-vector) -> number
-;; Computes the dot product of two 2d-vectors.
-;; (dot-product (2d-vector 1 2) (2d-vector 3 4)) -> 11
+;; (dot-product vec2D vec2D) -> number
+;; Computes the dot product of two two-dimensional vectors.
+;; (dot-product (vec2D 1 2) (vec2D 3 4)) -> 11
 
 (define (dot-product v1 v2)
   (let* ([p1 (v1 'point)]
@@ -74,7 +69,7 @@
          [y2 (cdr p2)])
     (+ (* x1 x2) (* y1 y2))))
 
-;; (cross-product 2d-vector 2d-vector) -> number
+;; (cross-product vec2D vec2D) -> number
 ;; Computes the cross product of two 2d-vectors.
 ;; (cross-product (2d-vector 1 2) (2d-vector 3 4)) -> -2
 
@@ -88,18 +83,18 @@
     (- (* x1 y2) (* y1 x2))))
 
 ;; (create-comparison operator) -> function
-;; Generates functions for sequentially comparing the magnitudes of a list of 2d-vectors.
-;; (define vect-gt? (create-comparison >)) -> (vect-gt? (2d-vector 3 4) (2d-vector 1 2)) -> #t
+;; Generates functions for sequentially comparing the magnitudes of a list of two-dimensional vectors.
+;; (define vec2D-gt? (create-comparison >)) -> (vec2D-gt? (vec2D 3 4) (vec2D 1 2)) -> #t
 
 (define (create-comparison operator)
-  (lambda vectors
-    (if (= (length vectors) 1)
+  (lambda vecs
+    (if (= (length vecs) 1)
         #t
         (apply operator
-               (map (lambda (v) (v 'magnitude)) vectors)))))
+               (map (lambda (v) (v 'magnitude)) vecs)))))
 
-;; 2d-vector comparison functions
+;; vec2D comparison functions
 
-(define vect-gt? (create-comparison >))
-(define vect-lt? (create-comparison <))
-(define vect-eq? (create-comparison =))
+(define vec2D-gt? (create-comparison >))
+(define vec2D-lt? (create-comparison <))
+(define vec2D-eq? (create-comparison =))
