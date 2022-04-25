@@ -40,20 +40,20 @@ def add(v1, v2):
     x2, y2 = v2.point
     return Vector2D(x1 + x2, y1 + y2)
 """
-dot_product(Vector2D, Vector2D) -> number
+dot(Vector2D, Vector2D) -> number
 Returns a number that is the dot product of two, two-dimensional vectors.
-dot_product(Vector2D(1, 2), Vector2D(3, 4)) -> 11
+dot(Vector2D(1, 2), Vector2D(3, 4)) -> 11
 """
-def dot_product(v1, v2):
+def dot(v1, v2):
     x1, y1 = v1.point
     x2, y2 = v2.point
     return (x1 * x2) + (y1 * y2)
 """
-cross_product(Vector2D, Vector2D) -> number
+cross(Vector2D, Vector2D) -> number
 Returns a number that is the cross product of two, two-dimensional vectors.
-cross_product(Vector2D(1, 2), Vector2D(3, 4)) -> -2
+cross(Vector2D(1, 2), Vector2D(3, 4)) -> -2
 """
-def cross_product(v1, v2):
+def cross(v1, v2):
     x1, y1 = v1.point
     x2, y2 = v2.point
     return (x1 * y2) - (y1 * x2)
