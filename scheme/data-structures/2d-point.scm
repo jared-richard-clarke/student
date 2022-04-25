@@ -5,38 +5,38 @@
 (define (hypotenuse x y)
   (sqrt (+ (sqr x) (sqr y))))
 
-; (point number number) -> pair
+; (point2D number number) -> pair
 ; Constructs a two-dimensional point represented as a pair.
-; (point 1 2) -> '(1 . 2)
+; (point2D 1 2) -> '(1 . 2)
 
-(define (point x y)
+(define (point2D x y)
   (cons x y))
 
-; (point-distance pair pair) -> number
+; (point2D-length pair pair) -> number
 ; Calculates the distance between two points.
-; (point-distance (point 3 0) (point 2 0)) -> 1
+; (point2D-length (point2D 3 0) (point2D 2 0)) -> 1
 
-(define (point-distance p1 p2)
+(define (point2D-length p1 p2)
   (let ([x1 (car p1)]
         [y1 (cdr p1)]
         [x2 (car p2)]
         [y2 (cdr p2)])
     (hypotenuse (- x2 x1) (- y2 y1))))
 
-;; (path points) -> list
+;; (path2D points) -> list
 ;; Returns a list of points.
-;; (path (point 1 2) (point 3 4)) -> '((1 . 2) (3 . 4))
+;; (path2D (point2D 1 2) (point2D 3 4)) -> '((1 . 2) (3 . 4))
 
-(define (path . points) points)
+(define (path2D . points) points)
 
-;; (path-length path) -> number
+;; (path2D-length path) -> number
 ;; Computes the length of a path.
-;; (path-length (path (point 1 1) (point 5 1) (point 5 4) (point 1 1))) -> 12
+;; (path2D-length (path2D (point2D 1 1) (point2D 5 1) (point2D 5 4) (point2D 1 1))) -> 12
 
-(define (path-length path)
+(define (path2D-length path)
   (let loop ([sum 0]
              [pth path])
     (if (<= (length pth) 1)
         sum
-        (loop (+ sum (point-distance (car pth) (cadr pth)))
+        (loop (+ sum (point2D-length (car pth) (cadr pth)))
               (cdr pth)))))
