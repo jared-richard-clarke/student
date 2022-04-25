@@ -56,11 +56,11 @@
          [y (cdr p)])
     (vec2D (* x factor) (* y factor))))
 
-;; (dot-product vec2D vec2D) -> number
+;; (dot vec2D vec2D) -> number
 ;; Computes the dot product of two two-dimensional vectors.
-;; (dot-product (vec2D 1 2) (vec2D 3 4)) -> 11
+;; (dot (vec2D 1 2) (vec2D 3 4)) -> 11
 
-(define (dot-product v1 v2)
+(define (dot v1 v2)
   (let* ([p1 (v1 'point)]
          [p2 (v2 'point)]
          [x1 (car p1)]
@@ -69,11 +69,11 @@
          [y2 (cdr p2)])
     (+ (* x1 x2) (* y1 y2))))
 
-;; (cross-product vec2D vec2D) -> number
+;; (cross vec2D vec2D) -> number
 ;; Computes the cross product of two 2d-vectors.
-;; (cross-product (2d-vector 1 2) (2d-vector 3 4)) -> -2
+;; (cross (2d-vector 1 2) (2d-vector 3 4)) -> -2
 
-(define (cross-product v1 v2)
+(define (cross v1 v2)
   (let* ([p1 (v1 'point)]
          [p2 (v2 'point)]
          [x1 (car p1)]
@@ -82,11 +82,11 @@
          [y2 (cdr p2)])
     (- (* x1 y2) (* y1 x2))))
 
-;; (create-comparison operator) -> function
+;; (compare operator) -> function
 ;; Generates functions for sequentially comparing the magnitudes of a list of two-dimensional vectors.
-;; (define vec2D-gt? (create-comparison >)) -> (vec2D-gt? (vec2D 3 4) (vec2D 1 2)) -> #t
+;; (define vec-gt? (compare >)) -> (vec-gt? (vec2D 3 4) (vec2D 1 2)) -> #t
 
-(define (create-comparison operator)
+(define (compare operator)
   (lambda vecs
     (if (= (length vecs) 1)
         #t
@@ -95,6 +95,6 @@
 
 ;; vec2D comparison functions
 
-(define vec2D-gt? (create-comparison >))
-(define vec2D-lt? (create-comparison <))
-(define vec2D-eq? (create-comparison =))
+(define vec-gt? (compare >))
+(define vec-lt? (compare <))
+(define vec-eq? (compare =))
