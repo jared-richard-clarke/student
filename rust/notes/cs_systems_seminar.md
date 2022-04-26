@@ -1,5 +1,5 @@
 # Computer Systems: The Rust Programming Language
-Primary Source: [Aaron Turon of Mozilla Colloquium on Computer Systems Seminar Series (EE380)](https://www.youtube.com/watch?v=SZvs15hC81U)
+Primary Source: [Aaron Turon of Mozilla Colloquium on Computer Systems Seminar Series (EE380)](https://youtu.be/O5vzLKg7y-k)
 
 ## Ownership and Borrowing
 1. All resources have a clear owner.
