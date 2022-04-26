@@ -6,12 +6,18 @@ point(1, 2) -> (1, 2)
 """
 def point(x, y):
     return (x, y)
+
 """
-distance(tuple, tuple) -> float
+ORIGIN: the point of origin in a two-dimensional coordinate system.
+"""
+ORIGIN = point(0, 0)
+
+"""
+segment(tuple, tuple) -> float
 Calculates the distance between two points.
-distance((3, 0), (2, 0)) -> 1.0
+segment((3, 0), (2, 0)) -> 1.0
 """
-def distance(p1, p2):
+def segment(p1, p2):
     x1, y1 = p1 
     x2, y2 = p2
     return math.hypot(x2 - x1, y2 - y1)
@@ -33,6 +39,6 @@ def path_length(path):
     for i in range(length - 1):
         p1 = path[i]
         p2 = path[i + 1]
-        sum += distance(p1, p2)
+        sum += segment(p1, p2)
     return sum
 
