@@ -20,7 +20,7 @@ var (
 func (v Vector2d) String() string {
 	x := v.X
 	y := v.Y
-	return fmt.Sprintf("(%.2f, %.2f)", x, y)
+	return fmt.Sprintf("vec(%.2f, %.2f)", x, y)
 }
 
 // Computes the distance of a 2d-vector's point from the origin.
