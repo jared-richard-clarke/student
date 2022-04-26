@@ -17,7 +17,7 @@
 (define ORIGIN (point 0 0))
 
 ; (segment pair pair) -> number
-; Calculates the length of a line segment between two given points.
+; Calculates the distance between two points.
 ; (segment (point 3 0) (point 2 0)) -> 1
 
 (define (segment p1 p2)
