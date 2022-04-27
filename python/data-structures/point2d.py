@@ -1,4 +1,5 @@
 import math
+
 """
 point(number, number) -> tuple
 Constructs a two dimensional point as a tuple.
@@ -21,6 +22,7 @@ def segment(p1, p2):
     x1, y1 = p1 
     x2, y2 = p2
     return math.hypot(x2 - x1, y2 - y1)
+
 """
 path(tuple) -> tuple
 Constructs a path as a tuple of points.
@@ -28,6 +30,7 @@ path(point(1, 2), point(3, 4)) -> ((1, 2), (3, 4))
 """
 def path(*points):
     return points
+
 """
 path_length(tuple) -> float
 Computes the length of a path along a series of points.
@@ -42,3 +45,17 @@ def path_length(path):
         sum += segment(p1, p2)
     return sum
 
+""" 
+approximate(function) -> function(point) -> point
+Generates approximation functions for simplifying point components.
+point_round = approximate(round) -> point_round(point(1.3, 1.7)) -> (1.0, 2.0)
+"""
+def approximate(operation): 
+    def approximater(pt):
+        x, y = pt
+        return point(operation(x), operation(y))
+    return approximater
+
+point_round = approximate(round)
+point_ceiling = approximate(math.ceil)
+point_floor = approximate(math.floor)
