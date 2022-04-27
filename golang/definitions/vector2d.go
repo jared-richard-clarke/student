@@ -51,7 +51,7 @@ func Add(vs ...Vector2d) Vector2d {
 }
 
 // Computes the dot product of two 2d-vectors.
-func DotProduct(v1, v2 Vector2d) float64 {
+func Dot(v1, v2 Vector2d) float64 {
 	x1 := v1.X
 	y1 := v1.Y
 	x2 := v2.X
@@ -60,7 +60,7 @@ func DotProduct(v1, v2 Vector2d) float64 {
 }
 
 // Computes the cross product of two 2d-vectors.
-func CrossProduct(v1, v2 Vector2d) float64 {
+func Cross(v1, v2 Vector2d) float64 {
 	x1 := v1.X
 	y1 := v1.Y
 	x2 := v2.X
