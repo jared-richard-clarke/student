@@ -14,12 +14,12 @@
          [point (cons x y)]
          [type 'vec2D]
          [magnitude (sqrt (+ (sqr px) (sqr py)))])
-  ;; === interface ===
-  (lambda (message)
-    (cond [(eq? message 'point) point]
-          [(eq? message 'type) type]
-          [(eq? message 'magnitude) magnitude]
-          [else (error "invalid input" message)]))))
+    ;; === interface ===
+    (lambda (message)
+      (cond [(eq? message 'point) point]
+            [(eq? message 'type) type]
+            [(eq? message 'magnitude) magnitude]
+            [else (error "invalid input:" message)]))))
 
 ;; I-HAT, J-HAT
 ;; Mutually orthogonal two-dimensional unit vectors, forming the standard basis.
@@ -98,3 +98,18 @@
 (define vec-gt? (compare >))
 (define vec-lt? (compare <))
 (define vec-eq? (compare =))
+
+;; (approximate function) -> (function vec2D) -> vec2D
+;; Generates approximation functions for simplifying vector components.
+;; (define vec-round (approximate round)) -> ((vec-round (vec2D 1.3 1.7)) 'point) -> '(1.0 . 2.0)
+
+(define (approximate operation)
+  (lambda (vec)
+    (let* ([pt (vec 'point)]
+           [x (car pt)]
+           [y (cdr pt)])
+      (vec2D (operation x) (operation y)))))
+
+(define vec-round (approximate round))
+(define vec-ceiling (approximate ceiling))
+(define vec-floor (approximate floor))
