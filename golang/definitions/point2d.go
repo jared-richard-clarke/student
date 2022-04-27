@@ -40,3 +40,10 @@ func (p Path) Length() float64 {
 	}
 	return sum
 }
+
+// Outputs a point with the rounded components of the receiver point.
+func (p Point) Round() Point {
+	x := math.Round(p.X)
+	y := math.Round(p.Y)
+	return Point{x, y}
+}
