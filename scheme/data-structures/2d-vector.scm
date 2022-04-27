@@ -102,7 +102,7 @@
   (lambda (vec)
     (let ([x (car vec)]
           [y (cdr vec)])
-      (cons (operation x) (operation y)))))
+      (vec2D (operation x) (operation y)))))
 
 (define vec-round (approximate round))
 (define vec-ceiling (approximate ceiling))
