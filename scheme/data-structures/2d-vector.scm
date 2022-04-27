@@ -77,7 +77,7 @@
         [y (cdr vec)])
     (hypotenuse x y)))
 
-;; (compare operator) -> function
+;; (compare operator) -> (function vec2D...) -> boolean
 ;; Generates functions for sequentially comparing the magnitudes of a list of two-dimensional vectors.
 ;; (define vec-gt? (compare >)) -> (vec-gt? (vec2D 3 4) (vec2D 1 2)) -> #t
 
@@ -93,3 +93,17 @@
 (define vec-gt? (compare >))
 (define vec-lt? (compare <))
 (define vec-eq? (compare =))
+
+;; (approximate function) -> (function vec2D) -> vec2D
+;; Generates approximation functions for simplifying vector components.
+;; (define vec-round (approximate round)) -> (vec-round (vec2D 1.3 1.7)) -> '(1.0 . 2.0)
+
+(define (approximate operation)
+  (lambda (vec)
+    (let ([x (car vec)]
+          [y (cdr vec)])
+      (cons (operation x) (operation y)))))
+
+(define vec-round (approximate round))
+(define vec-ceiling (approximate ceiling))
+(define vec-floor (approximate floor))
