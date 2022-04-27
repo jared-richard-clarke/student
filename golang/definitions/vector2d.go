@@ -81,3 +81,10 @@ func compare(op func(float64, float64) bool) func(Vector2d, Vector2d) bool {
 var Gt = compare(func(x, y float64) bool { return x > y })
 var Lt = compare(func(x, y float64) bool { return x < y })
 var Eq = compare(func(x, y float64) bool { return x == y })
+
+// Outputs a vector with the rounded components of the receiver vector.
+func (v Vector2d) Round() Vector2d {
+	x := math.Round(v.X)
+	y := math.Round(v.Y)
+	return Vector2d{x, y}
+}
