@@ -44,3 +44,17 @@
         sum
         (loop (+ sum (segment (car pth) (cadr pth)))
               (cdr pth)))))
+
+;; (approximate function) -> (function point) -> point
+;; Generates approximation functions for simplifying point components.
+;; (define point-round (approximate round)) -> (point-round (point 1.3 1.7)) -> '(1.0 . 2.0)
+
+(define (approximate operation)
+  (lambda (pt)
+    (let ([x (car pt)]
+          [y (cdr pt)])
+      (point (operation x) (operation y)))))
+
+(define point-round (approximate round))
+(define point-ceiling (approximate ceiling))
+(define point-floor (approximate floor))
