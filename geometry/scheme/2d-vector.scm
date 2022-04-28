@@ -87,7 +87,7 @@
         (apply operator
                (map magnitude vecs)))))
 
-;; Two-dimensional vector comparison functions
+;; vec2 comparison functions
 
 (define vec-gt? (compare >))
 (define vec-lt? (compare <))
