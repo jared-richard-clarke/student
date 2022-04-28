@@ -32,7 +32,7 @@
                      [y1 (cdr v1)]
                      [x2 (car v2)]
                      [y2 (cdr v2)])
-                 (cons (+ x1 x2) (+ y1 y2))))
+                 (vec2 (+ x1 x2) (+ y1 y2))))
              '(0 . 0)
              vecs)))
 
