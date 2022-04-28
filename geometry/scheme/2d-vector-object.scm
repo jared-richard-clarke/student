@@ -7,7 +7,7 @@
 ;; (v 'type) -> 'vec2
 ;; (v 'magnitude) -> 5
 
-(define (vec2D x y)
+(define (vec2 x y)
   ;; === properties ===
   (let* ([px x]
          [py y]
@@ -44,7 +44,7 @@
                             (cons (+ x1 x2) (+ y1 y2))))
                         '(0 . 0)
                         (map (lambda (v) (v 'point)) vecs))])
-        (vec2D (car sum) (cdr sum)))))
+        (vec2 (car sum) (cdr sum)))))
 
 ;; (scale vec2 number) -> vec2
 ;; Returns a scaled two-dimensional vector that is the product of a two-dimensional vector and a number.
