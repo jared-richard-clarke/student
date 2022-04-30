@@ -66,7 +66,7 @@
 ;; (assert-equal expression value) -> current-output-port
 ;; If expression does not evaluate to value, macro prints failed test to current-output-port.
 ;; (assert-equal (vec2 4 4) '(3 . 4)) ->
-;; Test: (add 2 2)
+;; Test: (vec2 4 4)
 ;; Expect: (3 . 4), Got: (4 . 4)
 
 (define-syntax assert-equal
