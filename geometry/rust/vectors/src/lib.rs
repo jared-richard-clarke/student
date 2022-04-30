@@ -15,7 +15,18 @@ impl Vector2D {
         (x * x + y * y).sqrt()
     }
 
-    fn scale(self, scalar: f64) -> Vector2D {
+    fn add(self, other: Self) -> Self {
+        let x1 = self.x;
+        let y1 = self.y;
+        let x2 = other.x;
+        let y2 = other.y;
+        Vector2D {
+            x: x1 + x2,
+            y: y1 + y2,
+        }
+    }
+
+    fn scale(self, scalar: f64) -> Self {
         let x = self.x;
         let y = self.y;
         Vector2D {
@@ -51,7 +62,7 @@ impl Clone for Vector2D {
         }
     }
 }
-// allows two-dimensional vectors to be compared in tests.
+
 impl Eq for Vector2D {}
 
 impl PartialEq for Vector2D {
@@ -76,10 +87,17 @@ mod tests {
         assert_eq!(result, 5.0);
     }
     #[test]
+    fn test_add() {
+        let v1 = Vector2D { x: 1.0, y: 2.0 };
+        let v2 = Vector2D { x: 3.0, y: 4.0 };
+        let result = v1.add(v2);
+        assert_eq!(result, Vector2D { x: 4.0, y: 6.0 });
+    }
+    #[test]
     fn test_scale() {
         let v = Vector2D { x: 3.0, y: 4.0 };
         let result = v.scale(2.0);
-        assert_eq!(result, Vector2D { x: 6.0, y: 8.0});
+        assert_eq!(result, Vector2D { x: 6.0, y: 8.0 });
     }
     #[test]
     fn test_dot() {
