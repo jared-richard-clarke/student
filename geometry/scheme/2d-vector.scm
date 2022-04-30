@@ -109,12 +109,20 @@
 
 ;; === testing ===
 
-;; (assert-equal expression value) -> boolean
-;; Asserts whether an expression evaluates to the provided value.
-;; (assert-equal (+ 1 2) 3) -> #t
+;; (assert-equal expression value) -> current-output-port
+;; If expression does not evaluate to value, macro prints failed test to current-output-port.
+;; (assert-equal (vec2 4 4) '(3 . 4)) ->
+;; Test: (add 2 2)
+;; Expect: (3 . 4), Got: (4 . 4)
 
-(define (assert-equal expression value)
-  (equal? expression value))
+(define-syntax assert-equal
+  (syntax-rules ()
+    [(_ expression value)
+     (when (not (equal? expression value))
+       (printf "Test: ~a\nExpect: ~a, Got: ~a\n"
+               (quote expression)
+               value
+               expression))]))
 
 ;; === unit tests ===
 
