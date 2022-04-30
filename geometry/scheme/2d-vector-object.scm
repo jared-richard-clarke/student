@@ -113,3 +113,33 @@
 (define vec-round (approximate round))
 (define vec-ceiling (approximate ceiling))
 (define vec-floor (approximate floor))
+
+;; === testing ===
+
+;; (assert-equal expression value) -> current-output-port
+;; If expression does not evaluate to value, macro prints failed test to current-output-port.
+;; (assert-equal (vec2 4 4) '(3 . 4)) ->
+;; Test: (add 2 2)
+;; Expect: (3 . 4), Got: (4 . 4)
+
+(define-syntax assert-equal
+  (syntax-rules ()
+    [(_ expression value)
+     (when (not (equal? expression value))
+       (printf "Test: ~a\nExpect: ~a, Got: ~a\n"
+               (quote expression)
+               value
+               expression))]))
+
+;; === unit tests ===
+
+(assert-equal ((add (vec2 1 2) (vec2 3 4) (vec2 2 1)) 'point) '(6 . 7))
+(assert-equal ((scale (vec2 3 4) 2) 'point) '(6 . 8))
+(assert-equal (dot (vec2 1 2) (vec2 3 4)) 11)
+(assert-equal (cross (vec2 1 2) (vec2 3 4)) -2)
+(assert-equal (vec-gt? (vec2 3 4) (vec2 1 2)) #t)
+(assert-equal (vec-lt? (vec2 3 4) (vec2 1 2)) #f)
+(assert-equal (vec-eq? (vec2 3 4) (vec2 3 4)) #t)
+(assert-equal ((vec-round (vec2 1.3 1.7)) 'point) '(1.0 . 2.0))
+(assert-equal ((vec-ceiling (vec2 1.3 1.7)) 'point) '(2.0 . 2.0))
+(assert-equal ((vec-floor (vec2 1.3 1.7)) 'point) '(1.0 . 1.0))
