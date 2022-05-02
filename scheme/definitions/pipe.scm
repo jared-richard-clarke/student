@@ -1,6 +1,5 @@
 ;; (pipe value function ...) -> value
-;; Transforms a value by passing it through a series of functions. 
-;; Functions must take the same number of arguments as the values returned by the previous function.
+;; Transforms a value by passing it through a series of single-argument functions. 
 ;; (pipe "dog" string-plural string-upcase) -> "DOGS"
 
 (define (pipe arg . functions)
@@ -10,8 +9,7 @@
          functions))
 
 ;; (compose-pipe function ...) -> (function value) -> value
-;; Composes a series of pure functions into a single function declaration.
-;; Functions must take the same number of arguments as the values returned by the previous function.
+;; Composes a series of single-argument functions into a single function expression.
 ;; (define edit (compose-pipe string-plural string-upcase)) -> (edit "dog") -> "DOGS"
 
 (define (compose-pipe . functions)
