@@ -1,6 +1,5 @@
 import math
 
-
 # point(number, number) -> tuple
 # Constructs a two dimensional point as a tuple.
 # point(1, 2) -> (1, 2)
