@@ -1,12 +1,11 @@
 from points import point
 
-"""
-unit_circle[number] -> tuple
-For a series of angles, returns the corresponding coordinates of a unit circle.
-Implemented as a dictionary whose keys are integers and values are tuples.
-unit_circle[90]  -> (0, 1)
-unit_circle[180] -> (-1, 0)
-"""
+# unit_circle[number] -> tuple
+# For a series of angles, returns the corresponding coordinates of a unit circle.
+# Implemented as a dictionary whose keys are integers and values are tuples.
+# unit_circle[90]  -> (0, 1)
+# unit_circle[180] -> (-1, 0)
+
 unit_circle = {
     0:   point(1, 0),
     30:  point(0.866, 0.5),
