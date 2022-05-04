@@ -7,7 +7,8 @@ Primary Sources:
 ## Recursive Descent
 Every grammar rule has an associated function.
 Each function produces a syntax tree and returns it to the caller.
-The body of a rule that contains a reference to another rule calls that other rule's function. Recursive calls produce a tree data structure.
+The body of a rule that contains a reference to another rule calls that other rule's function. Nested function calls produce 
+a tree data structure.
 
 ## Infix Grammar
 | head       | body                                                     |
