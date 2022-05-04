@@ -14,15 +14,16 @@
 
 ;; (assert-equal expression value) -> current-output-port
 ;; If expression does not evaluate to value, macro prints failed test to current-output-port.
-;; (assert-equal (vec2 4 4) '(3 . 4)) ->
+;; (assert-equal (vec2 4 4) #(3 4)) ->
 ;; Test: (vec2 4 4)
-;; Expect: (3 . 4), Got: (4 . 4)
+;; Expect: #(3 4), Got: #(4 4)
 
 (define-syntax assert-equal
   (syntax-rules ()
     [(_ expression value)
-     (when (not (equal? expression value))
-       (printf "Test: ~a\nExpect: ~a, Got: ~a\n"
-               (quote expression)
-               value
-               expression))]))
+     (let ([computed-expr expression]) ;; <- prevents redundant computation
+       (when (not (equal? computed-expr value))
+         (printf "Test: ~a\nExpect: ~a, Got: ~a\n"
+                 (quote expression) ;; <---- returns expression prior to evaluation
+                 value
+                 computed-expr)))]))
