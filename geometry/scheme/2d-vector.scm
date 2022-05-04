@@ -127,16 +127,41 @@
 
 ;; === unit tests ===
 
-(assert-equal (hypotenuse 3 4) 5)
-(assert-equal (vec2 3 4) #(3 4))
-(assert-equal (add (vec2 1 2) (vec2 1 2)) #(2 4))
-(assert-equal (scale (vec2 1 2) 2) #(2 4))
-(assert-equal (dot (vec2 1 2) (vec2 3 4)) 11)
-(assert-equal (cross (vec2 1 2) (vec2 3 4)) -2)
-(assert-equal (magnitude (vec2 3 4)) 5)
-(assert-equal (vec-gt? (vec2 3 4) (vec2 1 2)) #t)
-(assert-equal (vec-lt? (vec2 3 4) (vec2 1 2)) #f)
-(assert-equal (vec-eq? (vec2 3 4) (vec2 3 4)) #t)
-(assert-equal (vec-round (vec2 1.3 1.7)) #(1.0 2.0))
-(assert-equal (vec-ceiling (vec2 1.3 1.7)) #(2.0 2.0))
-(assert-equal (vec-floor (vec2 1.3 1.7)) #(1.0 1.0))
+(assert-equal (hypotenuse 3 4)
+              5)
+
+(assert-equal (vec2 3 4)
+              #(3 4))
+
+(assert-equal (add (vec2 1 2) (vec2 1 2))
+              #(2 4))
+
+(assert-equal (scale (vec2 1 2) 2)
+              #(2 4))
+
+(assert-equal (dot (vec2 1 2) (vec2 3 4))
+              11)
+
+(assert-equal (cross (vec2 1 2) (vec2 3 4))
+              -2)
+
+(assert-equal (magnitude (vec2 3 4))
+              5)
+
+(assert-equal (vec-gt? (vec2 3 4) (vec2 1 2))
+              #t)
+
+(assert-equal (vec-lt? (vec2 3 4) (vec2 1 2))
+              #f)
+
+(assert-equal (vec-eq? (vec2 3 4) (vec2 3 4))
+              #t)
+
+(assert-equal (vec-round (vec2 1.3 1.7))
+              #(1.0 2.0))
+
+(assert-equal (vec-ceiling (vec2 1.3 1.7))
+              #(2.0 2.0))
+
+(assert-equal (vec-floor (vec2 1.3 1.7))
+              #(1.0 1.0))
