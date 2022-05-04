@@ -1,30 +1,10 @@
 # Parsing Infix Arithmetic Expressions
 
-Primary Source: [Crafting Interpreters](https://craftinginterpreters.com/parsing-expressions.html)
-by Robert Nystrom
+Primary Source: **Software Tools in Pascal** by Brian W. Kernighan and P.J. Plauger
 
-| name       | operators         | Associates |
-| ---------- | ----------------- | ---------- |
-| term       | `-` `+`           | left       |
-| factor     | `/` `*`           | left       |
-| unary      | `-`               | right      |
-
-Each rule only matches at its precedence level or higher. 
-A term can match both `1 + 6` and `3 * 4 - 1`.
-
-| head       | body                                                            |
-|----------- | --------------------------------------------------------------- |
-| term       | factor ( ( `-` \| `+` ) factor )\*                              |
-| factor     | unary ( ( `/` \| `*` ) unary )\*                                |
-| unary      | ( `-` ) unary \| primary                                        |
-| primary    | NUMBER \| `(` term `)`                                          |
-
-A recursive descent parser is a literal translation of the grammar rules. 
-
-| grammar     | code                              |
-| ----------- | --------------------------------- |
-| terminal    | code to match and consume a token |
-| nonterminal | call to that rule's function      |
-| \|          | `if` or `switch` statement        |
-| `*` or `+`  | `while` or `for` loop             |
-| `?`         | `if` statement                    |
+| head       | body                                                     |
+| ---------- | -------------------------------------------------------- |
+| expression | term \| term `+` term \| term `-` term                   |
+| term       | factor \| factor `*` factor \| factor `/` factor         |
+| factor     | number \| `(` expression `)` \| `+` factor \| `-` factor |
+| number     | 0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| 7 \| 8 \| 9           |
