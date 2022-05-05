@@ -50,11 +50,11 @@
 ;; Returns a scaled two-dimensional vector that is the product of a two-dimensional vector and a number.
 ;; (scale (vec2 3 4) 2) -> (vec2 'point) -> #(6 8)
 
-(define (scale vec factor)
+(define (scale vec scalar)
   (let* ([p (vec 'point)]
          [x (vector-ref p 0)]
          [y (vector-ref p 1)])
-    (vec2 (* x factor) (* y factor))))
+    (vec2 (* x scalar) (* y scalar))))
 
 ;; (dot vec2 vec2) -> number
 ;; Computes the dot product of two two-dimensional vectors.
