@@ -31,7 +31,7 @@
                (let ([x1 (vector-ref v1 0)]
                      [y1 (vector-ref v1 1)]
                      [x2 (vector-ref v2 0)]
-                     [y2 (vector-ref v1 1)])
+                     [y2 (vector-ref v2 1)])
                  (vec2 (+ x1 x2) (+ y1 y2))))
              #(0 0)
              vecs)))
