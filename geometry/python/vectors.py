@@ -28,9 +28,9 @@ scale(Vector2D, number) -> Vector2D
 Returns a scaled two-dimensional vector that is the product of a vector and a number.
 v = scale(Vector2D(3, 4), 2) ->  v.point -> (6, 8)
 """
-def scale(v, factor):
+def scale(v, scalar):
     x, y = v.point
-    return Vector2D((x * factor), (y * factor))
+    return Vector2D((x * scalar), (y * scalar))
 
 """
 add(Vector2D, Vector2D) -> Vector2D
