@@ -40,10 +40,10 @@
 ;; Returns a vector multiplied by a number.
 ;; (scale (vec2 1 2) 2) -> #(2 4)
 
-(define (scale vec factor)
+(define (scale vec scalar)
   (let ([x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
-    (vec2 (* factor x) (* factor y))))
+    (vec2 (* scalar x) (* scalar y))))
 
 ;; (dot vec2 vec2) -> number
 ;; Computes the dot product of two two-dimensional vectors.
