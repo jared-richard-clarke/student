@@ -1,3 +1,4 @@
+use core::iter::Sum;
 use std::fmt;
 
 struct Vector2D {
@@ -52,6 +53,18 @@ impl Vector2D {
     }
 }
 
+impl<'a> Sum<&'a Self> for Vector2D {
+    fn sum<I>(iter: I) -> Self
+    where
+        I: Iterator<Item = &'a Self>,
+    {
+        iter.fold(Vector2D { x: 0.0, y: 0.0 }, |v1, v2| Vector2D {
+            x: v1.x + v2.x,
+            y: v1.y + v2.y,
+        })
+    }
+}
+
 impl Copy for Vector2D {}
 
 impl Clone for Vector2D {
@@ -80,6 +93,16 @@ impl fmt::Debug for Vector2D {
 mod tests {
     use crate::Vector2D;
 
+    #[test]
+    fn test_sum() {
+        let vs = [
+            Vector2D { x: 1.0, y: 2.0 },
+            Vector2D { x: 1.0, y: 2.0 },
+            Vector2D { x: 1.0, y: 2.0 },
+        ];
+        let result: Vector2D = vs.iter().sum();
+        assert_eq!(result, Vector2D { x: 3.0, y: 6.0 });
+    }
     #[test]
     fn test_magnitude() {
         let v = Vector2D { x: 3.0, y: 4.0 };
