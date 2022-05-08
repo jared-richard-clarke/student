@@ -7,9 +7,9 @@
 (define (hypotenuse x y)
   (sqrt (+ (sqr x) (sqr y))))
 
-; (point number number) -> vector
-; Constructs a two-dimensional point represented as a vector.
-; (point 1 2) -> #(1 2)
+;; (point number number) -> vector
+;; Constructs a two-dimensional point represented as a vector.
+;; (point 1 2) -> #(1 2)
 
 (define (point x y)
   (vector x y))
@@ -18,9 +18,18 @@
 
 (define ORIGIN (point 0 0))
 
-; (segment pair pair) -> number
-; Calculates the distance between two points.
-; (segment (point 3 0) (point 2 0)) -> 1
+;; (negate point) -> point
+;; Inverts the signs of the point components.
+;; (negate (point 3 4)) -> (point -3 -4)
+
+(define (negate pt)
+  (let ([x (vector-ref pt 0)]
+        [y (vector-ref pt 1)])
+    (point (* x -1) (* y -1))))
+
+;; (segment pair pair) -> number
+;; Calculates the distance between two points.
+;; (segment (point 3 0) (point 2 0)) -> 1
 
 (define (segment p1 p2)
   (let ([x1 (vector-ref p1 0)]
@@ -86,6 +95,9 @@
 
 (assert-equal (point 1 2)
               #(1 2))
+
+(assert-equal (negate (point 3 4))
+              #(-3 -4))
 
 (assert-equal (segment (point 3 0) (point 2 0))
               1)
