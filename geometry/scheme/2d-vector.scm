@@ -20,6 +20,15 @@
 (define I-HAT (vec2 1 0))
 (define J-HAT (vec2 0 1))
 
+;; (negate vec2) -> vec2
+;; Inverts the signs of the vector components.
+;; (negate (vec2 3 4)) -> (vec2 -3 -4)
+
+(define (negate vec)
+  (let ([x (vector-ref vec 0)]
+        [y (vector-ref vec 1)])
+    (vec2 (* x -1) (* y -1))))
+
 ;; (add vec2 ...) -> vec2
 ;; Computes the sum of a series of vectors.
 ;; (add (vec2 1 2) (vec2 1 2)) -> #(2 4)
@@ -131,6 +140,9 @@
               5)
 
 (assert-equal (vec2 3 4)
+              #(3 4))
+
+(assert-equal (negate (vec2 -3 -4))
               #(3 4))
 
 (assert-equal (add (vec2 1 2) (vec2 1 2))
