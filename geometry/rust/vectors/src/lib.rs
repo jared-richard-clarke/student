@@ -51,6 +51,30 @@ impl Vector2D {
         let y2 = other.y;
         x1 * y2 - y1 * x2
     }
+    fn round(self) -> Self {
+        let x = self.x;
+        let y = self.y;
+        Vector2D {
+            x: x.round(),
+            y: y.round(),
+        }
+    }
+    fn floor(self) -> Self {
+        let x = self.x;
+        let y = self.y;
+        Vector2D {
+            x: x.floor(),
+            y: y.floor(),
+        }
+    }
+    fn ceil(self) -> Self {
+        let x = self.x;
+        let y = self.y;
+        Vector2D {
+            x: x.ceil(),
+            y: y.ceil(),
+        }
+    }
 }
 
 impl<'a> Sum<&'a Self> for Vector2D {
@@ -116,5 +140,23 @@ mod tests {
         let v2 = Vector2D { x: 3.0, y: 4.0 };
         let result = v1.cross(v2);
         assert_eq!(result, -2.0);
+    }
+    #[test]
+    fn test_round() {
+        let result = Vector2D { x: 0.25, y: 6.73 }.round();
+        let expect = Vector2D { x: 0.0, y: 7.0 };
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_floor() {
+        let result = Vector2D { x: 0.25, y: 6.73 }.floor();
+        let expect = Vector2D { x: 0.0, y: 6.0 };
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_ceil() {
+        let result = Vector2D { x: 0.25, y: 6.73 }.ceil();
+        let expect = Vector2D { x: 1.0, y: 7.0 };
+        assert_eq!(result, expect);
     }
 }
