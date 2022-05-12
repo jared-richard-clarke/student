@@ -27,11 +27,11 @@
 (define I-HAT (vec2 1 0))
 (define J-HAT (vec2 0 1))
 
-;; (negate vec2) -> vec2
+;; (flip vec2) -> vec2
 ;; Inverts the signs of the vector components.
-;; (negate (vec2 3 4)) -> (vec2 -3 -4)
+;; (flip (vec2 3 4)) -> (vec2 -3 -4)
 
-(define (negate vec)
+(define (flip vec)
   (let* ([p (vec 'point)]
          [x (vector-ref p 0)]
          [y (vector-ref p 1)])
@@ -144,7 +144,7 @@
 
 ;; === unit tests ===
 
-(assert-equal ((negate (vec2 3 4)) 'point)
+(assert-equal ((flip (vec2 3 4)) 'point)
               #(-3 -4))
 
 (assert-equal ((add (vec2 1 2) (vec2 3 4) (vec2 2 1)) 'point)
