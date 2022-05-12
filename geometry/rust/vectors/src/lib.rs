@@ -51,6 +51,14 @@ impl Vector2D {
         let y2 = other.y;
         x1 * y2 - y1 * x2
     }
+    
+    fn flip(self) -> Self {
+        Vector2D {
+            x: -self.x,
+            y: -self.y,
+        }
+    }
+    
     fn round(self) -> Self {
         let x = self.x;
         let y = self.y;
@@ -59,6 +67,7 @@ impl Vector2D {
             y: y.round(),
         }
     }
+    
     fn floor(self) -> Self {
         let x = self.x;
         let y = self.y;
@@ -67,6 +76,7 @@ impl Vector2D {
             y: y.floor(),
         }
     }
+    
     fn ceil(self) -> Self {
         let x = self.x;
         let y = self.y;
@@ -142,6 +152,12 @@ mod tests {
         assert_eq!(result, -2.0);
     }
     #[test]
+    fn test_flip() {
+        let result = Vector2D{x: -3.0, y: 4.0}.flip();
+        let expect = Vector2D{x: 3.0, y: -4.0};
+        assert_eq!(result, expect);
+    }
+    #[test]
     fn test_round() {
         let result = Vector2D { x: 0.25, y: 6.73 }.round();
         let expect = Vector2D { x: 0.0, y: 7.0 };
@@ -160,3 +176,4 @@ mod tests {
         assert_eq!(result, expect);
     }
 }
+
