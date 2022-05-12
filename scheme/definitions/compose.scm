@@ -9,12 +9,12 @@
          arg
          functions))
 
-;; (comp function ...) -> (function value) -> value
+;; (compose function ...) -> (function value) -> value
 ;; Composes a series of functions into a single function expression.
 ;; The first function can take any number of arguments. All proceeding functions must take one.
-;; (define edit (comp string-plural string-upcase)) -> (edit "dog") -> "DOGS"
+;; (define edit (compose string-plural string-upcase)) -> (edit "dog") -> "DOGS"
 
-(define (comp . functions)
+(define (compose . functions)
   (lambda (arg)
     (foldl (lambda (function value)
              (function value))
