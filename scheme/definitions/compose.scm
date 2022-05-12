@@ -8,11 +8,11 @@
          arg
          functions))
 
-;; (compose-pipe function ...) -> (function value) -> value
+;; (comp function ...) -> (function value) -> value
 ;; Composes a series of single-argument functions into a single function expression.
-;; (define edit (compose-pipe string-plural string-upcase)) -> (edit "dog") -> "DOGS"
+;; (define edit (comp string-plural string-upcase)) -> (edit "dog") -> "DOGS"
 
-(define (compose-pipe . functions)
+(define (comp . functions)
   (lambda (arg)
     (foldl (lambda (function value)
              (function value))
