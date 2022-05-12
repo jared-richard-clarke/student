@@ -1,4 +1,4 @@
-;; (unit-circle symbol) -> pair
+;; (unit-circle symbol) -> vector
 ;; For a series of angles, returns the corresponding coordinates of a unit circle.
 ;; (unit-circle '90deg)  -> #(0 1)
 ;; (unit-circle '180deg) -> #(-1 0)
