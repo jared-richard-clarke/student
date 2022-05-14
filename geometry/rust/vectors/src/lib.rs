@@ -1,6 +1,6 @@
 use std::iter::Sum;
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug, Default)]
 struct Vector2D {
     x: f64,
     y: f64,
@@ -51,14 +51,12 @@ impl Vector2D {
         let y2 = other.y;
         x1 * y2 - y1 * x2
     }
-    
     fn flip(self) -> Self {
         Vector2D {
             x: -self.x,
             y: -self.y,
         }
     }
-    
     fn round(self) -> Self {
         let x = self.x;
         let y = self.y;
@@ -67,7 +65,6 @@ impl Vector2D {
             y: y.round(),
         }
     }
-    
     fn floor(self) -> Self {
         let x = self.x;
         let y = self.y;
@@ -76,7 +73,6 @@ impl Vector2D {
             y: y.floor(),
         }
     }
-    
     fn ceil(self) -> Self {
         let x = self.x;
         let y = self.y;
@@ -102,6 +98,11 @@ impl<'a> Sum<&'a Self> for Vector2D {
 #[cfg(test)]
 mod tests {
     use crate::Vector2D;
+    #[test]
+    fn test_default() {
+        let v = Vector2D::default();
+        assert_eq!(v, Vector2D{x: 0.0, y: 0.0});
+    }
     #[test]
     fn test_equal() {
         let v1 = Vector2D { x: 3.0, y: 4.0 };
@@ -176,4 +177,3 @@ mod tests {
         assert_eq!(result, expect);
     }
 }
-
