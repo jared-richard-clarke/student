@@ -24,6 +24,13 @@ func (v Vector2d) String() string {
 	return fmt.Sprintf("vec(%.2f, %.2f)", x, y)
 }
 
+// Inverts the signs of the vector components.
+func (v Vector2d) Flip() Vector2d {
+	x := v.X
+	y := v.Y
+	return Vector2d{-x, -y}
+}
+
 // Computes the distance of a 2d-vector's point from the origin.
 func (v Vector2d) Magnitude() float64 {
 	x := v.X
