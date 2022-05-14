@@ -13,6 +13,15 @@ func TestStringer(t *testing.T) {
 	}
 }
 
+func TestFlip(t *testing.T) {
+	v := Vector2d{3.0, 4.0}
+	expect := Vector2d{-3.0, -4.0}
+	result := v.Flip()
+	if expect != result {
+		t.Errorf("Test Flip failed. Expected: %v, Got %v", expect, result)
+	}
+}
+
 func TestMagnitude(t *testing.T) {
 	v := Vector2d{3.0, 4.0}
 	expect := 5.0
