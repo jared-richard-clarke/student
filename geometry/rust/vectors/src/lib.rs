@@ -1,4 +1,5 @@
 use std::iter::Sum;
+use std::ops::Add;
 
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 struct Vector2D {
@@ -83,6 +84,16 @@ impl Vector2D {
     }
 }
 
+impl Add for Vector2D {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
 impl<'a> Sum<&'a Self> for Vector2D {
     fn sum<I>(iter: I) -> Self
     where
@@ -101,23 +112,13 @@ mod tests {
     #[test]
     fn test_default() {
         let v = Vector2D::default();
-        assert_eq!(v, Vector2D{x: 0.0, y: 0.0});
+        assert_eq!(v, Vector2D { x: 0.0, y: 0.0 });
     }
     #[test]
     fn test_equal() {
         let v1 = Vector2D { x: 3.0, y: 4.0 };
         let v2 = Vector2D { x: 3.0, y: 4.0 };
         assert_eq!(v1, v2);
-    }
-    #[test]
-    fn test_sum() {
-        let vs = [
-            Vector2D { x: 1.0, y: 2.0 },
-            Vector2D { x: 3.0, y: 4.0 },
-            Vector2D { x: 2.0, y: 2.0 },
-        ];
-        let result: Vector2D = vs.iter().sum();
-        assert_eq!(result, Vector2D { x: 6.0, y: 8.0 });
     }
     #[test]
     fn test_magnitude() {
@@ -154,8 +155,8 @@ mod tests {
     }
     #[test]
     fn test_flip() {
-        let result = Vector2D{x: -3.0, y: 4.0}.flip();
-        let expect = Vector2D{x: 3.0, y: -4.0};
+        let result = Vector2D { x: -3.0, y: 4.0 }.flip();
+        let expect = Vector2D { x: 3.0, y: -4.0 };
         assert_eq!(result, expect);
     }
     #[test]
@@ -174,6 +175,22 @@ mod tests {
     fn test_ceil() {
         let result = Vector2D { x: 0.25, y: 6.73 }.ceil();
         let expect = Vector2D { x: 1.0, y: 7.0 };
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_sum() {
+        let vs = [
+            Vector2D { x: 1.0, y: 2.0 },
+            Vector2D { x: 3.0, y: 4.0 },
+            Vector2D { x: 2.0, y: 2.0 },
+        ];
+        let result: Vector2D = vs.iter().sum();
+        assert_eq!(result, Vector2D { x: 6.0, y: 8.0 });
+    }
+    #[test]
+    fn test_add_overload() {
+        let expect = Vector2D { x: 4.0, y: 6.0 };
+        let result = Vector2D { x: 3.0, y: 4.0 } + Vector2D { x: 1.0, y: 2.0 };
         assert_eq!(result, expect);
     }
 }
