@@ -22,7 +22,7 @@ impl Vector2D {
         let y1 = self.y;
         let x2 = other.x;
         let y2 = other.y;
-        Vector2D {
+        Self {
             x: x1 + x2,
             y: y1 + y2,
         }
@@ -31,7 +31,7 @@ impl Vector2D {
     fn scale(self, scalar: f64) -> Self {
         let x = self.x;
         let y = self.y;
-        Vector2D {
+        Self {
             x: x * scalar,
             y: y * scalar,
         }
@@ -54,7 +54,7 @@ impl Vector2D {
     }
 
     fn flip(self) -> Self {
-        Vector2D {
+        Self {
             x: -self.x,
             y: -self.y,
         }
@@ -63,7 +63,7 @@ impl Vector2D {
     fn round(self) -> Self {
         let x = self.x;
         let y = self.y;
-        Vector2D {
+        Self {
             x: x.round(),
             y: y.round(),
         }
