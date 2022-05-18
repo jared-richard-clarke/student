@@ -89,7 +89,7 @@ impl<'a> Sum<&'a Self> for Vector2D {
     where
         I: Iterator<Item = &'a Self>,
     {
-        iter.fold(Vector2D { x: 0.0, y: 0.0 }, |accum, el| Vector2D {
+        iter.fold(Vector2D { x: 0.0, y: 0.0 }, |accum, el| Self {
             x: accum.x + el.x,
             y: accum.y + el.y,
         })
