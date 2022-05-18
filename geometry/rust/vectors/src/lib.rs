@@ -10,6 +10,10 @@ struct Vector2D {
 const IHAT: Vector2D = Vector2D { x: 1.0, y: 0.0 };
 const JHAT: Vector2D = Vector2D { x: 0.0, y: 1.0 };
 
+fn vec2(x: f64, y: f64) -> Vector2D {
+    Vector2D { x, y }
+}
+
 impl Vector2D {
     fn magnitude(self) -> f64 {
         let x = self.x;
@@ -94,7 +98,7 @@ impl<'a> Sum<&'a Self> for Vector2D {
 
 #[cfg(test)]
 mod tests {
-    use crate::Vector2D;
+    use crate::{vec2, Vector2D};
     #[test]
     fn test_default() {
         let v = Vector2D::default();
@@ -105,6 +109,12 @@ mod tests {
         let v1 = Vector2D { x: 3.0, y: 4.0 };
         let v2 = Vector2D { x: 3.0, y: 4.0 };
         assert_eq!(v1, v2);
+    }
+    #[test]
+    fn test_vec2() {
+        let expect = Vector2D { x: 3.0, y: 4.0 };
+        let result = vec2(3.0, 4.0);
+        assert_eq!(result, expect);
     }
     #[test]
     fn test_magnitude() {
