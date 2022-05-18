@@ -27,6 +27,11 @@
 (define I-HAT (vec2 1 0))
 (define J-HAT (vec2 0 1))
 
+;; EPSILON
+;; The maximum allowable difference in precision between two floating-point vector coordinates.
+
+(define EPSILON 0.000001)
+
 ;; (flip vec2) -> vec2
 ;; Inverts the signs of the vector components.
 ;; (flip (vec2 3 4)) -> (vec2 -3 -4)
