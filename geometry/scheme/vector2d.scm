@@ -7,6 +7,11 @@
 (define (hypotenuse x y)
   (sqrt (+ (sqr x) (sqr y))))
 
+;; EPSILON
+;; The maximum allowable difference in precision between two floating-point vector coordinates.
+
+(define EPSILON 0.000001)
+
 ;; (vec2 number number) -> vector
 ;; Returns two-dimensional coordinates as a number vector.
 ;; (vec2 3 4) -> #(3 4)
