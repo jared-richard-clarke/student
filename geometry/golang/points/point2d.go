@@ -5,6 +5,9 @@ import (
 	"math"
 )
 
+// The maximum allowable difference in precision between two floating-point vector coordinates.
+const Epsilon = 0.000001
+
 type Point struct {
 	X, Y float64
 }
