@@ -18,6 +18,11 @@
 
 (define ORIGIN (point 0 0))
 
+;; EPSILON
+;; The maximum allowable difference in precision between two floating-point coordinates.
+
+(define EPSILON 0.000001)
+
 ;; (negate point) -> point
 ;; Inverts the signs of the point components.
 ;; (negate (point 3 4)) -> (point -3 -4)
