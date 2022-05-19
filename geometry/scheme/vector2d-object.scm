@@ -36,7 +36,7 @@
 ;; Inverts the signs of the vector components.
 ;; (flip (vec2 3 4)) -> (vec2 -3 -4)
 
-(define (flip vec)
+(define (negate vec)
   (let* ([p (vec 'point)]
          [x (vector-ref p 0)]
          [y (vector-ref p 1)])
@@ -112,6 +112,8 @@
 
 (define vec-gt? (compare >))
 (define vec-lt? (compare <))
+(define vec-ge? (compare >=))
+(define vec-le? (compare <=))
 (define vec-eq? (compare =))
 
 ;; (approximate function) -> (function vec2) -> vec2
@@ -149,7 +151,7 @@
 
 ;; === unit tests ===
 
-(assert-equal ((flip (vec2 3 4)) 'point)
+(assert-equal ((negate (vec2 3 4)) 'point)
               #(-3 -4))
 
 (assert-equal ((add (vec2 1 2) (vec2 3 4) (vec2 2 1)) 'point)
@@ -169,6 +171,14 @@
 
 (assert-equal (vec-lt? (vec2 3 4) (vec2 1 2))
               #f)
+
+(assert-equal (and (vec-ge? (vec2 3 4) (vec2 3 4))
+                   (vec-ge? (vec2 3 4) (vec2 1 2)))
+              #t)
+
+(assert-equal (and (vec-le? (vec2 3 4) (vec2 3 4))
+                   (vec-le? (vec2 1 2) (vec2 3 4)))
+              #t)
 
 (assert-equal (vec-eq? (vec2 3 4) (vec2 3 4))
               #t)
