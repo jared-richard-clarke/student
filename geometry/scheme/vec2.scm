@@ -93,7 +93,7 @@
 ;; (compare operator) -> (function vec2...) -> boolean
 ;; Generates functions for sequentially comparing the magnitudes of a list of two-dimensional vectors.
 ;; Comparisons are applied left to right.
-;; (define gt? (compare >)) -> (gt? (vec2 3 4) (vec2 1 2)) -> #t
+;; (define vec2-gt? (compare >)) -> (vec2-gt? (vec2 3 4) (vec2 1 2)) -> #t
 
 (define (compare operator)
   (lambda vecs
@@ -102,11 +102,11 @@
 
 ;; vec2 comparison functions
 
-(define gt? (compare >))
-(define lt? (compare <))
-(define ge? (compare >=))
-(define le? (compare <=))
-(define eq? (compare =))
+(define vec2-gt? (compare >))
+(define vec2-lt? (compare <))
+(define vec2-ge? (compare >=))
+(define vec2-le? (compare <=))
+(define vec2-eq? (compare =))
 
 ;; (approximate function) -> (function vec2) -> vec2
 ;; Generates approximation functions for simplifying vector components.
@@ -118,9 +118,9 @@
           [y (vector-ref vec 1)])
       (vec2 (operation x) (operation y)))))
 
-(define vec-round (approximate round))
-(define vec-ceil (approximate ceiling))
-(define vec-floor (approximate floor))
+(define vec2-round (approximate round))
+(define vec2-ceil (approximate ceiling))
+(define vec2-floor (approximate floor))
 
 ;; === testing ===
 
@@ -166,28 +166,28 @@
 (assert-equal (magnitude (vec2 3 4))
               5)
 
-(assert-equal (gt? (vec2 3 4) (vec2 1 2))
+(assert-equal (vec2-gt? (vec2 3 4) (vec2 1 2))
               #t)
 
-(assert-equal (lt? (vec2 3 4) (vec2 1 2))
+(assert-equal (vec2-lt? (vec2 3 4) (vec2 1 2))
               #f)
 
-(assert-equal (and (ge? (vec2 3 4) (vec2 3 4))
-                   (ge? (vec2 3 4) (vec2 1 2)))
+(assert-equal (and (vec2-ge? (vec2 3 4) (vec2 3 4))
+                   (vec2-ge? (vec2 3 4) (vec2 1 2)))
               #t)
 
-(assert-equal (and (le? (vec2 3 4) (vec2 3 4))
-                   (le? (vec2 1 2) (vec2 3 4)))
+(assert-equal (and (vec2-le? (vec2 3 4) (vec2 3 4))
+                   (vec2-le? (vec2 1 2) (vec2 3 4)))
               #t)
 
-(assert-equal (eq? (vec2 3 4) (vec2 3 4))
+(assert-equal (vec2-eq? (vec2 3 4) (vec2 3 4))
               #t)
 
-(assert-equal (vec-round (vec2 1.3 1.7))
+(assert-equal (vec2-round (vec2 1.3 1.7))
               #(1.0 2.0))
 
-(assert-equal (vec-ceil (vec2 1.3 1.7))
+(assert-equal (vec2-ceil (vec2 1.3 1.7))
               #(2.0 2.0))
 
-(assert-equal (vec-floor (vec2 1.3 1.7))
+(assert-equal (vec2-floor (vec2 1.3 1.7))
               #(1.0 1.0))
