@@ -1,8 +1,8 @@
 import math
 
 """
-A functional implementation of a two-dimensional vector
-and associated functions and constants.
+A functional implementation of a two-dimensional vector,
+associated functions, and constants.
 """
 
 # vec2(number, number) -> tuple(number, number)
