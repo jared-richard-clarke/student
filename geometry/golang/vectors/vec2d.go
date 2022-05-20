@@ -10,9 +10,6 @@ type Vector2d struct {
 	X, Y float64
 }
 
-// The maximum allowable difference in precision between two floating-point vector coordinates.
-const Epsilon = 0.000001
-
 // Ihat, Jhat
 // Mutually orthogonal unit vectors, forming the standard basis.
 var (
