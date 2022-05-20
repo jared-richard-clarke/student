@@ -13,12 +13,12 @@ func TestStringer(t *testing.T) {
 	}
 }
 
-func TestFlip(t *testing.T) {
+func TestNegate(t *testing.T) {
 	v := Vector2d{3.0, 4.0}
 	expect := Vector2d{-3.0, -4.0}
-	result := v.Flip()
+	result := v.Negate()
 	if expect != result {
-		t.Errorf("Test Flip failed. Expected: %v, Got %v", expect, result)
+		t.Errorf("Test Negate failed. Expected: %v, Got %v", expect, result)
 	}
 }
 
