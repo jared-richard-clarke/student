@@ -8,9 +8,17 @@
   (sqrt (+ (sqr x) (sqr y))))
 
 ;; EPSILON
-;; The maximum allowable difference in precision between two floating-point vector coordinates.
+;; The maximum allowable difference in precision between floating-point numbers.
 
 (define EPSILON 0.000001)
+
+;; (approx-eq? number number) -> boolean
+;; Tests for approximate equality between two floating-point numbers within an absolute
+;; or relative tolerance of EPSILON. An absolute tolerance is used for values
+;; less than or equal to 1.0. A relative tolerance is used for larger values.
+
+(define (approx-eq? x y)
+  (<= (abs (- x y)) EPSILON * (max 1.0 (abs x) (abs y))))
 
 ;; (vec2 number number) -> vector
 ;; Returns two-dimensional coordinates as a number vector.
