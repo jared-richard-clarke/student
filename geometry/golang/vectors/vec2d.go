@@ -25,7 +25,7 @@ func (v Vector2d) String() string {
 }
 
 // Inverts the signs of the vector components.
-func (v Vector2d) Flip() Vector2d {
+func (v Vector2d) Negate() Vector2d {
 	x := v.X
 	y := v.Y
 	return Vector2d{-x, -y}
