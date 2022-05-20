@@ -20,7 +20,10 @@
 
 (define (approx-eq? x y)
   (<= (abs (- x y))
-      (* EPSILON (max 1.0 (abs x) (abs y)))))
+      (* EPSILON 
+         (max 1.0 
+              (abs x) 
+              (abs y)))))
 
 ;; (vec2 number number) -> vector
 ;; Returns two-dimensional coordinates as a number vector.
