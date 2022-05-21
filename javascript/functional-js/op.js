@@ -14,7 +14,7 @@ function operator(operation, base) {
 const op = Object.create(null);
 
 op.add = operator((x, y) => x + y, 0);
-op.sub = operator((x, y) => x - y, 0)
+op.sub = operator((x, y) => x - y, 0);
 op.mul = operator((x, y) => x * y, 1);
 op.div = operator((x, y) => x / y, 1);
 
