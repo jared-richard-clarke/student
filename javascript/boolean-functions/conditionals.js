@@ -23,9 +23,13 @@ const conditionals = (function () {
     }
     // or(...expressions) -> boolean
     function or(...expressions) {
-        return expressions.some(function (value) {
-            return lookup.has(value) ? lookup.get(value) : value;
-        });
+        if (expressions.length === 0) {
+            return false;
+        } else {
+            return expressions.some(function (value) {
+                return lookup.has(value) ? lookup.get(value) : value;
+            });
+        }
     }
     // not(expression) -> boolean
     function not(value) {
