@@ -10,64 +10,64 @@
                0
                numbers)))
 
-;; (point number number) -> vector
-;; Constructs a two-dimensional point represented as a vector.
-;; (point 1 2) -> #(1 2)
+;; (point2 number number) -> vector
+;; Constructs a two-dimensional point implemented as a vector.
+;; (point2 1 2) -> #(1 2)
 
-(define (point x y)
+(define (point2 x y)
   (vector x y))
 
 ;; ORIGIN: point of origin.
 
-(define ORIGIN (point 0 0))
+(define ORIGIN (point2 0 0))
 
 ;; EPSILON
 ;; The maximum allowable difference in precision between two floating-point coordinates.
 
 (define EPSILON 0.000001)
 
-;; (segment pair pair) -> number
+;; (point2-segment pair pair) -> number
 ;; Calculates the distance between two points.
-;; (segment (point 3 0) (point 2 0)) -> 1
+;; (point2-segment (point2 3 0) (point2 2 0)) -> 1
 
-(define (segment p1 p2)
+(define (point2-segment p1 p2)
   (let ([x1 (vector-ref p1 0)]
         [y1 (vector-ref p1 1)]
         [x2 (vector-ref p2 0)]
         [y2 (vector-ref p2 1)])
     (hypotenuse (- x2 x1) (- y2 y1))))
 
-;; (path points) -> list
+;; (point2-path points) -> list
 ;; Returns a list of points.
-;; (path (point 1 2) (point 3 4)) -> '(#(1 2) #(3 4))
+;; (point2-path (point2 1 2) (point2 3 4)) -> '(#(1 2) #(3 4))
 
-(define (path . points) points)
+(define (point2-path . points) points)
 
-;; (path-length path) -> number
+;; (point2-path-length path) -> number
 ;; Computes the length of a path.
-;; (path-length (path (point 1 1) (point 5 1) (point 5 4) (point 1 1))) -> 12
+;; (point2-path-length (point2-path (point2 1 1) (point2 5 1) (point2 5 4) (point2 1 1))) -> 12
 
-(define (path-length path)
+(define (point2-path-length path)
   (let loop ([sum 0]
              [pth path])
     (if (<= (length pth) 1)
         sum
-        (loop (+ sum (segment (car pth) (cadr pth)))
+        (loop (+ sum (point2-segment (car pth) (cadr pth)))
               (cdr pth)))))
 
 ;; (approximate function) -> (function point) -> point
-;; Generates approximation functions for simplifying point components.
-;; (define point-round (approximate round)) -> (point-round (point 1.3 1.7)) -> #(1.0 2.0)
+;; Generates approximation functions for rounding point components.
+;; (define point2-round (approximate round)) -> (point2-round (point2 1.3 1.7)) -> #(1.0 2.0)
 
 (define (approximate operation)
   (lambda (pt)
     (let ([x (vector-ref pt 0)]
           [y (vector-ref pt 1)])
-      (point (operation x) (operation y)))))
+      (point2 (operation x) (operation y)))))
 
-(define point-round (approximate round))
-(define point-ceiling (approximate ceiling))
-(define point-floor (approximate floor))
+(define point2-round (approximate round))
+(define point2-ceil (approximate ceiling))
+(define point2-floor (approximate floor))
 
 ;; === testing ===
 
@@ -92,23 +92,23 @@
 (assert-equal (hypotenuse 3 4)
               5)
 
-(assert-equal (point 1 2)
+(assert-equal (point2 1 2)
               #(1 2))
 
-(assert-equal (segment (point 3 0) (point 2 0))
+(assert-equal (point2-segment (point2 3 0) (point2 2 0))
               1)
 
-(assert-equal (path (point 1 2) (point 3 4))
+(assert-equal (point2-path (point2 1 2) (point2 3 4))
               '(#(1 2) #(3 4)))
 
-(assert-equal (path-length (path (point 1 1) (point 5 1) (point 5 4) (point 1 1)))
+(assert-equal (point2-path-length (point2-path (point2 1 1) (point2 5 1) (point2 5 4) (point2 1 1)))
               12)
 
-(assert-equal (point-round (point 1.3 1.7))
+(assert-equal (point2-round (point2 1.3 1.7))
               #(1.0 2.0))
 
-(assert-equal (point-ceiling (point 1.3 1.7))
+(assert-equal (point2-ceil (point2 1.3 1.7))
               #(2.0 2.0))
 
-(assert-equal (point-floor (point 1.3 1.7))
+(assert-equal (point2-floor (point2 1.3 1.7))
               #(1.0 1.0))
