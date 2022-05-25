@@ -113,9 +113,13 @@
 ;; (define vec-gt? (compare >)) -> (vec-gt? (vec2 3 4) (vec2 1 2)) -> #t
 
 (define (compare operator)
-  (lambda vecs
-    (apply operator
-           (map (lambda (v) (v 'magnitude)) vecs))))
+  (lambda (v1 v2)
+    (let ([x1 (v1 'x)]
+          [y1 (v1 'y)]
+          [x2 (v2 'x)]
+          [y2 (v2 'y)])
+      (and (operator x1 x2)
+           (operator y1 y2)))))
 
 ;; vec2 comparison functions
 
