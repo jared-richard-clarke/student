@@ -60,16 +60,6 @@ func TestDotProduct(t *testing.T) {
 	}
 }
 
-func TestCrossProduct(t *testing.T) {
-	v1 := Vector2d{3.0, 4.0}
-	v2 := Vector2d{1.0, 2.0}
-	expect := 2.0
-	result := v1.Cross(v2)
-	if expect != result {
-		t.Errorf("Test Cross Product failed. Expected: %.2f, Got: %.2f", expect, result)
-	}
-}
-
 func TestRound(t *testing.T) {
 	v := Vector2d{0.75, 4.25}
 	expect := Vector2d{1.0, 4.0}
