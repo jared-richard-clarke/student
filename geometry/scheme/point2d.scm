@@ -23,15 +23,6 @@
 
 (define EPSILON 0.000001)
 
-;; (negate point) -> point
-;; Inverts the signs of the point components.
-;; (negate (point 3 4)) -> (point -3 -4)
-
-(define (negate pt)
-  (let ([x (vector-ref pt 0)]
-        [y (vector-ref pt 1)])
-    (point (* x -1) (* y -1))))
-
 ;; (segment pair pair) -> number
 ;; Calculates the distance between two points.
 ;; (segment (point 3 0) (point 2 0)) -> 1
@@ -100,9 +91,6 @@
 
 (assert-equal (point 1 2)
               #(1 2))
-
-(assert-equal (negate (point 3 4))
-              #(-3 -4))
 
 (assert-equal (segment (point 3 0) (point 2 0))
               1)
