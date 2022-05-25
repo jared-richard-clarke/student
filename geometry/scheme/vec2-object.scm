@@ -21,7 +21,7 @@
 
 (define (vec2 x y)
   ;; === properties ===
-  (let* ([px x]
+  (let ([px x]
          [py y]
          [point (vector x y)]
          [type 'vec2]
