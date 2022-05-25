@@ -13,6 +13,8 @@
 ;; (vec2 number number) -> vec2
 ;; Creates two-dimensional vector object implemented as a function. Captures values within its closure.
 ;; (define v (vec2 3 4))
+;; (v 'x) -> 3
+;; (v 'y) -> 4
 ;; (v 'point) -> #(3 4)
 ;; (v 'type) -> 'vec2
 ;; (v 'magnitude) -> 5
@@ -26,7 +28,9 @@
          [magnitude (hypotenuse x y)])
     ;; === interface ===
     (lambda (message)
-      (cond [(eq? message 'point) point]
+      (cond [(eq? message 'x) px]
+            [(eq? message 'y) py]
+            [(eq? message 'point) point]
             [(eq? message 'type) type]
             [(eq? message 'magnitude) magnitude]
             [else (error "invalid input:" message)]))))
@@ -47,9 +51,8 @@
 ;; (vec2-flip (vec2 3 4)) -> (vec2 -3 -4)
 
 (define (vec2-flip vec)
-  (let* ([p (vec 'point)]
-         [x (vector-ref p 0)]
-         [y (vector-ref p 1)])
+  (let ([x (vec 'x)]
+        [y (vec 'y)])
     (vec2 (* x -1) (* y -1))))
 
 ;; (vec2-add vec2 vec2) -> vec2
@@ -76,9 +79,8 @@
 ;; (vec2-scale (vec2 3 4) 2) -> (vec2 'point) -> #(6 8)
 
 (define (vec2-scale vec scalar)
-  (let* ([p (vec 'point)]
-         [x (vector-ref p 0)]
-         [y (vector-ref p 1)])
+  (let ([x (vec 'x)]
+        [y (vec 'y)])
     (vec2 (* x scalar) (* y scalar))))
 
 ;; (vec2-dot vec2 vec2) -> number
@@ -86,12 +88,10 @@
 ;; (vec2-dot (vec2 1 2) (vec2 3 4)) -> 11
 
 (define (vec2-dot v1 v2)
-  (let* ([p1 (v1 'point)]
-         [p2 (v2 'point)]
-         [x1 (vector-ref p1 0)]
-         [y1 (vector-ref p1 1)]
-         [x2 (vector-ref p2 0)]
-         [y2 (vector-ref p2 1)])
+  (let* ([x1 (v1 'x)]
+         [y1 (v1 'y)]
+         [x2 (v2 'x)]
+         [y2 (v2 'y)])
     (+ (* x1 x2) (* y1 y2))))
 
 ;; (vec2-distance vec2 vec2) -> number
@@ -99,12 +99,10 @@
 ;; (vec2-distance (vec2 8 0) (vec2 1 0)) -> 7
 
 (define (vec2-distance v1 v2)
-  (let* ([p1 (v1 'point)]
-         [p2 (v2 'point)]
-         [x1 (vector-ref p1 0)]
-         [y1 (vector-ref p1 1)]
-         [x2 (vector-ref p2 0)]
-         [y2 (vector-ref p2 1)])
+  (let ([x1 (v1 'x)]
+        [y1 (v1 'y)]
+        [x2 (v2 'x)]
+        [y2 (v2 'y)])
     (hypotenuse (- x2 x1) (- y2 y1))))
 
 ;; (compare operator) -> function
@@ -130,9 +128,8 @@
 
 (define (approximate operation)
   (lambda (vec)
-    (let* ([pt (vec 'point)]
-           [x (vector-ref pt 0)]
-           [y (vector-ref pt 1)])
+    (let ([x (vec 'x)]
+          [y (vec 'y)])
       (vec2 (operation x) (operation y)))))
 
 (define vec2-round (approximate round))
