@@ -76,7 +76,7 @@
     (vec2 (* scalar x) (* scalar y))))
 
 ;; (vec2-dot vec2 vec2) -> number
-;; Returns the dot product of two two-dimensional vectors.
+;; Returns the dot product of two, two-dimensional vectors.
 ;; (vec2-dot (vec2 1 2) (vec2 3 4)) -> 11
 
 (define (vec2-dot v1 v2)
@@ -117,14 +117,18 @@
     (vec2 (/ x m) (/ y m))))
 
 ;; (compare operator) -> (function vec2...) -> boolean
-;; Generates functions for sequentially comparing the magnitudes of a list of two-dimensional vectors.
+;; Generates functions for comparing the components of two, two-dimensional vectors.
 ;; Comparisons are applied left to right.
 ;; (define vec2-gt? (compare >)) -> (vec2-gt? (vec2 3 4) (vec2 1 2)) -> #t
 
 (define (compare operator)
-  (lambda vecs
-    (apply operator
-           (map vec2-magnitude vecs))))
+  (lambda (v1 v2)
+    (let ([x1 (vector-ref v1 0)]
+          [y1 (vector-ref v1 1)]
+          [x2 (vector-ref v2 0)]
+          [y2 (vector-ref v2 1)])
+    (and (operator x1 x2)
+         (operator y1 y2)))))
 
 ;; vec2 comparison functions
 
