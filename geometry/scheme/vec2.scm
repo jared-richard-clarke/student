@@ -50,9 +50,9 @@
         [y (vector-ref vec 1)])
     (vec2 (* x -1) (* y -1))))
 
-;; (add vec2 ...) -> vec2
-;; Computes the sum of a series of vectors.
-;; (add (vec2 1 2) (vec2 1 2)) -> #(2 4)
+;; (vec2-add vec2 ...) -> vec2
+;; Returns the sum of a series of vectors.
+;; (vec2-add (vec2 1 2) (vec2 1 2)) -> #(2 4)
 
 (define (vec2-add . vecs)
   (if (= (length vecs) 1)
@@ -66,18 +66,18 @@
              #(0 0)
              vecs)))
 
-;; (scale vec2 number) -> vec2
+;; (vec2-scale vec2 number) -> vec2
 ;; Returns a vector multiplied by a number.
-;; (scale (vec2 1 2) 2) -> #(2 4)
+;; (vec2-scale (vec2 1 2) 2) -> #(2 4)
 
 (define (vec2-scale vec scalar)
   (let ([x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
     (vec2 (* scalar x) (* scalar y))))
 
-;; (dot vec2 vec2) -> number
-;; Computes the dot product of two two-dimensional vectors.
-;; (dot (vec2 1 2) (vec2 3 4)) -> 11
+;; (vec2-dot vec2 vec2) -> number
+;; Returns the dot product of two two-dimensional vectors.
+;; (vec2-dot (vec2 1 2) (vec2 3 4)) -> 11
 
 (define (vec2-dot v1 v2)
   (let ([x1 (vector-ref v1 0)]
@@ -86,14 +86,25 @@
         [y2 (vector-ref v2 1)])
     (+ (* x1 x2) (* y1 y2))))
 
-;; (magnitude vec2) -> number
+;; (vec2-magnitude vec2) -> number
 ;; Returns the magnitude of a two-dimensional vector.
-;; (magnitude (vec2 3 4)) -> 5
+;; (vec2-magnitude (vec2 3 4)) -> 5
 
 (define (vec2-magnitude vec)
   (let ([x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
     (hypotenuse x y)))
+
+;; (vec2-distance vec2 vec2) -> number
+;; Returns the distance between two, two-dimensional vectors.
+;; (vec2-distance (vec2 8 0) (vec2 1 0)) -> 7
+
+(define (vec2-distance v1 v2)
+  (let ([x1 (vector-ref v1 0)]
+        [y1 (vector-ref v1 1)]
+        [x2 (vector-ref v2 0)]
+        [y2 (vector-ref v2 1)])
+    (hypotenuse (- x2 x1) (- y2 y1))))
 
 ;; (compare operator) -> (function vec2...) -> boolean
 ;; Generates functions for sequentially comparing the magnitudes of a list of two-dimensional vectors.
@@ -122,6 +133,8 @@
     (let ([x (vector-ref vec 0)]
           [y (vector-ref vec 1)])
       (vec2 (operation x) (operation y)))))
+
+;; vec2 rounding functions
 
 (define vec2-round (approximate round))
 (define vec2-ceil (approximate ceiling))
@@ -167,6 +180,9 @@
 
 (assert-equal (vec2-magnitude (vec2 3 4))
               5)
+
+(assert-equal (vec2-distance (vec2 8 0) (vec2 1 0))
+              7)
 
 (assert-equal (vec2-gt? (vec2 3 4) (vec2 1 2))
               #t)
