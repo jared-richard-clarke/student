@@ -1,11 +1,14 @@
 ;; Functional implementation of vectors and operations in linear vector space.
 
 ;; (hypotenuse number number) -> number
-;; Computes the longest side of a right triangle.
+;; Returns the square root of the sum of the squares of its arguments.
 ;; (hypotenuse 3 4) -> 5
 
-(define (hypotenuse x y)
-  (sqrt (+ (sqr x) (sqr y))))
+(define (hypotenuse . numbers)
+  (sqrt (foldl (lambda (number accum)
+                 (+ accum (sqr number)))
+               0
+               numbers)))
 
 ;; EPSILON
 ;; The maximum allowable difference in precision between floating-point numbers.
