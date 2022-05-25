@@ -109,7 +109,8 @@
     (hypotenuse (- x2 x1) (- y2 y1))))
 
 ;; (compare operator) -> function
-;; Generates functions for sequentially comparing the magnitudes of a list of two-dimensional vectors.
+;; Generates functions for comparing the components of two, two-dimensional vectors.
+;; Comparisons are applied left to right.
 ;; (define vec-gt? (compare >)) -> (vec-gt? (vec2 3 4) (vec2 1 2)) -> #t
 
 (define (compare operator)
@@ -130,7 +131,7 @@
 (define vec2-eq? (compare =))
 
 ;; (approximate function) -> (function vec2) -> vec2
-;; Generates approximation functions for simplifying vector components.
+;; Generates approximation functions for rounding vector components.
 ;; (define vec2-round (approximate round)) -> ((vec2-round (vec2 1.3 1.7)) 'point) -> '(1.0 . 2.0)
 
 (define (approximate operation)
