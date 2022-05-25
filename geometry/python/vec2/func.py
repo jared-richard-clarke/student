@@ -18,6 +18,14 @@ def vec2(x, y):
 IHAT = vec2(1, 0)
 JHAT = vec2(0, 1)
 
+# flip(tuple(number, number)) -> tuple(number, number)
+# Inverts the signs of the vector components. Flips the vector 180 degrees.
+# flip(vec2(3, 4)) -> vec2(-3, -4)
+
+def flip(vec):
+    x, y = vec
+    return vec2(-1 * x, -1 * y)
+
 # magnitude(tuple(number, number)) -> number
 # Computes the magnitude of a two-dimensional vector.
 # magnitude(vec2(3, 4)) -> 5.0
@@ -79,7 +87,7 @@ eq = compare(lambda x, y: x == y)
 gt = compare(lambda x, y: x > y)
 lt = compare(lambda x, y: x < y)
 
-# approximate(function) -> function(vec2) -> vec2
+# approximate(function) -> function(tuple(number, number)) -> tuple(number, number)
 # Constructs approximation functions for simplifying vector components.
 # rnd = approximate(round) -> rnd(vec2(1.3, 1.7)) -> (1.0, 2.0)
 
