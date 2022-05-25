@@ -84,19 +84,6 @@
          [y2 (vector-ref p2 1)])
     (+ (* x1 x2) (* y1 y2))))
 
-;; (cross vec2 vec2) -> number
-;; Computes the cross product of two 2d-vectors.
-;; (cross (vec2 1 2) (vec2 3 4)) -> -2
-
-(define (cross v1 v2)
-  (let* ([p1 (v1 'point)]
-         [p2 (v2 'point)]
-         [x1 (vector-ref p1 0)]
-         [y1 (vector-ref p1 1)]
-         [x2 (vector-ref p2 0)]
-         [y2 (vector-ref p2 1)])
-    (- (* x1 y2) (* y1 x2))))
-
 ;; (compare operator) -> function
 ;; Generates functions for sequentially comparing the magnitudes of a list of two-dimensional vectors.
 ;; (define vec-gt? (compare >)) -> (vec-gt? (vec2 3 4) (vec2 1 2)) -> #t
@@ -160,9 +147,6 @@
 
 (assert-equal (dot (vec2 1 2) (vec2 3 4))
               11)
-
-(assert-equal (cross (vec2 1 2) (vec2 3 4))
-              -2)
 
 (assert-equal (vec2-gt? (vec2 3 4) (vec2 1 2))
               #t)
