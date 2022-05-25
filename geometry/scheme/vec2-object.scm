@@ -1,5 +1,15 @@
 ;; Object implementation of vectors and operations in linear vector space.
 
+;; (hypotenuse number number) -> number
+;; Returns the square root of the sum of the squares of its arguments.
+;; (hypotenuse 3 4) -> 5
+
+(define (hypotenuse . numbers)
+  (sqrt (foldl (lambda (number accum)
+                 (+ accum (sqr number)))
+               0
+               numbers)))
+
 ;; (vec2 number number) -> vec2
 ;; Creates two-dimensional vector object implemented as a function. Captures values within its closure.
 ;; (define v (vec2 3 4))
@@ -13,7 +23,7 @@
          [py y]
          [point (vector x y)]
          [type 'vec2]
-         [magnitude (sqrt (+ (sqr px) (sqr py)))])
+         [magnitude (hypotenuse x y)])
     ;; === interface ===
     (lambda (message)
       (cond [(eq? message 'point) point]
@@ -32,21 +42,21 @@
 
 (define EPSILON 0.000001)
 
-;; (flip vec2) -> vec2
+;; (vec2-flip vec2) -> vec2
 ;; Inverts the signs of the vector components. Flips vector 180 degrees.
-;; (flip (vec2 3 4)) -> (vec2 -3 -4)
+;; (vec2-flip (vec2 3 4)) -> (vec2 -3 -4)
 
-(define (flip vec)
+(define (vec2-flip vec)
   (let* ([p (vec 'point)]
          [x (vector-ref p 0)]
          [y (vector-ref p 1)])
     (vec2 (* x -1) (* y -1))))
 
-;; (add vec2 vec2) -> vec2
+;; (vec2-add vec2 vec2) -> vec2
 ;; Returns a two-dimensional vector that is the sum of a series of two-dimensionsal vectors.
-;; (add (vec2 1 2) (vec2 3 4) (vec2 2 1)) -> (vec2 'point) -> #(6 7)
+;; (vec2-add (vec2 1 2) (vec2 3 4) (vec2 2 1)) -> (vec2 'point) -> #(6 7)
 
-(define (add . vecs)
+(define (vec2-add . vecs)
   (if (< (length vecs) 2)
       (car vecs)
       ;; To prevent memory consumption, add processes vec2s as a series of vectors,
@@ -61,21 +71,21 @@
                         (map (lambda (v) (v 'point)) vecs))])
         (vec2 (vector-ref sum 0) (vector-ref sum 1)))))
 
-;; (scale vec2 number) -> vec2
+;; (vec2-scale vec2 number) -> vec2
 ;; Returns a scaled two-dimensional vector that is the product of a two-dimensional vector and a number.
-;; (scale (vec2 3 4) 2) -> (vec2 'point) -> #(6 8)
+;; (vec2-scale (vec2 3 4) 2) -> (vec2 'point) -> #(6 8)
 
-(define (scale vec scalar)
+(define (vec2-scale vec scalar)
   (let* ([p (vec 'point)]
          [x (vector-ref p 0)]
          [y (vector-ref p 1)])
     (vec2 (* x scalar) (* y scalar))))
 
-;; (dot vec2 vec2) -> number
+;; (vec2-dot vec2 vec2) -> number
 ;; Computes the dot product of two two-dimensional vectors.
-;; (dot (vec2 1 2) (vec2 3 4)) -> 11
+;; (vec2-dot (vec2 1 2) (vec2 3 4)) -> 11
 
-(define (dot v1 v2)
+(define (vec2-dot v1 v2)
   (let* ([p1 (v1 'point)]
          [p2 (v2 'point)]
          [x1 (vector-ref p1 0)]
@@ -83,6 +93,19 @@
          [x2 (vector-ref p2 0)]
          [y2 (vector-ref p2 1)])
     (+ (* x1 x2) (* y1 y2))))
+
+;; (vec2-distance vec2 vec2) -> number
+;; Returns the distance between two, two-dimensional vectors.
+;; (vec2-distance (vec2 8 0) (vec2 1 0)) -> 7
+
+(define (vec2-distance v1 v2)
+  (let* ([p1 (v1 'point)]
+         [p2 (v2 'point)]
+         [x1 (vector-ref p1 0)]
+         [y1 (vector-ref p1 1)]
+         [x2 (vector-ref p2 0)]
+         [y2 (vector-ref p2 1)])
+    (hypotenuse (- x2 x1) (- y2 y1))))
 
 ;; (compare operator) -> function
 ;; Generates functions for sequentially comparing the magnitudes of a list of two-dimensional vectors.
@@ -136,17 +159,20 @@
 
 ;; === unit tests ===
 
-(assert-equal ((flip (vec2 3 4)) 'point)
+(assert-equal ((vec2-flip (vec2 3 4)) 'point)
               #(-3 -4))
 
-(assert-equal ((add (vec2 1 2) (vec2 3 4) (vec2 2 1)) 'point)
+(assert-equal ((vec2-add (vec2 1 2) (vec2 3 4) (vec2 2 1)) 'point)
               #(6 7))
 
-(assert-equal ((scale (vec2 3 4) 2) 'point)
+(assert-equal ((vec2-scale (vec2 3 4) 2) 'point)
               #(6 8))
 
-(assert-equal (dot (vec2 1 2) (vec2 3 4))
+(assert-equal (vec2-dot (vec2 1 2) (vec2 3 4))
               11)
+
+(assert-equal (vec2-distance (vec2 8 0) (vec2 1 0))
+              7)
 
 (assert-equal (vec2-gt? (vec2 3 4) (vec2 1 2))
               #t)
