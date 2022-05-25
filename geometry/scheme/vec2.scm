@@ -107,7 +107,7 @@
     (hypotenuse (- x2 x1) (- y2 y1))))
 
 ;; (vec2-normalize vec2) -> vec2
-;; Returns the unit vector of a two-dimensional vector. Divide components by magnitude
+;; Returns the unit vector of a two-dimensional vector.
 ;; (vec2-normalize (vec2 3 4)) -> #(3/5 4/5)
 
 (define (vec2-normalize vec)
