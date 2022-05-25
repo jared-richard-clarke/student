@@ -63,15 +63,6 @@ def dot(v1, v2):
     x2, y2 = v2
     return (x1 * x2) + (y1 * y2)
 
-# cross(tuple(number, number), tuple(number, number)) -> number
-# Computes the cross product of two, two-dimensional vectors.
-# cross(vec2(1, 2), vec2(3, 4)) -> -2
-
-def cross(v1, v2):
-    x1, y1 = v1
-    x2, y2 = v2
-    return (x1 * y2) - (y1 * x2)
-
 # compare(function) -> function(tuple(number, number), tuple(number, number)) -> boolean
 # Constructs comparison functions that operates on the magnitudes of two-dimensional vectors.
 # eq = compare(lambda x, y: x == y) -> eq(vec2(3, 4), vec2(3, 4)) -> True
