@@ -1,11 +1,14 @@
 ;; Implementation of two-dimensional points and point operations.
 
 ;; (hypotenuse number number) -> number
-;; Computes the longest side of a right triangle.
+;; Returns the square root of the sum of the squares of its arguments.
 ;; (hypotenuse 3 4) -> 5
 
-(define (hypotenuse x y)
-  (sqrt (+ (sqr x) (sqr y))))
+(define (hypotenuse . numbers)
+  (sqrt (foldl (lambda (number accum)
+                 (+ accum (sqr number)))
+               0
+               numbers)))
 
 ;; (point number number) -> vector
 ;; Constructs a two-dimensional point represented as a vector.
