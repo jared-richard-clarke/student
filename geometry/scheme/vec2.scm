@@ -83,17 +83,6 @@
         [y2 (vector-ref v2 1)])
     (+ (* x1 x2) (* y1 y2))))
 
-;; (cross vec2 vec2) -> number
-;; Computes the cross product of two two-dimensional vectors.
-;; (cross (vec2 1 2) (vec2 3 4)) -> -2
-
-(define (cross v1 v2)
-  (let ([x1 (vector-ref v1 0)]
-        [y1 (vector-ref v1 1)]
-        [x2 (vector-ref v2 0)]
-        [y2 (vector-ref v2 1)])
-    (- (* x1 y2) (* y1 x2))))
-
 ;; (magnitude vec2) -> number
 ;; Returns the magnitude of a two-dimensional vector.
 ;; (magnitude (vec2 3 4)) -> 5
@@ -172,9 +161,6 @@
 
 (assert-equal (dot (vec2 1 2) (vec2 3 4))
               11)
-
-(assert-equal (cross (vec2 1 2) (vec2 3 4))
-              -2)
 
 (assert-equal (magnitude (vec2 3 4))
               5)
