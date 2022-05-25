@@ -41,9 +41,9 @@
 (define I-HAT (vec2 1 0))
 (define J-HAT (vec2 0 1))
 
-;; (flip vec2) -> vec2
+;; (vec2-flip vec2) -> vec2
 ;; Inverts the signs of the vector components. Flips the vector 180 degrees.
-;; (flip (vec2 3 4)) -> (vec2 -3 -4)
+;; (vec2-flip (vec2 3 4)) -> (vec2 -3 -4)
 
 (define (vec2-flip vec)
   (let ([x (vector-ref vec 0)]
@@ -105,6 +105,16 @@
         [x2 (vector-ref v2 0)]
         [y2 (vector-ref v2 1)])
     (hypotenuse (- x2 x1) (- y2 y1))))
+
+;; (vec2-normalize vec2) -> vec2
+;; Returns the unit vector of a two-dimensional vector. Divide components by magnitude
+;; (vec2-normalize (vec2 3 4)) -> #(3/5 4/5)
+
+(define (vec2-normalize vec)
+  (let ([m (vec2-magnitude vec)]
+        [x (vector-ref vec 0)]
+        [y (vector-ref vec 1)])
+    (vec2 (/ x m) (/ y m))))
 
 ;; (compare operator) -> (function vec2...) -> boolean
 ;; Generates functions for sequentially comparing the magnitudes of a list of two-dimensional vectors.
@@ -183,6 +193,14 @@
 
 (assert-equal (vec2-distance (vec2 8 0) (vec2 1 0))
               7)
+
+;; rational division
+(assert-equal (vec2-normalize (vec2 3 4))
+              #(3/5 4/5))
+
+;; float division
+(assert-equal (vec2-normalize (vec2 3.0 4.0))
+              #(0.6 0.8))
 
 (assert-equal (vec2-gt? (vec2 3 4) (vec2 1 2))
               #t)
