@@ -45,7 +45,7 @@
 ;; Inverts the signs of the vector components. Flips the vector 180 degrees.
 ;; (flip (vec2 3 4)) -> (vec2 -3 -4)
 
-(define (flip vec)
+(define (vec2-flip vec)
   (let ([x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
     (vec2 (* x -1) (* y -1))))
@@ -54,7 +54,7 @@
 ;; Computes the sum of a series of vectors.
 ;; (add (vec2 1 2) (vec2 1 2)) -> #(2 4)
 
-(define (add . vecs)
+(define (vec2-add . vecs)
   (if (= (length vecs) 1)
       (car vecs)
       (foldl (lambda (v1 v2)
@@ -70,7 +70,7 @@
 ;; Returns a vector multiplied by a number.
 ;; (scale (vec2 1 2) 2) -> #(2 4)
 
-(define (scale vec scalar)
+(define (vec2-scale vec scalar)
   (let ([x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
     (vec2 (* scalar x) (* scalar y))))
@@ -79,7 +79,7 @@
 ;; Computes the dot product of two two-dimensional vectors.
 ;; (dot (vec2 1 2) (vec2 3 4)) -> 11
 
-(define (dot v1 v2)
+(define (vec2-dot v1 v2)
   (let ([x1 (vector-ref v1 0)]
         [y1 (vector-ref v1 1)]
         [x2 (vector-ref v2 0)]
@@ -90,7 +90,7 @@
 ;; Returns the magnitude of a two-dimensional vector.
 ;; (magnitude (vec2 3 4)) -> 5
 
-(define (magnitude vec)
+(define (vec2-magnitude vec)
   (let ([x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
     (hypotenuse x y)))
@@ -103,7 +103,7 @@
 (define (compare operator)
   (lambda vecs
     (apply operator
-           (map magnitude vecs))))
+           (map vec2-magnitude vecs))))
 
 ;; vec2 comparison functions
 
@@ -153,19 +153,19 @@
 (assert-equal (vec2 3 4)
               #(3 4))
 
-(assert-equal (flip (vec2 -3 -4))
+(assert-equal (vec2-flip (vec2 -3 -4))
               #(3 4))
 
-(assert-equal (add (vec2 1 2) (vec2 1 2))
+(assert-equal (vec2-add (vec2 1 2) (vec2 1 2))
               #(2 4))
 
-(assert-equal (scale (vec2 1 2) 2)
+(assert-equal (vec2-scale (vec2 1 2) 2)
               #(2 4))
 
-(assert-equal (dot (vec2 1 2) (vec2 3 4))
+(assert-equal (vec2-dot (vec2 1 2) (vec2 3 4))
               11)
 
-(assert-equal (magnitude (vec2 3 4))
+(assert-equal (vec2-magnitude (vec2 3 4))
               5)
 
 (assert-equal (vec2-gt? (vec2 3 4) (vec2 1 2))
