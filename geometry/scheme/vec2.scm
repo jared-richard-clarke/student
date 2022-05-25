@@ -139,7 +139,7 @@
 (define vec2-eq? (compare =))
 
 ;; (approximate function) -> (function vec2) -> vec2
-;; Generates approximation functions for simplifying vector components.
+;; Generates approximation functions for rounding vector components.
 ;; (define vec2-round (approximate round)) -> (vec2-round (vec2 1.3 1.7)) -> #(1.0 2.0)
 
 (define (approximate operation)
