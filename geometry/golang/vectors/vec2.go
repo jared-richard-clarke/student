@@ -67,15 +67,6 @@ func (v1 Vector2d) Dot(v2 Vector2d) float64 {
 	return x1*x2 + y1*y2
 }
 
-// Computes the cross product of two 2d-vectors.
-func (v1 Vector2d) Cross(v2 Vector2d) float64 {
-	x1 := v1.X
-	y1 := v1.Y
-	x2 := v2.X
-	y2 := v2.Y
-	return x1*y2 - y1*x2
-}
-
 // Outputs a vector with the rounded components of the receiver vector.
 func (v Vector2d) Round() Vector2d {
 	x := math.Round(v.X)
