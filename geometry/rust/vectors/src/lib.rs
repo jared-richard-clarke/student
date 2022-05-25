@@ -48,14 +48,6 @@ impl Vector2D {
         let y2 = other.y;
         x1 * x2 + y1 * y2
     }
-    // Cross product.
-    fn cross(self, other: Self) -> f64 {
-        let x1 = self.x;
-        let y1 = self.y;
-        let x2 = other.x;
-        let y2 = other.y;
-        x1 * y2 - y1 * x2
-    }
 
     fn flip(self) -> Self {
         Self {
@@ -141,13 +133,6 @@ mod tests {
         let v2 = Vector2D { x: 3.0, y: 4.0 };
         let result = v1.dot(v2);
         assert_eq!(result, 11.0);
-    }
-    #[test]
-    fn test_cross() {
-        let v1 = Vector2D { x: 1.0, y: 2.0 };
-        let v2 = Vector2D { x: 3.0, y: 4.0 };
-        let result = v1.cross(v2);
-        assert_eq!(result, -2.0);
     }
     #[test]
     fn test_flip() {
