@@ -24,8 +24,8 @@ func (v Vector2d) String() string {
 	return fmt.Sprintf("vec(%.2f, %.2f)", x, y)
 }
 
-// Inverts the signs of the vector components.
-func (v Vector2d) Negate() Vector2d {
+// Inverts the signs of the vector components. Rotates vector 180 degrees.
+func (v Vector2d) Flip() Vector2d {
 	x := v.X
 	y := v.Y
 	return Vector2d{-x, -y}
