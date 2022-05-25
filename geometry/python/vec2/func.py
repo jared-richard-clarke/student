@@ -55,7 +55,7 @@ def add(*vecs):
     return sum
 
 # dot(tuple(number, number), tuple(number, number)) -> number
-# Computes the dot product of two, two-dimensional vectors
+# Returns the dot product of two, two-dimensional vectors
 # dot(vec2(1, 2), vec2(3, 4)) -> 11
 
 def dot(v1, v2):
@@ -63,23 +63,35 @@ def dot(v1, v2):
     x2, y2 = v2
     return (x1 * x2) + (y1 * y2)
 
+# normalize(tuple(number, number), tuple(number, number)) -> tuple(number, number)
+# Returns the unit vector of a two-dimensional vector.
+# normalize(3, 4) -> (0.6, 0.8)
+
+def normalize(vec):
+    mag = magnitude(vec)
+    x, y = vec
+    return vec2(x / mag, y / mag)
+
 # compare(function) -> function(tuple(number, number), tuple(number, number)) -> boolean
-# Constructs comparison functions that operates on the magnitudes of two-dimensional vectors.
+# Generates functions for comparing the components of two, two-dimensional vectors.
+# Comparisons are applied left to right.
 # eq = compare(lambda x, y: x == y) -> eq(vec2(3, 4), vec2(3, 4)) -> True
 
 def compare(operation):
     def comparison(v1, v2):
-        m1 = magnitude(v1.x, v1.y)
-        m2 = magnitude(v2.x, v2.y)
-        return operation(m1, m2)
+        x1, y1 = v1
+        x2, y2 = v2
+        return operation(x1, x2) and operation(y1, y2)
     return comparison
 
 eq = compare(lambda x, y: x == y)
 gt = compare(lambda x, y: x > y)
+ge = compare(lambda x, y: x >= y)
 lt = compare(lambda x, y: x < y)
+le = compare(lambda x, y: x <= y)
 
 # approximate(function) -> function(tuple(number, number)) -> tuple(number, number)
-# Constructs approximation functions for simplifying vector components.
+# Constructs approximation functions for rounding vector components to integers.
 # rnd = approximate(round) -> rnd(vec2(1.3, 1.7)) -> (1.0, 2.0)
 
 def approximate(operation): 
@@ -89,5 +101,5 @@ def approximate(operation):
     return approximater
 
 rnd = approximate(round)
-clg = approximate(math.ceil)
-flr = approximate(math.floor)
+ceiling = approximate(math.ceil)
+floor = approximate(math.floor)
