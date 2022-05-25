@@ -18,14 +18,16 @@
 ;; (v 'point) -> #(3 4)
 ;; (v 'type) -> 'vec2
 ;; (v 'magnitude) -> 5
+;; (v 'unit) -> #(3/5 4/5)
 
 (define (vec2 x y)
   ;; === properties ===
-  (let ([px x]
+  (let* ([px x]
          [py y]
          [point (vector x y)]
          [type 'vec2]
-         [magnitude (hypotenuse x y)])
+         [magnitude (hypotenuse x y)]
+         [unit (vector (/ x magnitude) (/ y magnitude))])
     ;; === interface ===
     (lambda (message)
       (cond [(eq? message 'x) px]
@@ -33,6 +35,7 @@
             [(eq? message 'point) point]
             [(eq? message 'type) type]
             [(eq? message 'magnitude) magnitude]
+            [(eq? message 'unit) unit]
             [else (error "invalid input:" message)]))))
 
 ;; I-HAT, J-HAT
@@ -155,6 +158,8 @@
                  computed-expr)))]))
 
 ;; === unit tests ===
+(assert-equal ((vec2 3 4) 'unit)
+              #(3/5 4/5))
 
 (assert-equal ((vec2-flip (vec2 3 4)) 'point)
               #(-3 -4))
