@@ -52,15 +52,6 @@ class Vector2D:
         x2, y2 = vec.point
         return (x1 * x2) + (y1 * y2)
 
-    # Vector2D.cross(Vector2D) -> number
-    # Returns a number that is the cross product of two, two-dimensional vectors.
-    # Vector2D(1, 2).cross(Vector2D(3, 4)) -> -2
-
-    def cross(self, vec):
-        x1, y1 = self.point
-        x2, y2 = vec.point
-        return (x1 * y2) - (y1 * x2)
-
     # Vector2D.round() -> Vector2D
     # Returns a two-dimensional vector with coordinate components rounded.
     # Vector2D(3.2, 4.7).round().point -> (3.0, 5.0)
