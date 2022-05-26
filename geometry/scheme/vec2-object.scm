@@ -49,15 +49,6 @@
 
 (define EPSILON 0.000001)
 
-;; (vec2-flip vec2) -> vec2
-;; Inverts the signs of the vector components. Flips vector 180 degrees.
-;; (vec2-flip (vec2 3 4)) -> (vec2 -3 -4)
-
-(define (vec2-flip vec)
-  (let ([x (vec 'x)]
-        [y (vec 'y)])
-    (vec2 (* x -1) (* y -1))))
-
 ;; (vec2-add vec2 vec2) -> vec2
 ;; Returns a two-dimensional vector that is the sum of a series of two-dimensionsal vectors.
 ;; (vec2-add (vec2 1 2) (vec2 3 4) (vec2 2 1)) -> (vec2 'point) -> #(6 7)
@@ -76,6 +67,15 @@
                         #(0 0)
                         (map (lambda (v) (v 'point)) vecs))])
         (vec2 (vector-ref sum 0) (vector-ref sum 1)))))
+
+;; (vec2-flip vec2) -> vec2
+;; Inverts the signs of the vector components. Flips vector 180 degrees.
+;; (vec2-flip (vec2 3 4)) -> (vec2 -3 -4)
+
+(define (vec2-flip vec)
+  (let ([x (vec 'x)]
+        [y (vec 'y)])
+    (vec2 (* x -1) (* y -1))))
 
 ;; (vec2-scale vec2 number) -> vec2
 ;; Returns a scaled two-dimensional vector that is the product of a two-dimensional vector and a number.
@@ -157,11 +157,11 @@
 (assert-equal ((vec2 3 4) 'unit)
               #(3/5 4/5))
 
-(assert-equal ((vec2-flip (vec2 3 4)) 'point)
-              #(-3 -4))
-
 (assert-equal ((vec2-add (vec2 1 2) (vec2 3 4) (vec2 2 1)) 'point)
               #(6 7))
+
+(assert-equal ((vec2-flip (vec2 3 4)) 'point)
+              #(-3 -4))
 
 (assert-equal ((vec2-scale (vec2 3 4) 2) 'point)
               #(6 8))
