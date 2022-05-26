@@ -52,6 +52,24 @@ class Vector2D:
         x2, y2 = vec.point
         return (x1 * x2) + (y1 * y2)
 
+    # Vector2D.normalize() -> Vector2D
+    # Returns the unit vector of a two-dimensional vector.
+    # Vector2D(3, 4).normalize() -> Vector2D(0.6, 0.8)
+
+    def normalize(self):
+        x, y = self.point
+        mag = self.magnitude
+        return Vector2D(x / mag, y / mag)
+
+    # Vector2D.distance(Vector2D) -> number
+    # Returns the distance between two, two-dimensional vectors.
+    # Vector2D(8, 0).distance(Vector2D(1, 0)) -> 7.0
+
+    def distance(self, vec):
+        x1, y1 = self.point
+        x2, y2 = vec.point
+        return math.hypot(x2 - x1, y2 - y1)
+
     # Vector2D.round() -> Vector2D
     # Returns a two-dimensional vector with coordinate components rounded.
     # Vector2D(3.2, 4.7).round().point -> (3.0, 5.0)
