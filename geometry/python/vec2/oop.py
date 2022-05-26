@@ -77,26 +77,15 @@ class Vector2D:
     def round(self):
         return Vector2D(round(self.x), round(self.y))
 
-    # Vector2D.eq(Vector2D) -> boolean
-    # Checks whether the magnitudes of two vectors are equal.
-    # Vector2D(3, 4).eq(Vector2D(3, 4)) -> True
+    # Vector2D.equal(Vector2D) -> boolean
+    # Compares the components of two, two-dimensional vectors. Checks for equality.
+    # Comparisons are applied left to right.
+    # Vector2D(3, 4).equal(Vector2D(3, 4)) -> True
 
-    def eq(self, vec):
-        return self.magnitude == vec.magnitude
-
-    # Vector2D.gt(Vector2D) -> boolean
-    # Checks whether the magnitude of vector one is greater than the magnitude of vector two.
-    # Vector2D(3, 4).gt(Vector2D(1, 2)) -> True
-
-    def gt(self, vec):
-        return self.magnitude > vec.magnitude
-
-    # Vector2D.lt(Vector2D) -> boolean
-    # Checks whether the magnitude of vector one is less than the magnitude of vector two.
-    # Vector2D(1, 2).lt(Vector2D(3, 4)) -> True
-    
-    def lt(self, vec):
-        return self.magnitude < vec.magnitude
+    def equal(self, vec):
+        x1, y1 = self.point
+        x2, y2 = vec.point
+        return x1 == x2 and y1 == y2
 
 # IHAT, JHAT
 # Mutually orthogonal two-dimensional unit vectors, forming the standard basis.
