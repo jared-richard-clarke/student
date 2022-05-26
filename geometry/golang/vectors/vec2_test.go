@@ -60,6 +60,35 @@ func TestDotProduct(t *testing.T) {
 	}
 }
 
+func TestDistance(t *testing.T) {
+	v1 := Vector2d{8.0, 0.0}
+	v2 := Vector2d{1.0, 0.0}
+	expect := 7.0
+	result := v1.Distance(v2)
+	if expect != result {
+		t.Errorf("Test Distance failed. Expected: %v, Got: %v", expect, result)
+	}
+}
+
+func TestNormalize(t *testing.T) {
+	v := Vector2d{3.0, 4.0}
+	expect := Vector2d{0.6, 0.8}
+	result := v.Normalize()
+	if expect != result {
+		t.Errorf("Test Normalize failed. Expected: %v, Got: %v", expect, result)
+	}
+}
+
+func TestApproxEq(t *testing.T) {
+	v1 := Vector2d{3.2, 4.0}
+	v2 := Vector2d{3.19999999989, 4.0}
+	expect := true
+	result := v1.ApproxEq(v2)
+	if expect != result {
+		t.Errorf("Test ApproxEq failed. Expected: %v, Got: %v", expect, result)
+	}
+}
+
 func TestRound(t *testing.T) {
 	v := Vector2d{0.75, 4.25}
 	expect := Vector2d{1.0, 4.0}
