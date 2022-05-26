@@ -108,27 +108,18 @@
         [y2 (v2 'y)])
     (hypotenuse (- x2 x1) (- y2 y1))))
 
-;; (compare operator) -> function
-;; Generates functions for comparing the components of two, two-dimensional vectors.
+;; (vec2-equal? vec2 vec2) -> boolean
+;; Compares the components of two, two-dimensional vectors. Checks for equality.
 ;; Comparisons are applied left to right.
-;; (define vec-gt? (compare >)) -> (vec-gt? (vec2 3 4) (vec2 1 2)) -> #t
+;; (vec2-equal? (vec2 3 4) (vec2 1 2)) -> #t
 
-(define (compare operator)
-  (lambda (v1 v2)
-    (let ([x1 (v1 'x)]
-          [y1 (v1 'y)]
-          [x2 (v2 'x)]
-          [y2 (v2 'y)])
-      (and (operator x1 x2)
-           (operator y1 y2)))))
-
-;; vec2 comparison functions
-
-(define vec2-gt? (compare >))
-(define vec2-lt? (compare <))
-(define vec2-ge? (compare >=))
-(define vec2-le? (compare <=))
-(define vec2-eq? (compare =))
+(define (vec2-equal? v1 v2)
+  (let ([x1 (v1 'x)]
+        [y1 (v1 'y)]
+        [x2 (v2 'x)]
+        [y2 (v2 'y)])
+    (and (= x1 x2)
+         (= y1 y2))))
 
 ;; (approximate function) -> (function vec2) -> vec2
 ;; Generates approximation functions for rounding vector components.
@@ -181,21 +172,7 @@
 (assert-equal (vec2-distance (vec2 8 0) (vec2 1 0))
               7)
 
-(assert-equal (vec2-gt? (vec2 3 4) (vec2 1 2))
-              #t)
-
-(assert-equal (vec2-lt? (vec2 3 4) (vec2 1 2))
-              #f)
-
-(assert-equal (and (vec2-ge? (vec2 3 4) (vec2 3 4))
-                   (vec2-ge? (vec2 3 4) (vec2 1 2)))
-              #t)
-
-(assert-equal (and (vec2-le? (vec2 3 4) (vec2 3 4))
-                   (vec2-le? (vec2 1 2) (vec2 3 4)))
-              #t)
-
-(assert-equal (vec2-eq? (vec2 3 4) (vec2 3 4))
+(assert-equal (vec2-equal? (vec2 3 4) (vec2 3 4))
               #t)
 
 (assert-equal ((vec2-round (vec2 1.3 1.7)) 'point)
