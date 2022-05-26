@@ -41,15 +41,6 @@
 (define I-HAT (vec2 1 0))
 (define J-HAT (vec2 0 1))
 
-;; (vec2-flip vec2) -> vec2
-;; Inverts the signs of the vector components. Flips the vector 180 degrees.
-;; (vec2-flip (vec2 3 4)) -> (vec2 -3 -4)
-
-(define (vec2-flip vec)
-  (let ([x (vector-ref vec 0)]
-        [y (vector-ref vec 1)])
-    (vec2 (* x -1) (* y -1))))
-
 ;; (vec2-add vec2 ...) -> vec2
 ;; Returns the sum of a series of vectors.
 ;; (vec2-add (vec2 1 2) (vec2 1 2)) -> #(2 4)
@@ -65,6 +56,15 @@
                  (vec2 (+ x1 x2) (+ y1 y2))))
              #(0 0)
              vecs)))
+
+;; (vec2-flip vec2) -> vec2
+;; Inverts the signs of the vector components. Flips the vector 180 degrees.
+;; (vec2-flip (vec2 3 4)) -> (vec2 -3 -4)
+
+(define (vec2-flip vec)
+  (let ([x (vector-ref vec 0)]
+        [y (vector-ref vec 1)])
+    (vec2 (* x -1) (* y -1))))
 
 ;; (vec2-scale vec2 number) -> vec2
 ;; Returns a vector multiplied by a number.
@@ -86,6 +86,16 @@
         [y2 (vector-ref v2 1)])
     (+ (* x1 x2) (* y1 y2))))
 
+;; (vec2-normalize vec2) -> vec2
+;; Returns the unit vector of a two-dimensional vector.
+;; (vec2-normalize (vec2 3 4)) -> #(3/5 4/5)
+
+(define (vec2-normalize vec)
+  (let ([m (vec2-magnitude vec)]
+        [x (vector-ref vec 0)]
+        [y (vector-ref vec 1)])
+    (vec2 (/ x m) (/ y m))))
+
 ;; (vec2-magnitude vec2) -> number
 ;; Returns the magnitude of a two-dimensional vector.
 ;; (vec2-magnitude (vec2 3 4)) -> 5
@@ -106,26 +116,16 @@
         [y2 (vector-ref v2 1)])
     (hypotenuse (- x2 x1) (- y2 y1))))
 
-;; (vec2-normalize vec2) -> vec2
-;; Returns the unit vector of a two-dimensional vector.
-;; (vec2-normalize (vec2 3 4)) -> #(3/5 4/5)
-
-(define (vec2-normalize vec)
-  (let ([m (vec2-magnitude vec)]
-        [x (vector-ref vec 0)]
-        [y (vector-ref vec 1)])
-    (vec2 (/ x m) (/ y m))))
-
 ;; (vec2-equal? vec2 vec2) -> boolean
 ;; Compares the components of two, two-dimensional vectors. Checks for equality.
 ;; Comparisons are applied left to right.
 ;; (vec2-equal? (vec2 3 4) (vec2 1 2)) -> #t
 
 (define (vec2-equal? v1 v2)
-    (let ([x1 (vector-ref v1 0)]
-          [y1 (vector-ref v1 1)]
-          [x2 (vector-ref v2 0)]
-          [y2 (vector-ref v2 1)])
+  (let ([x1 (vector-ref v1 0)]
+        [y1 (vector-ref v1 1)]
+        [x2 (vector-ref v2 0)]
+        [y2 (vector-ref v2 1)])
     (and (= x1 x2)
          (= y1 y2))))
 
@@ -172,23 +172,17 @@
 (assert-equal (vec2 3 4)
               #(3 4))
 
-(assert-equal (vec2-flip (vec2 -3 -4))
-              #(3 4))
-
 (assert-equal (vec2-add (vec2 1 2) (vec2 1 2))
               #(2 4))
+
+(assert-equal (vec2-flip (vec2 -3 -4))
+              #(3 4))
 
 (assert-equal (vec2-scale (vec2 1 2) 2)
               #(2 4))
 
 (assert-equal (vec2-dot (vec2 1 2) (vec2 3 4))
               11)
-
-(assert-equal (vec2-magnitude (vec2 3 4))
-              5)
-
-(assert-equal (vec2-distance (vec2 8 0) (vec2 1 0))
-              7)
 
 ;; rational division
 (assert-equal (vec2-normalize (vec2 3 4))
@@ -197,6 +191,12 @@
 ;; float division
 (assert-equal (vec2-normalize (vec2 3.0 4.0))
               #(0.6 0.8))
+
+(assert-equal (vec2-magnitude (vec2 3 4))
+              5)
+
+(assert-equal (vec2-distance (vec2 8 0) (vec2 1 0))
+              7)
 
 (assert-equal (vec2-equal? (vec2 3 4) (vec2 3 4))
               #t)
