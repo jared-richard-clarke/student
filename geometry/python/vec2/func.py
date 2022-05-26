@@ -81,23 +81,15 @@ def normalize(vec):
     x, y = vec
     return vec2(x / mag, y / mag)
 
-# compare(function) -> function(tuple(number, number), tuple(number, number)) -> boolean
-# Generates functions for comparing the components of two, two-dimensional vectors.
+# equal(tuple(number, number), tuple(number, number)) -> boolean
+# Compares the components of two, two-dimensional vectors. Checks for equality.
 # Comparisons are applied left to right.
-# eq = compare(lambda x, y: x == y) -> eq(vec2(3, 4), vec2(3, 4)) -> True
+# equal(vec2(3, 4), vec2(3, 4)) -> True
 
-def compare(operation):
-    def comparison(v1, v2):
-        x1, y1 = v1
-        x2, y2 = v2
-        return operation(x1, x2) and operation(y1, y2)
-    return comparison
-
-eq = compare(lambda x, y: x == y)
-gt = compare(lambda x, y: x > y)
-ge = compare(lambda x, y: x >= y)
-lt = compare(lambda x, y: x < y)
-le = compare(lambda x, y: x <= y)
+def equal(v1, v2):
+    x1, y1 = v1
+    x2, y2 = v2
+    return x1 == x2 and y1 == y2
 
 # approximate(function) -> function(tuple(number, number)) -> tuple(number, number)
 # Constructs approximation functions for rounding vector components to integers.
