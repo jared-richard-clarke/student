@@ -116,27 +116,19 @@
         [y (vector-ref vec 1)])
     (vec2 (/ x m) (/ y m))))
 
-;; (compare operator) -> (function vec2...) -> boolean
-;; Generates functions for comparing the components of two, two-dimensional vectors.
+;; (vec2-equal? vec2 vec2) -> boolean
+;; Compares the components of two, two-dimensional vectors. Checks for equality.
 ;; Comparisons are applied left to right.
-;; (define vec2-gt? (compare >)) -> (vec2-gt? (vec2 3 4) (vec2 1 2)) -> #t
+;; (vec2-equal? (vec2 3 4) (vec2 1 2)) -> #t
 
-(define (compare operator)
-  (lambda (v1 v2)
+(define (vec2-equal? v1 v2)
     (let ([x1 (vector-ref v1 0)]
           [y1 (vector-ref v1 1)]
           [x2 (vector-ref v2 0)]
           [y2 (vector-ref v2 1)])
-    (and (operator x1 x2)
-         (operator y1 y2)))))
+    (and (= x1 x2)
+         (= y1 y2))))
 
-;; vec2 comparison functions
-
-(define vec2-gt? (compare >))
-(define vec2-lt? (compare <))
-(define vec2-ge? (compare >=))
-(define vec2-le? (compare <=))
-(define vec2-eq? (compare =))
 
 ;; (approximate function) -> (function vec2) -> vec2
 ;; Generates approximation functions for rounding vector components.
@@ -206,21 +198,7 @@
 (assert-equal (vec2-normalize (vec2 3.0 4.0))
               #(0.6 0.8))
 
-(assert-equal (vec2-gt? (vec2 3 4) (vec2 1 2))
-              #t)
-
-(assert-equal (vec2-lt? (vec2 3 4) (vec2 1 2))
-              #f)
-
-(assert-equal (and (vec2-ge? (vec2 3 4) (vec2 3 4))
-                   (vec2-ge? (vec2 3 4) (vec2 1 2)))
-              #t)
-
-(assert-equal (and (vec2-le? (vec2 3 4) (vec2 3 4))
-                   (vec2-le? (vec2 1 2) (vec2 3 4)))
-              #t)
-
-(assert-equal (vec2-eq? (vec2 3 4) (vec2 3 4))
+(assert-equal (vec2-equal? (vec2 3 4) (vec2 3 4))
               #t)
 
 (assert-equal (vec2-round (vec2 1.3 1.7))
