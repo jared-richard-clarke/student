@@ -34,6 +34,15 @@ def magnitude(vec):
     x, y = vec
     return math.hypot(x, y)
 
+# distance(tuple(number, number), tuple(number, number)) -> number
+# Returns the distance between two, two-dimensional vectors.
+# distance(vec2(8, 0), vec2(1, 0)) -> 7.0
+
+def distance(v1, v2):
+    x1, y1 = v1
+    x2, y2 = v2
+    return math.hypot(x2 - x1, y2 - y1)
+
 # scale(tuple(number, number), number) -> tuple(number, number)
 # Returns a scaled two-dimensional vector that is the product of a vector and a number.
 # scale(vec2(3, 4), 2) -> (6, 8)
