@@ -1,6 +1,7 @@
 package vectors
 
 import (
+	"didact/geometry/golang/utils"
 	"fmt"
 	"math"
 )
@@ -67,7 +68,35 @@ func (v1 Vector2d) Dot(v2 Vector2d) float64 {
 	return x1*x2 + y1*y2
 }
 
-// Outputs a vector with the rounded components of the receiver vector.
+// Returns the distance between two 2d-vectors.
+func (v1 Vector2d) Distance(v2 Vector2d) float64 {
+	x1 := v1.X
+	y1 := v1.Y
+	x2 := v2.X
+	y2 := v2.Y
+	return math.Hypot(x2-x1, y2-y1)
+}
+
+// Returns a unit vector of the receiver vector.
+func (v Vector2d) Normalize() Vector2d {
+	mag := v.Magnitude()
+	x := v.X
+	y := v.Y
+	return Vector2d{x / mag, y / mag}
+}
+
+// Checks whether floating-point vector components are approximately equal.
+// Comparisons made left to right.
+func (v1 Vector2d) ApproxEq(v2 Vector2d) bool {
+	x1 := v1.X
+	y1 := v1.Y
+	x2 := v2.X
+	y2 := v2.Y
+	eq := utils.ApproxEq
+	return eq(x1, x2) && eq(y1, y2)
+}
+
+// Returns a vector with the rounded components of the receiver vector.
 func (v Vector2d) Round() Vector2d {
 	x := math.Round(v.X)
 	y := math.Round(v.Y)
