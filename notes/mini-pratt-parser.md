@@ -7,8 +7,6 @@ by Aleksey Kladov
 
 ---
 
-## Lexer
-
 ```rust
 
 use std::{fmt, io::BufRead};
