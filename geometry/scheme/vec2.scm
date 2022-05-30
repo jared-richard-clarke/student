@@ -143,6 +143,18 @@
     (and (= x1 x2)
          (= y1 y2))))
 
+;; (vec2-approx-eq? (vector number number) (vector number number)) -> boolean
+;; Checks whether floating-point vector components are approximately equal.
+;; Comparisons made left to right.
+;; (vec2-approx-eq? (vec2 3.2 4.0) (vec2 3.19999999989 4.0)) -> #t
+
+(define (vec2-approx-eq? v1 v2)
+  (let ([x1 (vector-ref v1 0)]
+        [y1 (vector-ref v1 1)]
+        [x2 (vector-ref v2 0)]
+        [y2 (vector-ref v2 1)])
+    (and (approx-eq? x1 x2)
+         (approx-eq? y1 y2))))
 
 ;; (approximate function) -> (function (vector number number)) -> (vector number number)
 ;; Generates approximation functions for rounding vector components.
@@ -216,6 +228,9 @@
               7)
 
 (assert-equal (vec2-equal? (vec2 3 4) (vec2 3 4))
+              #t)
+
+(assert-equal (vec2-approx-eq? (vec2 3.2 4.0) (vec2 3.19999999989 4.0))
               #t)
 
 (assert-equal (vec2-round (vec2 1.3 1.7))
