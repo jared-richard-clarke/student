@@ -102,5 +102,5 @@ def approximate(operation):
     return approximater
 
 rnd = approximate(round)
-ceiling = approximate(math.ceil)
+ceil = approximate(math.ceil)
 floor = approximate(math.floor)
