@@ -7,15 +7,46 @@ by Professor Graham Hutton
 
 ---
 
-## Apply Parser
+## Parser Application
 
 ```haskell
-parse (some digit) "123"                 -- > [("123", "")]
-parse (digit <|> letter) "abc123"        -- > [('a', "bc123")]
-parse (some (digit <|> letter)) "abc123" -- > [("abc123", "")]
+import Parsing
+
+-- expr   ::= term + expr | term
+-- term   ::= factor * term | factor
+-- factor ::= (expr) | int
+
+-- Parsing and Evaluation Combined
+
+expr = do x <- term
+          char '+'
+          y <- expr
+          return (x+y)
+       <|> term
+
+term = do x <- term
+          char '*'
+          y <- term
+          return (x*y)
+       <|> factor
+
+factor = do char '('
+            x <- expr
+            char ')'
+            return x
+         <|> int
+
+{-
+
+Application
+
+parse expr "2+3*4"
+[(14,"")]
+
+-} 
 ```
 
-## Define Parser
+## Parser Definition
 
 ```haskell
 -- Functional parsing library from chapter 13 of Programming in Haskell,
