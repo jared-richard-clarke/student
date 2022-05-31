@@ -43,6 +43,9 @@ Application
 parse expr "2+3*4"
 [(14,"")]
 
+parse expr "2+3*"
+[(5, "*")]
+
 -} 
 ```
 
