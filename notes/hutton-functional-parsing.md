@@ -1,9 +1,21 @@
 # Functional or Combinator Parsing
 
+30 May 2022
+
 [Functional Parsing](https://www.youtube.com/watch?v=dDtZLm7HIJs)
 by Professor Graham Hutton
 
 ---
+
+## Apply Parser
+
+```haskell
+parse (some digit) "123"                 -- > [("123", "")]
+parse (digit <|> letter) "abc123"        -- > [('a', "bc123")]
+parse (some (digit <|> letter)) "abc123" -- > [("abc123", "")]
+```
+
+## Define Parser
 
 ```haskell
 -- Functional parsing library from chapter 13 of Programming in Haskell,
