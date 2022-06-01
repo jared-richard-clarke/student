@@ -41,11 +41,35 @@
 (define I-HAT (vec2 1 0))
 (define J-HAT (vec2 0 1))
 
-;; (arithmetic function (vector number number)) -> (function (vector number number) ...) -> (vector number number)
-;; Generates functions that perform an arithmetic operation over a series of two-dimensional vectors.
-;; (define vec2-add (arithmetic + #(0 0))) -> (vec2-add (vec2 1 2) (vec2 3 4)) -> #(4 6)
+;; (arithmetic function) -> (function (vector number number) (vector number number)) -> (vector number number)
+;; Generates functions that perform an arithmetic operation over two, two-dimensional vectors.
+;; (define vec2-add (arithmetic +)) -> (vec2-add (vec2 1 2) (vec2 3 4)) -> #(4 5)
 
-(define (arithmetic operation base)
+(define (arithmetic operation)
+  (lambda (v1 v2)
+    (let ([x1 (vector-ref v1 0)]
+          [y1 (vector-ref v1 1)]
+          [x2 (vector-ref v2 0)]
+          [y2 (vector-ref v2 1)])
+      (vec2 (operation x1 x2) (operation y1 y2)))))
+
+;; (vec2-add (vector number number) (vector number number)) -> (vector number number)
+;; Returns the sum of two, two-dimensional vectors.
+;; (vec2-add (vec2 3 4) (vec2 7 11)) -> #(10 15)
+
+(define vec2-add (arithmetic +))
+
+;; (vec2-sub (vector number number) (vector number number)) -> (vector number number)
+;; Returns the difference of two, two-dimensional vectors.
+;; (vec2-sub (vec2 3 4) (vec2 7 11)) -> #(-4 -7)
+
+(define vec2-sub (arithmetic -))
+
+;; (arith-seq function (vector number number)) -> (function (vector number number) ...) -> (vector number number)
+;; Generates functions that perform an arithmetic operation over a series of two-dimensional vectors.
+;; (define vec2-sum (arith-seq + #(0 0))) -> (vec2-sum (vec2 1 2) (vec2 3 4)) -> #(4 6)
+
+(define (arith-seq operation base)
   (lambda vecs
     (cond
       [(= (length vecs) 0) base]
@@ -59,17 +83,17 @@
                    (car vecs)
                    (cdr vecs))])))
 
-;; (vec2-add (vector number number) ...) -> (vector number number)
+;; (vec2-sum (vector number number) ...) -> (vector number number)
 ;; Returns the sum of a series of vectors.
-;; (vec2-add (vec2 1 2) (vec2 1 2)) -> #(2 4)
+;; (vec2-sum (vec2 1 2) (vec2 1 2)) -> #(2 4)
 
-(define vec2-add (arithmetic + #(0 0)))
+(define vec2-sum (arith-seq + #(0 0)))
 
-;; (vec2-sub (vector number number) ...) -> (vector number number)
+;; (vec2-diff (vector number number) ...) -> (vector number number)
 ;; Returns the difference of a series of two-dimensional vectors.
-;; (vec2-sub (vec2 3 4) (vec2 1 2)) -> #(2 2)
+;; (vec2-diff (vec2 3 4) (vec2 1 2)) -> #(2 2)
 
-(define vec2-sub (arithmetic - #(0 0)))
+(define vec2-diff (arith-seq - #(0 0)))
 
 ;; (vec2-flip (vector number number)) -> (vector number number)
 ;; Inverts the signs of the vector components. Flips the vector 180 degrees.
@@ -198,10 +222,16 @@
 (assert-equal (vec2 3 4)
               #(3 4))
 
-(assert-equal (vec2-add (vec2 3 4) (vec2 1 2))
-              #(4 6))
+(assert-equal (vec2-add (vec2 3 4) (vec2 7 11))
+              #(10 15))
 
-(assert-equal (vec2-sub (vec2 3 4) (vec2 1 2))
+(assert-equal (vec2-sub (vec2 3 4) (vec2 7 11))
+              #(-4 -7))
+
+(assert-equal (vec2-sum (vec2 3 4) (vec2 1 2) (vec2 1 2))
+              #(5 8))
+
+(assert-equal (vec2-diff (vec2 3 4) (vec2 1 2))
               #(2 2))
 
 (assert-equal (vec2-flip (vec2 -3 -4))
