@@ -127,7 +127,7 @@ function tokenize(source) {
             } else if (captives[4]) {
                 let number = Number(captives[4]);
                 if (Number.isFinite(number)) {
-                    make("number", );
+                    make("number", number);
                 } else {
                     throw new TypeError(
                         "line "
