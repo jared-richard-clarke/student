@@ -3,6 +3,8 @@
 ## Table of Contents
 - `egg.js`: **Egg** is a language implemented by Marijn Haverbeke for his book *Eloquent JavaScript*. 
 I included **Egg** because of its simplicity and similarity to **LISP**.
+- `pratt-parser-crockford.md`: A pratt parser and accompanying lexer as implemented by Douglas Crockford.
+I included notes and example code, because pratt parsers are supposed to be elegant, efficient, and simple.
 
 ## Lexemes vs. Syntax
 | Terminology | Lexical Grammar | Syntactic Grammar |
