@@ -261,7 +261,7 @@ let make_parse = function () {
         }
         token = Object.create(o);
         token.line_nr  = t.line_nr;
-        token.column_nr    = t.column_nr;
+        token.column_nr = t.column_nr;
         token.value = v;
         token.arity = a;
         return token;
@@ -677,8 +677,7 @@ let make_parse = function () {
     });
 
     return function (array_of_tokens) {
-        tokens = array_of_tokens
-        ;
+        tokens = array_of_tokens;
         token_nr = 0;
         new_scope();
         advance();
