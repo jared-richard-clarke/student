@@ -7,8 +7,8 @@ by Eli Bendersky
 
 ## Fundamentals
 
-- A binding mechanism to handle precedence levels.
-- Implementing different functionality based on token position relative to neighbors. 
+- A binds tokens according to precedence.
+- Implements different functionality based on token position relative to neighbors. 
 - Associates semantic actions with tokens, not grammar.
 
 ## Parser and Tokenizer
