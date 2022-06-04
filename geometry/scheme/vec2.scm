@@ -95,11 +95,11 @@
 
 (define vec2-diff (arith-seq - #(0 0)))
 
-;; (vec2-flip (vector number number)) -> (vector number number)
+;; (vec2-negate (vector number number)) -> (vector number number)
 ;; Inverts the signs of the vector components. Flips the vector 180 degrees.
-;; (vec2-flip (vec2 3 4)) -> (vec2 -3 -4)
+;; (vec2-negate (vec2 3 4)) -> (vec2 -3 -4)
 
-(define (vec2-flip vec)
+(define (vec2-negate vec)
   (let ([x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
     (vec2 (* x -1) (* y -1))))
@@ -234,7 +234,7 @@
 (assert-equal (vec2-diff (vec2 3 4) (vec2 1 2))
               #(2 2))
 
-(assert-equal (vec2-flip (vec2 -3 -4))
+(assert-equal (vec2-negate (vec2 -3 -4))
               #(3 4))
 
 (assert-equal (vec2-scale (vec2 1 2) 2)
