@@ -11,7 +11,7 @@ by Eli Bendersky
 - Implements different functionality based on token position relative to neighbors. 
 - Associates semantic actions with tokens, not grammar.
 
-## Parser and Tokenizer
+## Parser and Lexer
 
 ```python
 
