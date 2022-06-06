@@ -1,95 +1,106 @@
 import math
 
 """
-An Object-Oriented implementation of a two-dimensional vector,
-associated methods, and constants.
+A functional implementation of a two-dimensional vector,
+associated functions, and constants.
 """
 
-# Vector2D(number, number) -> Vector2D
-# Constructs a two-dimensional vector object.
-# v = Vector2D(3, 4)
-# v.x -> 3
-# v.y -> 4
-# v.point -> (3, 4)
-# v.magnitude -> 5
+# vec2(number, number) -> tuple(number, number)
+# Constructs a two-dimensional vector implemented as a tuple.
+# vec2(3, 4) -> (3, 4)
 
-class Vector2D:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.point = (x, y)
-        self.magnitude = math.hypot(x, y)
-    
-    # Vector2D.negate() -> Vector2D
-    # Inverts the signs of the vector components. Flips the vector 180 degrees.
-    # Vector2D(3, 4).negate() -> Vector2D(-3, -4)
-    
-    def negate(self):
-        return Vector2D(-self.x, -self.y)
-    
-    # Vector2D.scale(number) -> Vector2D
-    # Returns a scaled two-dimensional vector that is the product of a vector and a number.
-    # Vector2D(3, 4).scale(2).point -> (6, 8)
-    
-    def scale(self, scalar):
-        return Vector2D(self.x * scalar, self.y * scalar)
-
-    # Vector2D.add(Vector2D) -> Vector2D
-    # Returns a two-dimensional vector that is the sum of two vectors.
-    # Vector2D(1, 2).add(Vector2D(3, 4)).point -> (4, 6)
-
-    def add(self, vec):
-        x1, y1 = self.point
-        x2, y2 = vec.point
-        return Vector2D(x1 + x2, y1 + y2)
-
-    # Vector2D.dot(Vector2D) -> number
-    # Returns a number that is the dot product of two, two-dimensional vectors.
-    # Vector2D(1, 2).dot(Vector2D(3, 4)) -> 11
-
-    def dot(self, vec):
-        x1, y1 = self.point
-        x2, y2 = vec.point
-        return (x1 * x2) + (y1 * y2)
-
-    # Vector2D.normalize() -> Vector2D
-    # Returns the unit vector of a two-dimensional vector.
-    # Vector2D(3, 4).normalize() -> Vector2D(0.6, 0.8)
-
-    def normalize(self):
-        x, y = self.point
-        mag = self.magnitude
-        return Vector2D(x / mag, y / mag)
-
-    # Vector2D.distance(Vector2D) -> number
-    # Returns the distance between two, two-dimensional vectors.
-    # Vector2D(8, 0).distance(Vector2D(1, 0)) -> 7.0
-
-    def distance(self, vec):
-        x1, y1 = self.point
-        x2, y2 = vec.point
-        return math.hypot(x2 - x1, y2 - y1)
-
-    # Vector2D.round() -> Vector2D
-    # Returns a two-dimensional vector with coordinate components rounded.
-    # Vector2D(3.2, 4.7).round().point -> (3.0, 5.0)
-
-    def round(self):
-        return Vector2D(round(self.x), round(self.y))
-
-    # Vector2D.equal(Vector2D) -> boolean
-    # Compares the components of two, two-dimensional vectors. Checks for equality.
-    # Comparisons are applied left to right.
-    # Vector2D(3, 4).equal(Vector2D(3, 4)) -> True
-
-    def equal(self, vec):
-        x1, y1 = self.point
-        x2, y2 = vec.point
-        return x1 == x2 and y1 == y2
+def vec2(x, y):
+    return (x, y)
 
 # IHAT, JHAT
 # Mutually orthogonal two-dimensional unit vectors, forming the standard basis.
 
-IHAT = Vector2D(1, 0)
-JHAT = Vector2D(0, 1)
+IHAT = vec2(1, 0)
+JHAT = vec2(0, 1)
 
+# add(*tuple(number, number)) -> tuple(number, number)
+# Returns a two-dimensional vector that is the sum of a series of two-dimensional vectors.
+# add(vec2(1, 2), vec2(3, 4), vec2(0, 2)) -> (4, 8)
+
+def add(*vecs):
+    sum = (0, 0)
+    for vec in vecs:
+        x1, y1 = sum
+        x2, y2 = vec
+        sum = (x1 + x2, y1 + y2)
+    return sum
+
+# negate(tuple(number, number)) -> tuple(number, number)
+# Inverts the signs of the vector components. Flips the vector 180 degrees.
+# negate(vec2(3, 4)) -> vec2(-3, -4)
+
+def negate(vec):
+    x, y = vec
+    return vec2(-x, -y)
+
+# scale(tuple(number, number), number) -> tuple(number, number)
+# Returns a scaled two-dimensional vector that is the product of a vector and a number.
+# scale(vec2(3, 4), 2) -> (6, 8)
+
+def scale(vec, scalar):
+    x, y = vec
+    return vec2(x * scalar, y * scalar)
+
+# dot(tuple(number, number), tuple(number, number)) -> number
+# Returns the dot product of two, two-dimensional vectors
+# dot(vec2(1, 2), vec2(3, 4)) -> 11
+
+def dot(v1, v2):
+    x1, y1 = v1
+    x2, y2 = v2
+    return (x1 * x2) + (y1 * y2)
+
+# normalize(tuple(number, number), tuple(number, number)) -> tuple(number, number)
+# Returns the unit vector of a two-dimensional vector.
+# normalize(3, 4) -> (0.6, 0.8)
+
+def normalize(vec):
+    mag = magnitude(vec)
+    x, y = vec
+    return vec2(x / mag, y / mag)
+
+# magnitude(tuple(number, number)) -> number
+# Computes the magnitude of a two-dimensional vector.
+# magnitude(vec2(3, 4)) -> 5.0
+
+def magnitude(vec):
+    x, y = vec
+    return math.hypot(x, y)
+
+# distance(tuple(number, number), tuple(number, number)) -> number
+# Returns the distance between two, two-dimensional vectors.
+# distance(vec2(8, 0), vec2(1, 0)) -> 7.0
+
+def distance(v1, v2):
+    x1, y1 = v1
+    x2, y2 = v2
+    return math.hypot(x2 - x1, y2 - y1)
+
+# equal(tuple(number, number), tuple(number, number)) -> boolean
+# Compares the components of two, two-dimensional vectors. Checks for equality.
+# Comparisons are applied left to right.
+# equal(vec2(3, 4), vec2(3, 4)) -> True
+
+def equal(v1, v2):
+    x1, y1 = v1
+    x2, y2 = v2
+    return x1 == x2 and y1 == y2
+
+# approximate(function) -> function(tuple(number, number)) -> tuple(number, number)
+# Constructs approximation functions for rounding vector components to integers.
+# rnd = approximate(round) -> rnd(vec2(1.3, 1.7)) -> (1.0, 2.0)
+
+def approximate(operation): 
+    def approximater(vec):
+        x, y = vec
+        return vec2(operation(x), operation(y))
+    return approximater
+
+rnd = approximate(round)
+ceil = approximate(math.ceil)
+floor = approximate(math.floor)
