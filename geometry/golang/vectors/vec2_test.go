@@ -4,19 +4,41 @@ import (
 	"testing"
 )
 
+func TestVec2(t *testing.T) {
+	expect := Vector2d{3.0, 4.0}
+	result := Vec2(3.0, 4.0)
+	if expect != result {
+		t.Errorf("Test Vec2 failed. Expected: %v, Got: %v", expect, result)
+	}
+}
 func TestStringer(t *testing.T) {
 	v := Vector2d{3.0, 4.0}
 	expect := "vec(3.00, 4.00)"
 	result := v.String()
 	if expect != result {
-		t.Errorf("Test stringer failed. Expected: %q, Got: %q", expect, result)
+		t.Errorf("Test stringer failed. Expected: %v, Got: %v", expect, result)
+	}
+}
+
+func TestAdd(t *testing.T) {
+	expect := Vector2d{4.0, 6.0}
+	result := Vector2d{1.0, 2.0}.Add(Vector2d{3.0, 4.0})
+	if expect != result {
+		t.Errorf("Test Add failed. Expected: %v, Got: %v", expect, result)
+	}
+}
+
+func TestSub(t *testing.T) {
+	expect := Vector2d{2.0, 2.0}
+	result := Vector2d{3.0, 4.0}.Sub(Vector2d{1.0, 2.0})
+	if expect != result {
+		t.Errorf("Test Add failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestSum(t *testing.T) {
-	v := Vector2d{1.0, 2.0}
 	expect := Vector2d{11.0, 17.0}
-	result := v.Sum(Vector2d{3.0, 4.0}, Vector2d{7.0, 11.0})
+	result := Vector2d{1.0, 2.0}.Sum(Vector2d{3.0, 4.0}, Vector2d{7.0, 11.0})
 	if expect != result {
 		t.Errorf("Test Sum failed. Expected: %v, Got: %v", expect, result)
 	}
@@ -106,3 +128,4 @@ func TestRound(t *testing.T) {
 		t.Errorf("Test Cross Product failed. Expected: %.2f, Got: %.2f", expect, result)
 	}
 }
+
