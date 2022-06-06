@@ -11,7 +11,12 @@ type Vector2d struct {
 	X, Y float64
 }
 
-// Ihat, Jhat
+// Convenience function. Constructs a two-dimensional vector.
+func Vec2(x, y float64) Vector2d {
+	return Vector2d{x, y}
+}
+
+// Ihat and Jhat:
 // Mutually orthogonal unit vectors, forming the standard basis.
 var (
 	Ihat = Vector2d{1, 0}
@@ -25,8 +30,26 @@ func (v Vector2d) String() string {
 	return fmt.Sprintf("vec(%.2f, %.2f)", x, y)
 }
 
+// Returns a vector that is the sum of two, two-dimensional vectors.
+func (v1 Vector2d) Add(v2 Vector2d) Vector2d {
+	x1 := v1.X
+	y1 := v1.Y
+	x2 := v2.X
+	y2 := v2.Y
+	return Vector2d{x1 + x2, y1 + y2}
+}
+
+// Returns a vector that is the difference of two, two-dimensional vectors.
+func (v1 Vector2d) Sub(v2 Vector2d) Vector2d {
+	x1 := v1.X
+	y1 := v1.Y
+	x2 := v2.X
+	y2 := v2.Y
+	return Vector2d{x1 - x2, y1 - y2}
+}
+
 // Returns the sum of a series of two-dimensional vectors.
-func (v1 Vector2d) Add(vs ...Vector2d) Vector2d {
+func (v1 Vector2d) Sum(vs ...Vector2d) Vector2d {
 	accum := v1
 	for _, v := range vs {
 		x1 := accum.X
@@ -39,7 +62,7 @@ func (v1 Vector2d) Add(vs ...Vector2d) Vector2d {
 }
 
 // Returns the difference of a series of two-dimensional vectors.
-func (v1 Vector2d) Sub(vs ...Vector2d) Vector2d {
+func (v1 Vector2d) Diff(vs ...Vector2d) Vector2d {
 	accum := v1
 	for _, v := range vs {
 		x1 := accum.X
@@ -52,7 +75,7 @@ func (v1 Vector2d) Sub(vs ...Vector2d) Vector2d {
 }
 
 // Inverts the signs of the vector components. Rotates vector 180 degrees.
-func (v Vector2d) Flip() Vector2d {
+func (v Vector2d) Negate() Vector2d {
 	x := v.X
 	y := v.Y
 	return Vector2d{-x, -y}
