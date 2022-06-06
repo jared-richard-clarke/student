@@ -13,30 +13,30 @@ func TestStringer(t *testing.T) {
 	}
 }
 
-func TestAdd(t *testing.T) {
+func TestSum(t *testing.T) {
 	v := Vector2d{1.0, 2.0}
 	expect := Vector2d{11.0, 17.0}
-	result := v.Add(Vector2d{3.0, 4.0}, Vector2d{7.0, 11.0})
+	result := v.Sum(Vector2d{3.0, 4.0}, Vector2d{7.0, 11.0})
 	if expect != result {
-		t.Errorf("Test Add failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Sum failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
-func TestSub(t *testing.T) {
+func TestDiff(t *testing.T) {
 	v := Vector2d{11.0, 17.0}
 	expect := Vector2d{1.0, 2.0}
-	result := v.Sub(Vector2d{7.0, 11.0}, Vector2d{3.0, 4.0})
+	result := v.Diff(Vector2d{7.0, 11.0}, Vector2d{3.0, 4.0})
 	if expect != result {
-		t.Errorf("Test Sub failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Diff failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
-func TestFlip(t *testing.T) {
+func TestNegate(t *testing.T) {
 	v := Vector2d{3.0, 4.0}
 	expect := Vector2d{-3.0, -4.0}
-	result := v.Flip()
+	result := v.Negate()
 	if expect != result {
-		t.Errorf("Test Flip failed. Expected: %v, Got %v", expect, result)
+		t.Errorf("Test Negate failed. Expected: %v, Got %v", expect, result)
 	}
 }
 
@@ -106,4 +106,3 @@ func TestRound(t *testing.T) {
 		t.Errorf("Test Cross Product failed. Expected: %.2f, Got: %.2f", expect, result)
 	}
 }
-
