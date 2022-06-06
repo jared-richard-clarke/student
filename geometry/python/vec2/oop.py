@@ -20,12 +20,12 @@ class Vector2D:
         self.point = (x, y)
         self.magnitude = math.hypot(x, y)
     
-    # Vector2D.flip() -> Vector2D
+    # Vector2D.negate() -> Vector2D
     # Inverts the signs of the vector components. Flips the vector 180 degrees.
-    # Vector2D(3, 4).flip() -> Vector2D(-3, -4)
+    # Vector2D(3, 4).negate() -> Vector2D(-3, -4)
     
-    def flip(self):
-        return Vector2D(-1 * self.x, -1 * self.y)
+    def negate(self):
+        return Vector2D(-self.x, -self.y)
     
     # Vector2D.scale(number) -> Vector2D
     # Returns a scaled two-dimensional vector that is the product of a vector and a number.
@@ -92,3 +92,4 @@ class Vector2D:
 
 IHAT = Vector2D(1, 0)
 JHAT = Vector2D(0, 1)
+
