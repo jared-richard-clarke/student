@@ -1,9 +1,9 @@
-# compose_pipe(*functions) -> function
-# Composes a series of value functions into a single value function.
-# sums = compose_pipe(lambda x: x + 1, lambda x: x * 10)
+# compose(*functions) -> function
+# Composes a series of single-argument functions into a one function.
+# sums = compose(lambda x: x + 1, lambda x: x * 10)
 # sums(6) -> 70
 
-def compose_pipe(*actions):
+def compose(*actions):
     def reducer(input):
         accum = input
         for action in actions:
