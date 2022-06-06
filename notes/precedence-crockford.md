@@ -3,6 +3,7 @@
 6 June 2022
 
 [Top Down Operator Precedence](https://www.crockford.com/javascript/tdop/tdop.html)
+by Douglas Crockford
 
 ---
 
