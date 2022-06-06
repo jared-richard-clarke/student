@@ -7,7 +7,7 @@ by Eli Bendersky
 
 ## Fundamentals
 
-- A binds tokens according to precedence.
+- Binds tokens according to precedence.
 - Implements different functionality based on token position relative to neighbors. 
 - Associates semantic actions with tokens, not grammar.
 
@@ -33,9 +33,9 @@ def tokenize(program):
             yield operator_div_token()
         elif operator == "^":
             yield operator_pow_token()
-        elif operator == '(':
+        elif operator == "(":
             yield operator_lparen_token()
-        elif operator == ')':
+        elif operator == ")":
             yield operator_rparen_token()
         else:
             raise SyntaxError('unknown operator: %s', operator)
@@ -78,8 +78,7 @@ class operator_add_token(object):
     def nud(self):
         return expression(100)
     def led(self, left):
-        right = expression(10)
-        return left + right
+        return left + expression(10)
 
 class operator_sub_token(object):
     lbp = 10
