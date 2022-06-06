@@ -23,7 +23,7 @@ process of parsing comes down to the resolution of this ambiguity.
 `nud`, null denotation, does not care about tokens its left. It is used
 by values, such as variables, literals, and prefix operators.
 
-`led`, left denotation, cares about tokens its left. It is used by infix
+`led`, left denotation, examines tokens to its left. It is used by infix
 and suffix operators.
 
 ## Expression
