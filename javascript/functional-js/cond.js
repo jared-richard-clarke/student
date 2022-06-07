@@ -33,4 +33,3 @@ mod.not = function (value) {
 };
 // interface: import { and, or, not } from "cond.js";
 export default Object.freeze(mod);
-
