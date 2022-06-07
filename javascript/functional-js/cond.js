@@ -9,15 +9,21 @@ const lookup = new Map([
     ["", true],
     [/s+/g, true],
 ]);
+
 // mod acts as a module, namespacing "and" and "or".
+
 const mod = Object.create(null);
+
 // and(...expressions) -> boolean
+
 mod.and = function (...expressions) {
     return expressions.every(function (value) {
         return lookup.has(value) ? lookup.get(value) : value;
     });
 };
+
 // or(...expressions) -> boolean
+
 mod.or = function (...expressions) {
     if (expressions.length === 0) {
         return false;
@@ -27,9 +33,13 @@ mod.or = function (...expressions) {
         });
     }
 };
+
 // not(value) -> boolean
+
 mod.not = function (value) {
     return !(lookup.has(value) ? lookup.get(value) : value);
 };
+
 // interface: import { and, or, not } from "cond.js";
+
 export default Object.freeze(mod);
