@@ -10,7 +10,7 @@ const lookup = new Map([
     [/s+/g, true],
 ]);
 
-// mod acts as a module, namespacing "and" and "or".
+// mod acts as a module, namespacing "and", "or", and "not".
 
 const mod = Object.create(null);
 
