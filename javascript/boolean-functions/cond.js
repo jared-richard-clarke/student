@@ -1,7 +1,6 @@
-// conditonals acts as module providing functional replacements
+// cond acts as module providing functional replacements
 // for operators "&&", "||", and "!"
 // An internal lookup table intercepts and normalizes JavaScript's unusual bottom values:
-// Empty strings and numeral zero evaluate true. All others evaluate false.
 
 const cond = (function () {
     const lookup = new Map([
