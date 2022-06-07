@@ -1,5 +1,4 @@
-// cond acts as module providing functional replacements
-// for operators "&&", "||", and "!"
+// cond acts as module providing functional replacements for operators "&&", "||", and "!"
 // An internal lookup table intercepts and normalizes JavaScript's unusual bottom values:
 
 const cond = (function () {
