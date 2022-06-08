@@ -20,11 +20,9 @@ process of parsing comes down to the resolution of this ambiguity.
 
 ## NUD and LED
 
-`nud`, null denotation, does not care about tokens to its left. It is used
-by values, such as variables, literals, and prefix operators.
+`nud`, null denotation, returns the value of its token.
 
-`led`, left denotation, examines tokens to its left. It is used by infix
-and suffix operators.
+`led`, left denotation, chooses functionality according to the token left of the token it is operating on.
 
 ## Expression
 
