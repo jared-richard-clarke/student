@@ -1,6 +1,6 @@
 # Pratt Parser
 
-[Top Down Operator Precedence](http://crockford.com/javascript/tdop/tdop.html)
+[Top Down Operator Precedence](https://www.crockford.com/javascript/tdop/tdop.html)
 by Douglas Crockford
 
 ---
