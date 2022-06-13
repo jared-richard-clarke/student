@@ -27,7 +27,7 @@
             (+ (* b20 a01) (* b21 a11) (* b22 a21))
             (+ (* b20 a02) (* b21 a12) (* b22 a22)))))
 
-(define m3-identity
+(define (m3-identity)
   (vector 1 0 0
           0 1 0
           0 0 1))
