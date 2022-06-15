@@ -11,11 +11,11 @@ function operator(operation, base) {
     };
 }
 
-const mod = Object.create(null);
+const op = Object.create(null);
 
-mod.add = operator((x, y) => x + y, 0);
-mod.sub = operator((x, y) => x - y, 0);
-mod.mul = operator((x, y) => x * y, 1);
-mod.div = operator((x, y) => x / y, 1);
+op.add = operator((x, y) => x + y, 0);
+op.sub = operator((x, y) => x - y, 0);
+op.mul = operator((x, y) => x * y, 1);
+op.div = operator((x, y) => x / y, 1);
 
-export default Object.freeze(mod);
+export default Object.freeze(op);
