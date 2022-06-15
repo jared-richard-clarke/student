@@ -22,3 +22,18 @@
             (map (lambda (x) (compute x))
                  (cdr expr)))]
     [else (error "invalid expression: " expr)]))
+
+;; === examples ===
+
+(define ast-1
+  '(+ 1
+      (* 2
+         3)))
+
+(define ast-2
+  '(+ (+ 1
+         2)
+      3))
+
+(compute ast-1) ; -> 7
+(compute ast-2) ; -> 6
