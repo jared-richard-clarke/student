@@ -97,3 +97,10 @@ class Vec2:
         x1, y1 = self.point
         x2, y2 = other.point
         return x1 == x2 and y1 == y2
+
+    # Vec2(3, 4).__str__() -> string
+    # Returns a textual representation of a Vec2 object.
+    # Implements __str__.
+ 
+    def __str__(self):
+       return f"Vec2({self.x},{self.y})"
