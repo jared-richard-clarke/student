@@ -2,7 +2,7 @@ import math
 
 """
 An Object-Oriented implementation of a two-dimensional vector,
-associated methods, and constants.
+and associated methods.
 """
 
 # Vector2D(number, number) -> Vector2D
@@ -34,22 +34,33 @@ class Vector2D:
     def scale(self, scalar):
         return Vector2D(self.x * scalar, self.y * scalar)
 
-    # Vector2D.add(Vector2D) -> Vector2D
+    # Vector2D + Vector2D -> Vector2D
     # Returns a two-dimensional vector that is the sum of two vectors.
-    # Vector2D(1, 2).add(Vector2D(3, 4)).point -> (4, 6)
+    # Implements __add__.
+    # (Vector2D(1, 2) + Vector2D(3, 4)).point -> (4, 6)
 
-    def add(self, vec):
+    def __add__(self, other):
         x1, y1 = self.point
-        x2, y2 = vec.point
+        x2, y2 = other.point
         return Vector2D(x1 + x2, y1 + y2)
+
+    # Vector2D - Vector2D -> Vector2D
+    # Returns a two-dimensional vector that is the difference of two vectors.
+    # Implements __sub__.
+    # (Vector2D(3, 4) - Vector2D(1, 2)).point -> (2, 2)
+
+    def __sub__(self, other):
+        x1, y1 = self.point
+        x2, y2 = other.point
+        return Vector2D(x1 - x2, y1 - y2)
 
     # Vector2D.dot(Vector2D) -> number
     # Returns a number that is the dot product of two, two-dimensional vectors.
     # Vector2D(1, 2).dot(Vector2D(3, 4)) -> 11
 
-    def dot(self, vec):
+    def dot(self, other):
         x1, y1 = self.point
-        x2, y2 = vec.point
+        x2, y2 = other.point
         return (x1 * x2) + (y1 * y2)
 
     # Vector2D.normalize() -> Vector2D
@@ -65,9 +76,9 @@ class Vector2D:
     # Returns the distance between two, two-dimensional vectors.
     # Vector2D(8, 0).distance(Vector2D(1, 0)) -> 7.0
 
-    def distance(self, vec):
+    def distance(self, other):
         x1, y1 = self.point
-        x2, y2 = vec.point
+        x2, y2 = other.point
         return math.hypot(x2 - x1, y2 - y1)
 
     # Vector2D.round() -> Vector2D
@@ -77,14 +88,14 @@ class Vector2D:
     def round(self):
         return Vector2D(round(self.x), round(self.y))
 
-    # Vector2D.equal(Vector2D) -> boolean
+    # Vector2D(3, 4) == Vector3D(3, 4) -> boolean
     # Compares the components of two, two-dimensional vectors. Checks for equality.
-    # Comparisons are applied left to right.
-    # Vector2D(3, 4).equal(Vector2D(3, 4)) -> True
+    # Implements __eq__.
+    # Vector2D(3, 4) == Vector2D(3, 4) -> True
 
-    def equal(self, vec):
+    def __eq__(self, other):
         x1, y1 = self.point
-        x2, y2 = vec.point
+        x2, y2 = other.point
         return x1 == x2 and y1 == y2
 
 # IHAT, JHAT
@@ -92,4 +103,3 @@ class Vector2D:
 
 IHAT = Vector2D(1, 0)
 JHAT = Vector2D(0, 1)
-
