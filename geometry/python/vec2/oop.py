@@ -97,9 +97,3 @@ class Vector2D:
         x1, y1 = self.point
         x2, y2 = other.point
         return x1 == x2 and y1 == y2
-
-# IHAT, JHAT
-# Mutually orthogonal two-dimensional unit vectors, forming the standard basis.
-
-IHAT = Vector2D(1, 0)
-JHAT = Vector2D(0, 1)
