@@ -20,11 +20,12 @@ class Vector2D:
         self.point = (x, y)
         self.magnitude = math.hypot(x, y)
     
-    # Vector2D.negate() -> Vector2D
+    # -Vector2D -> -Vector2D
     # Inverts the signs of the vector components. Flips the vector 180 degrees.
-    # Vector2D(3, 4).negate() -> Vector2D(-3, -4)
+    # Implements __neg__.    
+    # -Vector2D(3, 4) -> Vector2D(-3, -4)
     
-    def negate(self):
+    def __neg__(self):
         return Vector2D(-self.x, -self.y)
     
     # Vector2D.scale(number) -> Vector2D
