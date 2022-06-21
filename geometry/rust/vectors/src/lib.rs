@@ -1,5 +1,5 @@
 use std::iter::Sum;
-use std::ops::{Add, Sub};
+use std::ops::{Add, Neg, Sub};
 
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 struct Vector2D {
@@ -35,13 +35,6 @@ impl Vector2D {
         x1 * x2 + y1 * y2
     }
 
-    fn negate(self) -> Self {
-        Self {
-            x: -self.x,
-            y: -self.y,
-        }
-    }
-
     fn round(self) -> Self {
         let x = self.x;
         let y = self.y;
@@ -68,6 +61,16 @@ impl Sub for Vector2D {
         Self {
             x: self.x - other.x,
             y: self.y - other.y,
+        }
+    }
+}
+
+impl Neg for Vector2D {
+    type Output = Self;
+    fn neg(self) -> Self {
+        Self {
+            x: -self.x,
+            y: -self.y,
         }
     }
 }
@@ -125,12 +128,6 @@ mod tests {
         assert_eq!(result, 11.0);
     }
     #[test]
-    fn test_negate() {
-        let result = Vector2D { x: -3.0, y: 4.0 }.negate();
-        let expect = Vector2D { x: 3.0, y: -4.0 };
-        assert_eq!(result, expect);
-    }
-    #[test]
     fn test_round() {
         let result = Vector2D { x: 0.25, y: 6.73 }.round();
         let expect = Vector2D { x: 0.0, y: 7.0 };
@@ -149,6 +146,12 @@ mod tests {
         assert_eq!(result, expect);
     }
     #[test]
+    fn test_neg() {
+        let expect = Vector2D { x: 3.0, y: -4.0 };
+        let result = -Vector2D { x: -3.0, y: 4.0 };
+        assert_eq!(result, expect);
+    }
+    #[test]
     fn test_sum() {
         let vs = [
             Vector2D { x: 1.0, y: 2.0 },
@@ -159,4 +162,3 @@ mod tests {
         assert_eq!(result, Vector2D { x: 6.0, y: 8.0 });
     }
 }
-
