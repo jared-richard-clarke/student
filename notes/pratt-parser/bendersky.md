@@ -7,9 +7,26 @@ by Eli Bendersky
 
 ## Fundamentals
 
-- Binds tokens according to precedence.
-- Implements different functionality based on token position relative to neighbors. 
-- Associates semantic actions with tokens, not grammar.
+```text
+
+expression = "3 + 1 * 2 * 4 + 5"
+
+expression with rbp 0
+    literal nud = 3
+    led of "+"
+    expression with rbp 10
+       literal nud = 1
+       led of "*"
+       expression with rbp 20
+          literal nud = 2
+       led of "*"
+       expression with rbp 20
+          literal nud = 4
+    led of "+"
+    expression with rbp 10
+       literal nud = 5
+
+```
 
 ## Lexer, Parser, and Evaluator
 
