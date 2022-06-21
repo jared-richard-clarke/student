@@ -1,5 +1,7 @@
 import math
 
+from vec2.oop import Vec2
+
 """
 A functional implementation of a two-dimensional vector,
 associated functions, and constants.
@@ -11,12 +13,6 @@ associated functions, and constants.
 
 def vec2(x, y):
     return (x, y)
-
-# IHAT, JHAT
-# Mutually orthogonal two-dimensional unit vectors, forming the standard basis.
-
-IHAT = vec2(1, 0)
-JHAT = vec2(0, 1)
 
 # add(*tuple(number, number)) -> tuple(number, number)
 # Returns a two-dimensional vector that is the sum of a series of two-dimensional vectors.
@@ -73,7 +69,7 @@ def magnitude(vec):
     return math.hypot(x, y)
 
 # distance(tuple(number, number), tuple(number, number)) -> number
-# Returns the distance between two, two-dimensional vectors.
+# Returns the distance between two vector points.
 # distance(vec2(8, 0), vec2(1, 0)) -> 7.0
 
 def distance(v1, v2):
@@ -81,8 +77,19 @@ def distance(v1, v2):
     x2, y2 = v2
     return math.hypot(x2 - x1, y2 - y1)
 
+# lerp(tuple(number, number), tuple(number, number), number) -> tuple(number, number)
+# Interpolates a vector point along the line between two vector points.
+# lerp(vec2(0, 10), vec2(8, -4), -1) -> vec2(-8, 24)
+
+def lerp(v1, v2, t):
+    x1, y1 = v1
+    x2, y2 = v2
+    x = x1 + (x2 - x1) * t
+    y = y1 + (y2 - y1) * t
+    return vec2(x, y)
+
 # equal(tuple(number, number), tuple(number, number)) -> boolean
-# Compares the components of two, two-dimensional vectors. Checks for equality.
+# Compares the components of two vectors. Checks for equality.
 # Comparisons are applied left to right.
 # equal(vec2(3, 4), vec2(3, 4)) -> True
 
