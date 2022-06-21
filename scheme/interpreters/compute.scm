@@ -25,15 +25,15 @@
 
 ;; === examples ===
 
-(define ast-1
+(define expression-1
   '(+ 1
       (* 2
          3)))
 
-(define ast-2
+(define expression-2
   '(+ (+ 1
          2)
       3))
 
-(compute ast-1) ; -> 7
-(compute ast-2) ; -> 6
+(compute expression-1) ; -> 7
+(compute expression-2) ; -> 6
