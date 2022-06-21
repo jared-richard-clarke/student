@@ -12,7 +12,7 @@ fn vec2(x: f64, y: f64) -> Vector2D {
 }
 
 impl Vector2D {
-    fn magnitude(self) -> f64 {
+    fn length(self) -> f64 {
         let x = self.x;
         let y = self.y;
         (x * x + y * y).sqrt()
@@ -33,6 +33,16 @@ impl Vector2D {
         let x2 = other.x;
         let y2 = other.y;
         x1 * x2 + y1 * y2
+    }
+    // Calculates the distance between two vector points.
+    fn distance(self, other: Self) -> f64 {
+        (self - other).length()
+    }
+    // Interpolates point between two vector points.
+    fn lerp(self, other: Self, t: f64) -> Self {
+        let x = self.x + (other.x - self.x) * t;
+        let y = self.y + (other.y - self.y) * t;
+        Self { x, y }
     }
 
     fn round(self) -> Self {
@@ -108,9 +118,9 @@ mod tests {
         assert_eq!(result, expect);
     }
     #[test]
-    fn test_magnitude() {
+    fn test_length() {
         let v = Vector2D { x: 3.0, y: 4.0 };
-        let result = v.magnitude();
+        let result = v.length();
         assert_eq!(result, 5.0);
     }
 
@@ -126,6 +136,18 @@ mod tests {
         let v2 = Vector2D { x: 3.0, y: 4.0 };
         let result = v1.dot(v2);
         assert_eq!(result, 11.0);
+    }
+    #[test]
+    fn test_distance() {
+        let expect = 7.0;
+        let result = vec2(8.0, 0.0).distance(vec2(1.0, 0.0));
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_lerp() {
+        let expect = vec2(-8.0, 24.0);
+        let result = vec2(0.0, 10.0).lerp(vec2(8.0, -4.0), -1.0);
+        assert_eq!(result, expect);
     }
     #[test]
     fn test_round() {
