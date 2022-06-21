@@ -5,25 +5,22 @@ import (
 	"math"
 )
 
-// The maximum allowable difference in precision between two floating-point vector coordinates.
-const Epsilon = 0.000001
+// The maximum allowable difference in precision between two floating-point coordinates.
+const epsilon = 0.000001
 
-type Point struct {
+type Point2 struct {
 	X, Y float64
 }
 
 // Fulfills the Stringer interface for the fmt package.
-func (p Point) String() string {
+func (p Point2) String() string {
 	x := p.X
 	y := p.Y
 	return fmt.Sprintf("pt(%.2f, %.2f)", x, y)
 }
 
-// Point of origin in a two-dimensional coordinate system.
-var Origin = Point{0, 0}
-
 // Calculates the distance between two points.
-func (p1 Point) Segment(p2 Point) float64 {
+func (p1 Point2) Segment(p2 Point2) float64 {
 	x1 := p1.X
 	y1 := p1.Y
 	x2 := p2.X
@@ -32,7 +29,7 @@ func (p1 Point) Segment(p2 Point) float64 {
 }
 
 // A geometric path implemented as a series of points.
-type Path []Point
+type Path []Point2
 
 func (p Path) Length() float64 {
 	sum := float64(0)
@@ -45,8 +42,8 @@ func (p Path) Length() float64 {
 }
 
 // Outputs a point with the rounded components of the receiver point.
-func (p Point) Round() Point {
+func (p Point2) Round() Point2 {
 	x := math.Round(p.X)
 	y := math.Round(p.Y)
-	return Point{x, y}
+	return Point2{x, y}
 }
