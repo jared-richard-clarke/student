@@ -82,7 +82,7 @@ class Vec2:
         return math.hypot(x2 - x1, y2 - y1)
 
     # Vec2.lerp(Vec2) -> Vec2
-    # Interpolates the vector point between two vector points.
+    # Interpolates a vector point between two vector points.
     # Vec2(0, 10).lerp(Vec2(8, -4), -1) -> Vec2(-8, 24)
 
     def lerp(self, other, t):
