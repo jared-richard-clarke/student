@@ -8,7 +8,6 @@ by Eli Bendersky
 ## Fundamentals
 
 ```text
-
 expression = "3 + 1 * 2 * 4 + 5"
 
 expression with rbp 0
@@ -25,7 +24,6 @@ expression with rbp 0
     led of "+"
     expression with rbp 10
        literal nud = 5
-
 ```
 
 ## Lexer, Parser, and Evaluator
