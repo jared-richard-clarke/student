@@ -19,13 +19,6 @@ class Vec2:
         self.y = y
         self.point = (x, y)
         self.length = math.hypot(x, y)
-    
-    # Vec2.scale(number) -> Vec2
-    # Returns a scaled two-dimensional vector that is the product of a vector and a number.
-    # Vec2(3, 4).scale(2).point -> (6, 8)
-    
-    def scale(self, scalar):
-        return Vec2(self.x * scalar, self.y * scalar)
 
     # Vec2 + Vec2 -> Vec2
     # Returns a two-dimensional vector that is the sum of two vectors.
@@ -53,6 +46,13 @@ class Vec2:
     
     def __neg__(self):
         return Vec2(-self.x, -self.y)
+
+    # Vec2.scale(number) -> Vec2
+    # Returns a scaled two-dimensional vector that is the product of a vector and a number.
+    # Vec2(3, 4).scale(2).point -> (6, 8)
+    
+    def scale(self, scalar):
+        return Vec2(self.x * scalar, self.y * scalar)
 
     # Vec2.dot(Vec2) -> number
     # Returns a number that is the dot product of two, two-dimensional vectors.
