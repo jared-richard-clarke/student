@@ -100,13 +100,20 @@ func (v Vec2) Magnitude() float64 {
 	return math.Hypot(x, y)
 }
 
-// Returns the distance between the points of two 2d-vectors.
+// Calculates the distance between two vector points.
 func (v1 Vec2) Distance(v2 Vec2) float64 {
 	x1 := v1.X
 	y1 := v1.Y
 	x2 := v2.X
 	y2 := v2.Y
 	return math.Hypot(x2-x1, y2-y1)
+}
+
+// Interpolates point between two vector points.
+func (v1 Vec2) Lerp(v2 Vec2, t float64) Vec2 {
+	x := v1.X + (v2.X-v1.X)*t
+	y := v1.Y + (v2.Y-v1.Y)*t
+	return Vec2{x, y}
 }
 
 // Checks whether floating-point vector components are approximately equal.
