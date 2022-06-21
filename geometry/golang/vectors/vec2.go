@@ -11,13 +11,6 @@ type Vec2 struct {
 	X, Y float64
 }
 
-// Ihat and Jhat:
-// Mutually orthogonal unit vectors, forming the standard basis.
-var (
-	Ihat = Vec2{1, 0}
-	Jhat = Vec2{0, 1}
-)
-
 // Fulfills the Stringer interface for the fmt package.
 func (v Vec2) String() string {
 	x := v.X
