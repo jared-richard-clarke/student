@@ -6,22 +6,22 @@
 
 const ast_1 = {
     operator: "+",
-    one: 1,
-    two: {
+    first: 1,
+    second: {
         operator: "*",
-        one: 2,
-        two: 3,
+        first: 2,
+        second: 3,
     },
 };
 
 const ast_2 = {
     operator: "+",
-    one: {
+    first: {
         operator: "+",
-        one: 1,
-        two: 2,
+        first: 1,
+        second: 2,
     },
-    two: 3,
+    second: 3,
 };
 
 ```
