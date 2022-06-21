@@ -11,14 +11,12 @@ and associated methods.
 # v.x -> 3
 # v.y -> 4
 # v.point -> (3, 4)
-# v.length -> 5
 
 class Vec2:
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.point = (x, y)
-        self.length = math.hypot(x, y)
 
     # Vec2 + Vec2 -> Vec2
     # Returns a two-dimensional vector that is the sum of two vectors.
@@ -47,6 +45,14 @@ class Vec2:
     def __neg__(self):
         return Vec2(-self.x, -self.y)
 
+    # Vec2.length() -> number
+    # Returns the length/magnitude of a vector.
+    # Vec2(3, 4).length() -> 5
+    
+    def length(self):
+        x, y = self.point
+        return math.hypot(x, y)
+
     # Vec2.scale(number) -> Vec2
     # Returns a scaled two-dimensional vector that is the product of a vector and a number.
     # Vec2(3, 4).scale(2).point -> (6, 8)
@@ -69,7 +75,7 @@ class Vec2:
 
     def normalize(self):
         x, y = self.point
-        mag = self.length
+        mag = self.length()
         return Vec2(x / mag, y / mag)
 
     # Vec2.distance(Vec2) -> number
@@ -112,4 +118,4 @@ class Vec2:
     # Implements __str__.
  
     def __str__(self):
-       return f"Vec2({self.x},{self.y})"
+       return f"vec({self.x},{self.y})"
