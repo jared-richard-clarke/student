@@ -20,13 +20,6 @@ class Vec2:
         self.point = (x, y)
         self.magnitude = math.hypot(x, y)
     
-    # -Vec2 -> -Vec2
-    # Inverts the signs of the vector components. Flips the vector 180 degrees.
-    # -Vec2(3, 4) -> Vec2(-3, -4)
-    
-    def __neg__(self):
-        return Vec2(-self.x, -self.y)
-    
     # Vec2.scale(number) -> Vec2
     # Returns a scaled two-dimensional vector that is the product of a vector and a number.
     # Vec2(3, 4).scale(2).point -> (6, 8)
@@ -54,6 +47,13 @@ class Vec2:
         x2, y2 = other.point
         return Vec2(x1 - x2, y1 - y2)
 
+    # -Vec2 -> -Vec2
+    # Inverts the signs of the vector components. Flips the vector 180 degrees.
+    # -Vec2(3, 4) -> Vec2(-3, -4)
+    
+    def __neg__(self):
+        return Vec2(-self.x, -self.y)
+
     # Vec2.dot(Vec2) -> number
     # Returns a number that is the dot product of two, two-dimensional vectors.
     # Vec2(1, 2).dot(Vec2(3, 4)) -> 11
@@ -73,13 +73,22 @@ class Vec2:
         return Vec2(x / mag, y / mag)
 
     # Vec2.distance(Vec2) -> number
-    # Returns the distance between two, two-dimensional vectors.
+    # Returns the distance between two vector points.
     # Vec2(8, 0).distance(Vec2(1, 0)) -> 7.0
 
     def distance(self, other):
         x1, y1 = self.point
         x2, y2 = other.point
         return math.hypot(x2 - x1, y2 - y1)
+
+    # Vec2.lerp(Vec2) -> Vec2
+    # Interpolates the vector point between two vector points.
+    # Vec2(0, 10).lerp(Vec2(8, -4), -1) -> Vec2(-8, 24)
+
+    def lerp(self, other, t):
+        x = self.x + (other.x - self.x) * t
+        y = self.y + (other.y - self.y) * t
+        return Vec2(x, y)
 
     # Vec2.round() -> Vec2
     # Returns a two-dimensional vector with coordinate components rounded.
@@ -88,8 +97,8 @@ class Vec2:
     def round(self):
         return Vec2(round(self.x), round(self.y))
 
-    # Vec2(3, 4) == Vector3D(3, 4) -> boolean
-    # Compares the components of two, two-dimensional vectors. Checks for equality.
+    # Vec2 == Vec2 -> boolean
+    # Compares the components of vectors. Checks for equality.
     # Implements __eq__.
     # Vec2(3, 4) == Vec2(3, 4) -> True
 
