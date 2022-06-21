@@ -5,7 +5,7 @@ import (
 )
 
 func TestStringer(t *testing.T) {
-	p := Point{3.0, 4.0}
+	p := Point2{3.0, 4.0}
 	expect := "pt(3.00, 4.00)"
 	result := p.String()
 	if expect != result {
@@ -14,8 +14,8 @@ func TestStringer(t *testing.T) {
 }
 
 func TestSegment(t *testing.T) {
-	p1 := Point{2.0, 0.0}
-	p2 := Point{3.0, 0.0}
+	p1 := Point2{2.0, 0.0}
+	p2 := Point2{3.0, 0.0}
 	expect := 1.0
 	result := p1.Segment(p2)
 	if expect != result {
@@ -33,8 +33,8 @@ func TestPathLength(t *testing.T) {
 }
 
 func TestRound(t *testing.T) {
-	p := Point{0.55, 1.75}
-	expect := Point{1.0, 2.0}
+	p := Point2{0.55, 1.75}
+	expect := Point2{1.0, 2.0}
 	result := p.Round()
 	if expect != result {
 		t.Errorf("Test Round failed. Expected: %v, Got: %v", expect, result)
