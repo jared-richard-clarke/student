@@ -11,14 +11,14 @@ and associated methods.
 # v.x -> 3
 # v.y -> 4
 # v.point -> (3, 4)
-# v.magnitude -> 5
+# v.length -> 5
 
 class Vec2:
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.point = (x, y)
-        self.magnitude = math.hypot(x, y)
+        self.length = math.hypot(x, y)
     
     # Vec2.scale(number) -> Vec2
     # Returns a scaled two-dimensional vector that is the product of a vector and a number.
@@ -69,7 +69,7 @@ class Vec2:
 
     def normalize(self):
         x, y = self.point
-        mag = self.magnitude
+        mag = self.length
         return Vec2(x / mag, y / mag)
 
     # Vec2.distance(Vec2) -> number
