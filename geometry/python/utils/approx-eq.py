@@ -10,4 +10,4 @@ EPSILON = 0.000001
 # approx_eq(0.2, 0.19999999) -> True
 
 def approx_eq(x, y):
-    return abs(x - y) <= EPSILON * max(1.0, abs(x), abs(y))
+    return abs(x - y) <= (EPSILON * max(1.0, abs(x), abs(y)))
