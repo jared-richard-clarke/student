@@ -7,89 +7,84 @@ import (
 )
 
 // A two-dimensional quantity that has direction and magnitude. Represented by coordinates X and Y.
-type Vector2d struct {
+type Vec2 struct {
 	X, Y float64
-}
-
-// Convenience function. Constructs a two-dimensional vector.
-func Vec2(x, y float64) Vector2d {
-	return Vector2d{x, y}
 }
 
 // Ihat and Jhat:
 // Mutually orthogonal unit vectors, forming the standard basis.
 var (
-	Ihat = Vector2d{1, 0}
-	Jhat = Vector2d{0, 1}
+	Ihat = Vec2{1, 0}
+	Jhat = Vec2{0, 1}
 )
 
 // Fulfills the Stringer interface for the fmt package.
-func (v Vector2d) String() string {
+func (v Vec2) String() string {
 	x := v.X
 	y := v.Y
 	return fmt.Sprintf("vec(%.2f, %.2f)", x, y)
 }
 
 // Returns a vector that is the sum of two, two-dimensional vectors.
-func (v1 Vector2d) Add(v2 Vector2d) Vector2d {
+func (v1 Vec2) Add(v2 Vec2) Vec2 {
 	x1 := v1.X
 	y1 := v1.Y
 	x2 := v2.X
 	y2 := v2.Y
-	return Vector2d{x1 + x2, y1 + y2}
+	return Vec2{x1 + x2, y1 + y2}
 }
 
 // Returns a vector that is the difference of two, two-dimensional vectors.
-func (v1 Vector2d) Sub(v2 Vector2d) Vector2d {
+func (v1 Vec2) Sub(v2 Vec2) Vec2 {
 	x1 := v1.X
 	y1 := v1.Y
 	x2 := v2.X
 	y2 := v2.Y
-	return Vector2d{x1 - x2, y1 - y2}
+	return Vec2{x1 - x2, y1 - y2}
 }
 
 // Returns the sum of a series of two-dimensional vectors.
-func (v1 Vector2d) Sum(vs ...Vector2d) Vector2d {
+func (v1 Vec2) Sum(vs ...Vec2) Vec2 {
 	accum := v1
 	for _, v := range vs {
 		x1 := accum.X
 		y1 := accum.Y
 		x2 := v.X
 		y2 := v.Y
-		accum = Vector2d{x1 + x2, y1 + y2}
+		accum = Vec2{x1 + x2, y1 + y2}
 	}
 	return accum
 }
 
 // Returns the difference of a series of two-dimensional vectors.
-func (v1 Vector2d) Diff(vs ...Vector2d) Vector2d {
+func (v1 Vec2) Diff(vs ...Vec2) Vec2 {
 	accum := v1
 	for _, v := range vs {
 		x1 := accum.X
 		y1 := accum.Y
 		x2 := v.X
 		y2 := v.Y
-		accum = Vector2d{x1 - x2, y1 - y2}
+		accum = Vec2{x1 - x2, y1 - y2}
 	}
 	return accum
 }
 
 // Inverts the signs of the vector components. Rotates vector 180 degrees.
-func (v Vector2d) Negate() Vector2d {
+func (v Vec2) Negate() Vec2 {
 	x := v.X
 	y := v.Y
-	return Vector2d{-x, -y}
+	return Vec2{-x, -y}
 }
 
 // Scales a 2d-vector by a scalar of s.
-func (v Vector2d) Scale(s float64) Vector2d {
+func (v Vec2) Scale(s float64) Vec2 {
 	x := v.X
 	y := v.Y
-	return Vector2d{x * s, y * s}
+	return Vec2{x * s, y * s}
 }
 
 // Computes the dot product of two 2d-vectors.
-func (v1 Vector2d) Dot(v2 Vector2d) float64 {
+func (v1 Vec2) Dot(v2 Vec2) float64 {
 	x1 := v1.X
 	y1 := v1.Y
 	x2 := v2.X
@@ -98,22 +93,22 @@ func (v1 Vector2d) Dot(v2 Vector2d) float64 {
 }
 
 // Returns a unit vector of the receiver vector.
-func (v Vector2d) Normalize() Vector2d {
+func (v Vec2) Normalize() Vec2 {
 	mag := v.Magnitude()
 	x := v.X
 	y := v.Y
-	return Vector2d{x / mag, y / mag}
+	return Vec2{x / mag, y / mag}
 }
 
 // Computes the distance of a 2d-vector's point from the origin.
-func (v Vector2d) Magnitude() float64 {
+func (v Vec2) Magnitude() float64 {
 	x := v.X
 	y := v.Y
 	return math.Hypot(x, y)
 }
 
 // Returns the distance between the points of two 2d-vectors.
-func (v1 Vector2d) Distance(v2 Vector2d) float64 {
+func (v1 Vec2) Distance(v2 Vec2) float64 {
 	x1 := v1.X
 	y1 := v1.Y
 	x2 := v2.X
@@ -123,7 +118,7 @@ func (v1 Vector2d) Distance(v2 Vector2d) float64 {
 
 // Checks whether floating-point vector components are approximately equal.
 // Comparisons made left to right.
-func (v1 Vector2d) ApproxEq(v2 Vector2d) bool {
+func (v1 Vec2) ApproxEq(v2 Vec2) bool {
 	x1 := v1.X
 	y1 := v1.Y
 	x2 := v2.X
@@ -133,8 +128,8 @@ func (v1 Vector2d) ApproxEq(v2 Vector2d) bool {
 }
 
 // Returns a vector with the rounded components of the receiver vector.
-func (v Vector2d) Round() Vector2d {
+func (v Vec2) Round() Vec2 {
 	x := math.Round(v.X)
 	y := math.Round(v.Y)
-	return Vector2d{x, y}
+	return Vec2{x, y}
 }
