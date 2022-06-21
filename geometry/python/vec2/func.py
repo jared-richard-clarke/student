@@ -1,32 +1,70 @@
 import math
 
-from vec2.oop import Vec2
-
 """
 A functional implementation of a two-dimensional vector,
 associated functions, and constants.
 """
 
-# vec2(number, number) -> tuple(number, number)
+# vec2(number, number) -> vec2
 # Constructs a two-dimensional vector implemented as a tuple.
 # vec2(3, 4) -> (3, 4)
 
 def vec2(x, y):
     return (x, y)
 
-# add(*tuple(number, number)) -> tuple(number, number)
-# Returns a two-dimensional vector that is the sum of a series of two-dimensional vectors.
-# add(vec2(1, 2), vec2(3, 4), vec2(0, 2)) -> (4, 8)
+# arithmetic(function) -> function(vec2, vec2) -> vec2
+# Creates function that performs an arithmetic operation on the components of two vectors.
 
-def add(*vecs):
-    sum = (0, 0)
-    for vec in vecs:
-        x1, y1 = sum
-        x2, y2 = vec
-        sum = (x1 + x2, y1 + y2)
-    return sum
+def arithmetic(op):
+    def func(v1, v2):
+        x1, y1 = v1
+        x2, y2 = v2
+        return vec2(op(x1, x2), op(y1, y2))
+    return func
 
-# negate(tuple(number, number)) -> tuple(number, number)
+# add(vec2, vec2) -> vec2
+# Returns the sum of two vectors.
+# add(vec2(3, 4), vec2(1, 2)) -> vec2(4, 6)
+
+add = arithmetic(lambda x, y: x + y)
+
+# sub(vec2, vec2) -> vec2
+# Returns the difference of two vectors.
+# sub(vec2(3, 4), vec2(1, 2)) -> vec2(2, 2)
+
+sub = arithmetic(lambda x, y: x - y)
+
+# arithmetic_seq(function, vec2) -> function(*vec2) -> vec2
+# Creates functions that perform an arithmetic operation over a sequence of vectors.
+
+def arithmetic_seq(op, base):
+    def func(*vecs):
+        if len(vecs) == 0:
+            return base
+        elif len(vecs) == 1:
+            return vecs[0]
+        else:
+            accum = vecs[0]
+            for vec in vecs[1:]:
+                x1, y1 = accum
+                x2, y2 = vec
+                accum = vec2(op(x1, x2), op(y1, y2))
+            return accum
+    return func
+
+# sum(*vec2) -> vec2
+# Returns a vector that is the sum of a series of vectors.
+# sum(vec2(1, 2), vec2(3, 4), vec2(0, 2)) -> (4, 8)
+
+sum = arithmetic_seq(lambda x, y: x + y, vec2(0, 0))
+
+# diff(*vec2) -> vec2
+# Returns a vector that is the difference of a series of vectors.
+# diff(vec2(3, 4), vec2(1, 2)) -> vec2(2, 2)
+
+diff = arithmetic_seq(lambda x, y: x - y, vec2(0, 0))
+
+# negate(vec2) -> vec2
 # Inverts the signs of the vector components. Flips the vector 180 degrees.
 # negate(vec2(3, 4)) -> vec2(-3, -4)
 
@@ -34,7 +72,7 @@ def negate(vec):
     x, y = vec
     return vec2(-x, -y)
 
-# scale(tuple(number, number), number) -> tuple(number, number)
+# scale(vec2, number) -> vec2
 # Returns a scaled two-dimensional vector that is the product of a vector and a number.
 # scale(vec2(3, 4), 2) -> (6, 8)
 
@@ -42,7 +80,7 @@ def scale(vec, scalar):
     x, y = vec
     return vec2(x * scalar, y * scalar)
 
-# dot(tuple(number, number), tuple(number, number)) -> number
+# dot(vec2, vec2) -> number
 # Returns the dot product of two, two-dimensional vectors
 # dot(vec2(1, 2), vec2(3, 4)) -> 11
 
@@ -51,7 +89,7 @@ def dot(v1, v2):
     x2, y2 = v2
     return (x1 * x2) + (y1 * y2)
 
-# normalize(tuple(number, number), tuple(number, number)) -> tuple(number, number)
+# normalize(vec2, vec2) -> vec2
 # Returns the unit vector of a two-dimensional vector.
 # normalize(3, 4) -> (0.6, 0.8)
 
@@ -60,7 +98,7 @@ def normalize(vec):
     x, y = vec
     return vec2(x / mag, y / mag)
 
-# magnitude(tuple(number, number)) -> number
+# magnitude(vec2) -> number
 # Computes the magnitude of a two-dimensional vector.
 # magnitude(vec2(3, 4)) -> 5.0
 
@@ -68,7 +106,7 @@ def magnitude(vec):
     x, y = vec
     return math.hypot(x, y)
 
-# distance(tuple(number, number), tuple(number, number)) -> number
+# distance(vec2, vec2) -> number
 # Returns the distance between two vector points.
 # distance(vec2(8, 0), vec2(1, 0)) -> 7.0
 
@@ -77,7 +115,7 @@ def distance(v1, v2):
     x2, y2 = v2
     return math.hypot(x2 - x1, y2 - y1)
 
-# lerp(tuple(number, number), tuple(number, number), number) -> tuple(number, number)
+# lerp(vec2, vec2, number) -> vec2
 # Interpolates a vector point along the line between two vector points.
 # lerp(vec2(0, 10), vec2(8, -4), -1) -> vec2(-8, 24)
 
@@ -88,7 +126,7 @@ def lerp(v1, v2, t):
     y = y1 + (y2 - y1) * t
     return vec2(x, y)
 
-# equal(tuple(number, number), tuple(number, number)) -> boolean
+# equal(vec2, vec2) -> boolean
 # Compares the components of two vectors. Checks for equality.
 # Comparisons are applied left to right.
 # equal(vec2(3, 4), vec2(3, 4)) -> True
@@ -98,7 +136,7 @@ def equal(v1, v2):
     x2, y2 = v2
     return x1 == x2 and y1 == y2
 
-# approximate(function) -> function(tuple(number, number)) -> tuple(number, number)
+# approximate(function) -> function(vec2) -> vec2
 # Constructs approximation functions for rounding vector components to integers.
 # rnd = approximate(round) -> rnd(vec2(1.3, 1.7)) -> (1.0, 2.0)
 
