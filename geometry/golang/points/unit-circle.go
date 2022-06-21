@@ -2,7 +2,7 @@ package points
 
 type Degrees int
 
-var UnitCircle = map[Degrees]Point{
+var UnitCircle = map[Degrees]Point2{
 	0:   {1, 0},
 	30:  {0.866, 0.5},
 	45:  {0.707, 0.707},
