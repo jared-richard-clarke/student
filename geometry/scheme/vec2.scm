@@ -10,11 +10,6 @@
                0
                numbers)))
 
-;; EPSILON
-;; The maximum allowable difference in precision between floating-point numbers.
-
-(define EPSILON 0.000001)
-
 ;; (approx-eq? number number) -> boolean
 ;; Tests for approximate equality between two floating-point numbers within an absolute
 ;; or relative tolerance of EPSILON. An absolute tolerance is used for values
@@ -22,6 +17,8 @@
 ;; (approx-eq? 0.2 0.19999999) -> #t
 
 (define (approx-eq? x y)
+  ;; The maximum allowable difference in precision between floating-point numbers.
+  (define EPSILON 0.000001)
   (<= (abs (- x y))
       (* EPSILON 
          (max 1.0 
@@ -34,12 +31,6 @@
 
 (define (vec2 x y)
   (vector x y))
-
-;; I-HAT, J-HAT
-;; Mutually orthogonal unit vectors, forming the standard basis.
-
-(define I-HAT (vec2 1 0))
-(define J-HAT (vec2 0 1))
 
 ;; (arithmetic function) -> (function (vector number number) (vector number number)) -> (vector number number)
 ;; Generates functions that perform an arithmetic operation over two, two-dimensional vectors.
@@ -65,11 +56,11 @@
 
 (define vec2-sub (arithmetic -))
 
-;; (arith-seq function (vector number number)) -> (function (vector number number) ...) -> (vector number number)
+;; (arithmetic-seq function (vector number number)) -> (function (vector number number) ...) -> (vector number number)
 ;; Generates functions that perform an arithmetic operation over a series of two-dimensional vectors.
-;; (define vec2-sum (arith-seq + #(0 0))) -> (vec2-sum (vec2 1 2) (vec2 3 4)) -> #(4 6)
+;; (define vec2-sum (arithmetic-seq + #(0 0))) -> (vec2-sum (vec2 1 2) (vec2 3 4)) -> #(4 6)
 
-(define (arith-seq operation base)
+(define (arithmetic-seq operation base)
   (lambda vecs
     (cond
       [(= (length vecs) 0) base]
@@ -87,13 +78,13 @@
 ;; Returns the sum of a series of vectors.
 ;; (vec2-sum (vec2 1 2) (vec2 1 2)) -> #(2 4)
 
-(define vec2-sum (arith-seq + #(0 0)))
+(define vec2-sum (arithmetic-seq + #(0 0)))
 
 ;; (vec2-diff (vector number number) ...) -> (vector number number)
 ;; Returns the difference of a series of two-dimensional vectors.
 ;; (vec2-diff (vec2 3 4) (vec2 1 2)) -> #(2 2)
 
-(define vec2-diff (arith-seq - #(0 0)))
+(define vec2-diff (arithmetic-seq - #(0 0)))
 
 ;; (vec2-negate (vector number number)) -> (vector number number)
 ;; Inverts the signs of the vector components. Flips the vector 180 degrees.
@@ -102,7 +93,7 @@
 (define (vec2-negate vec)
   (let ([x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
-    (vec2 (* x -1) (* y -1))))
+    (vec2 (- x) (- y))))
 
 ;; (vec2-scale (vector number number) number) -> (vector number number)
 ;; Returns a vector multiplied by a number.
@@ -129,16 +120,16 @@
 ;; (vec2-normalize (vec2 3 4)) -> #(3/5 4/5)
 
 (define (vec2-normalize vec)
-  (let ([m (vec2-magnitude vec)]
+  (let ([m (vec2-length vec)]
         [x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
     (vec2 (/ x m) (/ y m))))
 
-;; (vec2-magnitude (vector number number)) -> number
-;; Returns the magnitude of a two-dimensional vector.
-;; (vec2-magnitude (vec2 3 4)) -> 5
+;; (vec2-length (vector number number)) -> number
+;; Returns the length/magnitude of a two-dimensional vector.
+;; (vec2-length (vec2 3 4)) -> 5
 
-(define (vec2-magnitude vec)
+(define (vec2-length vec)
   (let ([x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
     (hypotenuse x y)))
@@ -154,10 +145,22 @@
         [y2 (vector-ref v2 1)])
     (hypotenuse (- x2 x1) (- y2 y1))))
 
+;; (vec2-lerp vec2 vec2 number) -> vec2
+;; Interpolates a vector point along a line between two vector points.
+;; (vec2-lerp (vec2 0 10) (vec2 8 -4) -1) -> (vec2 -8 24)
+
+(define (vec2-lerp v1 v2 t)
+  (let* ([x1 (vector-ref v1 0)]
+         [y1 (vector-ref v1 1)]
+         [x2 (vector-ref v2 0)]
+         [y2 (vector-ref v2 1)]
+         [x (+ x1 (* (- x2 x1) t))]
+         [y (+ y1 (* (- y2 y1) t))])
+    (vec2 x y)))
+
 ;; (vec2-equal? (vector number number) (vector number number)) -> boolean
-;; Compares the components of two, two-dimensional vectors. Checks for equality.
-;; Comparisons are applied left to right.
-;; (vec2-equal? (vec2 3 4) (vec2 1 2)) -> #t
+;; Compares the components of two vectors. Checks for equality.
+;; (vec2-equal? (vec2 3 4) (vec2 3 4)) -> #t
 
 (define (vec2-equal? v1 v2)
   (let ([x1 (vector-ref v1 0)]
@@ -251,11 +254,14 @@
 (assert-equal (vec2-normalize (vec2 3.0 4.0))
               #(0.6 0.8))
 
-(assert-equal (vec2-magnitude (vec2 3 4))
+(assert-equal (vec2-length (vec2 3 4))
               5)
 
 (assert-equal (vec2-distance (vec2 8 0) (vec2 1 0))
               7)
+
+(assert-equal (vec2-lerp (vec2 0 10) (vec2 8 -4) -1)
+              (vec2 -8 24))
 
 (assert-equal (vec2-equal? (vec2 3 4) (vec2 3 4))
               #t)
