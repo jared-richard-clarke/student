@@ -53,6 +53,16 @@ impl Vector2D {
             y: y.round(),
         }
     }
+
+    fn normalize(self) -> Self {
+        let mag = self.length();
+        let x = self.x;
+        let y = self.y;
+        Self {
+            x: x / mag,
+            y: y / mag,
+        }
+    }
 }
 
 impl Add for Vector2D {
@@ -156,6 +166,12 @@ mod tests {
         assert_eq!(result, expect);
     }
     #[test]
+    fn test_normalize() {
+        let expect = vec2(0.6, 0.8);
+        let result = vec2(3.0, 4.0).normalize();
+        assert_eq!(result, expect);
+    }
+    #[test]
     fn test_add() {
         let expect = Vector2D { x: 4.0, y: 6.0 };
         let result = Vector2D { x: 3.0, y: 4.0 } + Vector2D { x: 1.0, y: 2.0 };
@@ -175,12 +191,10 @@ mod tests {
     }
     #[test]
     fn test_sum() {
-        let vs = [
-            Vector2D { x: 1.0, y: 2.0 },
-            Vector2D { x: 3.0, y: 4.0 },
-            Vector2D { x: 2.0, y: 2.0 },
-        ];
-        let result: Vector2D = vs.iter().sum();
-        assert_eq!(result, Vector2D { x: 6.0, y: 8.0 });
+        let expect = vec2(6.0, 8.0);
+        let result: Vector2D = [vec2(1.0, 2.0), vec2(3.0, 4.0), vec2(2.0, 2.0)]
+            .iter()
+            .sum();
+        assert_eq!(result, expect);
     }
 }
