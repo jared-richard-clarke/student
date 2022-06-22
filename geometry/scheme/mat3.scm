@@ -11,13 +11,13 @@
         [a-x0 (vector-ref a 4)]
         [a-y0 (vector-ref a 5)]
         ; -------------------
-        [b-xx (vector-ref a 0)]
-        [b-yx (vector-ref a 1)]
-        [b-xy (vector-ref a 2)]
-        [b-yy (vector-ref a 3)]
-        [b-x0 (vector-ref a 4)]
-        [b-y0 (vector-ref a 5)])
-    ; ---------------------------------
+        [b-xx (vector-ref b 0)]
+        [b-yx (vector-ref b 1)]
+        [b-xy (vector-ref b 2)]
+        [b-yy (vector-ref b 3)]
+        [b-x0 (vector-ref b 4)]
+        [b-y0 (vector-ref b 5)])
+    ; -------------------
     (mat3 [+ (* a-xx b-xx) (* a-yx b-xy)]
           [+ (* a-xx b-yx) (* a-yx b-yy)]
           [+ (* a-xy b-xx) (* a-yy b-xy)]
