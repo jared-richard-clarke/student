@@ -10,6 +10,21 @@
                0
                numbers)))
 
+;; (approx-eq? number number) -> boolean
+;; Tests for approximate equality between two floating-point numbers within an absolute
+;; or relative tolerance of EPSILON. An absolute tolerance is used for values
+;; less than or equal to 1.0. A relative tolerance is used for larger values.
+;; (approx-eq? 0.2 0.19999999) -> #t
+
+(define (approx-eq? x y)
+  ;; An arbitrary maximum allowable difference in precision between floating-point numbers.
+  (define EPSILON 0.000001)
+  (<= (abs (- x y))
+      (* EPSILON 
+         (max 1.0 
+              (abs x) 
+              (abs y)))))
+
 ;; (point2 number number) -> vector
 ;; Constructs a two-dimensional point implemented as a vector.
 ;; (point2 1 2) -> #(1 2)
@@ -17,25 +32,38 @@
 (define (point2 x y)
   (vector x y))
 
-;; ORIGIN: point of origin.
+;; (point2-negate point2) -> point2
+;; Inverts the signs of the point components. Flips point 180 degrees.
+;; (point2-negate (point2 1 -2)) -> (point2 -1 2)
 
-(define ORIGIN (point2 0 0))
+(define (point2-negate pt)
+  (let ([x (vector-ref pt 0)]
+        [y (vector-ref pt 1)])
+    (point2 (- x) (- y))))
 
-;; EPSILON
-;; The maximum allowable difference in precision between two floating-point coordinates.
-
-(define EPSILON 0.000001)
-
-;; (point2-segment pair pair) -> number
+;; (point2-distance pair pair) -> number
 ;; Calculates the distance between two points.
-;; (point2-segment (point2 3 0) (point2 2 0)) -> 1
+;; (point2-distance (point2 3 0) (point2 2 0)) -> 1
 
-(define (point2-segment p1 p2)
+(define (point2-distance p1 p2)
   (let ([x1 (vector-ref p1 0)]
         [y1 (vector-ref p1 1)]
         [x2 (vector-ref p2 0)]
         [y2 (vector-ref p2 1)])
     (hypotenuse (- x2 x1) (- y2 y1))))
+
+;; (point2-lerp point2 point2 number) -> point2
+;; Interpolates a point along a line between two points.
+;; (point2-lerp (point2 0 10) (point2 8 -4) -1) -> (point2 -8 24)
+
+(define (point2-lerp p1 p2 t)
+  (let* ([x1 (vector-ref p1 0)]
+         [y1 (vector-ref p1 1)]
+         [x2 (vector-ref p2 0)]
+         [y2 (vector-ref p2 1)]
+         [x (+ x1 (* (- x2 x1) t))]
+         [y (+ y1 (* (- y2 y1) t))])
+    (point2 x y)))
 
 ;; (point2-path points) -> list
 ;; Returns a list of points.
@@ -47,13 +75,37 @@
 ;; Computes the length of a path.
 ;; (point2-path-length (point2-path (point2 1 1) (point2 5 1) (point2 5 4) (point2 1 1))) -> 12
 
-(define (point2-path-length path)
+(define (point2-path-distance path)
   (let loop ([sum 0]
              [pth path])
     (if (<= (length pth) 1)
         sum
-        (loop (+ sum (point2-segment (car pth) (cadr pth)))
+        (loop (+ sum (point2-distance (car pth) (cadr pth)))
               (cdr pth)))))
+
+;; (point2-equal? point2 point2) -> boolean
+;; Compares the components of points. Checks for equality.
+;; (point2-equal? (point2 3 4) (point2 3 4)) -> #t
+
+(define (point2-equal? p1 p2)
+  (let ([x1 (vector-ref p1 0)]
+        [y1 (vector-ref p1 1)]
+        [x2 (vector-ref p2 0)]
+        [y2 (vector-ref p2 1)])
+    (and (= x1 x2)
+         (= y1 y2))))
+
+;; (point2-approx-eq? point2 point2) -> boolean
+;; Checks whether floating-point components are approximately equal.
+;; (point2-approx-eq? (point2 3.2 4.0) (point2 3.19999999989 4.0)) -> #t
+
+(define (point2-approx-eq? p1 p2)
+  (let ([x1 (vector-ref p1 0)]
+        [y1 (vector-ref p1 1)]
+        [x2 (vector-ref p2 0)]
+        [y2 (vector-ref p2 1)])
+    (and (approx-eq? x1 x2)
+         (approx-eq? y1 y2))))
 
 ;; (approximate function) -> (function point) -> point
 ;; Generates approximation functions for rounding point components.
@@ -95,14 +147,26 @@
 (assert-equal (point2 1 2)
               #(1 2))
 
-(assert-equal (point2-segment (point2 3 0) (point2 2 0))
+(assert-equal (point2-negate (point2 1 -2))
+              (point2 -1 2))
+
+(assert-equal (point2-distance (point2 3 0) (point2 2 0))
               1)
+
+(assert-equal (point2-lerp (point2 0 10) (point2 8 -4) -1)
+              #(-8 24))
 
 (assert-equal (point2-path (point2 1 2) (point2 3 4))
               '(#(1 2) #(3 4)))
 
-(assert-equal (point2-path-length (point2-path (point2 1 1) (point2 5 1) (point2 5 4) (point2 1 1)))
+(assert-equal (point2-path-distance (point2-path (point2 1 1) (point2 5 1) (point2 5 4) (point2 1 1)))
               12)
+
+(assert-equal (point2-equal? (point2 3 4) (point2 3 4))
+              #t)
+
+(assert-equal (point2-approx-eq? (point2 3.2 4.0) (point2 3.19999999989 4.0))
+              #t)
 
 (assert-equal (point2-round (point2 1.3 1.7))
               #(1.0 2.0))
