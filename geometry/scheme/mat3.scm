@@ -17,7 +17,7 @@
         [b-yy (vector-ref b 3)]
         [b-x0 (vector-ref b 4)]
         [b-y0 (vector-ref b 5)])
-    ; -------------------
+    ; ---------------------------------
     (mat3 [+ (* a-xx b-xx) (* a-yx b-xy)]
           [+ (* a-xx b-yx) (* a-yx b-yy)]
           [+ (* a-xy b-xx) (* a-yy b-xy)]
