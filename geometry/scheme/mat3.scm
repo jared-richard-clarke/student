@@ -1,6 +1,4 @@
-(define (mat3 xx yx
-              xy yy
-              x0 y0)
+(define (mat3 xx yx xy yy x0 y0)
   (vector xx yx
           xy yy
           x0 y0))
