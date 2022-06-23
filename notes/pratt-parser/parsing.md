@@ -14,12 +14,6 @@ process of parsing comes down to the resolution of this ambiguity.
 >
 > (d Ⓐ e) Ⓑ f or d Ⓐ (e Ⓑ f)
 
-## NUD and LED
-
-`nud`, null denotation, returns the value of its token.
-
-`led`, left denotation, chooses functionality according to the token left of the token it is operating on.
-
 ## Expression
 
 The core of Pratt's technique is the `expression` function. It takes a right
