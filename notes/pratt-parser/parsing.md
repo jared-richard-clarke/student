@@ -7,7 +7,7 @@ by Douglas Crockford
 by Eli Bendersky
 
 Given an operand between two operators, is the operand bound to the left operator or the right? 
-Resolving this ambiguity is what makes parsing expressions complex.
+Resolving this ambiguity is what makes parsing infix expressions complex.
 
 > d Ⓐ e Ⓑ f
 >
