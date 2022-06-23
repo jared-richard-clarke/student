@@ -10,6 +10,17 @@ pub struct Mat3 {
     pub y0: f64,
 }
 
+pub fn mat3(xx: f64, yx: f64, xy: f64, yy: f64, x0: f64, y0: f64) -> Mat3 {
+    Mat3 {
+        xx,
+        yx,
+        xy,
+        yy,
+        x0,
+        y0,
+    }
+}
+
 fn translate(x: f64, y: f64) -> Mat3 {
     Mat3 {
         xx: 1.0,
@@ -70,7 +81,7 @@ impl Mat3 {
     pub fn translate(self, x: f64, y: f64) -> Self {
         self * translate(x, y)
     }
-    pub fn scale(self, x: f64, y:f64) -> Self {
+    pub fn scale(self, x: f64, y: f64) -> Self {
         self * scale(x, y)
     }
     pub fn rotate(self, angle: f64) -> Self {
