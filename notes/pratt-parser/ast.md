@@ -1,4 +1,4 @@
-# Pratt Parser: Abstract Syntax Tree
+# Abstract Syntax Tree
 
 ## JavaScript
 
