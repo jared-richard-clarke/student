@@ -22,10 +22,16 @@ class Mat3:
                     self.x0 * other.yx + self.y0 * other.yy + other.y0)
 
     def transform(self, *matrices):
-        accum = self
-        for matrix in matrices:
-            accum = accum.multiply(matrix)
-        return accum
+        length = len(matrices)
+        if length == 0:
+            return identity()
+        elif length == 1:
+            return matrices[0]
+        else:
+            accum = self
+            for matrix in matrices:
+                accum = accum.multiply(matrix)
+            return accum
 
 
 def identity():
