@@ -8,7 +8,7 @@ by Douglas Crockford
 > 
 > — Douglas Crockford
 
-## Simple JavaScript Parser and Lexer
+## Simple JavaScript Lexer and Parser
 
 ```javascript
 
