@@ -16,9 +16,10 @@ process of parsing comes down to the resolution of this ambiguity.
 
 ## Expression
 
-The core of Pratt's technique is the `expression` function. It takes a right
-binding power that controls how aggressively it binds to tokens on its right.
-The process is recursive because `nud` and `led` can call `expression`.
+> "`expression` calls the `nud` method of the token...Then as long as the right binding power is less than 
+> the left binding power of the next token, the `led` method is invoked on the following token." 
+> 
+> — Douglas Crockford
 
 ### JavaScript ( Crockford )
 
