@@ -6,7 +6,7 @@ by Eli Bendersky
 A number of authors, including Bendersky, argue that **Precedence Climbing**, **Shunting Yard**, and **Pratt Parsing** are different
 implementations of the same algorithm.
 
-## Python
+## Lexer, Parser, and Evaluator
 
 ```python
 from collections import namedtuple
