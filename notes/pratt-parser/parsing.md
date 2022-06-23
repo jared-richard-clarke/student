@@ -1,14 +1,10 @@
 # Precedence Parsing
 
-6 June 2022
-
 [Top Down Operator Precedence](https://www.crockford.com/javascript/tdop/tdop.html)
 by Douglas Crockford
 
 [Top-Down Operator Precedence Parsing](https://eli.thegreenplace.net/2010/01/02/top-down-operator-precedence-parsing)
 by Eli Bendersky
-
----
 
 The basic precedence problem is this: Given an operand between two operators, is
 the operand bound to the left operator or the right? The complexity in the
