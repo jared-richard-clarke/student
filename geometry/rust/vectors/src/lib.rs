@@ -109,16 +109,18 @@ impl<'a> Sum<&'a Self> for Vector2D {
 
 #[cfg(test)]
 mod tests {
+    use std::vec;
+
     use crate::{vec2, Vector2D};
     #[test]
     fn test_default() {
         let v = Vector2D::default();
-        assert_eq!(v, Vector2D { x: 0.0, y: 0.0 });
+        assert_eq!(v, vec2(0.0, 0.0));
     }
     #[test]
     fn test_equal() {
-        let v1 = Vector2D { x: 3.0, y: 4.0 };
-        let v2 = Vector2D { x: 3.0, y: 4.0 };
+        let v1 = vec2(3.0, 4.0);
+        let v2 = vec2(3.0, 4.0);
         assert_eq!(v1, v2);
     }
     #[test]
@@ -129,21 +131,21 @@ mod tests {
     }
     #[test]
     fn test_length() {
-        let v = Vector2D { x: 3.0, y: 4.0 };
-        let result = v.length();
-        assert_eq!(result, 5.0);
+        let expect = 5.0;
+        let result = vec2(3.0, 4.0).length();
+        assert_eq!(result, expect);
     }
 
     #[test]
     fn test_scale() {
-        let v = Vector2D { x: 3.0, y: 4.0 };
-        let result = v.scale(2.0);
-        assert_eq!(result, Vector2D { x: 6.0, y: 8.0 });
+        let expect = vec2(6.0, 8.0);
+        let result = vec2(3.0, 4.0).scale(2.0);
+        assert_eq!(result, expect);
     }
     #[test]
     fn test_dot() {
-        let v1 = Vector2D { x: 1.0, y: 2.0 };
-        let v2 = Vector2D { x: 3.0, y: 4.0 };
+        let v1 = vec2(1.0, 2.0);
+        let v2 = vec2(3.0, 4.0);
         let result = v1.dot(v2);
         assert_eq!(result, 11.0);
     }
@@ -161,8 +163,8 @@ mod tests {
     }
     #[test]
     fn test_round() {
-        let result = Vector2D { x: 0.25, y: 6.73 }.round();
-        let expect = Vector2D { x: 0.0, y: 7.0 };
+        let result = vec2(0.25, 6.73).round();
+        let expect = vec2(0.0, 7.0);
         assert_eq!(result, expect);
     }
     #[test]
@@ -173,8 +175,8 @@ mod tests {
     }
     #[test]
     fn test_add() {
-        let expect = Vector2D { x: 4.0, y: 6.0 };
-        let result = Vector2D { x: 3.0, y: 4.0 } + Vector2D { x: 1.0, y: 2.0 };
+        let expect = vec2(5.0, 7.0);
+        let result = vec2(3.0, 4.0) + vec2(1.0, 2.0) + vec2(1.0, 1.0);
         assert_eq!(result, expect);
     }
     #[test]
@@ -185,16 +187,21 @@ mod tests {
     }
     #[test]
     fn test_neg() {
-        let expect = Vector2D { x: 3.0, y: -4.0 };
-        let result = -Vector2D { x: -3.0, y: 4.0 };
+        let expect = vec2(3.0, -4.0);
+        let result = -vec2(-3.0, 4.0);
         assert_eq!(result, expect);
     }
     #[test]
     fn test_sum() {
-        let expect = vec2(6.0, 8.0);
-        let result: Vector2D = [vec2(1.0, 2.0), vec2(3.0, 4.0), vec2(2.0, 2.0)]
+        let array_expect = vec2(6.0, 8.0);
+        let array_result: Vector2D = [vec2(1.0, 2.0), vec2(3.0, 4.0), vec2(2.0, 2.0)]
             .iter()
             .sum();
-        assert_eq!(result, expect);
+        assert_eq!(array_result, array_expect);
+        let vector_expect = vec2(6.0, 8.0);
+        let vector_result: Vector2D = vec![vec2(1.0, 2.0), vec2(3.0, 4.0), vec2(2.0, 2.0)]
+            .iter()
+            .sum();
+        assert_eq!(vector_result, vector_expect);
     }
 }
