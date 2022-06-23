@@ -3,14 +3,12 @@
 [Top Down Operator Precedence](https://www.crockford.com/javascript/tdop/tdop.html)
 by Douglas Crockford
 
----
-
 > "`expression` calls the `nud` method of the token...Then as long as the right binding power is less than 
 > the left binding power of the next token, the `led` method is invoked on the following token." 
 > 
 > — Douglas Crockford
 
-## Simple JavaScript Parser
+## Simple JavaScript Parser and Lexer
 
 ```javascript
 
