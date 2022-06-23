@@ -6,9 +6,8 @@ by Douglas Crockford
 [Top-Down Operator Precedence Parsing](https://eli.thegreenplace.net/2010/01/02/top-down-operator-precedence-parsing)
 by Eli Bendersky
 
-The basic precedence problem is this: Given an operand between two operators, is
-the operand bound to the left operator or the right? The complexity in the
-process of parsing comes down to the resolution of this ambiguity.
+Given an operand between two operators, is the operand bound to the left operator or the right? 
+Resolving this ambiguity is what makes parsing expressions complex.
 
 > d Ⓐ e Ⓑ f
 >
