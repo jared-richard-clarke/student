@@ -6,6 +6,7 @@
 // interpret(string) -> number | string | boolean | void
 // parses and evaluates template string as Egg program.
 // interpret(`+(1, 2)`) -> 3
+
 const interpret = (function () {
     // parse(string) -> object
     // wraps parse_expression and parse_apply — mutually-recursive functions that build
@@ -20,10 +21,12 @@ const interpret = (function () {
     //     },
     //   rest: ""
     // }
+
     const parse = (function () {
         // trim(string) -> string
         // helper function: removes whitespace from the beginning string.
         // trim(`  +(1, 2)`) -> "+(1, 2)"
+
         function trim(program) {
             const token_index = program.search(/\S/);
             if (token_index === -1) {
@@ -33,6 +36,12 @@ const interpret = (function () {
             }
             return program;
         }
+
+        // parse_expression(string) -> parse_apply(object, string) | syntax error
+        // Uses three regular expressions to identify Egg's three atomic
+        // elements — strings, numbers, words — and constructs a matching
+        // syntax object. Passes tree and remaining string to parse_apply.
+
         function parse_expression(program) {
             program = trim(program);
             let expr, val, match;
@@ -63,8 +72,12 @@ const interpret = (function () {
                 };
                 return parse_apply(expr, program.slice(match[0].length));
             }
-            throw new SyntaxError("Unexpected syntax: " + program);
+            throw new SyntaxError("unexpected syntax: " + program);
         }
+
+        // parse_apply(object, string) -> parse_apply(object, string) | object | syntax error
+        // If expression is an application, parses parenthesized list of arguments.
+        // Recursively calls parse_expression for each subexpression.
 
         function parse_apply(expr, program) {
             program = trim(program);
@@ -87,7 +100,7 @@ const interpret = (function () {
                 if (program[0] === ",") {
                     program = trim(program.slice(1));
                 } else if (program[0] !== ")") {
-                    throw new SyntaxError("Expected ',' or ')'");
+                    throw new SyntaxError("expected ',' or ')'");
                 }
             }
             return parse_apply(expr, program.slice(1));
@@ -96,7 +109,7 @@ const interpret = (function () {
         return function (program) {
             const result = parse_expression(program);
             if (trim(result.rest).length > 0) {
-                throw new SyntaxError("Unexpected text after program");
+                throw new SyntaxError("unexpected text after program");
             }
             return result.expr;
         };
@@ -105,6 +118,7 @@ const interpret = (function () {
     // evaluate(object, object) -> number | string | boolean | void
     // evaluates syntax and environment objects and returns value.
     // evaluate({ type: "number", value: 11 }, env) -> 11
+
     function evaluate(expr, env) {
         switch (expr.type) {
             case "string":
@@ -116,7 +130,7 @@ const interpret = (function () {
                     return env[expr.value];
                 } else {
                     throw new ReferenceError(
-                        "Undefined variable: " + expr.value
+                        "undefined variable: " + expr.value
                     );
                 }
             case "apply":
@@ -129,7 +143,7 @@ const interpret = (function () {
                 }
                 const operation = evaluate(operator, env);
                 if (typeof operation !== "function") {
-                    throw new TypeError("Applying a non-function");
+                    throw new TypeError("cannot apply a non-function");
                 }
                 return operation(
                     ...args.map(function (arg) {
@@ -138,12 +152,13 @@ const interpret = (function () {
                 );
         }
     }
+
     // === special forms ===
     const special_forms = Object.create(null);
 
     special_forms["if"] = function (args, env) {
         if (args.length !== 3) {
-            throw new SyntaxError("Incorrect number of args to if");
+            throw new SyntaxError("incorrect number of args to if");
         }
         if (evaluate(args[0], env) !== false) {
             return evaluate(args[1], env);
@@ -153,7 +168,7 @@ const interpret = (function () {
     };
     special_forms["while"] = function (args, env) {
         if (args.length !== 2) {
-            throw new SyntaxError("Incorrect number of args to while");
+            throw new SyntaxError("incorrect number of args to while");
         }
         while (evaluate(args[0], env) !== false) {
             evaluate(args[1], env);
@@ -169,7 +184,7 @@ const interpret = (function () {
     };
     special_forms["define"] = function (args, env) {
         if (args.length !== 2 || args[0].type !== "word") {
-            throw new SyntaxError("Incorrect use of define");
+            throw new SyntaxError("incorrect use of define");
         }
         let value = evaluate(args[1], env);
         env[args[0].value] = value;
@@ -177,11 +192,11 @@ const interpret = (function () {
     };
     special_forms["fun"] = function (args, env) {
         if (!args.length) {
-            throw new SyntaxError("Functions need a body");
+            throw new SyntaxError("functions need a body");
         }
         const parameters = args.slice(0, args.length - 1).map(function (expr) {
             if (expr.type !== "word") {
-                throw new SyntaxError("Parameter names must be words");
+                throw new SyntaxError("parameter names must be words");
             }
             return expr.value;
         });
@@ -189,7 +204,7 @@ const interpret = (function () {
 
         return function () {
             if (arguments.length !== parameters.length) {
-                throw new TypeError("Incorrect number of arguments");
+                throw new TypeError("incorrect number of arguments");
             }
             const local_env = Object.create(env);
             for (let i = 0; i < arguments.length; i += 1) {
