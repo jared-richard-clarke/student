@@ -8,7 +8,7 @@
 // interpret(`+(1, 2)`) -> 3
 const interpret = (function () {
     // parse(string) -> object
-    // wraps parse_value and parse_expression — mutually-recursive functions that build
+    // wraps parse_expression and parse_apply — mutually-recursive functions that build
     // nested objects to represent nested expressions and procedure applications.
     // parse(`+(1, 2)`) ->
     // {
@@ -33,7 +33,7 @@ const interpret = (function () {
             }
             return program;
         }
-        function parse_value(program) {
+        function parse_expression(program) {
             program = trim(program);
             let expr, val, match;
             match = /^"([^"]*)"/.exec(program);
@@ -43,7 +43,7 @@ const interpret = (function () {
                     type: "string",
                     value: val,
                 };
-                return parse_expression(expr, program.slice(match[0].length));
+                return parse_apply(expr, program.slice(match[0].length));
             }
             match = /^\d+\b/.exec(program);
             if (match !== null) {
@@ -52,7 +52,7 @@ const interpret = (function () {
                     type: "number",
                     value: val,
                 };
-                return parse_expression(expr, program.slice(match[0].length));
+                return parse_apply(expr, program.slice(match[0].length));
             }
             match = /^[^\s(),"]+/.exec(program);
             if (match !== null) {
@@ -61,12 +61,12 @@ const interpret = (function () {
                     type: "word",
                     value: val,
                 };
-                return parse_expression(expr, program.slice(match[0].length));
+                return parse_apply(expr, program.slice(match[0].length));
             }
             throw new SyntaxError("Unexpected syntax: " + program);
         }
 
-        function parse_expression(expr, program) {
+        function parse_apply(expr, program) {
             program = trim(program);
             if (program[0] !== "(") {
                 return {
@@ -81,7 +81,7 @@ const interpret = (function () {
                 args: [],
             };
             while (program[0] !== ")") {
-                const arg = parse_value(program);
+                const arg = parse_expression(program);
                 expr.args.push(arg.expr);
                 program = trim(arg.rest);
                 if (program[0] === ",") {
@@ -90,11 +90,11 @@ const interpret = (function () {
                     throw new SyntaxError("Expected ',' or ')'");
                 }
             }
-            return parse_expression(expr, program.slice(1));
+            return parse_apply(expr, program.slice(1));
         }
         // === parse: interface ===
         return function (program) {
-            const result = parse_value(program);
+            const result = parse_expression(program);
             if (trim(result.rest).length > 0) {
                 throw new SyntaxError("Unexpected text after program");
             }
