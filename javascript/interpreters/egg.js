@@ -10,7 +10,7 @@
 const interpret = (function () {
     // parse(string) -> object
     // wraps parse_expression and parse_apply — mutually-recursive functions that build
-    // nested objects to represent nested expressions and procedure applications.
+    // build a syntax tree.
     // parse(`+(1, 2)`) ->
     // {
     //   expr: {
@@ -76,8 +76,10 @@ const interpret = (function () {
         }
 
         // parse_apply(object, string) -> parse_apply(object, string) | object | syntax error
-        // If expression is an application, parses parenthesized list of arguments.
-        // If not an application, returns the expression it was given
+        // If expression is an application, function parses list of arguments,
+        // recursively calling parse_expression on each subexpression.
+        // Because an application expression can itself be applied [ func(arg)(arg) ],
+        // parse_apply must, call itself to check for further applications.
 
         function parse_apply(expr, program) {
             program = trim(program);
