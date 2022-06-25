@@ -77,7 +77,7 @@ const interpret = (function () {
 
         // parse_apply(object, string) -> parse_apply(object, string) | object | syntax error
         // If expression is an application, parses parenthesized list of arguments.
-        // Recursively calls parse_expression for each subexpression.
+        // If not an application, returns the expression it was given
 
         function parse_apply(expr, program) {
             program = trim(program);
