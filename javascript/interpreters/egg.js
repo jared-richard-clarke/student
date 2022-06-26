@@ -1,7 +1,8 @@
 // My interpreter for the Egg programming language.
 // Egg was created by Marijn Haverbeke for "Eloquent Javascript" (https://eloquentjavascript.net/12_language.html)
-// This implmentation closely follows Haverbeke's original implementation.
-// I made my code more modular. I also added extensive inline documentation.
+// This implmentation closely follows Haverbeke's original program.
+// I namespaced key components within function closures to provide better modularity. 
+// I also added extensive inline documentation.
 
 // interpret(string) -> number | string | boolean | void
 // parses and evaluates template string as Egg program.
@@ -9,8 +10,9 @@
 
 const interpret = (function () {
     // parse(string) -> object
-    // wraps parse_expression and parse_apply — mutually-recursive functions that build
-    // build a syntax tree.
+    // wraps parse_expression and parse_apply — mutually-recursive functions
+    // that build a syntax tree from an input string.
+    //
     // parse(`+(1, 2)`) ->
     // {
     //   expr: {
@@ -24,7 +26,7 @@ const interpret = (function () {
 
     const parse = (function () {
         // trim(string) -> string
-        // helper function: removes whitespace from the beginning string.
+        // helper function: removes whitespace from the start of a string.
         // trim(`  +(1, 2)`) -> "+(1, 2)"
 
         function trim(program) {
@@ -40,7 +42,7 @@ const interpret = (function () {
         // parse_expression(string) -> parse_apply(object, string) | syntax error
         // Uses three regular expressions to identify Egg's three atomic
         // elements — strings, numbers, words — and constructs a matching
-        // syntax object. Passes tree and remaining string to parse_apply.
+        // syntax tree. Passes tree and remaining string to parse_apply.
 
         function parse_expression(program) {
             program = trim(program);
@@ -79,7 +81,7 @@ const interpret = (function () {
         // If expression is an application, function parses list of arguments,
         // recursively calling parse_expression on each subexpression.
         // Because an application expression can itself be applied [ func(arg)(arg) ],
-        // parse_apply must, call itself to check for further applications.
+        // parse_apply calls itself to check for further applications.
 
         function parse_apply(expr, program) {
             program = trim(program);
@@ -118,7 +120,7 @@ const interpret = (function () {
     })();
 
     // evaluate(object, object) -> number | string | boolean | void
-    // evaluates syntax and environment objects and returns value.
+    // evaluates syntax tree within the context of an environment to compute a value.
     // evaluate({ type: "number", value: 11 }, env) -> 11
 
     function evaluate(expr, env) {
