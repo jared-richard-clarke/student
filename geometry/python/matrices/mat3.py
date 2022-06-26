@@ -21,17 +21,17 @@ class Mat3:
                     self.x0 * other.xx + self.y0 * other.xy + other.x0,
                     self.x0 * other.yx + self.y0 * other.yy + other.y0)
 
-    def transform(self, *matrices):
-        length = len(matrices)
-        if length == 0:
-            return identity()
-        elif length == 1:
-            return matrices[0]
-        else:
-            accum = self
-            for matrix in matrices:
-                accum = accum.multiply(matrix)
-            return accum
+    def translate(self, x, y):
+        return self.multiply(translate(x, y))
+
+    def scale(self, x, y):
+        return self.multiply(scale(x, y))
+
+    def rotate(self, angle):
+        return self.multiply(rotate(angle))
+
+    def shear(self, x, y):
+        return self.multiply(shear(x, y))
 
 
 def identity():
