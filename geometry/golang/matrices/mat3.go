@@ -50,7 +50,7 @@ func Shear(x, y float64) Mat3 {
 	}
 }
 
-func Multiply(a, b Mat3) Mat3 {
+func (a Mat3) Multiply(b Mat3) Mat3 {
 	return Mat3{
 		a.XX*b.XX + a.YX*b.XY,
 		a.XX*b.YX + a.YX*b.YY,
@@ -61,10 +61,18 @@ func Multiply(a, b Mat3) Mat3 {
 	}
 }
 
-func (m Mat3) Transform(mats ...Mat3) Mat3 {
-	accum := m
-	for _, mat := range mats {
-		accum = Multiply(accum, mat)
-	}
-	return accum
+func (a Mat3) Translate(x, y float64) Mat3 {
+	return Translate(x, y).Multiply(a)
+}
+
+func (a Mat3) Scale(x, y float64) Mat3 {
+	return Scale(x, y).Multiply(a)
+}
+
+func (a Mat3) Rotate(angle float64) Mat3 {
+	return Rotate(angle).Multiply(a)
+}
+
+func (a Mat3) Shear(x, y float64) Mat3 {
+	return Shear(x, y).Multiply(a)
 }
