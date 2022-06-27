@@ -105,3 +105,57 @@ impl Mul for Mat3 {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::matrices::{mat3, Mat3};
+
+    #[test]
+    fn test_default() {
+        let expect = mat3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        let result = Mat3::default();
+        assert_eq!(result, expect);
+    }
+
+    #[test]
+    fn test_identity() {
+        let expect = mat3(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+        let result = Mat3::identity();
+        assert_eq!(result, expect);
+    }
+
+    #[test]
+    fn test_translate() {
+        let expect = mat3(1.0, 0.0, 0.0, 1.0, 3.0, 4.0);
+        let result = Mat3::identity().translate(3.0, 4.0);
+        assert_eq!(result, expect);
+    }
+
+    #[test]
+    fn test_scale() {
+        let expect = mat3(3.0, 0.0, 0.0, 4.0, 0.0, 0.0);
+        let result = Mat3::identity().scale(3.0, 4.0);
+        assert_eq!(result, expect);
+    }
+
+    #[test]
+    fn test_rotate() {
+        let expect = mat3(
+            0.2836621854632263,
+            -0.9589242746631385,
+            0.9589242746631385,
+            0.2836621854632263,
+            0.0,
+            0.0,
+        );
+        let result = Mat3::identity().rotate(5.0);
+        assert_eq!(result, expect);
+    }
+
+    #[test]
+    fn test_shear() {
+        let expect = mat3(1.0, 4.0, 3.0, 1.0, 0.0, 0.0);
+        let result = Mat3::identity().shear(3.0, 4.0);
+        assert_eq!(result, expect);
+    }
+}
