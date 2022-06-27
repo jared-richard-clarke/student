@@ -27,7 +27,9 @@ expression with rbp 0
 
 ```python
 import re
+
 token_pat = re.compile("\s*(?:(\d+)|(.))")
+
 def tokenize(program):
     for number, operator in token_pat.findall(program):
         if number:
@@ -49,16 +51,22 @@ def tokenize(program):
         else:
             raise SyntaxError('unknown operator: %s', operator)
     yield end_token()
+
+
 def match(tok=None):
     global token
     if tok and tok != type(token):
         raise SyntaxError('Expected %s' % tok)
     token = next()
+
+
 def parse(program):
     global token, next
     next = tokenize(program).__next__
     token = next()
     return expression()
+
+
 def expression(rbp=0):
     global token
     t = token
@@ -69,43 +77,53 @@ def expression(rbp=0):
         token = next()
         left = t.led(left)
     return left
+
 class literal_token(object):
     def __init__(self, value):
         self.value = int(value)
     def nud(self):
         return self.value
+
 class operator_add_token(object):
     lbp = 10
     def nud(self):
         return expression(100)
     def led(self, left):
         return left + expression(10)
+
 class operator_sub_token(object):
     lbp = 10
     def nud(self):
         return -expression(100)
     def led(self, left):
         return left - expression(10)
+
 class operator_mul_token(object):
     lbp = 20
     def led(self, left):
         return left * expression(20)
+
 class operator_div_token(object):
     lbp = 20
     def led(self, left):
         return left / expression(20)
+
 class operator_pow_token(object):
     lbp = 30
     def led(self, left):
         return left ** expression(30 - 1)
+
 class operator_lparen_token(object):
     lbp = 0
     def nud(self):
         expr = expression()
         match(operator_rparen_token)
         return expr
+
 class operator_rparen_token(object):
     lbp = 0
+
 class end_token(object):
     lbp = 0
+
 ```
