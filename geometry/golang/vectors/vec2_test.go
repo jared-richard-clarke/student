@@ -128,6 +128,22 @@ func TestRound(t *testing.T) {
 	expect := Vec2{1.0, 4.0}
 	result := v.Round()
 	if expect != result {
-		t.Errorf("Test Cross Product failed. Expected: %.2f, Got: %.2f", expect, result)
+		t.Errorf("Test Round failed. Expected: %v, Got: %v", expect, result)
+	}
+}
+
+func TestCeil(t *testing.T) {
+	expect := Vec2{1.0, 5.0}
+	result := Vec2{0.75, 4.25}.Ceil()
+	if expect != result {
+		t.Errorf("Test Ceil failed. Expected: %v, Got: %v", expect, result)
+	}
+}
+
+func TestFloor(t *testing.T) {
+	expect := Vec2{0.0, 4.0}
+	result := Vec2{0.75, 4.25}.Floor()
+	if expect != result {
+		t.Errorf("Test Floor failed. Expected: %v, Got: %v", expect, result)
 	}
 }
