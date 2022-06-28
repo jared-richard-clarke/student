@@ -133,3 +133,17 @@ func (v Vec2) Round() Vec2 {
 	y := math.Round(v.Y)
 	return Vec2{x, y}
 }
+
+// Returns a vector with the components of the receiver vector rounded up to the nearest integers.
+func (v Vec2) Ceil() Vec2 {
+	x := math.Ceil(v.X)
+	y := math.Ceil(v.Y)
+	return Vec2{x, y}
+}
+
+// Returns vector with the components of the receiver vector rounded down to the nearest integers.
+func (v Vec2) Floor() Vec2 {
+	x := math.Floor(v.X)
+	y := math.Floor(v.Y)
+	return Vec2{x, y}
+}
