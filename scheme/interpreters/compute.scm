@@ -16,7 +16,10 @@
         (cons 'φ 1.618033988749894)))
 
 (define (lookup var env)
-  (cdr (assq var env)))
+  (let ([result (assq var env)])
+    (if result
+        (cdr result)
+        (error "undefined operator: " var))))
 
 (define (compute expr)
   (cond
