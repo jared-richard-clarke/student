@@ -8,7 +8,12 @@
         (cons '* *)
         (cons '× *)
         (cons '/ /)
-        (cons '÷ /)))
+        (cons '÷ /)
+        (cons '^ expt)
+        (cons '√ sqrt)
+        (cons 'π 3.141592653589793)
+        (cons 'e 2.718281828459045)
+        (cons 'φ 1.618033988749894)))
 
 (define (lookup var env)
   (cdr (assq var env)))
@@ -33,7 +38,12 @@
 (define expression-2
   '(+ (+ 1
          2)
-      3))
+      4))
+
+(define expression-3
+  '(+ (√ 25)
+      2))
 
 (compute expression-1) ; -> 7
-(compute expression-2) ; -> 6
+(compute expression-2) ; -> 7
+(compute expression-3) ; -> 7
