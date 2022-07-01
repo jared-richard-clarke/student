@@ -1,4 +1,4 @@
-# Abstract Syntax Tree
+# Abstract Syntax Trees
 
 ## JavaScript
 
