@@ -1,5 +1,5 @@
-// module op: provides a set of variadic arithmetic functions.
-// op.add(1, 2, 4) -> 7
+// module op: provides a set of variable-argument, arithmetic functions.
+// op.add(1, 2, op.sub(8, 4)) -> 7
 
 function operator(operation, base) {
     return function (...numbers) {
