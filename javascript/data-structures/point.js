@@ -1,3 +1,11 @@
+// hypotenuse(...numbers) -> number
+// Returns the square root of the sum of squares of its arguments.
+// hypotenuse(3, 4) -> 5
+
+function hypotenuse(...numbers) {
+    return Math.hypot(...numbers);
+}
+
 // point(number, number) -> array
 // Constructs a two-dimensional point represented as an immutable array.
 // point(1, 2) -> [1, 2]
@@ -22,32 +30,8 @@ function segment(p1, p2) {
 
 // path(...point) -> array
 // Constructs an array of two-dimensional points.
-// path(point(1, 2), path(3, 4)) -> [[1, 2], [3, 4]]
+// path(point(1, 2), point(3, 4)) -> [[1, 2], [3, 4]]
 
 function path(...points) {
     return Object.freeze(points);
-}
-
-// path_length(array) -> number
-// Computes the length of a two-dimensional path.
-// path_length(path(point(1, 1), point(5, 1), point(5, 4), point(1, 1))) -> 12
-
-function path_length(path) {
-    let sum = 0;
-    // subtract 1 to prevent indexing out of bounds
-    const length = path.length - 1;
-    for (let i = 0; i < length; i += 1) {
-      const p1 = path[i];
-      const p2 = path[i + 1];
-      sum += segment(p1, p2);
-    }
-    return sum;
-}
-
-// hypotenuse(number, number) -> number
-// Computes the longest side of a right triangle. (Helper Function)
-// hypotenuse(3, 4) -> 5
-
-function hypotenuse(x, y) {
-    return Math.sqrt((x * x) + (y * y));
 }
