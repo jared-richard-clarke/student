@@ -1,81 +1,67 @@
 use std::ops::Mul;
 
+#[rustfmt::skip]
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub struct Mat3 {
-    pub xx: f64,
-    pub yx: f64,
-    pub xy: f64,
-    pub yy: f64,
-    pub x0: f64,
-    pub y0: f64,
+    pub xx: f64, pub yx: f64,
+    pub xy: f64, pub yy: f64,
+    pub x0: f64, pub y0: f64,
 }
 
+#[rustfmt::skip]
 pub fn mat3(xx: f64, yx: f64, xy: f64, yy: f64, x0: f64, y0: f64) -> Mat3 {
     Mat3 {
-        xx,
-        yx,
-        xy,
-        yy,
-        x0,
-        y0,
+        xx, yx,
+        xy, yy,
+        x0, y0,
     }
 }
 
+#[rustfmt::skip]
 fn translate(x: f64, y: f64) -> Mat3 {
     Mat3 {
-        xx: 1.0,
-        yx: 0.0,
-        xy: 0.0,
-        yy: 1.0,
-        x0: x,
-        y0: y,
+        xx: 1.0, yx: 0.0,
+        xy: 0.0, yy: 1.0,
+        x0: x,   y0: y,
     }
 }
 
+#[rustfmt::skip]
 fn scale(x: f64, y: f64) -> Mat3 {
     Mat3 {
-        xx: x,
-        yx: 0.0,
-        xy: 0.0,
-        yy: y,
-        x0: 0.0,
-        y0: 0.0,
+        xx: x,   yx: 0.0,
+        xy: 0.0, yy: y,
+        x0: 0.0, y0: 0.0,
     }
 }
 
+#[rustfmt::skip]
 fn rotate(angle: f64) -> Mat3 {
     let c = angle.cos();
     let s = angle.sin();
     Mat3 {
-        xx: c,
-        yx: s,
-        xy: -s,
-        yy: c,
-        x0: 0.0,
-        y0: 0.0,
+        xx: c,   yx: s,
+        xy: -s,  yy: c,
+        x0: 0.0, y0: 0.0,
     }
 }
 
+#[rustfmt::skip]
 fn shear(x: f64, y: f64) -> Mat3 {
     Mat3 {
-        xx: 1.0,
-        yx: y,
-        xy: x,
-        yy: 1.0,
-        x0: 0.0,
-        y0: 0.0,
+        xx: 1.0, yx: y,
+        xy: x,   yy: 1.0,
+        x0: 0.0, y0: 0.0,
     }
 }
 
 impl Mat3 {
+    #[rustfmt::skip]
     pub fn identity() -> Self {
         Self {
-            xx: 1.0,
-            yx: 0.0,
-            xy: 0.0,
-            yy: 1.0,
-            x0: 0.0,
-            y0: 0.0,
+            xx: 1.0, yx: 0.0,
+            xy: 0.0, yy: 1.0,
+            x0: 0.0, y0: 0.0,
         }
     }
     pub fn translate(self, x: f64, y: f64) -> Self {
