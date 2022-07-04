@@ -53,21 +53,6 @@
         x 1
         0 0))
 
-(define (m3-reflect-origin)
-  (mat3 -1  0
-        0 -1
-        0  0))
-
-(define (m3-reflect-x)
-  (mat3 1  0
-        0 -1
-        0  0))
-
-(define (m3-reflect-y)
-  (mat3 -1 0
-        0 1
-        0 0))
-
 (define (m3-transform . matrices)
   (let ([len (length matrices)])
     (cond
