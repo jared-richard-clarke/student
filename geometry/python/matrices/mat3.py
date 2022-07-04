@@ -13,7 +13,7 @@ class Mat3:
     def __str__(self):
         return f"({self.xx}, {self.yx}, {self.xy}, {self.yy}, {self.x0}, {self.y0})"
 
-    def multiply(self, other):
+    def __mul__(self, other):
         return Mat3(self.xx * other.xx + self.yx * other.xy,
                     self.xx * other.yx + self.yx * other.yy,
                     self.xy * other.xx + self.yy * other.xy,
@@ -22,16 +22,16 @@ class Mat3:
                     self.x0 * other.yx + self.y0 * other.yy + other.y0)
 
     def translate(self, x, y):
-        return self.multiply(translate(x, y))
+        return translate(x, y) * self
 
     def scale(self, x, y):
-        return self.multiply(scale(x, y))
+        return scale(x, y) * self
 
     def rotate(self, angle):
-        return self.multiply(rotate(angle))
+        return rotate(angle) * self
 
     def shear(self, x, y):
-        return self.multiply(shear(x, y))
+        return shear(x, y) * self
 
 
 def identity():
