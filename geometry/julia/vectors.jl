@@ -1,5 +1,3 @@
-module Vectors
-
 import Base: +, -, *
 
 """
@@ -53,6 +51,4 @@ function lerp(v1::Vec2, v2::Vec2, t::Real)
     x = v1.x + (v2.x - v1.x) * t
     y = v1.y + (v2.y - v1.y) * t
     Vec2(x, y)
-end
-
 end
