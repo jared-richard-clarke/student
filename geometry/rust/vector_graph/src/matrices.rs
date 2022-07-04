@@ -65,16 +65,16 @@ impl Mat3 {
         }
     }
     pub fn translate(self, x: f64, y: f64) -> Self {
-        self * translate(x, y)
+        translate(x, y) * self
     }
     pub fn scale(self, x: f64, y: f64) -> Self {
-        self * scale(x, y)
+        scale(x, y) * self
     }
     pub fn rotate(self, angle: f64) -> Self {
-        self * rotate(angle)
+        rotate(angle) * self
     }
     pub fn shear(self, x: f64, y: f64) -> Self {
-        self * shear(x, y)
+        shear(x, y) * self
     }
 }
 
@@ -142,6 +142,16 @@ mod tests {
     fn test_shear() {
         let expect = mat3(1.0, 4.0, 3.0, 1.0, 0.0, 0.0);
         let result = Mat3::identity().shear(3.0, 4.0);
+        assert_eq!(result, expect);
+    }
+
+    #[test]
+    fn test_transform() {
+        let expect = mat3(2.0, 4.0, 2.0, 2.0, 3.0, 4.0);
+        let result = Mat3::identity()
+            .translate(3.0, 4.0)
+            .scale(2.0, 2.0)
+            .shear(1.0, 2.0);
         assert_eq!(result, expect);
     }
 }
