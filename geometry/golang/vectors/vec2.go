@@ -87,14 +87,14 @@ func (v1 Vec2) Dot(v2 Vec2) float64 {
 
 // Returns a unit vector of the receiver vector.
 func (v Vec2) Normalize() Vec2 {
-	mag := v.Magnitude()
+	mag := v.Mag()
 	x := v.X
 	y := v.Y
 	return Vec2{x / mag, y / mag}
 }
 
 // Computes the distance of a 2d-vector's point from the origin.
-func (v Vec2) Magnitude() float64 {
+func (v Vec2) Mag() float64 {
 	x := v.X
 	y := v.Y
 	return math.Hypot(x, y)
