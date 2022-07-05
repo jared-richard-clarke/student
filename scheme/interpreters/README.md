@@ -3,7 +3,6 @@
 ## Table of Contents
 - `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
-- `mccarthy.lisp`: a LISP interpreter as defined by John McCarthy.
 - `compute.scm`: an arithmetic interpreter as defined by me.
 
 ## Grammar
