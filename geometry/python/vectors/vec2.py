@@ -46,11 +46,11 @@ class Vec2:
     def __neg__(self):
         return Vec2(-self.x, -self.y)
 
-    # Vec2.length() -> number
-    # Returns the length/magnitude of a vector.
-    # Vec2(3, 4).length() -> 5
+    # Vec2.mag() -> number
+    # Returns the mag/magnitude of a vector.
+    # Vec2(3, 4).mag() -> 5
 
-    def length(self):
+    def mag(self):
         x, y = self.point
         return math.hypot(x, y)
 
@@ -76,7 +76,7 @@ class Vec2:
 
     def normalize(self):
         x, y = self.point
-        mag = self.length()
+        mag = self.mag()
         return Vec2(x / mag, y / mag)
 
     # Vec2.distance(Vec2) -> number
