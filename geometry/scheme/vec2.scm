@@ -120,16 +120,16 @@
 ;; (vec2-normalize (vec2 3 4)) -> #(3/5 4/5)
 
 (define (vec2-normalize vec)
-  (let ([m (vec2-length vec)]
+  (let ([m (vec2-mag vec)]
         [x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
     (vec2 (/ x m) (/ y m))))
 
-;; (vec2-length (vector number number)) -> number
-;; Returns the length/magnitude of a two-dimensional vector.
-;; (vec2-length (vec2 3 4)) -> 5
+;; (vec2-mag (vector number number)) -> number
+;; Returns the magnitude of a two-dimensional vector.
+;; (vec2-mag (vec2 3 4)) -> 5
 
-(define (vec2-length vec)
+(define (vec2-mag vec)
   (let ([x (vector-ref vec 0)]
         [y (vector-ref vec 1)])
     (hypotenuse x y)))
@@ -254,7 +254,7 @@
 (assert-equal (vec2-normalize (vec2 3.0 4.0))
               #(0.6 0.8))
 
-(assert-equal (vec2-length (vec2 3 4))
+(assert-equal (vec2-mag (vec2 3 4))
               5)
 
 (assert-equal (vec2-distance (vec2 8 0) (vec2 1 0))
