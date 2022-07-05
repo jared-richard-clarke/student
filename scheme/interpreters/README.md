@@ -4,6 +4,7 @@
 - `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
 - `compute.scm`: an arithmetic interpreter as defined by me.
+- `ast.md`: A diagram of an abstract syntax tree as defined by Daniel P. Friedman and Mitchell Wand in *The Essentials of Programming Languages*, third edition
 
 ## Grammar
 **LISP** is defined in terms of the evaluation of data structures, **not** in terms of the syntax of character streams or files.
