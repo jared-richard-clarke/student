@@ -84,12 +84,12 @@ func TestNormalize(t *testing.T) {
 	}
 }
 
-func TestMagnitude(t *testing.T) {
+func TestMag(t *testing.T) {
 	v := Vec2{3.0, 4.0}
 	expect := 5.0
-	result := v.Magnitude()
+	result := v.Mag()
 	if expect != result {
-		t.Errorf("Test Magnitude failed. Expected: %.2f, Got: %.2f", expect, result)
+		t.Errorf("Test Mag failed. Expected: %.2f, Got: %.2f", expect, result)
 	}
 }
 
