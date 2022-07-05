@@ -12,7 +12,7 @@ pub fn vec2(x: f64, y: f64) -> Vector2D {
 }
 
 impl Vector2D {
-    pub fn length(self) -> f64 {
+    pub fn mag(self) -> f64 {
         let x = self.x;
         let y = self.y;
         (x * x + y * y).sqrt()
@@ -36,7 +36,7 @@ impl Vector2D {
     }
     // Calculates the distance between two vector points.
     pub fn distance(self, other: Self) -> f64 {
-        (self - other).length()
+        (self - other).mag()
     }
     // Interpolates point between two vector points.
     pub fn lerp(self, other: Self, t: f64) -> Self {
@@ -73,7 +73,7 @@ impl Vector2D {
     }
 
     pub fn normalize(self) -> Self {
-        let mag = self.length();
+        let mag = self.mag();
         let x = self.x;
         let y = self.y;
         Self {
@@ -148,9 +148,9 @@ mod tests {
         assert_eq!(result, expect);
     }
     #[test]
-    fn test_length() {
+    fn test_mag() {
         let expect = 5.0;
-        let result = vec2(3.0, 4.0).length();
+        let result = vec2(3.0, 4.0).mag();
         assert_eq!(result, expect);
     }
 
