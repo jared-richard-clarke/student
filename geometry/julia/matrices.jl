@@ -31,5 +31,5 @@ function shear(x, y)
 end
 
 function transform(matrices...)
-    reduce(*, matrices)
+    foldl(*, matrices; init=identity())
 end
