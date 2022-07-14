@@ -6,7 +6,9 @@ function operator(operation, base) {
         if (numbers.length === 0) {
             return base;
         } else {
-            return numbers.reduce((accum, number) => operation(accum, number));
+            return numbers.reduce(
+                (accum, number) => operation(accum, number)
+            );
         }
     };
 }
