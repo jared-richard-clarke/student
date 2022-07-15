@@ -5,9 +5,9 @@ by Douglas Crockford
 
 ## Top Down Operator Precedence
 
-- It is easy to build parsers with it.
-- It is really fast because it does almost nothing.
-- It is fast enough to use as an interpreter.
+- Easy to build parsers with it.
+- Really fast because it does almost nothing.
+- Fast enough to use as an interpreter.
 - Dynamic: Build DSLs with it.
 - Extensible languages.
 - No more reserved words.
