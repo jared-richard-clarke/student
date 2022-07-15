@@ -1,7 +1,11 @@
 # Parser Combinators in F\#
 
-[Understanding Parser Combinators](https://fsharpforfunandprofit.com/posts/understanding-parser-combinators/)
-by Scott Wlaschin
+## `pchar` function
+![pchar diagram](https://user-images.githubusercontent.com/80301412/179132432-22a25158-7da4-49ad-a477-292987b1dff5.png)
+`pchar` is the base parser from which all other parsers in this library are composed.
+
+## Parser Combinator Library
+This is the second iteration of the parser combinator library as defined by Scott Wlaschin for his blog [Understanding Parser Combinators](https://fsharpforfunandprofit.com/posts/understanding-parser-combinators/).
 
 ```fs
 open System
