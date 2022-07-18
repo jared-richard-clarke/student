@@ -35,7 +35,7 @@
 
 (define expression-1
   '(+ 1
-      (* 2
+      (× 2
          3)))
 
 (define expression-2
