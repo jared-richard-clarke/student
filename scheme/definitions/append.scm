@@ -1,5 +1,5 @@
 ;; (append list ... obj)
-;; concatenates lists. ("cons up" a list while "cdring" down another)
+;; Concatenates lists. ("cons up" a list while "cdring" down another)
 ;; (append '(1 2 3) '())  -> '(1 2 3)
 ;; (append '(1 2) '(3 4)) -> '(1 2 3 4)
 
