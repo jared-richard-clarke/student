@@ -2,13 +2,13 @@
 // op.add(1, 2, op.sub(8, 4)) -> 7
 // op.mul() -> 1
 
-function operator(operation, base) {
-    return function (...numbers) {
-        if (numbers.length === 0) {
-            return base;
+function operator(operation, identity) {
+    return function (...operands) {
+        if (operands.length === 0) {
+            return identity;
         } else {
-            return numbers.reduce(
-                (accum, number) => operation(accum, number)
+            return operands.reduce(
+                (total, operand) => operation(total, operand)
             );
         }
     };
