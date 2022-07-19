@@ -8,7 +8,7 @@ function operator(operation, identity) {
             return identity;
         } else {
             return operands.reduce(
-                (total, operand) => operation(total, operand)
+                (result, operand) => operation(result, operand)
             );
         }
     };
