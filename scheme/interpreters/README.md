@@ -1,7 +1,6 @@
 # LISP Interpreters
 
 ## Table of Contents
-- `ast.md`: a diagram of an abstract syntax tree for the Scheme programming language as defined by Daniel P. Friedman and Mitchell Wand in *The Essentials of Programming Languages*, third edition.
 - `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
 - `compute.scm`: an arithmetic interpreter as defined by me.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
