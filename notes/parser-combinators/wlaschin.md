@@ -13,7 +13,7 @@ The parser inputs a stream of characters and outputs either a parsed character a
 | `<\|>` (`orElse`)   | Applies first parser. If failure, apply second.                           |
 | `choice`            | Extends `orElse`. Choose from list of parsers.                            |
 | `>>=` (`bindP`)     | Chains the result of a parser to a parser-producing function.             |
-| `<!>` (`mapP`)      | Transforms the result of a parser.                                        |
+| `<!>` (`mapP`)      | Transforms the result of a parser. Maps from one domain to another.       |
 | `\|>>`              | Pipe version of `mapP`.                                                   |
 |  `returnP`          | Transforms value into parser value.                                       |
 | `<*>` `applyP`      | Allows multi-parameter functions to be transformed into parsers.          |
