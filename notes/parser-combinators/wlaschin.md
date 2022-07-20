@@ -1,5 +1,8 @@
 # Parser Combinators in F\#
 
+[Understanding Parser Combinators](https://fsharpforfunandprofit.com/posts/understanding-parser-combinators/)
+by Scott Wlaschin
+
 ## `pchar` function
 ![pchar diagram](https://user-images.githubusercontent.com/80301412/179132432-22a25158-7da4-49ad-a477-292987b1dff5.png)
 `pchar` embodies the logic from which all other parsers in this library are composed. `pchar` inputs a character and outputs a parser. 
