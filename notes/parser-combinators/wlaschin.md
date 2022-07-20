@@ -5,6 +5,29 @@
 `pchar` embodies the logic from which all other parsers in this library are composed. `pchar` inputs a character and outputs a parser. 
 The parser inputs a stream of characters and outputs either a parsed character and remaining character stream or signals failure.
 
+## List of Parser Combinators
+
+| combinator          | description                                                               |
+| ------------------- | ------------------------------------------------------------------------- |
+| `.>>.` (`andThen`)  | Applies two parsers in sequence and returns tuple.                        |
+| `<\|>` (`orElse`)   | Applies first parser. If failure, apply second.                           |
+| `choice`            | Extends `orElse`. Choose from list of parsers.                            |
+| `>>=` (`bindP`)     | Chains the result of a parser to a parser-producing function.             |
+| `<!>` (`mapP`)      | Transforms the result of a parser.                                        |
+| `\|>>`              | Pipe version of `mapP`.                                                   |
+|  `returnP`          | Transforms value into parser value.                                       |
+| `<*>` `applyP`      | Allows multi-parameter functions to be transformed into parsers.          |
+| `lift2`             | Uses `applyP` to transform two-parameter functions into parsers.          |
+| `sequence`          | Transforms list of parsers into a parser containing a list.               |
+| `many`              | Matches zero or more occurences of the specified parser.                  |
+| `many1`             | Matches one or more occurences of the specified parser.                   |
+| `opt`               | Matches an optional occurence of specified parser.                        |
+| `.>>`               | Keeps only the result of the left-side parser.                            |
+| `>>.`               | Keeps only the result of the right-side parser.                           |
+| `between`           | Keeps only the result of the middle parser.                               |
+| `sepBy`             | Parses zero or more occurences of a parser with a separator.              |
+| `sepBy1`            | Parses one or more occurences of a parser with a separator.               |
+
 ## Parser Combinator Library
 This is the second iteration of the parser combinator library as defined by Scott Wlaschin for his blog [Understanding Parser Combinators](https://fsharpforfunandprofit.com/posts/understanding-parser-combinators/).
 
