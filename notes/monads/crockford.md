@@ -18,12 +18,12 @@ Monads are, generally, an object.
 ### Functional Notation
 
 ```
-- bind(unit(value), f) ==== f(value)
+- bind(unit(value), f) -> f(value)
 
-- bind(monad, unit) ==== monad
+- bind(monad, unit) -> monad
 
 - bind(bind(monad, f), g)
-  ====
+  ->
   bind(monad, function (value) {
       return bind(f(value), g);
   })
@@ -32,12 +32,12 @@ Monads are, generally, an object.
 ### Methodical Notation
 
 ```
-- unit(value).bind(f) ==== f(value)
+- unit(value).bind(f) -> f(value)
 
-- monad.bind(unit) ==== monad
+- monad.bind(unit) -> monad
 
 - monad.bind(f).bind(g) 
-  ====
+  ->
   monad.bind(function (value) {
       return f(value).bind(g)
   })
