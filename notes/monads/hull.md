@@ -1,7 +1,7 @@
 # Jäsentää
 
-[Jäsentää](https://www.destructuring-bind.org/jasentaa/) is a parser-combinator library written in Clojure 
-and created by Richard Hull. Below is his implementation of a monad for that library.
+[Jäsentää](https://www.destructuring-bind.org/jasentaa/) is a parser-combinator library written in Clojure. 
+Jäsentää was created by Richard Hull. Below is his implementation of a monad for that library.
 
 ## jasentaa.monad.cljc
 
