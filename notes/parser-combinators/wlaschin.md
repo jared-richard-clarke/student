@@ -4,8 +4,8 @@
 by Scott Wlaschin
 
 ## Parser Combinator Library
-This is the final iteration of the parser combinator library as defined by Scott Wlaschin for his blog 
-[Understanding Parser Combinators](https://fsharpforfunandprofit.com/posts/understanding-parser-combinators-3/).
+
+This is the final iteration of the parser combinator library as defined by Scott Wlaschin.
 
 ```fsharp
 (*
