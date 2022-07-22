@@ -1,7 +1,7 @@
 # Monad
 
 ```clojure
- (ns jasentaa.monad)
+(ns jasentaa.monad)
 
 (defn failure [& args]
   '())
