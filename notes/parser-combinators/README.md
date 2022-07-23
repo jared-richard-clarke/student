@@ -8,10 +8,3 @@
 > computational problems.
 >
 > **Monadic Parser Combinators** by Graham Hutton and Erik Meijer
-
-> A combinator library combines values to get more complex values of the same type.
-> - integer + integer = integer
-> - list @ list = list
-> - Parser ?? Parser = Parser
->
-> **Understanding Parser Combinators: a deep dive** by Scott Wlaschin
