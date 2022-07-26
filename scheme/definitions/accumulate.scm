@@ -1,5 +1,7 @@
 ;; (accumulate function value list) -> value
-;; Iterates over a sequence, accumulating the results into a single value.
+;; Iterates over a list, recursively building a return value through a combining operation.
+;; Alternatively called fold, reduce, compress, aggregate, or inject.
+;; (accumulate cons '() '(1 2 4)) -> '(1 2 4)
 ;; (accumulate + 0 '(1 2 4)) -> 7
 
 (define (accumulate action init sequence)
