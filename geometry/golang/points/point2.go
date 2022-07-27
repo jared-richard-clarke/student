@@ -3,7 +3,7 @@ package points
 
 import "math"
 
-// A two-dimensional cartesian coordinate.
+// A cartesian representation of a point in two dimensions.
 type Point2 struct {
 	X, Y float64
 }
