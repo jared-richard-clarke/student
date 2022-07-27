@@ -1,3 +1,4 @@
+// Provides units of measure and conversion functions for angles.
 package angles
 
 import (
@@ -16,10 +17,12 @@ func (r Radians) String() string {
 	return fmt.Sprintf("%frad", r)
 }
 
+// Converts Degrees to Radians.
 func DegreesToRadians(d Degrees) Radians {
 	return Radians(d * (math.Pi / 180.0))
 }
 
+// Converts Radians to Degrees.
 func RadiansToDegrees(r Radians) Degrees {
 	return Degrees(r * (180 / math.Pi))
 }
