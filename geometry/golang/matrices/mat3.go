@@ -1,13 +1,17 @@
+// Provides affine transformation matrices and functions.
 package matrices
 
 import "math"
 
+// A 2d transformation implemented as a column-major, 3 × 3 matrix.
+// The third row is implicit.
 type Mat3 struct {
 	XX, YX,
 	XY, YY,
 	X0, Y0 float64
 }
 
+// Creates an identity matrix.
 func Identity() Mat3 {
 	return Mat3{
 		1, 0,
@@ -16,6 +20,7 @@ func Identity() Mat3 {
 	}
 }
 
+// Creates a translation matrix.
 func Translate(x, y float64) Mat3 {
 	return Mat3{
 		1, 0,
@@ -24,6 +29,7 @@ func Translate(x, y float64) Mat3 {
 	}
 }
 
+// Creates a scaling matrix.
 func Scale(x, y float64) Mat3 {
 	return Mat3{
 		x, 0,
@@ -32,6 +38,7 @@ func Scale(x, y float64) Mat3 {
 	}
 }
 
+// Creates a rotation matrix.
 func Rotate(angle float64) Mat3 {
 	c := math.Cos(angle)
 	s := math.Sin(angle)
@@ -42,6 +49,7 @@ func Rotate(angle float64) Mat3 {
 	}
 }
 
+// Creates a shearing matrix.
 func Shear(x, y float64) Mat3 {
 	return Mat3{
 		1, y,
@@ -50,6 +58,7 @@ func Shear(x, y float64) Mat3 {
 	}
 }
 
+// Combines matrix transformations through multiplication.
 func (a Mat3) Multiply(b Mat3) Mat3 {
 	return Mat3{
 		a.XX*b.XX + a.YX*b.XY,
@@ -61,18 +70,22 @@ func (a Mat3) Multiply(b Mat3) Mat3 {
 	}
 }
 
+// Translates matrix by scalars "x" and "y". Transformation can be chained.
 func (a Mat3) Translate(x, y float64) Mat3 {
 	return Translate(x, y).Multiply(a)
 }
 
+// Scales matrix by scalars "x" and "y". Transformation can be chained.
 func (a Mat3) Scale(x, y float64) Mat3 {
 	return Scale(x, y).Multiply(a)
 }
 
+// Rotates matrix by "angle", measured in radians. Transformation can be chained.
 func (a Mat3) Rotate(angle float64) Mat3 {
 	return Rotate(angle).Multiply(a)
 }
 
+// Shears matrix by scalars "x" and "y". Transformation can be chained.
 func (a Mat3) Shear(x, y float64) Mat3 {
 	return Shear(x, y).Multiply(a)
 }
