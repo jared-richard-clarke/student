@@ -1,7 +1,15 @@
+;; Provides affine transformation matrices and functions.
+
+;; (mat3 |number * 6|) -> (vector |number * 6|)
+;; A 2d transformation implemented as a column-major, 3 × 3 matrix. The third row is implicit.
+
 (define (mat3 xx yx xy yy x0 y0)
   (vector xx yx
           xy yy
           x0 y0))
+
+;; (m3-multiply mat3 mat3) -> mat3
+;; Combines matrix transformations through multiplication.
 
 (define (m3-multiply a b)
   (let ([a-xx (vector-ref a 0)]
@@ -25,20 +33,32 @@
           [+ (* a-x0 b-xx) (* a-y0 b-xy) b-x0]
           [+ (* a-x0 b-yx) (* a-y0 b-yy) b-y0])))
 
+;; (m3-identity) -> mat3
+;; Creates an identity matrix.
+
 (define (m3-identity)
   (mat3 1 0
         0 1
         0 0))
+
+;; (m3-translate number number) -> mat3
+;; Creates a translation matrix.
 
 (define (m3-translate x y)
   (mat3 1 0
         0 1
         x y))
 
+;; (m3-scale number number) -> mat3
+;; Creates a scaling matrix.
+
 (define (m3-scale x y)
   (mat3 x 0
         0 y
         0 0))
+
+;; (m3-rotate number) -> mat3
+;; Creates a rotation matrix. Argument, "angle", measured in radians.
 
 (define (m3-rotate angle)
   (let* ([c (cos angle)]
@@ -48,10 +68,17 @@
           -s c
           0  0)))
 
+;; (m3-shear number number) -> mat3
+;; Creates a shearing matrix.
+
 (define (m3-shear x y)
   (mat3 1 y
         x 1
         0 0))
+
+;; (m3-transform mat3 ...) -> mat3
+;; Multiplies a list of transformation matrices pairwise to create a combined transform.
+;; If no matrices are provided, function returns a mat3-identity matrix.
 
 (define (m3-transform . matrices)
   (let ([len (length matrices)])
