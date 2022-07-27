@@ -17,7 +17,7 @@ func (p1 Point2) Distance(p2 Point2) float64 {
 	return math.Hypot(x2-x1, y2-y1)
 }
 
-// Interpolates a point between two points.
+// Interpolates a point along a line between two points.
 func (p1 Point2) Lerp(p2 Point2, t float64) Point2 {
 	x1 := p1.X
 	y1 := p1.Y
