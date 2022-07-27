@@ -1,7 +1,9 @@
+// Provides cartesian coordinates and associated functions.
 package points
 
 import "math"
 
+// A two-dimensional cartesian coordinate.
 type Point2 struct {
 	X, Y float64
 }
