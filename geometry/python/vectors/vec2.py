@@ -1,8 +1,7 @@
 import math
 
 """
-An Object-Oriented implementation of a two-dimensional vector,
-and associated methods.
+Provides two-dimensional vectors and methods.
 """
 
 
