@@ -1,3 +1,4 @@
+module Mat3
 
 """Creates a 3×3 identity matrix."""
 function identity()
@@ -37,11 +38,11 @@ function shear(x, y)
 end
 
 """
-Multiplies a collection of 3×3 transformation matrices to create a combined transform.
+Multiplies a collection of 3×3 transformation matrices to create a combined transform. 
 Initial value is an identity matrix.
 """
 function transform(matrices...)
     foldl(*, matrices; init=identity())
 end
 
-
+end
