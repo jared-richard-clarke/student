@@ -1,4 +1,4 @@
-;; Fold, right and left, iterate over a list, recursively building a return value through a combining operation.
+;; Fold iterates over a list, recursively building a return value through a combining operation.
 ;; Alternatively called reduce, compress, accumulate, aggregate, or inject.
 
 ;; (foldr function any list) -> any
