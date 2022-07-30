@@ -38,8 +38,8 @@ function shear(x, y)
 end
 
 """
-Multiplies a collection of 3×3 transformation matrices to create a combined transform. 
-Initial value is an identity matrix.
+Multiplies a collection of 3×3 transformation matrices pairwise 
+to create a combined transform. Initial value is an identity matrix.
 """
 function transform(matrices...)
     foldl(*, matrices; init=identity())
