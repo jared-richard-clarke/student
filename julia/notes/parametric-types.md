@@ -2,8 +2,8 @@
 
 [Types: The Julia Language](https://docs.julialang.org/en/v1/manual/types/#)
 
-Below is the definition of Julia's `Rational` immutable number type, representing
-the exact ratio of integers. The constructor is omitted.
+Below is the definition of Julia's immutable `Rational` number type, representing
+an exact ratio of integers. The constructor is omitted.
 
 ```julia
 struct Rational{T<:Integer} <: Real
