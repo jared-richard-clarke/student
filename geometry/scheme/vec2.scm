@@ -17,7 +17,7 @@
 ;; (approx-eq? 0.2 0.19999999) -> #t
 
 (define (approx-eq? x y)
-  ;; The maximum allowable difference in precision between floating-point numbers.
+  ;; The aribitrary maximum allowable difference in precision between floating-point numbers.
   (define EPSILON 0.000001)
   (<= (abs (- x y))
       (* EPSILON 
