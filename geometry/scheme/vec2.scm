@@ -17,13 +17,12 @@
 ;; (approx-eq? 0.2 0.19999999) -> #t
 
 (define (approx-eq? x y)
-  ;; The aribitrary maximum allowable difference in precision between floating-point numbers.
-  (define EPSILON 0.000001)
-  (<= (abs (- x y))
-      (* EPSILON 
-         (max 1.0 
-              (abs x) 
-              (abs y)))))
+  (let ([EPSILON 0.000001]) ;; <- arbitrary maximum allowable difference
+    (<= (abs (- x y))
+        (* EPSILON 
+           (max 1.0 
+                (abs x) 
+                (abs y))))))
 
 ;; (vec2 number number) -> (vector number number)
 ;; Returns two-dimensional coordinates as a vector of two numbers.
