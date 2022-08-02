@@ -8,21 +8,13 @@ end
 
 """Computes the distance between two points."""
 function distance(p1::Pt2, p2::Pt2)
-    x1 = p1.x
-    y1 = p1.y
-    x2 = p2.x
-    y2 = p2.y
-    hypot(x2 - x1, y2 - y1)
+    hypot(p2.x - p1.x, p2.y - p1.y)
 end
 
 """Interpolates a point along a line between two points."""
 function lerp(p1::Pt2, p2::Pt2, t::Float64)
-    x1 = p1.x
-    y1 = p1.y
-    x2 = p2.x
-    y2 = p2.y
-    x = x1 + (x2 - x1) * t
-    y = y1 + (y2 - y1) * t
+    x = p1.x + (p2.x - p1.x) * t
+    y = p1.y + (p2.y - p1.y) * t
     Pt2(x, y)
 end
 
