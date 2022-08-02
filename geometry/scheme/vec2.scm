@@ -56,11 +56,11 @@
 
 (define vec2-sub (arithmetic -))
 
-;; (arithmetic-seq function (vector number number)) -> (function (vector number number) ...) -> (vector number number)
-;; Generates functions that perform an arithmetic operation over a series of two-dimensional vectors.
-;; (define vec2-sum (arithmetic-seq + #(0 0))) -> (vec2-sum (vec2 1 2) (vec2 3 4)) -> #(4 6)
+;; (total function (vector number number)) -> (function (vector number number) ...) -> (vector number number)
+;; Returns function that performs an arithmetic operation over a series of two-dimensional vectors.
+;; (define vec2-sum (total + #(0 0))) -> (total (vec2 1 2) (vec2 3 4)) -> #(4 6)
 
-(define (arithmetic-seq operation base)
+(define (total operation base)
   (lambda vecs
     (cond
       [(= (length vecs) 0) base]
@@ -78,13 +78,13 @@
 ;; Returns the sum of a series of vectors.
 ;; (vec2-sum (vec2 1 2) (vec2 1 2)) -> #(2 4)
 
-(define vec2-sum (arithmetic-seq + #(0 0)))
+(define vec2-sum (total + #(0 0)))
 
 ;; (vec2-diff (vector number number) ...) -> (vector number number)
 ;; Returns the difference of a series of two-dimensional vectors.
 ;; (vec2-diff (vec2 3 4) (vec2 1 2)) -> #(2 2)
 
-(define vec2-diff (arithmetic-seq - #(0 0)))
+(define vec2-diff (total - #(0 0)))
 
 ;; (vec2-negate (vector number number)) -> (vector number number)
 ;; Inverts the signs of the vector components. Flips the vector 180 degrees.
