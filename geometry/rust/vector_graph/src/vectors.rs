@@ -34,7 +34,7 @@ impl Vector2D {
         let y2 = other.y;
         x1 * x2 + y1 * y2
     }
-    // Calculates the distance between two vector points.
+    // Calculates the distance between the tips of two vectors.
     pub fn distance(self, other: Self) -> f64 {
         (self - other).mag()
     }
@@ -175,8 +175,8 @@ mod tests {
     }
     #[test]
     fn test_lerp() {
-        let expect = vec2(-8.0, 24.0);
-        let result = vec2(0.0, 10.0).lerp(vec2(8.0, -4.0), -1.0);
+        let expect = vec2(5.0, 0.0);
+        let result = vec2(0.0, 0.0).lerp(vec2(10.0, 0.0), 0.5);
         assert_eq!(result, expect);
     }
     #[test]
@@ -235,3 +235,4 @@ mod tests {
         assert_eq!(vector_result, vector_expect);
     }
 }
+
