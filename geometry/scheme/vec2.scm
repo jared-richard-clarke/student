@@ -259,8 +259,8 @@
 (assert-equal (vec2-distance (vec2 8 0) (vec2 1 0))
               7)
 
-(assert-equal (vec2-lerp (vec2 0 10) (vec2 8 -4) -1)
-              (vec2 -8 24))
+(assert-equal (vec2-lerp (vec2 0 0) (vec2 10 0) 1/2)
+              (vec2 5 0))
 
 (assert-equal (vec2-equal? (vec2 3 4) (vec2 3 4))
               #t)
