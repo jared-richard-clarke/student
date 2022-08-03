@@ -2,7 +2,8 @@
 
 The factorial function is a common example used in many programming tutorials. 
 It is therefore an excellent tool for comparing the syntax and semantics of different programming languages.
-A majority of these implementations ( my programs ) return the multiplicative identity for any number <= 0 rather than raising an error.
+A majority of these implementations (my programs) return the multiplicative identity for any number 
+less than or equal to 0 instead of raising an error.
 
 > n! is the product of all positive integers less than or equal to n.
 
