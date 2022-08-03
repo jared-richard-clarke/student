@@ -146,9 +146,9 @@
 
 ;; (vec2-lerp vec2 vec2 number) -> vec2
 ;; Interpolates a vector point along a line between two vector points.
-;; (vec2-lerp (vec2 0 10) (vec2 8 -4) -1) -> (vec2 -8 24)
+;; (vec2-lerp 1/2 (vec2 0 0) (vec2 10 0)) -> (vec2 5 0)
 
-(define (vec2-lerp v1 v2 t)
+(define (vec2-lerp t v1 v2)
   (let* ([x1 (vector-ref v1 0)]
          [y1 (vector-ref v1 1)]
          [x2 (vector-ref v2 0)]
@@ -259,7 +259,7 @@
 (assert-equal (vec2-distance (vec2 8 0) (vec2 1 0))
               7)
 
-(assert-equal (vec2-lerp (vec2 0 0) (vec2 10 0) 1/2)
+(assert-equal (vec2-lerp 1/2 (vec2 0 0) (vec2 10 0))
               (vec2 5 0))
 
 (assert-equal (vec2-equal? (vec2 3 4) (vec2 3 4))
