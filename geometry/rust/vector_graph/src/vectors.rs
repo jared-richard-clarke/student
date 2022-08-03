@@ -38,7 +38,7 @@ impl Vector2D {
     pub fn distance(self, other: Self) -> f64 {
         (self - other).mag()
     }
-    // Interpolates point between two vector points.
+    // Interpolates point between the tips of two vectors.
     pub fn lerp(self, other: Self, t: f64) -> Self {
         let x = self.x + (other.x - self.x) * t;
         let y = self.y + (other.y - self.y) * t;
