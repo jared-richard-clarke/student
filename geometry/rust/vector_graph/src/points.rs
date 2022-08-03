@@ -53,8 +53,8 @@ mod tests {
     }
     #[test]
     fn test_lerp() {
-        let expect = pt2(-8.0, 24.0);
-        let result = pt2(0.0, 10.0).lerp(pt2(8.0, -4.0), -1.0);
+        let expect = pt2(5.0, 0.0);
+        let result = pt2(0.0, 0.0).lerp(pt2(10.0, 0.0), 0.5);
         assert_eq!(expect, result);
     }
 }
