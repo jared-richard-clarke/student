@@ -104,10 +104,8 @@ func TestDistance(t *testing.T) {
 }
 
 func TestLerp(t *testing.T) {
-	v1 := Vec2{0.0, 10.0}
-	v2 := Vec2{8.0, -4.0}
-	expect := Vec2{-8.0, 24.0}
-	result := v1.Lerp(v2, -1.0)
+	expect := Vec2{5.0, 0.0}
+	result := Vec2{0.0, 0.0}.Lerp(Vec2{10.0, 0.0}, 0.5)
 	if expect != result {
 		t.Errorf("Test Lerp failed. Expected: %v, Got: %v", expect, result)
 	}
