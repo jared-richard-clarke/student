@@ -1,0 +1,50 @@
+## De Casteljau's Algorithm
+
+[De Casteljau's algorithm](https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm) 
+from Wikipedia
+
+### JavaScript
+
+```javascript
+// Example: lerp(0.5, 0.0, 1.0) == 0.5
+const lerp = function(t, p1, p2) { 
+    return (1 - t) * p1 + t * p2; 
+};
+
+// Example: reduce(0.5, ...[0.0, 1.0, 2.0, 3.0]) == [0.5, 1.5, 2.5]
+const reduce = function(t, p1, p2, ...ps) {
+    return (ps.length > 0
+           ? [lerp(t, p1, p2), ...reduce(t, p2, ...ps)]
+           : [lerp(t, p1, p2)]);
+};
+
+// Example: deCasteljau(0.5, [0.0, 1.0, 2.0, 3.0]) == 1.5
+const deCasteljau = function(t, ps) { 
+    return (ps.length > 1
+           ? deCasteljau(t, reduce(t, ...ps))
+           : ps[0]);
+};
+```
+
+### Python
+
+```python
+def de_casteljau(t, coefs):
+    beta = [c for c in coefs] # values in this list are overridden
+    n = len(beta)
+    for j in range(1, n):
+        for k in range(n - j):
+            beta[k] = beta[k] * (1 - t) + beta[k + 1] * t
+    return beta[0]
+```
+### Haskell
+
+```haskell
+deCasteljau :: Double -> [(Double, Double)] -> (Double, Double)
+deCasteljau t [b] = b
+deCasteljau t coefs = deCasteljau t reduced
+  where
+    reduced = zipWith (lerpP t) coefs (tail coefs)
+    lerpP t (x0, y0) (x1, y1) = (lerp t x0 x1, lerp t y0 y1)
+    lerp t a b = t * b + (1 - t) * a
+```
