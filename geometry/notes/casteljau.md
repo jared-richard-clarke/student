@@ -13,16 +13,16 @@ const lerp = function(t, p1, p2) {
 
 // Example: reduce(0.5, ...[0.0, 1.0, 2.0, 3.0]) == [0.5, 1.5, 2.5]
 const reduce = function(t, p1, p2, ...ps) {
-    return (ps.length > 0
+    return ps.length > 0
            ? [lerp(t, p1, p2), ...reduce(t, p2, ...ps)]
-           : [lerp(t, p1, p2)]);
+           : [lerp(t, p1, p2)];
 };
 
 // Example: deCasteljau(0.5, [0.0, 1.0, 2.0, 3.0]) == 1.5
 const deCasteljau = function(t, ps) { 
-    return (ps.length > 1
+    return ps.length > 1
            ? deCasteljau(t, reduce(t, ...ps))
-           : ps[0]);
+           : ps[0];
 };
 ```
 
