@@ -1,6 +1,6 @@
 ## De Casteljau's Algorithm
 
-[De Casteljau's algorithm](https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm) 
+[De Casteljau's Algorithm](https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm) 
 from Wikipedia
 
 ### JavaScript
