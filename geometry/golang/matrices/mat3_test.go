@@ -43,3 +43,12 @@ func TestShear(t *testing.T) {
 		t.Errorf("Test Shear failed. Expected: %v, Got: %v", expect, result)
 	}
 }
+
+func TestEquals(t *testing.T) {
+	ep := 0.000001
+	m1 := Mat3{1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep}
+	m2 := Mat3{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}
+	if !m1.Equals(m2) {
+		t.Errorf("Test Equals failed. Check test epsilon (ep).")
+	}
+}
