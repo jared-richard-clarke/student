@@ -116,9 +116,9 @@ func (v1 Vec2) Lerp(v2 Vec2, t float64) Vec2 {
 	return Vec2{x, y}
 }
 
-// Checks whether floating-point vector components are approximately equal.
-// Comparisons made left to right.
-func (v1 Vec2) ApproxEq(v2 Vec2) bool {
+// As opposed to operator "==", method "Equals" whether floating-point vector components are approximately equal.
+// Check "didact/geometry/golang/utils/approx-eq.go" for details.
+func (v1 Vec2) Equals(v2 Vec2) bool {
 	x1 := v1.X
 	y1 := v1.Y
 	x2 := v2.X
