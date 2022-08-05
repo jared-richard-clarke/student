@@ -111,13 +111,12 @@ func TestLerp(t *testing.T) {
 	}
 }
 
-func TestApproxEq(t *testing.T) {
-	v1 := Vec2{3.2, 4.0}
-	v2 := Vec2{3.19999999989, 4.0}
-	expect := true
-	result := v1.ApproxEq(v2)
-	if expect != result {
-		t.Errorf("Test ApproxEq failed. Expected: %v, Got: %v", expect, result)
+func TestEquals(t *testing.T) {
+	ep := 0.000001
+	v1 := Vec2{3.0 + ep, 4.0 + ep}
+	v2 := Vec2{3.0, 4.0}
+	if !v1.Equals(v2) {
+		t.Errorf("Test Equals failed. Check test epsilon (ep).")
 	}
 }
 
