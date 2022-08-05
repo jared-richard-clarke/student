@@ -54,24 +54,6 @@ impl Vector2D {
         }
     }
 
-    pub fn ceil(self) -> Self {
-        let x = self.x;
-        let y = self.y;
-        Self {
-            x: x.ceil(),
-            y: y.ceil(),
-        }
-    }
-
-    pub fn floor(self) -> Self {
-        let x = self.x;
-        let y = self.y;
-        Self {
-            x: x.floor(),
-            y: y.floor(),
-        }
-    }
-
     pub fn normalize(self) -> Self {
         let mag = self.mag();
         let x = self.x;
@@ -186,18 +168,6 @@ mod tests {
         assert_eq!(result, expect);
     }
     #[test]
-    fn test_ceil() {
-        let result = vec2(0.25, 6.73).ceil();
-        let expect = vec2(1.0, 7.0);
-        assert_eq!(result, expect);
-    }
-    #[test]
-    fn test_floor() {
-        let result = vec2(0.25, 6.73).floor();
-        let expect = vec2(0.0, 6.0);
-        assert_eq!(result, expect);
-    }
-    #[test]
     fn test_normalize() {
         let expect = vec2(0.6, 0.8);
         let result = vec2(3.0, 4.0).normalize();
@@ -235,4 +205,3 @@ mod tests {
         assert_eq!(vector_result, vector_expect);
     }
 }
-
