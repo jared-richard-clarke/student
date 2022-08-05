@@ -17,6 +17,20 @@ pub fn mat3(xx: f64, yx: f64, xy: f64, yy: f64, x0: f64, y0: f64) -> Mat3 {
     }
 }
 
+impl Mul for Mat3 {
+    type Output = Self;
+    fn mul(self, other: Self) -> Self {
+        Mat3 {
+            xx: self.xx * other.xx + self.yx * other.xy,
+            yx: self.xx * other.yx + self.yx * other.yy,
+            xy: self.xy * other.xx + self.yy * other.xy,
+            yy: self.xy * other.yx + self.yy * other.yy,
+            x0: self.x0 * other.xx + self.y0 * other.xy + other.x0,
+            y0: self.x0 * other.yx + self.y0 * other.yy + other.y0,
+        }
+    }
+}
+
 #[rustfmt::skip]
 fn translate(x: f64, y: f64) -> Mat3 {
     Mat3 {
@@ -75,20 +89,6 @@ impl Mat3 {
     }
     pub fn shear(self, x: f64, y: f64) -> Self {
         shear(x, y) * self
-    }
-}
-
-impl Mul for Mat3 {
-    type Output = Self;
-    fn mul(self, other: Self) -> Self {
-        Mat3 {
-            xx: self.xx * other.xx + self.yx * other.xy,
-            yx: self.xx * other.yx + self.yx * other.yy,
-            xy: self.xy * other.xx + self.yy * other.xy,
-            yy: self.xy * other.yx + self.yy * other.yy,
-            x0: self.x0 * other.xx + self.y0 * other.xy + other.x0,
-            y0: self.x0 * other.yx + self.y0 * other.yy + other.y0,
-        }
     }
 }
 
