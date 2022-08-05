@@ -11,60 +11,6 @@ pub fn vec2(x: f64, y: f64) -> Vector2D {
     Vector2D { x, y }
 }
 
-impl Vector2D {
-    pub fn mag(self) -> f64 {
-        let x = self.x;
-        let y = self.y;
-        (x * x + y * y).sqrt()
-    }
-
-    pub fn scale(self, scalar: f64) -> Self {
-        let x = self.x;
-        let y = self.y;
-        Self {
-            x: x * scalar,
-            y: y * scalar,
-        }
-    }
-    // Dot product.
-    pub fn dot(self, other: Self) -> f64 {
-        let x1 = self.x;
-        let y1 = self.y;
-        let x2 = other.x;
-        let y2 = other.y;
-        x1 * x2 + y1 * y2
-    }
-    // Calculates the distance between the tips of two vectors.
-    pub fn distance(self, other: Self) -> f64 {
-        (self - other).mag()
-    }
-    // Interpolates point between the tips of two vectors.
-    pub fn lerp(self, other: Self, t: f64) -> Self {
-        let x = self.x + (other.x - self.x) * t;
-        let y = self.y + (other.y - self.y) * t;
-        Self { x, y }
-    }
-
-    pub fn round(self) -> Self {
-        let x = self.x;
-        let y = self.y;
-        Self {
-            x: x.round(),
-            y: y.round(),
-        }
-    }
-
-    pub fn normalize(self) -> Self {
-        let mag = self.mag();
-        let x = self.x;
-        let y = self.y;
-        Self {
-            x: x / mag,
-            y: y / mag,
-        }
-    }
-}
-
 impl Add for Vector2D {
     type Output = Self;
     fn add(self, other: Self) -> Self {
@@ -107,6 +53,60 @@ impl<'a> Sum<&'a Self> for Vector2D {
     }
 }
 
+impl Vector2D {
+    pub fn mag(self) -> f64 {
+        let x = self.x;
+        let y = self.y;
+        (x * x + y * y).sqrt()
+    }
+
+    pub fn scale(self, scalar: f64) -> Self {
+        let x = self.x;
+        let y = self.y;
+        Self {
+            x: x * scalar,
+            y: y * scalar,
+        }
+    }
+    // Dot product.
+    pub fn dot(self, other: Self) -> f64 {
+        let x1 = self.x;
+        let y1 = self.y;
+        let x2 = other.x;
+        let y2 = other.y;
+        x1 * x2 + y1 * y2
+    }
+    // Calculates the distance between the tips of two vectors.
+    pub fn distance(self, other: Self) -> f64 {
+        (self - other).mag()
+    }
+    // Interpolates point between the tips of two vectors.
+    pub fn lerp(self, other: Self, t: f64) -> Self {
+        let x = self.x + (other.x - self.x) * t;
+        let y = self.y + (other.y - self.y) * t;
+        Self { x, y }
+    }
+
+    pub fn normalize(self) -> Self {
+        let mag = self.mag();
+        let x = self.x;
+        let y = self.y;
+        Self {
+            x: x / mag,
+            y: y / mag,
+        }
+    }
+
+    pub fn round(self) -> Self {
+        let x = self.x;
+        let y = self.y;
+        Self {
+            x: x.round(),
+            y: y.round(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::vec;
@@ -128,6 +128,37 @@ mod tests {
         let expect = Vector2D { x: 3.0, y: 4.0 };
         let result = vec2(3.0, 4.0);
         assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_add() {
+        let expect = vec2(5.0, 7.0);
+        let result = vec2(3.0, 4.0) + vec2(1.0, 2.0) + vec2(1.0, 1.0);
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_sub() {
+        let expect = vec2(2.0, 2.0);
+        let result = vec2(3.0, 4.0) - vec2(1.0, 2.0);
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_neg() {
+        let expect = vec2(3.0, -4.0);
+        let result = -vec2(-3.0, 4.0);
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_sum() {
+        let array_expect = vec2(6.0, 8.0);
+        let array_result: Vector2D = [vec2(1.0, 2.0), vec2(3.0, 4.0), vec2(2.0, 2.0)]
+            .iter()
+            .sum();
+        assert_eq!(array_result, array_expect);
+        let vector_expect = vec2(6.0, 8.0);
+        let vector_result: Vector2D = vec![vec2(1.0, 2.0), vec2(3.0, 4.0), vec2(2.0, 2.0)]
+            .iter()
+            .sum();
+        assert_eq!(vector_result, vector_expect);
     }
     #[test]
     fn test_mag() {
@@ -162,46 +193,15 @@ mod tests {
         assert_eq!(result, expect);
     }
     #[test]
-    fn test_round() {
-        let result = vec2(0.25, 6.73).round();
-        let expect = vec2(0.0, 7.0);
-        assert_eq!(result, expect);
-    }
-    #[test]
     fn test_normalize() {
         let expect = vec2(0.6, 0.8);
         let result = vec2(3.0, 4.0).normalize();
         assert_eq!(result, expect);
     }
     #[test]
-    fn test_add() {
-        let expect = vec2(5.0, 7.0);
-        let result = vec2(3.0, 4.0) + vec2(1.0, 2.0) + vec2(1.0, 1.0);
+    fn test_round() {
+        let result = vec2(0.25, 6.73).round();
+        let expect = vec2(0.0, 7.0);
         assert_eq!(result, expect);
-    }
-    #[test]
-    fn test_sub() {
-        let expect = vec2(2.0, 2.0);
-        let result = vec2(3.0, 4.0) - vec2(1.0, 2.0);
-        assert_eq!(result, expect);
-    }
-    #[test]
-    fn test_neg() {
-        let expect = vec2(3.0, -4.0);
-        let result = -vec2(-3.0, 4.0);
-        assert_eq!(result, expect);
-    }
-    #[test]
-    fn test_sum() {
-        let array_expect = vec2(6.0, 8.0);
-        let array_result: Vector2D = [vec2(1.0, 2.0), vec2(3.0, 4.0), vec2(2.0, 2.0)]
-            .iter()
-            .sum();
-        assert_eq!(array_result, array_expect);
-        let vector_expect = vec2(6.0, 8.0);
-        let vector_result: Vector2D = vec![vec2(1.0, 2.0), vec2(3.0, 4.0), vec2(2.0, 2.0)]
-            .iter()
-            .sum();
-        assert_eq!(vector_result, vector_expect);
     }
 }
