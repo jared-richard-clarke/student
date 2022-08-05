@@ -1,4 +1,5 @@
 import math
+import approximate
 
 """
 Provides affine transformation matrices, methods, and functions.
@@ -21,6 +22,28 @@ class Mat3:
 
     def __str__(self):
         return f"Mat3({self.xx}, {self.yx}, {self.xy}, {self.yy}, {self.x0}, {self.y0})"
+
+    def __eq__(self, other):
+        """Checks equality by comparing matrix components."""
+        return (self.xx == other.xx and
+                self.yx == other.yx and
+                self.xy == other.xy and
+                self.yy == other.yy and
+                self.x0 == other.x0 and
+                self.y0 == other.y0)
+
+    def equals(self, other):
+        """
+        As opposed to operator "==", method "equals" checks whether 
+        floating-point matrix components are approximately equal.
+        """
+        eq = approximate.equals
+        return (eq(self.xx, other.xx) and
+                eq(self.yx, other.yx) and
+                eq(self.xy, other.xy) and
+                eq(self.yy, other.yy) and
+                eq(self.x0, other.x0) and
+                eq(self.y0, other.y0))
 
     def __mul__(self, other):
         """Combines two transformations through matrix multiplication."""
