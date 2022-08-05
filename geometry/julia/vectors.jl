@@ -63,4 +63,7 @@ function normalize(v::Vec2)
     Vec2(x / m, y / m)
 end
 
+# TODO: Will add rounding method after I better understand the rounding mechanism in Julia.
+# Rounding is more complex than I originally thought.
+
 end # Vectors module
