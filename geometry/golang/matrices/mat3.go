@@ -1,7 +1,10 @@
 // Provides affine transformation matrices and functions.
 package matrices
 
-import "math"
+import (
+	"didact/geometry/golang/utils"
+	"math"
+)
 
 // A 2d transformation implemented as a column-major, 3 × 3 matrix.
 // The third row is implicit.
@@ -88,4 +91,16 @@ func (a Mat3) Rotate(angle float64) Mat3 {
 // Shears matrix by scalars "x" and "y". Transformation can be chained.
 func (a Mat3) Shear(x, y float64) Mat3 {
 	return Shear(x, y).Multiply(a)
+}
+
+// As opposed to operator "==", method "Equals" checks whether floating-point matrix components are approximately equal.
+// Check "didact/geometry/golang/utils/approx-eq.go" for details.
+func (a Mat3) Equals(b Mat3) bool {
+	eq := utils.ApproxEq
+	return eq(a.XX, b.XX) &&
+		eq(a.YX, b.YX) &&
+		eq(a.XY, b.XY) &&
+		eq(a.YY, b.YY) &&
+		eq(a.X0, b.X0) &&
+		eq(a.Y0, b.Y0)
 }
