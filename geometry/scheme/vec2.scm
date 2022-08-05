@@ -157,18 +157,6 @@
          [y (+ y1 (* (- y2 y1) t))])
     (vec2 x y)))
 
-;; (vec2-equal? (vector number number) (vector number number)) -> boolean
-;; Compares the components of two vectors. Checks for equality.
-;; (vec2-equal? (vec2 3 4) (vec2 3 4)) -> #t
-
-(define (vec2-equal? v1 v2)
-  (let ([x1 (vector-ref v1 0)]
-        [y1 (vector-ref v1 1)]
-        [x2 (vector-ref v2 0)]
-        [y2 (vector-ref v2 1)])
-    (and (= x1 x2)
-         (= y1 y2))))
-
 ;; (vec2-approx-eq? (vector number number) (vector number number)) -> boolean
 ;; Checks whether floating-point vector components are approximately equal.
 ;; Comparisons made left to right.
@@ -261,9 +249,6 @@
 
 (assert-equal (vec2-lerp 1/2 (vec2 0 0) (vec2 10 0))
               (vec2 5 0))
-
-(assert-equal (vec2-equal? (vec2 3 4) (vec2 3 4))
-              #t)
 
 (assert-equal (vec2-approx-eq? (vec2 3.2 4.0) (vec2 3.19999999989 4.0))
               #t)
