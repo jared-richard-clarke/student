@@ -73,7 +73,7 @@ class Vec2:
         return Vec2(round(self.x), round(self.y))
 
     def __eq__(self, other):
-        """Checks for equality by comparing vector components."""
+        """Checks equality by comparing vector components."""
         x1, y1 = self.point
         x2, y2 = other.point
         return x1 == x2 and y1 == y2
