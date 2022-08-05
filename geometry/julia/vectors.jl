@@ -24,8 +24,8 @@ neg(v::Vec2) = Vec2(-v.x, -v.y)
 (-)(v) = neg(v)
 
 # Returns function that runs a pairwise operation over a sequence.
-function total(op, zero)
-    (vs) -> length(vs == 0) ? zero : foldl(op, vs; init=zero)
+function total(op, ident)
+    (vs...) -> length(vs) == 0 ? ident : foldl(op, vs)
 end
 
 """Computes the sum of a series of vectors."""
