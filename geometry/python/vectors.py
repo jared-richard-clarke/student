@@ -21,9 +21,9 @@ class Vec2:
         x2, y2 = other.x, other.y
         return x1 == x2 and y1 == y2
 
-    def equals(self, other):
+    def approx_eq(self, other):
         """
-        As opposed to operator "==", method "equals" checks whether 
+        As opposed to operator "==", method "approx_eq" checks whether 
         floating-point vector components are approximately equal.
         """
         x1, y1 = self.x, self.y
