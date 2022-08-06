@@ -4,6 +4,15 @@ import (
 	"testing"
 )
 
+func TestApproxEq(t *testing.T) {
+	ep := 0.000001
+	m1 := Mat3{1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep}
+	m2 := Mat3{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}
+	if !m1.ApproxEq(m2) {
+		t.Errorf("Test ApproxEq failed. Check test epsilon (ep).")
+	}
+}
+
 func TestIdentity(t *testing.T) {
 	expect := Mat3{1.0, 0.0, 0.0, 1.0, 0.0, 0.0}
 	result := Identity()
@@ -41,14 +50,5 @@ func TestShear(t *testing.T) {
 	result := Identity().Shear(3.0, 4.0)
 	if expect != result {
 		t.Errorf("Test Shear failed. Expected: %v, Got: %v", expect, result)
-	}
-}
-
-func TestEquals(t *testing.T) {
-	ep := 0.000001
-	m1 := Mat3{1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep}
-	m2 := Mat3{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}
-	if !m1.Equals(m2) {
-		t.Errorf("Test Equals failed. Check test epsilon (ep).")
 	}
 }
