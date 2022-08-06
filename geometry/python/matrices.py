@@ -29,9 +29,9 @@ class Mat3:
                 self.x0 == other.x0 and
                 self.y0 == other.y0)
 
-    def equals(self, other):
+    def approx_eq(self, other):
         """
-        As opposed to operator "==", method "equals" checks whether 
+        As opposed to operator "==", method "approx_eq" checks whether 
         floating-point matrix components are approximately equal.
         """
         eq = approximate.equals
