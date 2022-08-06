@@ -92,3 +92,17 @@ function factorial(n::Integer)
     return f
 end
 ```
+
+## Forth
+
+```forth
+ : factorial  ( n -- n! )  recursive
+    dup 1 >  if   dup 1-  factorial  *  then
+ ;
+ 
+ ( or )
+ 
+ : factorial  ( n -- n! )
+    dup 1 >  if   dup 1-  recurse  *  then
+ ;
+```
