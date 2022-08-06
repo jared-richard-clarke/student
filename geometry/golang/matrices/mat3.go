@@ -14,6 +14,30 @@ type Mat3 struct {
 	X0, Y0 float64
 }
 
+// As opposed to operator "==", method "ApproxEq" checks whether floating-point matrix components are approximately equal.
+// Check "didact/geometry/golang/utils/approx-eq.go" for details.
+func (a Mat3) ApproxEq(b Mat3) bool {
+	eq := utils.ApproxEq
+	return eq(a.XX, b.XX) &&
+		eq(a.YX, b.YX) &&
+		eq(a.XY, b.XY) &&
+		eq(a.YY, b.YY) &&
+		eq(a.X0, b.X0) &&
+		eq(a.Y0, b.Y0)
+}
+
+// Combines matrix transformations through multiplication.
+func (a Mat3) Multiply(b Mat3) Mat3 {
+	return Mat3{
+		a.XX*b.XX + a.YX*b.XY,
+		a.XX*b.YX + a.YX*b.YY,
+		a.XY*b.XX + a.YY*b.XY,
+		a.XY*b.YX + a.YY*b.YY,
+		a.X0*b.XX + a.Y0*b.XY + b.X0,
+		a.X0*b.YX + a.Y0*b.YY + b.Y0,
+	}
+}
+
 // Creates an identity matrix.
 func Identity() Mat3 {
 	return Mat3{
@@ -61,18 +85,6 @@ func Shear(x, y float64) Mat3 {
 	}
 }
 
-// Combines matrix transformations through multiplication.
-func (a Mat3) Multiply(b Mat3) Mat3 {
-	return Mat3{
-		a.XX*b.XX + a.YX*b.XY,
-		a.XX*b.YX + a.YX*b.YY,
-		a.XY*b.XX + a.YY*b.XY,
-		a.XY*b.YX + a.YY*b.YY,
-		a.X0*b.XX + a.Y0*b.XY + b.X0,
-		a.X0*b.YX + a.Y0*b.YY + b.Y0,
-	}
-}
-
 // Translates matrix by scalars "x" and "y". Transformation can be chained.
 func (a Mat3) Translate(x, y float64) Mat3 {
 	return Translate(x, y).Multiply(a)
@@ -91,16 +103,4 @@ func (a Mat3) Rotate(angle float64) Mat3 {
 // Shears matrix by scalars "x" and "y". Transformation can be chained.
 func (a Mat3) Shear(x, y float64) Mat3 {
 	return Shear(x, y).Multiply(a)
-}
-
-// As opposed to operator "==", method "Equals" checks whether floating-point matrix components are approximately equal.
-// Check "didact/geometry/golang/utils/approx-eq.go" for details.
-func (a Mat3) Equals(b Mat3) bool {
-	eq := utils.ApproxEq
-	return eq(a.XX, b.XX) &&
-		eq(a.YX, b.YX) &&
-		eq(a.XY, b.XY) &&
-		eq(a.YY, b.YY) &&
-		eq(a.X0, b.X0) &&
-		eq(a.Y0, b.Y0)
 }
