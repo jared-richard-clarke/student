@@ -20,9 +20,6 @@ class Mat3:
         self.x0 = x0
         self.y0 = y0
 
-    def __str__(self):
-        return f"Mat3({self.xx}, {self.yx}, {self.xy}, {self.yy}, {self.x0}, {self.y0})"
-
     def __eq__(self, other):
         """Checks equality by comparing matrix components."""
         return (self.xx == other.xx and
@@ -80,6 +77,9 @@ class Mat3:
         Shears matrix by scalars "x" and "y". Transformation can be chained.
         """
         return shear(x, y) * self
+
+    def __str__(self):
+        return f"Mat3({self.xx}, {self.yx}, {self.xy}, {self.yy}, {self.x0}, {self.y0})"
 
 
 def identity():
