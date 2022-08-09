@@ -23,16 +23,8 @@ sub(v1::Vec2, v2::Vec2) = Vec2(v1.x - v2.x, v1.y - v2.y)
 neg(v::Vec2) = Vec2(-v.x, -v.y)
 (-)(v) = neg(v)
 
-# Returns function that runs a pairwise operation over a sequence.
-function total(op, ident)
-    (vs...) -> length(vs) == 0 ? ident : foldl(op, vs)
-end
-
 """Computes the sum of a series of vectors."""
-sum = total(add, Vec2(0, 0))
-
-"""Computes the difference of a series of vectors."""
-diff = total(sub, Vec2(0, 0))
+sum(vs::Vec2...) = foldl(+, vs; init=Vec2(0, 0))
 
 """Computes the magnitude (a.k.a. length) of a vector."""
 mag(v::Vec2) = hypot(v.x, v.y)
@@ -66,4 +58,4 @@ end
 # TODO: Will add rounding method after I better understand the rounding mechanism in Julia.
 # Rounding is more complex than I originally thought.
 
-end # Vectors module
+end # module Vectors
