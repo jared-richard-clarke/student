@@ -77,35 +77,23 @@
         [y (vector-ref vec 1)])
     (vec2 (- x) (- y))))
 
-;; (total function (vector number number)) -> (function (vector number number) ...) -> (vector number number)
-;; Creates function that performs an arithmetic operation over a series of vectors.
-;; (define vec2-sum (total + #(0 0))) -> (vec2-sum (vec2 1 2) (vec2 3 4)) -> #(4 6)
+;; (vec2-sum (vector number number) ...) -> (vector number number)
+;; Returns the sum of a series of vectors.
+;; (vec2-sum (vec2 1 2) (vec2 1 2) (vec2 3 4)) -> #(5 8)
+;; (vec2-sum) -> #(0 0)
 
-(define (total operation base)
-  (lambda vecs
+(define (vec2-sum . vecs)
     (cond
-      [(= (length vecs) 0) base]
-      [(= (length vecs) 1)(car vecs)]
+      [(= (length vecs) 0) (vec2 0 0)]
+      [(= (length vecs) 1) (car vecs)]
       [else (foldl (lambda (vec accum)
                      (let ([x1 (vector-ref accum 0)]
                            [y1 (vector-ref accum 1)]
                            [x2 (vector-ref vec 0)]
                            [y2 (vector-ref vec 1)])
-                       (vec2 (operation x1 x2) (operation y1 y2))))
+                       (vec2 (+ x1 x2) (+ y1 y2))))
                    (car vecs)
-                   (cdr vecs))])))
-
-;; (vec2-sum (vector number number) ...) -> (vector number number)
-;; Returns the sum of a series of vectors.
-;; (vec2-sum (vec2 1 2) (vec2 1 2)) -> #(2 4)
-
-(define vec2-sum (total + #(0 0)))
-
-;; (vec2-diff (vector number number) ...) -> (vector number number)
-;; Returns the difference of a series of vectors.
-;; (vec2-diff (vec2 3 4) (vec2 1 2)) -> #(2 2)
-
-(define vec2-diff (total - #(0 0)))
+                   (cdr vecs))]))
 
 ;; (vec2-mag (vector number number)) -> number
 ;; Returns the magnitude of a two-dimensional vector.
@@ -216,9 +204,6 @@
 
 (assert-equal (vec2-sum (vec2 3 4) (vec2 1 2) (vec2 1 2))
               #(5 8))
-
-(assert-equal (vec2-diff (vec2 3 4) (vec2 1 2))
-              #(2 2))
 
 (assert-equal (vec2-negate (vec2 -3 -4))
               #(3 4))
