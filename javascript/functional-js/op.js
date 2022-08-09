@@ -1,24 +1,20 @@
-// module op: provides a set of variable-argument, arithmetic functions.
-// op.add(1, 2, op.sub(8, 4)) -> 7
-// op.mul() -> 1
+// module "op" provides sum and product: variable-arity, arithmetic functions.
+// op.sum(1, 2, 3, 4, 5, 6, 7, 8, 9, op.product(2, 5)) -> 55
+// op.product() -> 1
+// op.sum() -> 0
 
-function operator(operation, identity) {
-    return function (...operands) {
-        if (operands.length === 0) {
-            return identity;
-        } else {
-            return operands.reduce(
-                (result, operand) => operation(result, operand)
-            );
-        }
-    };
+function monoid(operation, identity) {
+    return Object.freeze(function (...operands) {
+        return operands.reduce(
+            (total, operand) => operation(total, operand),
+            identity
+        );
+    });
 }
 
 const op = Object.create(null);
 
-op.add = operator((x, y) => x + y, 0);
-op.sub = operator((x, y) => x - y, 0);
-op.mul = operator((x, y) => x * y, 1);
-op.div = operator((x, y) => x / y, 1);
+op.sum = monoid((x, y) => x + y, 0);
+op.product = monoid((x, y) => x * y, 1);
 
 export default Object.freeze(op);
