@@ -46,15 +46,6 @@ func TestSum(t *testing.T) {
 	}
 }
 
-func TestDiff(t *testing.T) {
-	v := Vec2{11.0, 17.0}
-	expect := Vec2{1.0, 2.0}
-	result := v.Diff(Vec2{7.0, 11.0}, Vec2{3.0, 4.0})
-	if expect != result {
-		t.Errorf("Test Diff failed. Expected: %v, Got: %v", expect, result)
-	}
-}
-
 func TestMag(t *testing.T) {
 	v := Vec2{3.0, 4.0}
 	expect := 5.0
