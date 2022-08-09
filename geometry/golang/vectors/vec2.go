@@ -60,19 +60,6 @@ func (v1 Vec2) Sum(vs ...Vec2) Vec2 {
 	return accum
 }
 
-// Returns the difference of a series of two-dimensional vectors.
-func (v1 Vec2) Diff(vs ...Vec2) Vec2 {
-	accum := v1
-	for _, v := range vs {
-		x1 := accum.X
-		y1 := accum.Y
-		x2 := v.X
-		y2 := v.Y
-		accum = Vec2{x1 - x2, y1 - y2}
-	}
-	return accum
-}
-
 // Computes the distance of a 2d-vector's point from the origin.
 func (v Vec2) Mag() float64 {
 	x := v.X
