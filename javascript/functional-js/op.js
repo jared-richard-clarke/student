@@ -9,18 +9,16 @@
 // }
 
 function binary(operation) {
-    return Object.freeze(function (x, y) {
-        return operation(x, y);
-    });
+    return (x, y) => operation(x, y);
 }
 
 function monoid(operation, identity) {
-    return Object.freeze(function (...operands) {
+    return (...operands) => {
         return operands.reduce(
             (total, operand) => operation(total, operand),
             identity
         );
-    });
+    };
 }
 
 const op = Object.create(null);
@@ -34,4 +32,3 @@ op.sum = monoid((x, y) => x + y, 0);
 op.product = monoid((x, y) => x * y, 1);
 
 export default Object.freeze(op);
-
