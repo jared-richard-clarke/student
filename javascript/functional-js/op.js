@@ -9,16 +9,18 @@
 // }
 
 function binary(operation) {
-    return (x, y) => operation(x, y);
+    return Object.freeze(function (x, y) {
+        return operation(x, y);
+    });
 }
 
 function monoid(operation, identity) {
-    return (...operands) => {
+    return Object.freeze(function (...operands) {
         return operands.reduce(
             (total, operand) => operation(total, operand),
             identity
         );
-    };
+    });
 }
 
 const op = Object.create(null);
