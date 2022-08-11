@@ -5,7 +5,7 @@ by Scott Wlaschin
 
 ## Parser Combinator Library
 
-This is the final iteration of the parser combinator library as defined by Scott Wlaschin.
+This is the final iteration of a parser combinator library as defined by Scott Wlaschin.
 
 ```fsharp
 (*
