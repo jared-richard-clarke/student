@@ -19,7 +19,7 @@
   (let ([result (assq var env)])
     (if result
         (cdr result)
-        (error "undefined operator: " var))))
+        (error "undefined operator or constant: " var))))
 
 (define (compute expr)
   (cond
