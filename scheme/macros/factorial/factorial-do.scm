@@ -1,43 +1,43 @@
-; do syntax: (do ((var init update) ...) (test result ...) expr ...)
-; simplified macro expansion for clarity.
+;; do syntax: (do ((var init update) ...) (test result ...) expr ...)
+;; simplified macro expansion for clarity.
 
 (define (factorial n)
-  (do ([number n (- number 1)]
-       [result 1 (* result number)])
-    ((< number 1) result)))
+  (do ([operand n (- operand 1)]
+       [product 1 (* product operand)])
+    ((< operand 1) product)))
 
-; === letrec expansion ===
+;; === letrec expansion ===
 (define factorial-letrec
   (lambda (n)
-    (letrec ([loop (lambda (number result)
-                     (if (< number 1)
-                         result                        ; (begin (if #f #f #f) result)
-                         (loop (- number 1)            ; (begin (loop (do "step" number (- number 1))
-                               (* result number))))])  ;              (do "step" result (* result number))))))])
+    (letrec ([loop (lambda (operand product)
+                     (if (< operand 1)
+                         product                        ;; (begin (if #f #f #f) result)
+                         (loop (- operand 1)            ;; (begin (loop (do "step" number (- number 1))
+                               (* product operand))))]) ;;              (do "step" result (* result number))))))])
       (loop n 1))))
 
-; === let expansion ===
+;; === let expansion ===
 (define factorial-let
   (lambda (n)
     (let ([loop #f])
-      (let ([temp (lambda (number result)
-                    (if (< number 1)
-                        result                          ; (begin (if #f #f #f) result)
-                        (loop (- number 1)              ; (begin (loop (do "step" number (- number 1))
-                              (* result number))))])    ;              (do "step" result (* result number))))))])
+      (let ([temp (lambda (operand product)
+                    (if (< operand 1)
+                        product                         ;; (begin (if #f #f #f) result)
+                        (loop (- operand 1)             ;; (begin (loop (do "step" operand (- operand 1))
+                              (* product operand))))])  ;;              (do "step" product (* product operand))))))])
         (set! loop temp)
         (loop n 1)))))
 
-; === lambda expansion ===
+;; === lambda expansion ===
 (define factorial-lambda
   (lambda (n)
     ((lambda (loop)
        ((lambda (temp)
           (set! loop temp)
           (loop n 1))
-        (lambda (number result)
-          (if (< number 1)
-              result
-              (loop (- number 1)
-                    (* result number))))))
+        (lambda (operand product)
+          (if (< operand 1)
+              product
+              (loop (- operand 1)
+                    (* product operand))))))
      #f)))
