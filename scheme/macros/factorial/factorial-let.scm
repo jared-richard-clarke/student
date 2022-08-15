@@ -1,23 +1,23 @@
-; factorial: where n! is the product of all positive integers less than or equal to n.
-; ( iterative implementation )
-; example: (factorial 4) -> 24
+;; factorial: where n! is the product of all positive integers less than or equal to n.
+;; ( iterative implementation )
+;; example: (factorial 4) -> 24
 
 (define (factorial n)
-  (let loop ([result 1]
-             [number n])
-    (if (< number 1)
-        result
-        (loop (* result number) 
-              (- number 1)))))
+  (let loop ([product 1]
+             [operand n])
+    (if (< operand 1)
+        product
+        (loop (* product operand) 
+              (- operand 1)))))
 
 ; === letrec expansion ===
 (define factorial-letrec
   (lambda (n)
-    ((letrec ([loop (lambda (result number)
-                      (if (< number 1)
-                          result
-                          (loop (* result number)
-                                (- number 1))))])
+    ((letrec ([loop (lambda (product operand)
+                      (if (< operand 1)
+                          product
+                          (loop (* product operand)
+                                (- operand 1))))])
        loop)
      1 n)))
 
@@ -25,11 +25,11 @@
 (define factorial-let
   (lambda (n)
     ((let ([loop #f])
-       (let ([temp (lambda (result number)
-                     (if (< number 1)
-                         result
-                         (loop (* result number)
-                               (- number 1))))])
+       (let ([temp (lambda (product operand)
+                     (if (< operand 1)
+                         product
+                         (loop (* product operand)
+                               (- operand 1))))])
          (set! loop temp)
          loop))
      1 n)))
@@ -41,10 +41,10 @@
         ((lambda (temp)
            (set! loop temp)
            loop)
-         (lambda (result number)
-           (if (< number 1)
-               result
-               (loop (* result number)
-                     (- number 1))))))
+         (lambda (product operand)
+           (if (< operand 1)
+               product
+               (loop (* product operand)
+                     (- operand 1))))))
       #f)
      1 n)))
