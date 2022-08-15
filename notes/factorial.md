@@ -37,18 +37,18 @@ let factorial n = (range 1 n) |> product
 
 ;; tail-recursive
 (define (factorial n)
-  (let loop ([result 1]
+  (let loop ([product 1]
              [number n])
     (if (< number 1)
-        result
-        (loop (* result number) 
+        product
+        (loop (* product number) 
               (- number 1)))))
               
 ;; do loop
 (define (factorial n)
   (do ([number n (- number 1)]
-       [result 1 (* result number)])
-    ((< number 1) result)))
+       [product 1 (* product number)])
+    ((< number 1) product)))
 ```
 
 ## Go
