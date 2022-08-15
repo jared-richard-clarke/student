@@ -1,30 +1,30 @@
 (define (factorial n)
-  (define (iter result number)
-    (if (< number 1)
-        result
-        (iter (* result number)
-              (- number 1))))
+  (define (iter product operand)
+    (if (< operand 1)
+        product
+        (iter (* product operand)
+              (- operand 1))))
   (iter 1 n))
 
 ; === letrec* expansion ===
 (define factorial-letrec*
   (lambda (n)
-    (letrec* ([iter (lambda (result number)
-                      (if (< number 1)
-                          result
-                          (iter (* result number)
-                                (- number 1))))])
+    (letrec* ([iter (lambda (product operand)
+                      (if (< operand 1)
+                          product
+                          (iter (* product operand)
+                                (- operand 1))))])
              (iter 1 n))))
 
 ; === let expansion ===
 (define factorial-let
   (lambda (n)
     (let ([iter #f])
-      (set! iter (lambda (result number)
-                   (if (< number 1)
-                       result
-                       (iter (* result number)
-                             (- number 1)))))
+      (set! iter (lambda (product operand)
+                   (if (< operand 1)
+                       product
+                       (iter (* product operand)
+                             (- operand 1)))))
       (let ()
         (iter 1 n)))))
 
@@ -32,11 +32,11 @@
 (define factorial-lambda
   (lambda (n)
     ((lambda (iter)
-       (set! iter (lambda (result number)
-                    (if (< number 1)
-                        result
-                        (iter (* result number)
-                              (- number 1)))))
+       (set! iter (lambda (product operand)
+                    (if (< operand 1)
+                        product
+                        (iter (* product operand)
+                              (- operand 1)))))
        ((lambda ()
           (iter 1 n))))
      #f)))
