@@ -3,9 +3,6 @@
 [Top Down Operator Precedence](https://www.crockford.com/javascript/tdop/tdop.html)
 by Douglas Crockford
 
-[JSLint](https://www.jslint.com/)
-by Douglas Crockford
-
 [Top-Down Operator Precedence Parsing](https://eli.thegreenplace.net/2010/01/02/top-down-operator-precedence-parsing)
 by Eli Bendersky
 
@@ -66,44 +63,4 @@ def expression(rbp=0):
         left = t.led(left)
     return left
 
-```
-
-### JavaScript ( JSLint by Crockford)
-
-```javascript
-function parse_expression(rbp, initial) {
-    let left;
-    let the_symbol;
-
-    if (!initial) {
-        advance();
-    }
-
-    the_symbol = syntax_dict[token_now.id];
-
-    if (the_symbol !== undefined && the_symbol.nud_prefix !== undefined) {
-        test_cause("symbol");
-        left = the_symbol.nud_prefix();
-    } else if (token_now.identifier) {
-        test_cause("identifier");
-        left = token_now;
-        left.arity = "variable";
-    } else {
-        return stop("unexpected_a", token_now);
-    }
-
-    while (true) {
-        the_symbol = syntax_dict[token_nxt.id];
-        if (
-            the_symbol === undefined ||
-            the_symbol.led_infix === undefined ||
-            the_symbol.lbp <= rbp
-        ) {
-            break;
-        }
-        advance();
-        left = the_symbol.led_infix(left);
-    }
-    return left;
-}
 ```
