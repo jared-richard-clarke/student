@@ -11,9 +11,9 @@
   (lambda (n)
     (letrec ([loop (lambda (operand product)
                      (if (< operand 1)
-                         product                        ;; (begin (if #f #f #f) result)
-                         (loop (- operand 1)            ;; (begin (loop (do "step" number (- number 1))
-                               (* product operand))))]) ;;              (do "step" result (* result number))))))])
+                         product                        ;; (begin (if #f #f #f) product)
+                         (loop (- operand 1)            ;; (begin (loop (do "step" operand (- operand 1))
+                               (* product operand))))]) ;;              (do "step" product (* product operand))))))])
       (loop n 1))))
 
 ;; === let expansion ===
