@@ -25,9 +25,9 @@ let range start stop =
 (* putting it all together *)    
 let factorial n = (range 1 n) |> product
 
-(* without all the pomp and syntax *)
-let rec factorial x =
-  if x <= 1 then 1 else x * factorial (x - 1)
+(* alternative without all the pomp and syntax *)
+let rec factorial n =
+  if n <= 1 then 1 else n * factorial (n - 1)
 ```
 
 ## Scheme
