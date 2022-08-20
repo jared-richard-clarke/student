@@ -1,7 +1,8 @@
 # Automata Theory
 
-[Automata Theory](https://en.wikipedia.org/wiki/Automata_theory)
-from Wikipedia, The Free Encyclopedia
+> "The study of abstract machines and automata, as well as the computational problems that can be solved using them."
+>
+> [Automata Theory](https://en.wikipedia.org/wiki/Automata_theory) from Wikipedia, The Free Encyclopedia
 
 <figure>
   <img src="https://user-images.githubusercontent.com/80301412/185726188-1399eb35-64e1-4dc2-b4cc-5da2b74b88af.png" alt="">
