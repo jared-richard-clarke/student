@@ -1,8 +1,13 @@
 # LISP Interpreters
 
+This repository contains a collection of meta-circular LISP interpreters and symbolic processors
+as written by others and myself. I include examples from other languages if the code helps me better
+understand the problem domain.
+
 ## Table of Contents
 - `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
-- `compute.scm`: an arithmetic interpreter as defined by me.
+- `compute.ml`: an OCaml arithmetic interpreter and symbolic processor as defined by **The OCaml Manual**
+- `compute.scm`: an arithmetic interpreter and symbolic processor as defined by me.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
 
 ## Grammar
