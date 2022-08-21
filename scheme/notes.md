@@ -56,6 +56,14 @@ at all, the binding is pointless.
 
 ---
 
+## Closure
+
+- When the Scheme interpreter evaluates a `lambda` expression, it stores the current environment as part of the procedure definition.
+- Whenever that procedure is called, the interpreter reinstates the environment that is stored in 
+  the procedure definition and evaluates the procedure body within the context of that environment.
+
+---
+
 ## Special Forms
 
 > "When a procedure invocation expression is evaluated, the procedure and all 
@@ -68,7 +76,7 @@ at all, the binding is pointless.
 
 ---
 
-## Tail Call
+## Tail Calls
 A call is in tail position with respect to a function if its value is returned directly. 
 Nothing is left to do after the call but to return from the function.
 
