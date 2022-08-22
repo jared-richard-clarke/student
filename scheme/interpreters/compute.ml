@@ -24,23 +24,8 @@ let rec eval env exp =
   | Prod(f, g) -> eval env f *. eval env g
   | Quot(f, g) -> eval env f /. eval env g
 
-let rec deriv exp dv =
-  match exp with
-    Const c -> Const 0.0
-  | Var v -> if v = dv then Const 1.0 else Const 0.0
-  | Sum(f, g) -> Sum(deriv f dv, deriv g dv)
-  | Diff(f, g) -> Diff(deriv f dv, deriv g dv)
-  | Prod(f, g) -> Sum(Prod(f, deriv g dv), Prod(deriv f dv, g))
-  | Quot(f, g) -> Quot(Diff(Prod(deriv f dv, g), Prod(f, deriv g dv)),
-                       Prod(g, g)) 
-
 (* 
-   === Example: eval ===
+   === Example ===
    eval [("x", 2.0); ("y", 3.14)] (Prod(Sum(Var "x", Const 2.0), Var "y"));;
-   - : float 7.14 
-   
-   === Example: deriv ===
-   deriv (Quote(Const 1.0, Var "x")) "x";;
-   - : expression = 
-       Quot (Diff (Prod (Const 0.0, Var "x"), Prod (Const 1.0, Const 1.0)), Prod (Var "x", Var "x"))
+   - : float 7.14
 *)
