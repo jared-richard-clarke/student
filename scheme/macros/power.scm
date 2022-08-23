@@ -1,6 +1,6 @@
 ;; (power 2 3) -> 8
 
-;; === base ===
+;; === named let ===
 (define (power base exponent)
   (let loop ([product base]
              [iter 1])
