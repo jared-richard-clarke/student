@@ -1,49 +1,49 @@
-; (power 2 3) -> 8
+;; (power 2 3) -> 8
 
-; === base ===
+;; === base ===
 (define (power base exponent)
-  (let loop ([result 1]
-             [count 1])
-    (if (> count exponent)
-        result
-        (loop (* result base)
-              (+ 1 count)))))
+  (let loop ([product base]
+             [iter 1])
+    (if (>= iter exponent)
+        product
+        (loop (* product base)
+              (+ iter 1)))))
 
-; === letrec expansion ===
+;; === letrec expansion ===
 (define power-letrec
   (lambda (base exponent)
-    ((letrec ([loop (lambda (result count)
-                      (if (> count exponent)
-                          result
-                          (loop (* result base)
-                                (+ 1 count))))])
+    ((letrec ([loop (lambda (product iter)
+                      (if (>= iter exponent)
+                          product
+                          (loop (* product base)
+                                (+ iter 1))))])
        loop)
-     1 1)))
+     base 1)))
 
-; === let expansion ===
+;; === let expansion ===
 (define power-let
   (lambda (base exponent)
     ((let ([loop #f])
-       (let ([temp (lambda (result count)
-                        (if (> count exponent)
-                            result
-                            (loop (* result base)
-                                  (+ 1 count))))])
+       (let ([temp (lambda (product iter)
+                     (if (>= iter exponent)
+                         product
+                         (loop (* product base)
+                               (+ iter 1))))])
          (set! loop temp)
          loop))
-     1 1)))
+     base 1)))
 
-; === lambda expansion ===
+;; === lambda expansion ===
 (define power-lambda
   (lambda (base exponent)
     (((lambda (loop)
         ((lambda (temp)
            (set! loop temp)
            loop)
-         (lambda (result count)
-           (if (> count exponent)
-               result
-               (loop (* result base)
-                     (+ 1 count))))))
+         (lambda (product iter)
+           (if (>= iter exponent)
+               product
+               (loop (* product base)
+                     (+ iter 1))))))
       #f)
-     1 1)))
+     base 1)))
