@@ -62,4 +62,4 @@
 ;;   ([x] x)
 ;;   ([x & next]
 ;;    `(let [and# ~x]
-;;     (if and# (and ~@next) and#))))
+;;       (if and# (and ~@next) and#))))
