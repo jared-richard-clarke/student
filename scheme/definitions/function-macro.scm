@@ -14,6 +14,13 @@
     [(_ formals x y ...)
      (lambda formals x y ...)]))
 
+;; Inspired by Rust's function declaration keyword.
+
+(define-syntax fn
+  (syntax-rules ()
+    [(_ formals x y ...)
+     (lambda formals x y ...)]))
+
 ;; ᓴᓐᓇ translates to Sedna. She is the Inuit goddess of the sea and marine mammals.
 ;; A function/procedure in Scheme is a an identifier, a list of formals, and a body of one or more expressions.
 ;; The identifier for a Scheme function is "lambda" in reference to the lambda calculus.
