@@ -4,22 +4,22 @@
 
 (define-syntax λ
   (syntax-rules ()
-    [(_ formals x y ...)
-     (lambda formals x y ...)]))
+    [(_ formals body-1 body-2 ...)
+     (lambda formals body-1 body-2 ...)]))
 
 ;; Defines lowercase florin (ƒ) as an alternative symbol to lambda.
 
 (define-syntax ƒ
   (syntax-rules ()
-    [(_ formals x y ...)
-     (lambda formals x y ...)]))
+    [(_ formals body-1 body-2 ...)
+     (lambda formals body-1 body-2 ...)]))
 
 ;; Inspired by Rust's function declaration keyword.
 
 (define-syntax fn
   (syntax-rules ()
-    [(_ formals x y ...)
-     (lambda formals x y ...)]))
+    [(_ formals body-1 body-2 ...)
+     (lambda formals body-1 body-2 ...)]))
 
 ;; ᓴᓐᓇ translates to Sedna. She is the Inuit goddess of the sea and marine mammals.
 ;; A function/procedure in Scheme is a an identifier, a list of formals, and a body of one or more expressions.
@@ -28,5 +28,5 @@
 
 (define-syntax ᓴᓐᓇ
   (syntax-rules ()
-    [(_ formals x y ...)
-     (lambda formals x y ...)]))
+    [(_ formals body-1 body-2 ...)
+     (lambda formals body-1 body-2 ...)]))
