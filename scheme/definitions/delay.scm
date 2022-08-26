@@ -11,14 +11,13 @@
     [(_ expr) (make-promise (lambda () expr))]))
 
 (define (make-promise p)
-  (let ([val #f] [set? #f]) ;; <- Capture bindings in closure.
+  (let([cache #f]
+       [set? #f])
     (lambda ()
       (unless set?
-        (let ([x (p)]) ;; <------ Prevent redundant computation.
-          (unless set?
-            (set! val x)
-            (set! set? #t))))
-      val)))
+        (set! cache (p))
+        (set! set? #t))
+      cache)))
 
 (define (force promise)
   (promise))
