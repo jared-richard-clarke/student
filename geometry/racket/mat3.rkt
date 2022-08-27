@@ -11,7 +11,7 @@
          m3-shear
          m3-transform)
 
-(require "test.rkt")
+(require "tests.rkt")
 
 ;; (mat3 |number * 6|) -> (vector |number * 6|)
 ;; A 2d transformation implemented as a column-major, 3 × 3 matrix. The third row is implicit.
