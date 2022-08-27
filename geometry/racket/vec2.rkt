@@ -1,3 +1,5 @@
+#lang racket
+
 ;; Provides two-dimensional vectors and operations in linear vector space.
 
 (provide vec2
