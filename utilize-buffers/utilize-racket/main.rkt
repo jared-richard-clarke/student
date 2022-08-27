@@ -10,11 +10,11 @@
                 filename.txt))
 
 ;; check if file exists
-(when (not (file-exists? file))
+(unless (file-exists? file)
   (raise-user-error "file does not exist in current directory"))
 
 ;; check file type
-(when (not (path-has-extension? file ".txt"))
+(unless (path-has-extension? file ".txt")
   (raise-user-error "argument must be plain text file: <example.txt>"))
 
 ;; open input and output files
