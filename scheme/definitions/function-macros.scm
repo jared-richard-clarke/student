@@ -14,9 +14,9 @@
     [(_ formals body-1 body-2 ...)
      (lambda formals body-1 body-2 ...)]))
 
-;; Inspired by Rust's function declaration keyword.
+;; Inspired by OCaml's anonymous function keyword.
 
-(define-syntax fn
+(define-syntax fun
   (syntax-rules ()
     [(_ formals body-1 body-2 ...)
      (lambda formals body-1 body-2 ...)]))
