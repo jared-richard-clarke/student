@@ -6,3 +6,10 @@
   (if (= y 0)
       x
       (GCD y (remainder x y))))
+
+;; (LCM integer integer) -> integer
+;; Returns the least common multiple — the smallest integer that is divisible by "x" and "y".
+;; (LCM 10 5) -> 10
+
+(define (LCM x y)
+    (/ (* x y) (GCD x y)))
