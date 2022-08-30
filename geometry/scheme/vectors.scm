@@ -1,4 +1,5 @@
 ;; Functional implementation of vectors and operations in linear vector space.
+
 (library (vectors)
          (export vec2 
                  vec2-approx-eq? 
