@@ -3,7 +3,7 @@
                  rad->deg
                  PI
                  π)
-         (import (scheme))
+         (import (rnrs base))
          
          ;; PI and π: approximation of π.
 
