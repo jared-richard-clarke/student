@@ -8,7 +8,7 @@
 (assert-equal (vec2 3 4)
             '#(3 4))
 
-(assert-equal (vec2-eq? (vec2 3.2 4.0) (vec2 3.19999999989 4.0))
+(assert-equal (vec2-approx-eq? (vec2 3.2 4.0) (vec2 3.19999999989 4.0))
             #t)
 
 (assert-equal (vec2-add (vec2 3 4) (vec2 7 11))
