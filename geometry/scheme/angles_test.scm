@@ -1,4 +1,6 @@
-(import (scheme) (angles) (utils))
+(import (rnrs base) 
+        (angles) 
+        (utils))
 
 ;; === unit tests ===
 
