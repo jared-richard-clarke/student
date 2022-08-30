@@ -1,4 +1,6 @@
-(import (scheme) (vectors) (utils))
+(import (rnrs base)
+        (vectors)
+        (utils))
 
 ;; === unit tests ===
 
