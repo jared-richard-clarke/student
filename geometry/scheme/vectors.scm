@@ -1,7 +1,7 @@
-;; Provides vectors and vector operations in linear vector space.
+;; Functional implementation of vectors and operations in linear vector space.
 (library (vectors)
          (export vec2 
-                 vec2-eq? 
+                 vec2-approx-eq? 
                  vec2-add 
                  vec2-sub 
                  vec2-negate 
@@ -13,7 +13,9 @@
                  vec2-lerp 
                  vec2-normalize 
                  vec2-round)
-         (import (scheme) (utils))
+         (import (rnrs base)
+                 (rnrs lists)
+                 (utils))
 
          ;; (vec2 number number) -> (vector number number)
          ;; Returns two-dimensional coordinates as a vector of two numbers.
@@ -22,12 +24,11 @@
          (define (vec2 x y)
            (vector x y))
 
-         ;; (vec2-eq? (vector number number) (vector number number)) -> boolean
-         ;; Checks whether floating-point vector components are approximately equal.
-         ;; Comparisons made left to right.
-         ;; (vec2-eq? (vec2 3.2 4.0) (vec2 3.19999999989 4.0)) -> #t
+         ;; (vec2-approx-eq? (vector number number) (vector number number)) -> boolean
+         ;; Compares the vector components, checking for approximate equality.
+         ;; (vec2-approx-eq? (vec2 3.2 4.0) (vec2 3.19999999989 4.0)) -> #t
 
-         (define (vec2-eq? v1 v2)
+         (define (vec2-approx-eq? v1 v2)
            (let ([x1 (vector-ref v1 0)]
                  [y1 (vector-ref v1 1)]
                  [x2 (vector-ref v2 0)]
