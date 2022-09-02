@@ -1,4 +1,4 @@
-;; A "let" macro wherein a fender to verifies 
+;; A "let" macro wherein a fender verifies 
 ;; that certain subforms of an input form are identifiers
 
 (define-syntax let
