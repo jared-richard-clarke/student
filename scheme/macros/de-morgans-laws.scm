@@ -43,9 +43,9 @@
 
 ;; macro expansion
 
-(eq? (not (let ([x A])
-            (if x 
-                x 
+(eq? (not (let ([t A])
+            (if t 
+                t 
                 B)))
      (if (not A)
          (not B)
@@ -63,7 +63,7 @@
 (eq? (not (if A
               B
               #f))
-     (let ([x (not A)])
-       (if x
-           x
+     (let ([t (not A)])
+       (if t
+           t
            (not B))))
