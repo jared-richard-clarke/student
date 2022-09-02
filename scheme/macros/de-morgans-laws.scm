@@ -2,16 +2,16 @@
 
 (define-syntax and
   (syntax-rules ()
-    [(and) #t]
-    [(and e) e]
-    [(and e1 e2 e3 ...)
+    [(_) #t]
+    [(_ e) e]
+    [(_ e1 e2 e3 ...)
      (if e1 (and e2 e3 ...) #f)]))
 
 (define-syntax or
   (syntax-rules ()
-    [(or) #f]
-    [(or e) e]
-    [(or e1 e2 e3 ...)
+    [(_) #f]
+    [(_ e) e]
+    [(_ e1 e2 e3 ...)
      (let ([t e1])
        (if t t (or e2 e3 ...)))]))
 
