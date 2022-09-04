@@ -47,7 +47,7 @@
 (assert-equal (vec2-normalize (vec2 3 4))
               '#(3/5 4/5))
 
-;; float-point division
+;; floating-point division
 (assert-equal (vec2-normalize (vec2 3.0 4.0))
               '#(0.6 0.8))
 
