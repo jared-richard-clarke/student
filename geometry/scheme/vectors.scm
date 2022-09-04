@@ -2,19 +2,20 @@
 
 (library (vectors)
          (export vec2 
-                 vec2?
-                 vec2-approx-eq? 
-                 vec2-add 
-                 vec2-sub 
-                 vec2-negate 
-                 vec2-sum 
-                 vec2-mag 
-                 vec2-scale 
-                 vec2-dot 
-                 vec2-distance 
-                 vec2-lerp 
-                 vec2-normalize 
-                 vec2-round)
+                 vec3
+                 vec2? 
+                 vec3?
+                 vec-add 
+                 vec-sub 
+                 vec-neg 
+                 vec-sum 
+                 vec-mag
+                 vec-scale 
+                 vec-dot 
+                 vec-dist 
+                 vec-lerp 
+                 vec-normalize 
+                 vec-round)
          (import (rnrs base)
                  (rnrs lists)
                  (utils))
@@ -26,137 +27,128 @@
          (define (vec2 x y)
            (vector x y))
 
+         ;; (vec3 number number number) -> (vector number number number)
+         ;; Returns three-dimensional coordinates as a vector of three numbers.
+         ;; (vec2 3 4 1) -> #(3 4 1)
+
+         (define (vec3 x y z)
+           (vector x y z))
+
+         ;; (vec-type number) -> (function vector) -> boolean
+         ;; Creates functions that assert vector identity.
+         ;; (define vec2? (vec-type 2)) -> (vec2? (vec2 1 2)) -> #t
+
+         (define (vec-type dimensions)
+           (lambda (v)
+             (and (vector? v)
+                  (= (vector-length v) dimensions))))
+
          ;; (vec2? value) -> boolean
          ;; Returns #t if value is a two-dimensional vector, #f otherwise.
          ;; (vec2? '#(3 4)) -> #t
 
-         (define (vec2? x)
-           (and (vector? x)
-                (= (vector-length x) 2)))
+         (define vec2? (vec-type 2))
 
-         ;; (vec2-approx-eq? (vector number number) (vector number number)) -> boolean
-         ;; Compares the vector components, checking for approximate equality.
-         ;; (vec2-approx-eq? (vec2 3.2 4.0) (vec2 3.19999999989 4.0)) -> #t
+         ;; (vec3? value) -> boolean
+         ;; Returns #t if value is a three-dimensional vector, #f otherwise.
+         ;; (vec3? '#(3 4)) -> #f
 
-         (define (vec2-approx-eq? v1 v2)
-           (let ([x1 (vector-ref v1 0)]
-                 [y1 (vector-ref v1 1)]
-                 [x2 (vector-ref v2 0)]
-                 [y2 (vector-ref v2 1)])
-             (and (approx-eq? x1 x2)
-                  (approx-eq? y1 y2))))
+         (define vec3? (vec-type 3))
 
-         ;; (arithmetic function) -> (function (vector number number) (vector number number)) -> (vector number number)
-         ;; Creates functions that perform an arithmetic operation over two vectors.
-         ;; (define vec2-add (arithmetic +)) -> (vec2-add (vec2 1 2) (vec2 3 4)) -> #(4 5)
+         ;; (binary function) -> (function vector vector) -> vector
+         ;; Creates functions that perform binary operations over two vectors.
+         ;; (define vec-add (binary +)) -> (vec-add (vec2 1 2) (vec2 3 4)) -> #(4 5)
 
-         (define (arithmetic operation)
+         (define (binary operation)
            (lambda (v1 v2)
              (vector-map (lambda (x y) (operation x y)) 
                          v1 
                          v2)))
 
-         ;; (vec2-add (vector number number) (vector number number)) -> (vector number number)
-         ;; Returns the sum of two, two-dimensional vectors.
-         ;; (vec2-add (vec2 3 4) (vec2 7 11)) -> #(10 15)
+         ;; (vec-add (vector number number) (vector number number)) -> (vector number number)
+         ;; Returns the sum of two vectors.
+         ;; (vec-add (vec2 3 4) (vec2 7 11)) -> #(10 15)
 
-         (define vec2-add (arithmetic +))
+         (define vec-add (binary +))
 
-         ;; (vec2-sub (vector number number) (vector number number)) -> (vector number number)
-         ;; Returns the difference of two, two-dimensional vectors.
-         ;; (vec2-sub (vec2 3 4) (vec2 7 11)) -> #(-4 -7)
+         ;; (vec-sub (vector number number) (vector number number)) -> (vector number number)
+         ;; Returns the difference of two vectors.
+         ;; (vec-sub (vec2 3 4) (vec2 7 11)) -> #(-4 -7)
 
-         (define vec2-sub (arithmetic -))
+         (define vec-sub (binary -))
 
-         ;; (vec2-negate (vector number number)) -> (vector number number)
-         ;; Inverts the signs of the vector components. Flips the vector 180 degrees.
-         ;; (vec2-negate (vec2 3 4)) -> (vec2 -3 -4)
+         ;; (vec-neg vector) -> (- vector)
+         ;; Inverts the signs of the vector components.
+         ;; (vec-neg (vec2 3 4)) -> (vec2 -3 -4)
 
-         (define (vec2-negate vec)
+         (define (vec-neg vec)
            (vector-map (lambda (x) (- x)) vec))
 
-         ;; (vec2-sum (vector number number) ...) -> (vector number number)
+         ;; (vec-sum vector ...) -> vector
          ;; Returns the sum of a series of vectors.
-         ;; (vec2-sum (vec2 1 2) (vec2 1 2) (vec2 3 4)) -> #(5 8)
-         ;; (vec2-sum) -> #(0 0)
+         ;; (vec-sum (vec2 1 2) (vec2 1 2) (vec2 3 4)) -> #(5 8)
 
-         (define (vec2-sum . vecs)
-           (cond
-             [(= (length vecs) 0) (vec2 0 0)]
-             [(= (length vecs) 1) (car vecs)]
-             [else (fold-left (lambda (accum vec)
-                                (let ([x1 (vector-ref accum 0)]
-                                      [y1 (vector-ref accum 1)]
-                                      [x2 (vector-ref vec 0)]
-                                      [y2 (vector-ref vec 1)])
-                                  (vec2 (+ x1 x2) (+ y1 y2))))
-                              (car vecs)
-                              (cdr vecs))]))
+         (define (vec-sum . vecs)
+           (fold-left (lambda (accum vec)
+                        (vector-map (lambda (x y) (+ x y)) accum vec))
+                      (car vecs)
+                      (cdr vecs)))
 
-         ;; (vec2-mag (vector number number)) -> number
-         ;; Returns the magnitude of a two-dimensional vector.
-         ;; (vec2-mag (vec2 3 4)) -> 5
+         ;; (vec-mag (vector number number)) -> number
+         ;; Returns the magnitude of a vector.
+         ;; (vec-mag (vec2 3 4)) -> 5
 
-         (define (vec2-mag vec)
-           (let ([x (vector-ref vec 0)]
-                 [y (vector-ref vec 1)])
-             (hypotenuse x y)))
+         (define (vec-mag vec)
+           (apply hypotenuse (vector->list vec)))
 
-         ;; (vec2-scale (vector number number) number) -> (vector number number)
+         ;; (vec-scale vector number) -> vector
          ;; Returns a vector multiplied by a number.
-         ;; (vec2-scale (vec2 1 2) 2) -> #(2 4)
+         ;; (vec-scale (vec2 1 2) 2) -> #(2 4)
 
-         (define (vec2-scale vec scalar)
+         (define (vec-scale vec scalar)
            (vector-map (lambda (x) (* scalar x)) vec))
 
-         ;; (vec2-dot (vector number number) (vector number number)) -> number
+         ;; (vec-dot (vector number number) (vector number number)) -> number
          ;; Returns the dot product of two vectors.
-         ;; (vec2-dot (vec2 1 2) (vec2 3 4)) -> 11
+         ;; (vec-dot (vec2 1 2) (vec2 3 4)) -> 11
 
-         (define (vec2-dot v1 v2)
-           (let ([x1 (vector-ref v1 0)]
-                 [y1 (vector-ref v1 1)]
-                 [x2 (vector-ref v2 0)]
-                 [y2 (vector-ref v2 1)])
-             (+ (* x1 x2) (* y1 y2))))
+         (define (vec-dot v1 v2)
+           (apply + (vector->list (vector-map (lambda (x y) (* x y))
+                                              v1
+                                              v2))))
 
-         ;; (vec2-distance (vector number number) (vector number number)) -> number
-         ;; Returns the distance between two, two-dimensional vectors.
-         ;; (vec2-distance (vec2 8 0) (vec2 1 0)) -> 7
+         ;; (vec-dist (vector number ...) (vector number ...)) -> number
+         ;; Returns the distance between two vectors.
+         ;; (vec-dist (vec2 8 0) (vec2 1 0)) -> 7
 
-         (define (vec2-distance v1 v2)
-           (let ([x1 (vector-ref v1 0)]
-                 [y1 (vector-ref v1 1)]
-                 [x2 (vector-ref v2 0)]
-                 [y2 (vector-ref v2 1)])
-             (hypotenuse (- x2 x1) (- y2 y1))))
+         (define (vec-dist v1 v2)
+           (apply hypotenuse (vector->list (vector-map (lambda (x y) (- y x))
+                                                       v1
+                                                       v2))))
 
-         ;; (vec2-lerp vec2 vec2 number) -> vec2
+         ;; (vec-lerp vec2 vec2 number) -> vec2
          ;; Interpolates a vector point along a line between two vector points.
-         ;; (vec2-lerp 1/2 (vec2 0 0) (vec2 10 0)) -> (vec2 5 0)
+         ;; (vec-lerp 1/2 (vec2 0 0) (vec2 10 0)) -> (vec2 5 0)
 
-         (define (vec2-lerp t v1 v2)
-           (let* ([x1 (vector-ref v1 0)]
-                  [y1 (vector-ref v1 1)]
-                  [x2 (vector-ref v2 0)]
-                  [y2 (vector-ref v2 1)]
-                  [x (+ x1 (* (- x2 x1) t))]
-                  [y (+ y1 (* (- y2 y1) t))])
-             (vec2 x y)))
+         (define (vec-lerp t v1 v2)
+           (vector-map (lambda (x y)
+                         (+ x (* (- y x) t)))
+                       v1
+                       v2))
 
-         ;; (vec2-normalize (vector number number)) -> (vector number number)
-         ;; Returns the unit vector of a two-dimensional vector.
-         ;; (vec2-normalize (vec2 3 4)) -> #(3/5 4/5)
+         ;; (vec-normalize (vector number ...)) -> (vector number ...)
+         ;; Returns the unit vector of a vector.
+         ;; (vec-normalize (vec2 3 4)) -> #(3/5 4/5)
 
-         (define (vec2-normalize vec)
-           (let ([m (vec2-mag vec)])
+         (define (vec-normalize vec)
+           (let ([m (vec-mag vec)])
              (vector-map (lambda (x) (/ x m)) vec)))
 
-         ;; (vec2-round (vector number number)) -> (vector number number)
+         ;; (vec-round (vector number ...)) -> (vector number ...)
          ;; Rounds the vector components.
-         ;; (vec2-round (vec2 1.3 1.7)) -> #(1.0 2.0)
+         ;; (vec-round (vec2 1.3 1.7)) -> #(1.0 2.0)
 
-         (define (vec2-round vec)
+         (define (vec-round vec)
            (vector-map (lambda (x) (round x)) vec))
 
          )
