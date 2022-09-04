@@ -2,6 +2,7 @@
 
 (library (vectors)
          (export vec2 
+                 vec2?
                  vec2-approx-eq? 
                  vec2-add 
                  vec2-sub 
@@ -25,6 +26,14 @@
          (define (vec2 x y)
            (vector x y))
 
+         ;; (vec2? value) -> boolean
+         ;; Returns #t if value is a two-dimensional vector, #f otherwise.
+         ;; (vec2? '#(3 4)) -> #t
+
+         (define (vec2? x)
+           (and (vector? x)
+                (= (vector-length x) 2)))
+
          ;; (vec2-approx-eq? (vector number number) (vector number number)) -> boolean
          ;; Compares the vector components, checking for approximate equality.
          ;; (vec2-approx-eq? (vec2 3.2 4.0) (vec2 3.19999999989 4.0)) -> #t
@@ -43,11 +52,9 @@
 
          (define (arithmetic operation)
            (lambda (v1 v2)
-             (let ([x1 (vector-ref v1 0)]
-                   [y1 (vector-ref v1 1)]
-                   [x2 (vector-ref v2 0)]
-                   [y2 (vector-ref v2 1)])
-               (vec2 (operation x1 x2) (operation y1 y2)))))
+             (vector-map (lambda (x y) (operation x y)) 
+                         v1 
+                         v2)))
 
          ;; (vec2-add (vector number number) (vector number number)) -> (vector number number)
          ;; Returns the sum of two, two-dimensional vectors.
@@ -66,9 +73,7 @@
          ;; (vec2-negate (vec2 3 4)) -> (vec2 -3 -4)
 
          (define (vec2-negate vec)
-           (let ([x (vector-ref vec 0)]
-                 [y (vector-ref vec 1)])
-             (vec2 (- x) (- y))))
+           (vector-map (lambda (x) (- x)) vec))
 
          ;; (vec2-sum (vector number number) ...) -> (vector number number)
          ;; Returns the sum of a series of vectors.
@@ -102,9 +107,7 @@
          ;; (vec2-scale (vec2 1 2) 2) -> #(2 4)
 
          (define (vec2-scale vec scalar)
-           (let ([x (vector-ref vec 0)]
-                 [y (vector-ref vec 1)])
-             (vec2 (* scalar x) (* scalar y))))
+           (vector-map (lambda (x) (* scalar x)) vec))
 
          ;; (vec2-dot (vector number number) (vector number number)) -> number
          ;; Returns the dot product of two vectors.
@@ -146,18 +149,14 @@
          ;; (vec2-normalize (vec2 3 4)) -> #(3/5 4/5)
 
          (define (vec2-normalize vec)
-           (let ([m (vec2-mag vec)]
-                 [x (vector-ref vec 0)]
-                 [y (vector-ref vec 1)])
-             (vec2 (/ x m) (/ y m))))
+           (let ([m (vec2-mag vec)])
+             (vector-map (lambda (x) (/ x m)) vec)))
 
          ;; (vec2-round (vector number number)) -> (vector number number)
          ;; Rounds the vector components.
          ;; (vec2-round (vec2 1.3 1.7)) -> #(1.0 2.0)
 
          (define (vec2-round vec)
-           (let ([x (vector-ref vec 0)]
-                 [y (vector-ref vec 1)])
-             (vec2 (round x) (round y))))
+           (vector-map (lambda (x) (round x)) vec))
 
          )
