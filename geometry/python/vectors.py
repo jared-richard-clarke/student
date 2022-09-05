@@ -6,92 +6,110 @@ Provides cartesian vectors and methods.
 """
 
 
-class Vec2:
+class Vector:
     """
-    Creates a cartesian representation of a vector in two dimensions.
+    Base class for a cartesian representation of a vector.
     """
 
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self, *xs):
+        self.point = xs
 
     def __eq__(self, other):
         """Checks equality by comparing vector components."""
-        x1, y1 = self.x, self.y
-        x2, y2 = other.x, other.y
-        return x1 == x2 and y1 == y2
+        return self.point == other.point
 
     def approx_eq(self, other):
         """
         As opposed to operator "==", method "approx_eq" checks whether 
         floating-point vector components are approximately equal.
         """
-        x1, y1 = self.x, self.y
-        x2, y2 = other.x, other.y
         eq = approximate.equals
-        return eq(x1, x2) and eq(y1, y2)
+        for x1, x2 in zip(self.point, other.point, strict=True):
+            if not eq(x1, x2):
+                return False
+        return True
 
     def __add__(self, other):
         """Returns the sum of two vectors."""
-        x1, y1 = self.x, self.y
-        x2, y2 = other.x, other.y
-        return Vec2(x1 + x2, y1 + y2)
+        result = [x + y for x, y in zip(self.point, other.point, strict=True)]
+        return Vector(*result)
 
     def __sub__(self, other):
-        """Returns the difference of two vectors."""
-        x1, y1 = self.x, self.y
-        x2, y2 = other.x, other.y
-        return Vec2(x1 - x2, y1 - y2)
+        """Returns the difference between two vectors."""
+        result = [x - y for x, y in zip(self.point, other.point, strict=True)]
+        return Vector(*result)
 
     def __neg__(self):
         """
         Inverts the signs of the vector components. 
         Flips the vector 180 degrees
         """
-        x, y = self.x, self.y
-        return Vec2(-x, -y)
+        result = [-x for x in self.point]
+        return Vector(*result)
 
     def mag(self):
         """Returns the magnitude of a vector."""
-        x, y = self.x, self.y
-        return math.hypot(x, y)
+        return math.hypot(*self.point)
 
     def scale(self, scalar):
         """Returns a scaled two-dimensional vector."""
-        x, y = self.x, self.y
-        return Vec2(x * scalar, y * scalar)
+        result = [x * scalar for x in self.point]
+        return Vector(*result)
 
     def dot(self, other):
         """Returns the dot product of two vectors."""
-        x1, y1 = self.x, self.y
-        x2, y2 = other.x, other.y
-        return (x1 * x2) + (y1 * y2)
+        result = sum(
+            [v1 * v2 for v1, v2 in zip(self.point, other.point, strict=True)])
+        return result
 
     def distance(self, other):
         """Returns the distance between the tips of two vectors."""
-        x1, y1 = self.x, self.y
-        x2, y2 = other.x, other.y
-        return math.hypot(x2 - x1, y2 - y1)
+        result = [x2 - x1 for x1,
+                  x2 in zip(self.point, other.point, strict=True)]
+        return math.hypot(*result)
 
     def lerp(self, other, t):
         """Interpolates a vector point between the tips of two vectors."""
-        x1, y1 = self.x, self.y
-        x2, y2 = other.x, other.y
-        x = x1 + (x2 - x1) * t
-        y = y1 + (y2 - y1) * t
-        return Vec2(x, y)
+        result = [x1 + (x2 - x1) * t for x1,
+                  x2 in zip(self.point, other.point, strict=True)]
+        return Vector(*result)
 
     def normalize(self):
         """Returns the unit vector of a vector."""
-        x, y = self.x, self.y
         mag = self.mag()
-        return Vec2(x / mag, y / mag)
+        result = [x / mag for x in self.point]
+        return Vector(*result)
 
     def round(self):
         """Returns a vector with its coordinate components rounded."""
-        x, y = self.x, self.y
-        return Vec2(round(x), round(y))
+        result = [round(x) for x in self.point]
+        return Vector(*result)
+
+
+class Vec2(Vector):
+    """
+    A cartesian representation of a two-dimensional vector.
+    """
+
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.x = x
+        self.y = y
 
     def __str__(self):
-        """Returns a textual representation of a Vec2 object."""
-        return f"vec2({self.x},{self.y})"
+        return f"Vec2{self.point}"
+
+
+class Vec3(Vector):
+    """
+    A cartesian representation of a three-dimensional vector.
+    """
+
+    def __init__(self, x, y, z):
+        super().__init__(x, y, z)
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def __str__(self):
+        return f"Vec3{self.point}"
