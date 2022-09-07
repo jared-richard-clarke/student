@@ -3,23 +3,23 @@
 ;; (compute '(+ 1 2 3 4 5 6 7 8 9 10)) -> 55
 
 (define env
-  (list (cons '+ +)
-        (cons '- -)
-        (cons '* *)
-        (cons '× *)
-        (cons '/ /)
-        (cons '÷ /)
-        (cons '^ expt)
-        (cons '√ sqrt)
-        (cons 'π 3.141592653589793)
-        (cons 'e 2.718281828459045)
-        (cons 'φ 1.618033988749894)))
+  (list [cons '+ +]
+        [cons '- -]
+        [cons '* *]
+        [cons '× *]
+        [cons '/ /]
+        [cons '÷ /]
+        [cons '^ expt]
+        [cons '√ sqrt]
+        [cons 'π 3.141592653589793]
+        [cons 'e 2.718281828459045]
+        [cons 'φ 1.618033988749894]))
 
 (define (lookup var env)
   (let ([result (assq var env)])
     (if result
         (cdr result)
-        (error "undefined operator or constant: " var))))
+        (error "unbound operator or constant: " var))))
 
 (define (compute expr)
   (cond
