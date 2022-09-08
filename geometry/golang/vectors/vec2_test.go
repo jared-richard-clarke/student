@@ -8,8 +8,14 @@ func TestApproxEq(t *testing.T) {
 	ep := 0.000001
 	v1 := Vec2{3.0 + ep, 4.0 + ep}
 	v2 := Vec2{3.0, 4.0}
-	if !v1.ApproxEq(v2) {
-		t.Errorf("Test ApproxEq failed. Check test epsilon (ep).")
+	if v1.ApproxEq(v2) == false {
+		t.Errorf("Test ApproxEq failed: false negative. Check epsilon (ep) in test.")
+	}
+	// Push values past threshold for approximate equality,
+	// by pushing epsilon into one figure higher in significance.
+	v1 = Vec2{3.0 + ep * 10, 4.0 + ep}
+	if v1.ApproxEq(v2) == true {
+		t.Errorf("Test ApproxEq failed: false positive. Check epsilon (ep) in test.")
 	}
 }
 
