@@ -6,117 +6,114 @@ import (
 	"math"
 )
 
-// A two-dimensional quantity that has direction and magnitude. Represented by coordinates X and Y.
-type Vec2 struct {
-	X, Y float64
-}
+// A two-dimensional quantity that has direction and magnitude. Represented by a two-part array.
+type Vec2 [2]float64
 
 // As opposed to operator "==", method "ApproxEq" whether floating-point vector components are approximately equal.
 // Check "didact/geometry/golang/utils/approx-eq.go" for details.
 func (v1 Vec2) ApproxEq(v2 Vec2) bool {
-	x1 := v1.X
-	y1 := v1.Y
-	x2 := v2.X
-	y2 := v2.Y
 	eq := utils.ApproxEq
-	return eq(x1, x2) && eq(y1, y2)
+	for i := range v1 {
+		if !eq(v1[i], v2[i]) {
+			return false
+		}
+	}
+	return true
 }
 
 // Returns a vector that is the sum of two vectors.
 func (v1 Vec2) Add(v2 Vec2) Vec2 {
-	x1 := v1.X
-	y1 := v1.Y
-	x2 := v2.X
-	y2 := v2.Y
-	return Vec2{x1 + x2, y1 + y2}
+	for i := range v1 {
+		v1[i] += v2[i]
+	}
+	return v1
 }
 
 // Returns a vector that is the difference of two vectors.
 func (v1 Vec2) Sub(v2 Vec2) Vec2 {
-	x1 := v1.X
-	y1 := v1.Y
-	x2 := v2.X
-	y2 := v2.Y
-	return Vec2{x1 - x2, y1 - y2}
+	for i := range v1 {
+		v1[i] -= v2[i]
+	}
+	return v1
 }
 
 // Inverts the signs of the vector components. Rotates vector 180 degrees.
 func (v Vec2) Negate() Vec2 {
-	x := v.X
-	y := v.Y
-	return Vec2{-x, -y}
+	for i := range v {
+		v[i] = -v[i]
+	}
+	return v
 }
 
 // Returns the sum of a series of two-dimensional vectors.
 func (v1 Vec2) Sum(vs ...Vec2) Vec2 {
 	accum := v1
 	for _, v := range vs {
-		x1 := accum.X
-		y1 := accum.Y
-		x2 := v.X
-		y2 := v.Y
-		accum = Vec2{x1 + x2, y1 + y2}
+		for i := range accum {
+			accum[i] += v[i]
+		}
 	}
 	return accum
 }
 
 // Computes the distance of a 2d-vector's point from the origin.
 func (v Vec2) Mag() float64 {
-	x := v.X
-	y := v.Y
-	return math.Hypot(x, y)
+	return math.Hypot(v[0], v[1])
 }
 
 // Scales a 2d-vector by a scalar of s.
 func (v Vec2) Scale(s float64) Vec2 {
-	x := v.X
-	y := v.Y
-	return Vec2{x * s, y * s}
+	for i := range v {
+		v[i] *= s
+	}
+	return v
 }
 
 // Computes the dot product of two 2d-vectors.
 func (v1 Vec2) Dot(v2 Vec2) float64 {
-	x1 := v1.X
-	y1 := v1.Y
-	x2 := v2.X
-	y2 := v2.Y
-	return x1*x2 + y1*y2
+	id := 0.0
+	for i := range v1 {
+		id += v1[i] * v2[i]
+	}
+	return id
 }
 
 // Calculates the distance between two vector points.
 func (v1 Vec2) Distance(v2 Vec2) float64 {
-	x1 := v1.X
-	y1 := v1.Y
-	x2 := v2.X
-	y2 := v2.Y
-	return math.Hypot(x2-x1, y2-y1)
+	for i := range v1 {
+		v1[i] = v2[i] - v1[i]
+	}
+	return math.Hypot(v1[0], v1[1])
 }
 
 // Interpolates point between two vector points.
 func (v1 Vec2) Lerp(v2 Vec2, t float64) Vec2 {
-	x := v1.X + (v2.X-v1.X)*t
-	y := v1.Y + (v2.Y-v1.Y)*t
-	return Vec2{x, y}
+	for i := range v1 {
+		v1[i] = v1[i] + (v2[i]-v1[i])*t
+	}
+	return v1
 }
 
 // Returns a unit vector of the receiver vector.
 func (v Vec2) Normalize() Vec2 {
 	mag := v.Mag()
-	x := v.X
-	y := v.Y
-	return Vec2{x / mag, y / mag}
+	for i := range v {
+		v[i] /= mag
+	}
+	return v
 }
 
 // Returns a vector with the rounded components of the receiver vector.
 func (v Vec2) Round() Vec2 {
-	x := math.Round(v.X)
-	y := math.Round(v.Y)
-	return Vec2{x, y}
+	for i := range v {
+		v[i] = math.Round(v[i])
+	}
+	return v
 }
 
 // Fulfills the Stringer interface for the fmt package.
 func (v Vec2) String() string {
-	x := v.X
-	y := v.Y
+	x := v[0]
+	y := v[1]
 	return fmt.Sprintf("vec(%.2f, %.2f)", x, y)
 }
