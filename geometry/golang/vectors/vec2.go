@@ -9,11 +9,19 @@ import (
 // A two-dimensional quantity that has direction and magnitude. Represented by a two-part array.
 type Vec2 [2]float64
 
-// As opposed to operator "==", method "ApproxEq" whether floating-point vector components are approximately equal.
+// A three-dimensional quantity that has direction and magnitude. Represented by a three-part array.
+type Vec3 [3]float64
+
+type Vector interface {
+	Vec2 | Vec3
+}
+
+// As opposed to operator "==", function "ApproxEq" tests whether
+// floating-point vector components are approximately equal.
 // Check "didact/geometry/golang/utils/approx-eq.go" for details.
-func (v1 Vec2) ApproxEq(v2 Vec2) bool {
+func ApproxEq[T Vector](v1, v2 T) bool {
 	eq := utils.ApproxEq
-	for i := range v1 {
+	for i := 0; i < len(v1); i += 1 {
 		if !eq(v1[i], v2[i]) {
 			return false
 		}
@@ -22,98 +30,116 @@ func (v1 Vec2) ApproxEq(v2 Vec2) bool {
 }
 
 // Returns a vector that is the sum of two vectors.
-func (v1 Vec2) Add(v2 Vec2) Vec2 {
-	for i := range v1 {
-		v1[i] += v2[i]
+func Add[T Vector](v1, v2 T) T {
+	var v3 T
+	for i := 0; i < len(v1); i += 1 {
+		v3[i] = v1[i] + v2[i]
 	}
-	return v1
+	return v3
 }
 
 // Returns a vector that is the difference of two vectors.
-func (v1 Vec2) Sub(v2 Vec2) Vec2 {
-	for i := range v1 {
-		v1[i] -= v2[i]
+func Sub[T Vector](v1, v2 T) T {
+	var v3 T
+	for i := 0; i < len(v1); i += 1 {
+		v3[i] = v1[i] - v2[i]
 	}
-	return v1
+	return v3
 }
 
-// Inverts the signs of the vector components. Rotates vector 180 degrees.
-func (v Vec2) Negate() Vec2 {
-	for i := range v {
+// Inverts the signs of the vector components.
+func Negate[T Vector](v T) T {
+	for i := 0; i < len(v); i += 1 {
 		v[i] = -v[i]
 	}
 	return v
 }
 
-// Returns the sum of a series of two-dimensional vectors.
-func (v1 Vec2) Sum(vs ...Vec2) Vec2 {
-	accum := v1
-	for _, v := range vs {
-		for i := range accum {
-			accum[i] += v[i]
+// Returns the sum of a series of vectors.
+func Sum[T Vector](vs ...T) T {
+	var accum T
+	for i := 0; i < len(vs); i += 1 {
+		for j := 0; j < len(vs[i]); j += 1 {
+			accum[j] += vs[i][j]
 		}
 	}
 	return accum
 }
 
-// Computes the distance of a 2d-vector's point from the origin.
-func (v Vec2) Mag() float64 {
-	return math.Hypot(v[0], v[1])
+// Computes the distance of a vector's point from the origin.
+func Mag[T Vector](v T) float64 {
+	accum := 0.0
+	for i := 0; i < len(v); i += 1 {
+		accum += math.Pow(v[i], 2)
+	}
+	return math.Sqrt(accum)
 }
 
-// Scales a 2d-vector by a scalar of s.
-func (v Vec2) Scale(s float64) Vec2 {
-	for i := range v {
+// Scales a vector by a scalar of s.
+func Scale[T Vector](v T, s float64) T {
+	for i := 0; i < len(v); i += 1 {
 		v[i] *= s
 	}
 	return v
 }
 
-// Computes the dot product of two 2d-vectors.
-func (v1 Vec2) Dot(v2 Vec2) float64 {
-	id := 0.0
-	for i := range v1 {
-		id += v1[i] * v2[i]
+// Computes the dot product of two vectors.
+func Dot[T Vector](v1, v2 T) float64 {
+	accum := 0.0
+	for i := 0; i < len(v1); i += 1 {
+		accum += v1[i] * v2[i]
 	}
-	return id
+	return accum
 }
 
 // Calculates the distance between two vector points.
-func (v1 Vec2) Distance(v2 Vec2) float64 {
-	for i := range v1 {
-		v1[i] = v2[i] - v1[i]
+func Distance[T Vector](v1, v2 T) float64 {
+	accum := 0.0
+	for i := 0; i < len(v1); i += 1 {
+		accum += math.Pow(v2[i]-v1[i], 2)
 	}
-	return math.Hypot(v1[0], v1[1])
+	return math.Sqrt(accum)
 }
 
 // Interpolates point between two vector points.
-func (v1 Vec2) Lerp(v2 Vec2, t float64) Vec2 {
-	for i := range v1 {
-		v1[i] = v1[i] + (v2[i]-v1[i])*t
-	}
-	return v1
-}
-
-// Returns a unit vector of the receiver vector.
-func (v Vec2) Normalize() Vec2 {
-	mag := v.Mag()
-	for i := range v {
-		v[i] /= mag
+func Lerp[T Vector](v1, v2 T, t float64) T {
+	var v T
+	for i := 0; i < len(v1); i += 1 {
+		v[i] = v1[i] + (v2[i]-v1[i])*t
 	}
 	return v
 }
 
-// Returns a vector with the rounded components of the receiver vector.
-func (v Vec2) Round() Vec2 {
-	for i := range v {
-		v[i] = math.Round(v[i])
+// Returns a vectors unit vector.
+func Normalize[T Vector](v T) T {
+	mag := Mag(v)
+	var u T
+	for i := 0; i < len(v); i += 1 {
+		u[i] = v[i] / mag
 	}
-	return v
+	return u
 }
 
-// Fulfills the Stringer interface for the fmt package.
+// Returns a vector with its components rounded.
+func Round[T Vector](v T) T {
+	var r T
+	for i := 0; i < len(v); i += 1 {
+		r[i] = math.Round(v[i])
+	}
+	return r
+}
+
+// Fulfills the Stringer interface for Vec2.
 func (v Vec2) String() string {
 	x := v[0]
 	y := v[1]
 	return fmt.Sprintf("vec(%.2f, %.2f)", x, y)
+}
+
+// Fulfills the Stringer interface for Vec3.
+func (v Vec3) String() string {
+	x := v[0]
+	y := v[1]
+	z := v[2]
+	return fmt.Sprintf("vec(%.2f, %.2f, %.2f)", x, y, z)
 }
