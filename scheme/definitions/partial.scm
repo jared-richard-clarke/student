@@ -1,7 +1,7 @@
 ;; (partial function values ...) -> (function values ...) -> value
 ;; Fixes a number of arguments to a function, producing another function with a smaller arity.
 ;; Applies function to combined arguments.
-;; (define double (partial map (lambda (x) (* x 2)))) -> (double '(1 2 3)) -> '(2 4 6)
+;; (define add1 (partial + 1)) -> (add1 10) -> 11
 
 (define (partial f x)
   (lambda args (apply f x args)))
