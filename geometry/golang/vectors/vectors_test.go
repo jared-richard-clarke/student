@@ -172,12 +172,12 @@ func TestRound(t *testing.T) {
 }
 
 func TestStringer(t *testing.T) {
-	vec2Expect := "vec(3.00, 4.00)"
+	vec2Expect := "vec2(3.00, 4.00)"
 	vec2Result := Vec2{3.0, 4.0}.String()
 	if vec2Expect != vec2Result {
 		t.Errorf("Test Stringer Vec2 failed. Expected: %v, Got: %v", vec2Expect, vec2Result)
 	}
-	vec3Expect := "vec(3.00, 4.00, 1.00)"
+	vec3Expect := "vec3(3.00, 4.00, 1.00)"
 	vec3Result := Vec3{3.0, 4.0, 1.0}.String()
 	if vec3Expect != vec3Result {
 		t.Errorf("Test Stringer Vec3 failed. Expected: %v, Got: %v", vec3Expect, vec3Result)
