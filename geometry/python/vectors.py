@@ -32,12 +32,12 @@ class Vector:
     def __add__(self, other):
         """Returns the sum of two vectors."""
         result = [x + y for x, y in zip(self.point, other.point, strict=True)]
-        return Vector(*result)
+        return type(self)(*result)
 
     def __sub__(self, other):
         """Returns the difference between two vectors."""
         result = [x - y for x, y in zip(self.point, other.point, strict=True)]
-        return Vector(*result)
+        return type(self)(*result)
 
     def __neg__(self):
         """
@@ -45,7 +45,7 @@ class Vector:
         Flips the vector 180 degrees
         """
         result = [-x for x in self.point]
-        return Vector(*result)
+        return type(self)(*result)
 
     def mag(self):
         """Returns the magnitude of a vector."""
@@ -54,7 +54,7 @@ class Vector:
     def scale(self, scalar):
         """Returns a scaled two-dimensional vector."""
         result = [x * scalar for x in self.point]
-        return Vector(*result)
+        return type(self)(*result)
 
     def dot(self, other):
         """Returns the dot product of two vectors."""
@@ -72,18 +72,18 @@ class Vector:
         """Interpolates a vector point between the tips of two vectors."""
         result = [x1 + (x2 - x1) * t for x1,
                   x2 in zip(self.point, other.point, strict=True)]
-        return Vector(*result)
+        return type(self)(*result)
 
     def normalize(self):
         """Returns the unit vector of a vector."""
         mag = self.mag()
         result = [x / mag for x in self.point]
-        return Vector(*result)
+        return type(self)(*result)
 
     def round(self):
         """Returns a vector with its coordinate components rounded."""
         result = [round(x) for x in self.point]
-        return Vector(*result)
+        return type(self)(*result)
 
 
 class Vec2(Vector):
@@ -113,3 +113,4 @@ class Vec3(Vector):
 
     def __str__(self):
         return f"Vec3{self.point}"
+    
