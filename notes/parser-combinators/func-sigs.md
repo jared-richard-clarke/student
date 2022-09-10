@@ -15,7 +15,7 @@ return :: a -> m a
 ## Map
 
 ```hs
-fmap :: (a -> b) -> f a -> f b
+map :: (a -> b) -> f a -> f b
 ```
 
 ## Apply
