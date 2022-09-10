@@ -3,9 +3,8 @@
 ;; Applies function to combined arguments.
 ;; (define double (partial map (lambda (x) (* x 2)))) -> (double '(1 2 3)) -> '(2 4 6)
 
-(define (partial fn . x)
-  (lambda y
-    (apply fn (append x y))))
+(define (partial f x)
+  (lambda args (apply f x args)))
 
 ;; Functions F2, F3, and F4 return partial functions implemented via currying.
 
