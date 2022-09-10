@@ -31,20 +31,18 @@ func ApproxEq[T Vector](v1, v2 T) bool {
 
 // Returns a vector that is the sum of two vectors.
 func Add[T Vector](v1, v2 T) T {
-	var v3 T
 	for i := 0; i < len(v1); i += 1 {
-		v3[i] = v1[i] + v2[i]
+		v1[i] += v2[i]
 	}
-	return v3
+	return v1
 }
 
 // Returns a vector that is the difference of two vectors.
 func Sub[T Vector](v1, v2 T) T {
-	var v3 T
 	for i := 0; i < len(v1); i += 1 {
-		v3[i] = v1[i] - v2[i]
+		v1[i] -= v2[i]
 	}
-	return v3
+	return v1
 }
 
 // Inverts the signs of the vector components.
@@ -103,37 +101,34 @@ func Distance[T Vector](v1, v2 T) float64 {
 
 // Interpolates point between two vector points.
 func Lerp[T Vector](v1, v2 T, t float64) T {
-	var v T
 	for i := 0; i < len(v1); i += 1 {
-		v[i] = v1[i] + (v2[i]-v1[i])*t
+		v1[i] += (v2[i] - v1[i]) * t
 	}
-	return v
+	return v1
 }
 
 // Returns a vectors unit vector.
 func Normalize[T Vector](v T) T {
 	mag := Mag(v)
-	var u T
 	for i := 0; i < len(v); i += 1 {
-		u[i] = v[i] / mag
+		v[i] /= mag
 	}
-	return u
+	return v
 }
 
 // Returns a vector with its components rounded.
 func Round[T Vector](v T) T {
-	var r T
 	for i := 0; i < len(v); i += 1 {
-		r[i] = math.Round(v[i])
+		v[i] = math.Round(v[i])
 	}
-	return r
+	return v
 }
 
 // Fulfills the Stringer interface for Vec2.
 func (v Vec2) String() string {
 	x := v[0]
 	y := v[1]
-	return fmt.Sprintf("vec(%.2f, %.2f)", x, y)
+	return fmt.Sprintf("vec2(%.2f, %.2f)", x, y)
 }
 
 // Fulfills the Stringer interface for Vec3.
@@ -141,5 +136,5 @@ func (v Vec3) String() string {
 	x := v[0]
 	y := v[1]
 	z := v[2]
-	return fmt.Sprintf("vec(%.2f, %.2f, %.2f)", x, y, z)
+	return fmt.Sprintf("vec3(%.2f, %.2f, %.2f)", x, y, z)
 }
