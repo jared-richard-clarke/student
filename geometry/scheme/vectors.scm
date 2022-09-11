@@ -3,8 +3,10 @@
 (library (vectors)
          (export vec2 
                  vec3
+                 vec4
                  vec2? 
                  vec3?
+                 vec4?
                  vec-add 
                  vec-sub 
                  vec-neg 
@@ -22,17 +24,23 @@
 
          ;; (vec2 number number) -> (vector number number)
          ;; Returns two-dimensional coordinates as a vector of two numbers.
-         ;; (vec2 3 4) -> #(3 4)
+         ;; (vec2 3 4) -> '#(3 4)
 
          (define (vec2 x y)
            (vector x y))
 
          ;; (vec3 number number number) -> (vector number number number)
          ;; Returns three-dimensional coordinates as a vector of three numbers.
-         ;; (vec2 3 4 1) -> #(3 4 1)
+         ;; (vec3 3 4 5) -> '#(3 4 5)
 
          (define (vec3 x y z)
            (vector x y z))
+
+         ;; (vec4 number number number number) -> (vector number number number number)
+         ;; Returns four-dimensional coordinates as a vector of three numbers.
+         ;; (vec4 3 4 5 6) -> '#(3 4 5 6)
+
+         (define (vec4 x y z w))
 
          ;; (vec-type number) -> (function vector) -> boolean
          ;; Creates functions that assert vector identity.
@@ -43,17 +51,22 @@
              (and (vector? v)
                   (= (vector-length v) dimensions))))
 
-         ;; (vec2? value) -> boolean
+         ;; (vec2? any) -> boolean
          ;; Returns #t if value is a two-dimensional vector, #f otherwise.
          ;; (vec2? '#(3 4)) -> #t
 
          (define vec2? (vec-type 2))
 
-         ;; (vec3? value) -> boolean
+         ;; (vec3? any) -> boolean
          ;; Returns #t if value is a three-dimensional vector, #f otherwise.
-         ;; (vec3? '#(3 4)) -> #f
+         ;; (vec3? '#(3 4 5)) -> #t
 
          (define vec3? (vec-type 3))
+
+         ;; (vec4? any) -> boolean
+         ;; Returns #t if value is a 4-dimensional vector, #f otherwise.
+         ;; (vec4? '#(3 4 5 1)) -> #t
+         (define vec4? (vec-type 4))
 
          ;; (binary function) -> (function vector vector) -> vector
          ;; Creates functions that perform binary operations over two vectors.
