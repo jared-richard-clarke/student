@@ -1,7 +1,6 @@
 (library (utils)
          (export hypotenuse approx-eq? assert-equal)
-         (import (rnrs base)
-                 (rnrs list))
+         (import (scheme))
 
          ;; (hypotenuse number number) -> number
          ;; Returns the square root of the sum of the squares of its arguments.
@@ -24,7 +23,7 @@
              (<= (abs (- x y))
                  (* EPSILON 
                     (max 1.0 
-                         (abs x) 
+                         (abs x)
                          (abs y))))))
 
          ;; (assert-equal expression value) -> current-output-port
