@@ -36,7 +36,7 @@
            (syntax-rules ()
              [(_ expression value)
               (let ([computed-expr expression]) ;; <- prevents redundant computation
-                (when (not (equal? computed-expr value))
+                (unless (equal? computed-expr value)
                   (printf "Test: ~a\nExpect: ~a, Got: ~a\n"
                           (quote expression) ;; <---- returns expression prior to evaluation
                           value
