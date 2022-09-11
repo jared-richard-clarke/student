@@ -2,7 +2,7 @@ module Vectors
 
 import Base: +, -, *
 
-export Vec2, Vec3, add, +, sub, -, neg, mag, scale, *, dot, dist, lerp, norm
+export Vec2, Vec3, add, +, sub, -, neg, mag, scale, *, dot, distance, lerp, normalize
 
 """
 A cartesian representation of a vector in two dimensions.
@@ -52,8 +52,8 @@ dot(v1::Vec2, v2::Vec2) = (v1.x * v2.x) + (v1.y * v2.y)
 dot(v1::Vec3, v2::Vec3) = (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z)
 
 """Computes the distance between the tips of two vectors."""
-dist(v1::Vec2, v2::Vec2) = hypot(v2.x - v1.x, v2.y - v1.y)
-dist(v1::Vec3, v2::Vec3) = hypot(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z)
+distance(v1::Vec2, v2::Vec2) = hypot(v2.x - v1.x, v2.y - v1.y)
+distance(v1::Vec3, v2::Vec3) = hypot(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z)
 
 """Interpolates a vector point along a line between two vector points."""
 function lerp(v1::Vec2, v2::Vec2, t::Float64)
@@ -70,14 +70,14 @@ function lerp(v1::Vec3, v2::Vec3, t::Float64)
 end
 
 """Computes the unit vector of a vector."""
-function norm(v::Vec2)
+function normalize(v::Vec2)
     m = mag(v)
     x = v.x
     y = v.y
     Vec2(x / m, y / m)
 end
 
-function norm(v::Vec3)
+function normalize(v::Vec3)
     m = mag(v)
     x = v.x
     y = v.y
