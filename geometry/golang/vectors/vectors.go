@@ -6,14 +6,17 @@ import (
 	"math"
 )
 
-// A two-dimensional quantity that has direction and magnitude. Represented by a two-part array.
+// A two-dimensional cartesian vector. Represented by a two-part array.
 type Vec2 [2]float64
 
-// A three-dimensional quantity that has direction and magnitude. Represented by a three-part array.
+// A three-dimensional cartesian vector. Represented by a three-part array.
 type Vec3 [3]float64
 
+// A four-dimensional cartesian vector. Represented by a four-part array.
+type Vec4 [4]float64
+
 type Vector interface {
-	Vec2 | Vec3
+	Vec2 | Vec3 | Vec4
 }
 
 // As opposed to operator "==", function "ApproxEq" tests whether
@@ -137,4 +140,13 @@ func (v Vec3) String() string {
 	y := v[1]
 	z := v[2]
 	return fmt.Sprintf("vec3(%.2f, %.2f, %.2f)", x, y, z)
+}
+
+// Fulfills the Stringer interface for Vec4
+func (v Vec4) String() string {
+	x := v[0]
+	y := v[1]
+	z := v[2]
+	w := v[3]
+	return fmt.Sprintf("vec4(%.2f, %.2f, %.2f, %.2f)", x, y, z, w)
 }
