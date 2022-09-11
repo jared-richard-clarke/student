@@ -1,6 +1,7 @@
 (library (utils)
          (export hypotenuse approx-eq? assert-equal)
-         (import (scheme))
+         (import (rnrs base)
+                 (rnrs list))
 
          ;; (hypotenuse number number) -> number
          ;; Returns the square root of the sum of the squares of its arguments.
