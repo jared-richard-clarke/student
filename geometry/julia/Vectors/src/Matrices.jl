@@ -15,8 +15,10 @@ struct Mat3
     y0::Float64
 end
 
-"""Combines matrix transformations through multiplication."""
-function multiply(a::Mat3, b::Mat3)
+# Matrices are multiplied right to left. Reversing the arguments
+# "a" and "b" allows function foldl to iterate over a list of matrices
+# from left to right while multiplying them as if right to left.
+function multiply(b::Mat3, a::Mat3)
     Mat3(
         a.xx * b.xx + a.yx * b.xy,
         a.xx * b.yx + a.yx * b.yy,
@@ -27,8 +29,8 @@ function multiply(a::Mat3, b::Mat3)
     )
 end
 
-"""Matrix multiplication defined as operator."""
-(*)(a::Mat3, b::Mat3) = multiply(a, b)
+"""Combines matrix transformations through multiplication."""
+(*)(a::Mat3, b::Mat3) = multiply(b, a)
 
 """Creates a 3x3 identity matrix."""
 function identity()
