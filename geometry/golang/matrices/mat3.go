@@ -9,32 +9,32 @@ import (
 // A 2d transformation implemented as a column-major, 3 × 3 matrix.
 // The third row is implicit.
 type Mat3 struct {
-	XX, YX,
-	XY, YY,
-	X0, Y0 float64
+	A, B,
+	C, D,
+	E, F float64
 }
 
 // As opposed to operator "==", method "ApproxEq" checks whether floating-point matrix components are approximately equal.
 // Check "didact/geometry/golang/utils/approx-eq.go" for details.
-func (a Mat3) ApproxEq(b Mat3) bool {
+func (m Mat3) ApproxEq(n Mat3) bool {
 	eq := utils.ApproxEq
-	return eq(a.XX, b.XX) &&
-		eq(a.YX, b.YX) &&
-		eq(a.XY, b.XY) &&
-		eq(a.YY, b.YY) &&
-		eq(a.X0, b.X0) &&
-		eq(a.Y0, b.Y0)
+	return eq(m.A, n.A) &&
+		eq(m.B, n.B) &&
+		eq(m.C, n.C) &&
+		eq(m.D, n.D) &&
+		eq(m.E, n.E) &&
+		eq(m.F, n.F)
 }
 
 // Combines matrix transformations through multiplication.
-func (a Mat3) Multiply(b Mat3) Mat3 {
+func (m Mat3) Multiply(n Mat3) Mat3 {
 	return Mat3{
-		a.XX*b.XX + a.YX*b.XY,
-		a.XX*b.YX + a.YX*b.YY,
-		a.XY*b.XX + a.YY*b.XY,
-		a.XY*b.YX + a.YY*b.YY,
-		a.X0*b.XX + a.Y0*b.XY + b.X0,
-		a.X0*b.YX + a.Y0*b.YY + b.Y0,
+		m.A*n.A + m.B*n.C,
+		m.A*n.B + m.B*n.D,
+		m.C*n.A + m.D*n.C,
+		m.C*n.B + m.D*n.D,
+		m.E*n.A + m.F*n.C + n.E,
+		m.E*n.B + m.F*n.D + n.F,
 	}
 }
 
@@ -86,21 +86,21 @@ func Shear(x, y float64) Mat3 {
 }
 
 // Translates matrix by scalars "x" and "y". Transformation can be chained.
-func (a Mat3) Translate(x, y float64) Mat3 {
-	return Translate(x, y).Multiply(a)
+func (m Mat3) Translate(x, y float64) Mat3 {
+	return Translate(x, y).Multiply(m)
 }
 
 // Scales matrix by scalars "x" and "y". Transformation can be chained.
-func (a Mat3) Scale(x, y float64) Mat3 {
-	return Scale(x, y).Multiply(a)
+func (m Mat3) Scale(x, y float64) Mat3 {
+	return Scale(x, y).Multiply(m)
 }
 
 // Rotates matrix by "angle", measured in radians. Transformation can be chained.
-func (a Mat3) Rotate(angle float64) Mat3 {
-	return Rotate(angle).Multiply(a)
+func (m Mat3) Rotate(angle float64) Mat3 {
+	return Rotate(angle).Multiply(m)
 }
 
 // Shears matrix by scalars "x" and "y". Transformation can be chained.
-func (a Mat3) Shear(x, y float64) Mat3 {
-	return Shear(x, y).Multiply(a)
+func (m Mat3) Shear(x, y float64) Mat3 {
+	return Shear(x, y).Multiply(m)
 }
