@@ -13,38 +13,46 @@
                  (rnrs lists))
 
          ;; (mat3 |number * 6|) -> (vector |number * 6|)
-         ;; A 2d transformation implemented as a column-major, 3 × 3 matrix. The third row is implicit.
+         ;; A column-major, 3 × 3 affine transformation matrix implemented as a 6-part vector.
+         ;; The third row is implicit.
+         ;;
+         ;; [ a b c d ] <- linear transformations
+         ;; [ e f ] <----- translations
+         ;;
+         ;;        |-------|-------|---- implied
+         ;; [ a b (0) c d (0) e f (1) ]
+         ;; [ 0 1     2 3     4 5     ]
 
-         (define (mat3 xx yx xy yy x0 y0)
-           (vector xx yx
-                   xy yy
-                   x0 y0))
+         (define (mat3 a b c d e f)
+           (vector a b
+                   c d
+                   e f))
 
 
          ;; (m3-multiply mat3 mat3) -> mat3
          ;; Combines matrix transformations through multiplication.
 
-         (define (m3-multiply b a)
-           (let ([a-xx (vector-ref a 0)]
-                 [a-yx (vector-ref a 1)]
-                 [a-xy (vector-ref a 2)]
-                 [a-yy (vector-ref a 3)]
-                 [a-x0 (vector-ref a 4)]
-                 [a-y0 (vector-ref a 5)]
+         (define (m3-multiply n m)
+           (let ([ma (vector-ref m 0)]
+                 [mb (vector-ref m 1)]
+                 [mc (vector-ref m 2)]
+                 [md (vector-ref m 3)]
+                 [me (vector-ref m 4)]
+                 [mf (vector-ref m 5)]
                  ; -------------------
-                 [b-xx (vector-ref b 0)]
-                 [b-yx (vector-ref b 1)]
-                 [b-xy (vector-ref b 2)]
-                 [b-yy (vector-ref b 3)]
-                 [b-x0 (vector-ref b 4)]
-                 [b-y0 (vector-ref b 5)])
+                 [na (vector-ref n 0)]
+                 [nb (vector-ref n 1)]
+                 [nc (vector-ref n 2)]
+                 [nd (vector-ref n 3)]
+                 [ne (vector-ref n 4)]
+                 [nf (vector-ref n 5)])
              ; ---------------------------------
-             (mat3 [+ (* a-xx b-xx) (* a-yx b-xy)]
-                   [+ (* a-xx b-yx) (* a-yx b-yy)]
-                   [+ (* a-xy b-xx) (* a-yy b-xy)]
-                   [+ (* a-xy b-yx) (* a-yy b-yy)]
-                   [+ (* a-x0 b-xx) (* a-y0 b-xy) b-x0]
-                   [+ (* a-x0 b-yx) (* a-y0 b-yy) b-y0])))
+             (mat3 [+ (* ma na) (* mb nc)]
+                   [+ (* ma nb) (* mb nd)]
+                   [+ (* mc na) (* md nc)]
+                   [+ (* mc nb) (* md nd)]
+                   [+ (* me na) (* mf nc) ne]
+                   [+ (* me nb) (* mf nd) nf])))
 
          ;; (m3-identity) -> mat3
          ;; Creates an identity matrix.
