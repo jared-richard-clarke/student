@@ -40,7 +40,8 @@
          ;; Returns four-dimensional coordinates as a vector of three numbers.
          ;; (vec4 3 4 5 6) -> '#(3 4 5 6)
 
-         (define (vec4 x y z w))
+         (define (vec4 x y z w)
+           (vector x y z w))
 
          ;; (vec-type number) -> (function vector) -> boolean
          ;; Creates functions that assert vector identity.
