@@ -33,26 +33,13 @@
          ;; Combines matrix transformations through multiplication.
 
          (define (m3-multiply n m)
-           (let ([ma (vector-ref m 0)]
-                 [mb (vector-ref m 1)]
-                 [mc (vector-ref m 2)]
-                 [md (vector-ref m 3)]
-                 [me (vector-ref m 4)]
-                 [mf (vector-ref m 5)]
-                 ; -------------------
-                 [na (vector-ref n 0)]
-                 [nb (vector-ref n 1)]
-                 [nc (vector-ref n 2)]
-                 [nd (vector-ref n 3)]
-                 [ne (vector-ref n 4)]
-                 [nf (vector-ref n 5)])
-             ; ---------------------------------
-             (mat3 [+ (* ma na) (* mb nc)]
-                   [+ (* ma nb) (* mb nd)]
-                   [+ (* mc na) (* md nc)]
-                   [+ (* mc nb) (* md nd)]
-                   [+ (* me na) (* mf nc) ne]
-                   [+ (* me nb) (* mf nd) nf])))
+           (let ([v vector-ref])
+             (mat3 [+ (* (v m 0) (v n 0)) (* (v m 1) (v n 2))]
+                   [+ (* (v m 0) (v n 1)) (* (v m 1) (v n 3))]
+                   [+ (* (v m 2) (v n 0)) (* (v m 3) (v n 2))]
+                   [+ (* (v m 2) (v n 1)) (* (v m 3) (v n 3))]
+                   [+ (* (v m 4) (v n 0)) (* (v m 5) (v n 2)) (v n 4)]
+                   [+ (* (v m 4) (v n 1)) (* (v m 5) (v n 3)) (v n 5)])))
 
          ;; (m3-identity) -> mat3
          ;; Creates an identity matrix.
