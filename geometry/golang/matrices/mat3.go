@@ -6,35 +6,39 @@ import (
 	"math"
 )
 
-// A 2d transformation implemented as a column-major, 3 × 3 matrix.
+// A column-major, 3 × 3 affine transformation matrix implemented as a 6-part array.
 // The third row is implicit.
-type Mat3 struct {
-	A, B,
-	C, D,
-	E, F float64
-}
+//
+// [ A B C D ] <- linear transformations
+// [ E F ] <----- translations
+//
+//        |-------|-------|---- implied
+// [ A B (0) C D (0) E F (1) ]
+// [ 0 1     2 3     4 5     ]
+
+type Mat3 [6]float64
 
 // As opposed to operator "==", method "ApproxEq" checks whether floating-point matrix components are approximately equal.
 // Check "didact/geometry/golang/utils/approx-eq.go" for details.
 func (m Mat3) ApproxEq(n Mat3) bool {
 	eq := utils.ApproxEq
-	return eq(m.A, n.A) &&
-		eq(m.B, n.B) &&
-		eq(m.C, n.C) &&
-		eq(m.D, n.D) &&
-		eq(m.E, n.E) &&
-		eq(m.F, n.F)
+	for i := range m {
+		if !eq(m[i], n[i]) {
+			return false
+		}
+	}
+	return true
 }
 
 // Combines matrix transformations through multiplication.
 func (m Mat3) Multiply(n Mat3) Mat3 {
 	return Mat3{
-		m.A*n.A + m.B*n.C,
-		m.A*n.B + m.B*n.D,
-		m.C*n.A + m.D*n.C,
-		m.C*n.B + m.D*n.D,
-		m.E*n.A + m.F*n.C + n.E,
-		m.E*n.B + m.F*n.D + n.F,
+		m[0]*n[0] + m[1]*n[2],
+		m[0]*n[1] + m[1]*n[3],
+		m[2]*n[0] + m[3]*n[2],
+		m[2]*n[1] + m[3]*n[3],
+		m[4]*n[0] + m[5]*n[2] + n[4],
+		m[4]*n[1] + m[5]*n[3] + n[5],
 	}
 }
 
@@ -104,3 +108,4 @@ func (m Mat3) Rotate(angle float64) Mat3 {
 func (m Mat3) Shear(x, y float64) Mat3 {
 	return Shear(x, y).Multiply(m)
 }
+
