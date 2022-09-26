@@ -1,112 +1,168 @@
-;; Provides affine transformation matrices and functions.
+;; Functional implementation of vectors and operations in linear vector space.
 
-(library (matrices)
-         (export mat3
-                 m3-multiply
-                 m3-identity
-                 m3-translate
-                 m3-scale
-                 m3-rotate
-                 m3-shear
-                 m3-transform)
+(library (vectors)
+         (export vec2 
+                 vec3
+                 vec4
+                 vec2? 
+                 vec3?
+                 vec4?
+                 vec-add 
+                 vec-sub 
+                 vec-neg 
+                 vec-sum 
+                 vec-mag
+                 vec-scale 
+                 vec-dot 
+                 vec-dist 
+                 vec-lerp 
+                 vec-normalize 
+                 vec-round)
          (import (rnrs base)
-                 (rnrs lists))
+                 (rnrs lists)
+                 (utils))
 
-         ;; (mat3 |number * 6|) -> (vector |number * 6|)
-         ;; A column-major, 3 × 3 affine transformation matrix implemented as a 6-part vector.
-         ;; The third row is implicit.
-         ;;
-         ;; [ a b c d ] <- linear transformations
-         ;; [ e f ] <----- translations
-         ;;
-         ;;        |-------|-------|---- implied
-         ;; [ a b (0) c d (0) e f (1) ]
-         ;; [ 0 1     2 3     4 5     ]
+         ;; (vec2 number number) -> (vector number number)
+         ;; Returns two-dimensional coordinates as a vector of two numbers.
+         ;; (vec2 3 4) -> '#(3 4)
 
-         (define (mat3 a b c d e f)
-           (vector a b
-                   c d
-                   e f))
+         (define (vec2 x y)
+           (vector x y))
 
+         ;; (vec3 number number number) -> (vector number number number)
+         ;; Returns three-dimensional coordinates as a vector of three numbers.
+         ;; (vec3 3 4 5) -> '#(3 4 5)
 
-         ;; (m3-multiply mat3 mat3) -> mat3
-         ;; Combines matrix transformations through multiplication.
+         (define (vec3 x y z)
+           (vector x y z))
 
-         (define (m3-multiply n m)
-           (let ([ma (vector-ref m 0)]
-                 [mb (vector-ref m 1)]
-                 [mc (vector-ref m 2)]
-                 [md (vector-ref m 3)]
-                 [me (vector-ref m 4)]
-                 [mf (vector-ref m 5)]
-                 ; -------------------
-                 [na (vector-ref n 0)]
-                 [nb (vector-ref n 1)]
-                 [nc (vector-ref n 2)]
-                 [nd (vector-ref n 3)]
-                 [ne (vector-ref n 4)]
-                 [nf (vector-ref n 5)])
-             ; ---------------------------------
-             (mat3 [+ (* ma na) (* mb nc)]
-                   [+ (* ma nb) (* mb nd)]
-                   [+ (* mc na) (* md nc)]
-                   [+ (* mc nb) (* md nd)]
-                   [+ (* me na) (* mf nc) ne]
-                   [+ (* me nb) (* mf nd) nf])))
+         ;; (vec4 number number number number) -> (vector number number number number)
+         ;; Returns four-dimensional coordinates as a vector of three numbers.
+         ;; (vec4 3 4 5 6) -> '#(3 4 5 6)
 
-         ;; (m3-identity) -> mat3
-         ;; Creates an identity matrix.
+         (define (vec4 x y z w)
+           (vector x y z w))
 
-         (define (m3-identity)
-           (mat3 1 0
-                 0 1
-                 0 0))
+         ;; (vec-type number) -> (function vector) -> boolean
+         ;; Creates functions that assert vector identity.
+         ;; (define vec2? (vec-type 2)) -> (vec2? (vec2 1 2)) -> #t
 
-         ;; (m3-translate number number) -> mat3
-         ;; Creates a translation matrix.
+         (define (vec-type dimensions)
+           (lambda (v)
+             (and (vector? v)
+                  (= (vector-length v) dimensions))))
 
-         (define (m3-translate x y)
-           (mat3 1 0
-                 0 1
-                 x y))
+         ;; (vec2? any) -> boolean
+         ;; Returns #t if value is a two-dimensional vector, #f otherwise.
+         ;; (vec2? '#(3 4)) -> #t
 
-         ;; (m3-scale number number) -> mat3
-         ;; Creates a scaling matrix.
+         (define vec2? (vec-type 2))
 
-         (define (m3-scale x y)
-           (mat3 x 0
-                 0 y
-                 0 0))
+         ;; (vec3? any) -> boolean
+         ;; Returns #t if value is a three-dimensional vector, #f otherwise.
+         ;; (vec3? '#(3 4 5)) -> #t
 
-         ;; (m3-rotate number) -> mat3
-         ;; Creates a rotation matrix. Argument, "angle", measured in radians.
+         (define vec3? (vec-type 3))
 
-         (define (m3-rotate angle)
-           (let* ([c (cos angle)]
-                  [s (sin angle)])
-             (mat3    c  s
-                   (- s) c
-                      0  0)))
+         ;; (vec4? any) -> boolean
+         ;; Returns #t if value is a 4-dimensional vector, #f otherwise.
+         ;; (vec4? '#(3 4 5 1)) -> #t
+         (define vec4? (vec-type 4))
 
-         ;; (m3-shear number number) -> mat3
-         ;; Creates a shearing matrix.
+         ;; (binary function) -> (function vector vector) -> vector
+         ;; Creates functions that perform binary operations over two vectors.
+         ;; (define vec-add (binary +)) -> (vec-add (vec2 1 2) (vec2 3 4)) -> #(4 5)
 
-         (define (m3-shear x y)
-           (mat3 1 y
-                 x 1
-                 0 0))
+         (define (binary operation)
+           (lambda (v1 v2)
+             (vector-map (lambda (x y) (operation x y)) 
+                         v1 
+                         v2)))
 
-         ;; (m3-transform mat3 ...) -> mat3
-         ;; Multiplies a list of transformation matrices pairwise to create a combined transform.
-         ;; If no matrices are provided, function returns a mat3-identity matrix.
+         ;; (vec-add (vector number number) (vector number number)) -> (vector number number)
+         ;; Returns the sum of two vectors.
+         ;; (vec-add (vec2 3 4) (vec2 7 11)) -> #(10 15)
 
-         (define (m3-transform . matrices)
-           (let ([len (length matrices)])
-             (cond
-               [(= len 0) (m3-identity)]
-               [(= len 1) (car matrices)]
-               [else (fold-left m3-multiply
-                                (car matrices)
-                                (cdr matrices))])))
+         (define vec-add (binary +))
+
+         ;; (vec-sub (vector number number) (vector number number)) -> (vector number number)
+         ;; Returns the difference of two vectors.
+         ;; (vec-sub (vec2 3 4) (vec2 7 11)) -> #(-4 -7)
+
+         (define vec-sub (binary -))
+
+         ;; (vec-neg vector) -> (- vector)
+         ;; Inverts the signs of the vector components.
+         ;; (vec-neg (vec2 3 4)) -> (vec2 -3 -4)
+
+         (define (vec-neg vec)
+           (vector-map (lambda (x) (- x)) vec))
+
+         ;; (vec-sum vector ...) -> vector
+         ;; Returns the sum of a series of vectors.
+         ;; (vec-sum (vec2 1 2) (vec2 1 2) (vec2 3 4)) -> #(5 8)
+
+         (define (vec-sum . vecs)
+           (fold-left (lambda (accum vec)
+                        (vector-map (lambda (x y) (+ x y)) accum vec))
+                      (car vecs)
+                      (cdr vecs)))
+
+         ;; (vec-mag (vector number number)) -> number
+         ;; Returns the magnitude of a vector.
+         ;; (vec-mag (vec2 3 4)) -> 5
+
+         (define (vec-mag vec)
+           (apply hypotenuse (vector->list vec)))
+
+         ;; (vec-scale vector number) -> vector
+         ;; Returns a vector multiplied by a number.
+         ;; (vec-scale (vec2 1 2) 2) -> #(2 4)
+
+         (define (vec-scale vec scalar)
+           (vector-map (lambda (x) (* scalar x)) vec))
+
+         ;; (vec-dot (vector number number) (vector number number)) -> number
+         ;; Returns the dot product of two vectors.
+         ;; (vec-dot (vec2 1 2) (vec2 3 4)) -> 11
+
+         (define (vec-dot v1 v2)
+           (apply + (vector->list (vector-map (lambda (x y) (* x y))
+                                              v1
+                                              v2))))
+
+         ;; (vec-dist (vector number ...) (vector number ...)) -> number
+         ;; Returns the distance between two vectors.
+         ;; (vec-dist (vec2 8 0) (vec2 1 0)) -> 7
+
+         (define (vec-dist v1 v2)
+           (apply hypotenuse (vector->list (vector-map (lambda (x y) (- y x))
+                                                       v1
+                                                       v2))))
+
+         ;; (vec-lerp vec2 vec2 number) -> vec2
+         ;; Interpolates a vector point along a line between two vector points.
+         ;; (vec-lerp 1/2 (vec2 0 0) (vec2 10 0)) -> (vec2 5 0)
+
+         (define (vec-lerp t v1 v2)
+           (vector-map (lambda (x y)
+                         (+ x (* (- y x) t)))
+                       v1
+                       v2))
+
+         ;; (vec-normalize (vector number ...)) -> (vector number ...)
+         ;; Returns the unit vector of a vector.
+         ;; (vec-normalize (vec2 3 4)) -> #(3/5 4/5)
+
+         (define (vec-normalize vec)
+           (let ([m (vec-mag vec)])
+             (vector-map (lambda (x) (/ x m)) vec)))
+
+         ;; (vec-round (vector number ...)) -> (vector number ...)
+         ;; Rounds the vector components.
+         ;; (vec-round (vec2 1.3 1.7)) -> #(1.0 2.0)
+
+         (define (vec-round vec)
+           (vector-map (lambda (x) (round x)) vec))
 
          )
