@@ -12,22 +12,22 @@ class Mat3:
     The third row is implicit.
     """
 
-    def __init__(self, xx, yx, xy, yy, x0, y0):
-        self.xx = xx
-        self.yx = yx
-        self.xy = xy
-        self.yy = yy
-        self.x0 = x0
-        self.y0 = y0
+    def __init__(self, a, b, c, d, e, f):
+        self.a = a
+        self.b = b
+        self.c = c
+        self.d = d
+        self.e = e
+        self.f = f
 
     def __eq__(self, other):
         """Checks equality by comparing matrix components."""
-        return (self.xx == other.xx and
-                self.yx == other.yx and
-                self.xy == other.xy and
-                self.yy == other.yy and
-                self.x0 == other.x0 and
-                self.y0 == other.y0)
+        return (self.a == other.a and
+                self.b == other.b and
+                self.c == other.c and
+                self.d == other.d and
+                self.e == other.e and
+                self.f == other.f)
 
     def approx_eq(self, other):
         """
@@ -35,21 +35,21 @@ class Mat3:
         floating-point matrix components are approximately equal.
         """
         eq = approximate.equals
-        return (eq(self.xx, other.xx) and
-                eq(self.yx, other.yx) and
-                eq(self.xy, other.xy) and
-                eq(self.yy, other.yy) and
-                eq(self.x0, other.x0) and
-                eq(self.y0, other.y0))
+        return (eq(self.a, other.a) and
+                eq(self.b, other.b) and
+                eq(self.c, other.c) and
+                eq(self.d, other.d) and
+                eq(self.e, other.e) and
+                eq(self.f, other.f))
 
     def __mul__(self, other):
         """Combines two transformations through matrix multiplication."""
-        return Mat3(self.xx * other.xx + self.yx * other.xy,
-                    self.xx * other.yx + self.yx * other.yy,
-                    self.xy * other.xx + self.yy * other.xy,
-                    self.xy * other.yx + self.yy * other.yy,
-                    self.x0 * other.xx + self.y0 * other.xy + other.x0,
-                    self.x0 * other.yx + self.y0 * other.yy + other.y0)
+        return Mat3(self.a * other.a + self.b * other.c,
+                    self.a * other.b + self.b * other.d,
+                    self.c * other.a + self.d * other.c,
+                    self.c * other.b + self.d * other.d,
+                    self.e * other.a + self.f * other.c + other.e,
+                    self.e * other.b + self.f * other.d + other.f)
 
     def translate(self, x, y):
         """
@@ -79,7 +79,7 @@ class Mat3:
         return shear(x, y) * self
 
     def __str__(self):
-        return f"Mat3({self.xx}, {self.yx}, {self.xy}, {self.yy}, {self.x0}, {self.y0})"
+        return f"Mat3({self.a}, {self.b}, {self.c}, {self.d}, {self.e}, {self.f})"
 
 
 def identity():
