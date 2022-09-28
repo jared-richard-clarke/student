@@ -14,7 +14,7 @@ import (
 //
 //        |-------|-------|---- implied
 // [ A B (0) C D (0) E F (1) ]
-// [ 0 1     2 3     4 5     ]
+//   0 1     2 3     4 5
 
 type Mat3 [6]float64
 
@@ -108,4 +108,3 @@ func (m Mat3) Rotate(angle float64) Mat3 {
 func (m Mat3) Shear(x, y float64) Mat3 {
 	return Shear(x, y).Multiply(m)
 }
-
