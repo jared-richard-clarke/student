@@ -21,7 +21,7 @@
          ;;
          ;;        |-------|-------|---- implied
          ;; [ a b (0) c d (0) e f (1) ]
-         ;; [ 0 1     2 3     4 5     ]
+         ;;   0 1     2 3     4 5
 
          (define (mat3 a b c d e f)
            (vector a b
