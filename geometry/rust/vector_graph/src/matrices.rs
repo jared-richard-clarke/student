@@ -3,17 +3,17 @@ use std::ops::Mul;
 #[rustfmt::skip]
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub struct Mat3 {
-    pub xx: f64, pub yx: f64,
-    pub xy: f64, pub yy: f64,
-    pub x0: f64, pub y0: f64,
+    pub a: f64, pub b: f64,
+    pub c: f64, pub d: f64,
+    pub e: f64, pub f: f64,
 }
 
 #[rustfmt::skip]
-pub fn mat3(xx: f64, yx: f64, xy: f64, yy: f64, x0: f64, y0: f64) -> Mat3 {
+pub fn mat3(a: f64, b: f64, c: f64, d: f64, e: f64, f: f64) -> Mat3 {
     Mat3 {
-        xx, yx,
-        xy, yy,
-        x0, y0,
+        a, b,
+        c, d,
+        e, f,
     }
 }
 
@@ -21,12 +21,12 @@ impl Mul for Mat3 {
     type Output = Self;
     fn mul(self, other: Self) -> Self {
         Mat3 {
-            xx: self.xx * other.xx + self.yx * other.xy,
-            yx: self.xx * other.yx + self.yx * other.yy,
-            xy: self.xy * other.xx + self.yy * other.xy,
-            yy: self.xy * other.yx + self.yy * other.yy,
-            x0: self.x0 * other.xx + self.y0 * other.xy + other.x0,
-            y0: self.x0 * other.yx + self.y0 * other.yy + other.y0,
+            a: self.a * other.a + self.b * other.c,
+            b: self.a * other.b + self.b * other.d,
+            c: self.c * other.a + self.d * other.c,
+            d: self.c * other.b + self.d * other.d,
+            e: self.e * other.a + self.f * other.c + other.e,
+            f: self.e * other.b + self.f * other.d + other.f,
         }
     }
 }
@@ -34,18 +34,18 @@ impl Mul for Mat3 {
 #[rustfmt::skip]
 fn translate(x: f64, y: f64) -> Mat3 {
     Mat3 {
-        xx: 1.0, yx: 0.0,
-        xy: 0.0, yy: 1.0,
-        x0: x,   y0: y,
+        a: 1.0, b: 0.0,
+        c: 0.0, d: 1.0,
+        e: x,   f: y,
     }
 }
 
 #[rustfmt::skip]
 fn scale(x: f64, y: f64) -> Mat3 {
     Mat3 {
-        xx: x,   yx: 0.0,
-        xy: 0.0, yy: y,
-        x0: 0.0, y0: 0.0,
+        a: x,   b: 0.0,
+        c: 0.0, d: y,
+        e: 0.0, f: 0.0,
     }
 }
 
@@ -54,18 +54,18 @@ fn rotate(angle: f64) -> Mat3 {
     let c = angle.cos();
     let s = angle.sin();
     Mat3 {
-        xx: c,   yx: s,
-        xy: -s,  yy: c,
-        x0: 0.0, y0: 0.0,
+        a: c,   b: s,
+        c: -s,  d: c,
+        e: 0.0, f: 0.0,
     }
 }
 
 #[rustfmt::skip]
 fn shear(x: f64, y: f64) -> Mat3 {
     Mat3 {
-        xx: 1.0, yx: y,
-        xy: x,   yy: 1.0,
-        x0: 0.0, y0: 0.0,
+        a: 1.0, b: y,
+        c: x,   d: 1.0,
+        e: 0.0, f: 0.0,
     }
 }
 
@@ -73,9 +73,9 @@ impl Mat3 {
     #[rustfmt::skip]
     pub fn identity() -> Self {
         Self {
-            xx: 1.0, yx: 0.0,
-            xy: 0.0, yy: 1.0,
-            x0: 0.0, y0: 0.0,
+            a: 1.0, b: 0.0,
+            c: 0.0, d: 1.0,
+            e: 0.0, f: 0.0,
         }
     }
     pub fn translate(self, x: f64, y: f64) -> Self {
