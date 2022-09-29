@@ -4,6 +4,8 @@ import (
 	"testing"
 )
 
+type vecTests[T Vector] []struct{ expect, result T }
+
 func TestApproxEq(t *testing.T) {
 	ep := 0.000001
 	v1 := Vec2{3.0 + ep, 4.0 + ep}
@@ -56,6 +58,43 @@ func TestNegate(t *testing.T) {
 	vec3Result := Negate(Vec3{3.0, 4.0, 1.0})
 	if vec3Expect != vec3Result {
 		t.Errorf("Test Negate Vec2 failed. Expected: %v, Got %v", vec3Expect, vec3Result)
+	}
+}
+
+func TestInvert(t *testing.T) {
+	invertVec2 := vecTests[Vec2]{
+		{
+			expect: Vec2{0.5, 0.5},
+			result: Invert(Vec2{2.0, 2.0}),
+		},
+		{
+			expect: Vec2{2.0, 2.0},
+			result: Invert(Vec2{0.5, 0.5}),
+		},
+	}
+	for _, v := range invertVec2 {
+		expect := v.expect
+		result := v.result
+		if result != expect {
+			t.Errorf("Test Invert Vec2 failed. Expected: %v, Got: %v", expect, result)
+		}
+	}
+	invertVec3 := vecTests[Vec3]{
+		{
+			expect: Vec3{0.5, 0.5, 0.5},
+			result: Invert(Vec3{2.0, 2.0, 2.0}),
+		},
+		{
+			expect: Vec3{2.0, 2.0, 2.0},
+			result: Invert(Vec3{0.5, 0.5, 0.5}),
+		},
+	}
+	for _, v := range invertVec3 {
+		expect := v.expect
+		result := v.result
+		if result != expect {
+			t.Errorf("Test Invert Vec3 failed. Expected: %v, Got: %v", expect, result)
+		}
 	}
 }
 
