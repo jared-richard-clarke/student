@@ -7,25 +7,25 @@ A 2d transformation implemented as a column-major, 3x3 matrix.
 The third row is implicit. Columns and rows inverted as in OpenGL.
 """
 struct Mat3
-    xx::Float64
-    yx::Float64
-    xy::Float64
-    yy::Float64
-    x0::Float64
-    y0::Float64
+    a::Float64
+    b::Float64
+    c::Float64
+    d::Float64
+    e::Float64
+    f::Float64
 end
 
 # Matrices are multiplied right to left. Reversing the arguments
 # "a" and "b" allows function foldl to iterate over a list of matrices
 # from left to right while multiplying them as if right to left.
-function multiply(b::Mat3, a::Mat3)
+function multiply(n::Mat3, m::Mat3)
     Mat3(
-        a.xx * b.xx + a.yx * b.xy,
-        a.xx * b.yx + a.yx * b.yy,
-        a.xy * b.xx + a.yy * b.xy,
-        a.xy * b.yx + a.yy * b.yy,
-        a.x0 * b.xx + a.y0 * b.xy + b.x0,
-        a.x0 * b.yx + a.y0 * b.yy + b.y0
+        m.a * n.a + m.b * n.c,
+        m.a * n.b + m.b * n.d,
+        m.c * n.a + m.d * n.c,
+        m.c * n.b + m.d * n.d,
+        m.e * n.a + m.f * n.c + n.e,
+        m.e * n.b + m.f * n.d + n.f
     )
 end
 
