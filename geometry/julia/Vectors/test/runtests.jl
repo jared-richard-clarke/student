@@ -11,6 +11,9 @@ using Test
     # negation
     @test -Vec2(3, 4) == Vec2(-3, -4)
     @test -Vec3(3, 4, 5) == Vec3(-3, -4, -5)
+    # inversion
+    @test invert(Vec2(2, 2)) == Vec2(0.5, 0.5)
+    @test invert(Vec3(2, 2, 2)) == Vec3(0.5, 0.5, 0.5)
     # summation
     @test +(Vec2(1, 2), Vec2(3, 4), Vec2(1, 1)) == Vec2(5, 7)
     @test +(Vec2(3, 4)) == Vec2(3, 4)
