@@ -1,22 +1,23 @@
 ;; Functional implementation of vectors and operations in linear vector space.
 
 (library (vectors)
-         (export vec2 
+         (export vec2
                  vec3
                  vec4
-                 vec2? 
+                 vec2?
                  vec3?
                  vec4?
-                 vec-add 
-                 vec-sub 
-                 vec-neg 
-                 vec-sum 
+                 vec-add
+                 vec-sub
+                 vec-neg
+                 vec-invert
+                 vec-sum
                  vec-mag
-                 vec-scale 
-                 vec-dot 
-                 vec-dist 
-                 vec-lerp 
-                 vec-normalize 
+                 vec-scale
+                 vec-dot
+                 vec-dist
+                 vec-lerp
+                 vec-normalize
                  vec-round)
          (import (rnrs base)
                  (rnrs lists)
@@ -92,11 +93,20 @@
          (define vec-sub (binary -))
 
          ;; (vec-neg vector) -> (- vector)
-         ;; Inverts the signs of the vector components.
+         ;; Flips the signs of the vector components.
          ;; (vec-neg (vec2 3 4)) -> (vec2 -3 -4)
 
          (define (vec-neg vec)
-           (vector-map (lambda (x) (- x)) vec))
+           (vector-map (lambda (x) (- x))
+                       vec))
+
+         ;; (vec-invert vector) -> vector
+         ;; Inverts the vector components.
+         ;; (vec-invert (vec2 2 2)) -> '#(0.5 0.5)
+
+         (define (vec-invert vec)
+           (vector-map (lambda (x) (/ 1 x))
+                       vec))
 
          ;; (vec-sum vector ...) -> vector
          ;; Returns the sum of a series of vectors.
