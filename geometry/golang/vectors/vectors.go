@@ -48,10 +48,18 @@ func Sub[T Vector](v1, v2 T) T {
 	return v1
 }
 
-// Inverts the signs of the vector components.
+// Flips the signs of the vector components.
 func Negate[T Vector](v T) T {
 	for i := 0; i < len(v); i += 1 {
 		v[i] = -v[i]
+	}
+	return v
+}
+
+// Inverts the vector components.
+func Invert[T Vector](v T) T {
+	for i := 0; i < len(v); i += 1 {
+		v[i] = 1.0 / v[i]
 	}
 	return v
 }
