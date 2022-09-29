@@ -54,6 +54,15 @@ impl<'a> Sum<&'a Self> for Vector2D {
 }
 
 impl Vector2D {
+    pub fn invert(self) -> Self {
+        let x = self.x;
+        let y = self.y;
+        Self {
+            x: 1.0 / x,
+            y: 1.0 / y,
+        }
+    }
+
     pub fn mag(self) -> f64 {
         let x = self.x;
         let y = self.y;
@@ -161,6 +170,12 @@ mod tests {
         assert_eq!(vector_result, vector_expect);
     }
     #[test]
+    fn test_invert() {
+        let expect = vec2(0.5, 0.5);
+        let result = vec2(2.0, 2.0).invert();
+        assert_eq!(result, expect);
+    }
+    #[test]
     fn test_mag() {
         let expect = 5.0;
         let result = vec2(3.0, 4.0).mag();
@@ -205,3 +220,4 @@ mod tests {
         assert_eq!(result, expect);
     }
 }
+
