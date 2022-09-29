@@ -46,6 +46,16 @@ class TestMatrices(unittest.TestCase):
         result = -Vec3(3, 4, 5)
         self.assertEqual(expect, result)
 
+    def test_invert(self):
+        # Vec2
+        expect = Vec2(0.5, 0.5)
+        result = Vec2(2, 2).invert()
+        self.assertEqual(expect, result)
+        # Vec3
+        expect = Vec3(0.5, 0.5, 0.5)
+        result = Vec3(2, 2, 2).invert()
+        self.assertEqual(expect, result)
+
     def test_magnitude(self):
         # Vec2
         expect = 5
