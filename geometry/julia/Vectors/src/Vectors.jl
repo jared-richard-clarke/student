@@ -2,7 +2,7 @@ module Vectors
 
 import Base: +, -, *
 
-export Vec2, Vec3, add, +, sub, -, neg, mag, scale, *, dot, distance, lerp, normalize
+export Vec2, Vec3, add, +, sub, -, neg, invert, mag, scale, *, dot, distance, lerp, normalize
 
 """
 A cartesian representation of a vector in two dimensions.
@@ -32,10 +32,14 @@ sub(v1::Vec2, v2::Vec2) = Vec2(v1.x - v2.x, v1.y - v2.y)
 sub(v1::Vec3, v2::Vec3) = Vec3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z)
 (-)(v1, v2) = sub(v1, v2)
 
-"""Inverts the signs of the vector components."""
+"""Flips the signs of the vector components."""
 neg(v::Vec2) = Vec2(-v.x, -v.y)
 neg(v::Vec3) = Vec3(-v.x, -v.y, -v.z)
 (-)(v) = neg(v)
+
+"""Inverts the vector components."""
+invert(v::Vec2) = Vec2(1 / v.x, 1 / v.y)
+invert(v::Vec3) = Vec3(1 / v.x, 1 / v.y, 1 / v.z)
 
 """Computes the magnitude (a.k.a. length) of a vector."""
 mag(v::Vec2) = hypot(v.x, v.y)
