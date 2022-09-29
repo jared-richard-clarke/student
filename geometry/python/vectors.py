@@ -34,6 +34,11 @@ class Vector:
         result = [x + y for x, y in zip(self.point, other.point, strict=True)]
         return type(self)(*result)
 
+    def invert(self):
+        """Inverts the vector components."""
+        result = [1 / x for x in self.point]
+        return type(self)(*result)
+
     def __sub__(self, other):
         """Returns the difference between two vectors."""
         result = [x - y for x, y in zip(self.point, other.point, strict=True)]
@@ -41,8 +46,7 @@ class Vector:
 
     def __neg__(self):
         """
-        Inverts the signs of the vector components. 
-        Flips the vector 180 degrees
+        Inverts the signs of the vector components.
         """
         result = [-x for x in self.point]
         return type(self)(*result)
@@ -113,4 +117,3 @@ class Vec3(Vector):
 
     def __str__(self):
         return f"Vec3{self.point}"
-    
