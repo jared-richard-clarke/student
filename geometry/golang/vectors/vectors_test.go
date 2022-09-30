@@ -22,42 +22,113 @@ func TestApproxEq(t *testing.T) {
 }
 
 func TestAdd(t *testing.T) {
-	vec2Expect := Vec2{4.0, 6.0}
-	vec2Result := Add(Vec2{1.0, 2.0}, Vec2{3.0, 4.0})
-	if vec2Expect != vec2Result {
-		t.Errorf("Test Add Vec2 failed. Expected: %v, Got: %v", vec2Expect, vec2Result)
+	addVec2 := vecTests[Vec2]{
+		{
+			expect: Vec2{4.0, 6.0},
+			result: Add(Vec2{1.0, 2.0}, Vec2{3.0, 4.0}),
+		},
+		{
+			expect: Vec2{2.0, 4.0},
+			result: Add(Vec2{4.0, 6.0}, Vec2{-2.0, -2.0}),
+		},
 	}
-	vec3Expect := Vec3{4.0, 4.0, 4.0}
-	vec3Result := Add(Vec3{1.0, 2.0, 3.0}, Vec3{3.0, 2.0, 1.0})
-	if vec3Expect != vec3Result {
-		t.Errorf("Test Add Vec3 failed. Expected: %v, Got: %v", vec3Expect, vec3Result)
+	for _, v := range addVec2 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Add Vec2 failed. Expected: %v, Got: %v", expect, result)
+		}
+	}
+	addVec3 := vecTests[Vec3]{
+		{
+			expect: Vec3{4.0, 6.0, 8.0},
+			result: Add(Vec3{1.0, 1.0, 1.0}, Vec3{3.0, 5.0, 7.0}),
+		},
+		{
+			expect: Vec3{-1.0, 2.0, -5.0},
+			result: Add(Vec3{-2.0, 4.0, 0.0}, Vec3{1.0, -2.0, -5.0}),
+		},
+	}
+	for _, v := range addVec3 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Add Vec3 failed. Expected: %v, Got: %v", expect, result)
+		}
 	}
 }
 
 func TestSub(t *testing.T) {
-	vec2Expect := Vec2{2.0, 2.0}
-	vec2Result := Sub(Vec2{3.0, 4.0}, Vec2{1.0, 2.0})
-	if vec2Expect != vec2Result {
-		t.Errorf("Test Sub Vec2 failed. Expected: %v, Got: %v", vec2Expect, vec2Result)
+	subVec2 := vecTests[Vec2]{
+		{
+			expect: Vec2{2.0, 2.0},
+			result: Sub(Vec2{3.0, 4.0}, Vec2{1.0, 2.0}),
+		},
+		{
+			expect: Vec2{-2.0, -2.0},
+			result: Sub(Vec2{1.0, 2.0}, Vec2{3.0, 4.0}),
+		},
 	}
-	vec3Expect := Vec3{2.0, 0.0, -2.0}
-	vec3Result := Sub(Vec3{3.0, 4.0, 1.0}, Vec3{1.0, 4.0, 3.0})
-	if vec3Expect != vec3Result {
-		t.Errorf("Test Sub Vec3 failed. Expected: %v, Got: %v", vec3Expect, vec3Result)
+	for _, v := range subVec2 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Sub Vec2 failed. Expected: %v, Got: %v", expect, result)
+		}
 	}
-
+	subVec3 := vecTests[Vec3]{
+		{
+			expect: Vec3{0.0, 0.0, 0.0},
+			result: Sub(Vec3{3.0, 4.0, 5.0}, Vec3{3.0, 4.0, 5.0}),
+		},
+		{
+			expect: Vec3{3.0, 4.0, 5.0},
+			result: Sub(Vec3{0.0, 0.0, 0.0}, Vec3{-3.0, -4.0, -5.0}),
+		},
+	}
+	for _, v := range subVec3 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Sub Vec3 failed. Expected: %v, Got: %v", expect, result)
+		}
+	}
 }
 
 func TestNegate(t *testing.T) {
-	vec2Expect := Vec2{-3.0, -4.0}
-	vec2Result := Negate(Vec2{3.0, 4.0})
-	if vec2Expect != vec2Result {
-		t.Errorf("Test Negate Vec2 failed. Expected: %v, Got %v", vec2Expect, vec2Result)
+	negateVec2 := vecTests[Vec2]{
+		{
+			expect: Vec2{-3.0, -4.0},
+			result: Negate(Vec2{3.0, 4.0}),
+		},
+		{
+			expect: Vec2{0.0, 0.0},
+			result: Negate(Vec2{0.0, 0.0}),
+		},
 	}
-	vec3Expect := Vec3{-3.0, -4.0, -1.0}
-	vec3Result := Negate(Vec3{3.0, 4.0, 1.0})
-	if vec3Expect != vec3Result {
-		t.Errorf("Test Negate Vec2 failed. Expected: %v, Got %v", vec3Expect, vec3Result)
+	for _, v := range negateVec2 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Negate Vec2 failed. Expected: %v, Got: %v", expect, result)
+		}
+	}
+	negateVec3 := vecTests[Vec3]{
+		{
+			expect: Vec3{-3.0, -4.0, -5.0},
+			result: Negate(Vec3{3.0, 4.0, 5.0}),
+		},
+		{
+			expect: Vec3{1.0, 2.0, 3.0},
+			result: Negate(Vec3{-1.0, -2.0, -3.0}),
+		},
+	}
+	for _, v := range negateVec3 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Negate Vec3 failed. Expected: %v, Got: %v", expect, result)
+		}
 	}
 }
 
@@ -99,15 +170,39 @@ func TestInvert(t *testing.T) {
 }
 
 func TestSum(t *testing.T) {
-	vec2Expect := Vec2{11.0, 17.0}
-	vec2Result := Sum(Vec2{1.0, 2.0}, Vec2{3.0, 4.0}, Vec2{7.0, 11.0})
-	if vec2Expect != vec2Result {
-		t.Errorf("Test Sum Vec2 failed. Expected: %v, Got: %v", vec2Expect, vec2Result)
+	sumVec2 := vecTests[Vec2]{
+		{
+			expect: Vec2{11.0, 17.0},
+			result: Sum(Vec2{1.0, 2.0}, Vec2{3.0, 4.0}, Vec2{7.0, 11.0}),
+		},
+		{
+			expect: Vec2{3.0, 4.0},
+			result: Sum(Vec2{3.0, 4.0}),
+		},
 	}
-	vec3Expect := Vec3{11.0, 17.0, 3.0}
-	vec3Result := Sum(Vec3{1.0, 2.0, 1.0}, Vec3{3.0, 4.0, 1.0}, Vec3{7.0, 11.0, 1.0})
-	if vec3Expect != vec3Result {
-		t.Errorf("Test Sum Vec3 failed. Expected: %v, Got: %v", vec3Expect, vec3Result)
+	for _, v := range sumVec2 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Sum Vec2 failed. Expected: %v, Got: %v", expect, result)
+		}
+	}
+	sumVec3 := vecTests[Vec3]{
+		{
+			expect: Vec3{11.0, 17.0, 3.0},
+			result: Sum(Vec3{1.0, 2.0, 1.0}, Vec3{3.0, 4.0, 1.0}, Vec3{7.0, 11.0, 1.0}, Vec3{0.0, 0.0, 0.0}),
+		},
+		{
+			expect: Vec3{3.0, 4.0, 5.0},
+			result: Sum(Vec3{3.0, 4.0, 5.0}),
+		},
+	}
+	for _, v := range sumVec3 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Sum Vec3 failed. Expected: %v, Got: %v", expect, result)
+		}
 	}
 }
 
@@ -125,15 +220,39 @@ func TestMag(t *testing.T) {
 }
 
 func TestScale(t *testing.T) {
-	vec2Expect := Vec2{33.0, 44.0}
-	vec2Result := Scale(Vec2{3.0, 4.0}, 11.0)
-	if vec2Expect != vec2Result {
-		t.Errorf("Test Scale Vec2 failed. Expected: %v, Got: %v", vec2Expect, vec2Result)
+	scaleVec2 := vecTests[Vec2]{
+		{
+			expect: Vec2{33.0, 44.0},
+			result: Scale(Vec2{3.0, 4.0}, 11.0),
+		},
+		{
+			expect: Vec2{1.0, 0.5},
+			result: Scale(Vec2{0.5, 0.25}, 2.0),
+		},
 	}
-	vec3Expect := Vec3{33.0, 44.0, 11.0}
-	vec3Result := Scale(Vec3{3.0, 4.0, 1.0}, 11.0)
-	if vec3Expect != vec3Result {
-		t.Errorf("Test Scale Vec3 failed. Expected: %v, Got: %v", vec3Expect, vec3Result)
+	for _, v := range scaleVec2 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Scale Vec2 failed. Expected: %v, Got: %v", expect, result)
+		}
+	}
+	scaleVec3 := vecTests[Vec3]{
+		{
+			expect: Vec3{33.0, 44.0, 11.0},
+			result: Scale(Vec3{3.0, 4.0, 1.0}, 11.0),
+		},
+		{
+			expect: Vec3{2.5, 1.5, 1.0},
+			result: Scale(Vec3{10.0, 6.0, 4.0}, 0.25),
+		},
+	}
+	for _, v := range scaleVec3 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Scale Vec3 failed. Expected: %v, Got: %v", expect, result)
+		}
 	}
 }
 
