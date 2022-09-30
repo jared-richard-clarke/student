@@ -107,7 +107,7 @@ func Distance[T Vector](v1, v2 T) float64 {
 	return math.Sqrt(accum)
 }
 
-// Interpolates point between two vector points.
+// Linearly interpolates each component between two vectors.
 func Lerp[T Vector](v1, v2 T, t float64) T {
 	for i := 0; i < len(v1); i += 1 {
 		v1[i] += (v2[i] - v1[i]) * t
@@ -146,4 +146,3 @@ func (v Vec3) String() string {
 	z := v[2]
 	return fmt.Sprintf("vec3(%.2f, %.2f, %.2f)", x, y, z)
 }
-
