@@ -1,3 +1,5 @@
+use crate::vectors::Vector2D;
+
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 // A cartesian representation of a point in two dimensions.
 pub struct Point2D {
@@ -10,6 +12,13 @@ pub fn pt2(x: f64, y: f64) -> Point2D {
 }
 
 impl Point2D {
+    // Returns a vector by subtracting two points.
+    pub fn sub(self, other: Self) -> Vector2D {
+        Vector2D {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
     // Returns the distance between two points.
     pub fn distance(self, other: Self) -> f64 {
         let x1 = self.x;
@@ -32,7 +41,10 @@ impl Point2D {
 
 #[cfg(test)]
 mod tests {
-    use crate::points::{pt2, Point2D};
+    use crate::{
+        points::{pt2, Point2D},
+        vectors::vec2,
+    };
 
     #[test]
     fn test_default() {
@@ -44,6 +56,12 @@ mod tests {
         let p1 = pt2(3.0, 4.0);
         let p2 = pt2(3.0, 4.0);
         assert!(p1 == p2);
+    }
+    #[test]
+    fn test_sub() {
+        let expect = vec2(5.0, 1.0);
+        let result = pt2(10.0, 7.0).sub(pt2(5.0, 6.0));
+        assert_eq!(expect, result);
     }
     #[test]
     fn test_distance() {
