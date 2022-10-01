@@ -95,6 +95,15 @@ class TestMatrices(unittest.TestCase):
         expect = 7
         result = Vec3(10, 0, 0).distance(Vec3(3, 0, 0))
 
+    def test_lerp(self):
+        # Vec2
+        expect = Vec2(2, 1.5)
+        result = Vec2(1, 1).lerp(Vec2(3, 2), 0.5)
+        self.assertEqual(expect, result)
+        # Vec3
+        expect = Vec3(2, 3, 4)
+        result = Vec3(3, 4, 5).lerp(Vec3(1, 2, 3), 0.5)
+
     def test_normalize(self):
         # Vec2
         expect = Vec2(0.6, 0.8)
