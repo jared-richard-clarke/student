@@ -31,9 +31,6 @@ using Test
     # distance
     @test distance(Vec2(8, 0), Vec2(1, 0)) == 7
     @test distance(Vec3(10, 0, 0), Vec3(3, 0, 0)) == 7
-    # Linear Interpolation
-    @test lerp(Vec2(0, 0), Vec2(10, 0), 0.5) == Vec2(5, 0)
-    @test lerp(Vec3(0, 0, 0), Vec3(10, 0, 0), 0.5) == Vec3(5, 0, 0)
     # Normalize
     @test normalize(Vec2(3, 4)) == Vec2(0.6, 0.8)
     @test normalize(Vec3(3, 4, 1)) == Vec3(0.5883484054145521, 0.7844645405527362, 0.19611613513818404)
