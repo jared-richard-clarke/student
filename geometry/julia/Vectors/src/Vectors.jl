@@ -2,7 +2,7 @@ module Vectors
 
 import Base: +, -, *
 
-export Vec2, Vec3, add, +, sub, -, neg, invert, mag, scale, *, dot, distance, normalize
+export Vec2, Vec3, add, +, sub, -, neg, invert, mag, scale, *, dot, distance, lerp, normalize
 
 """
 A cartesian representation of a vector in two dimensions.
@@ -59,24 +59,22 @@ dot(v1::Vec3, v2::Vec3) = (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z)
 distance(v1::Vec2, v2::Vec2) = hypot(v2.x - v1.x, v2.y - v1.y)
 distance(v1::Vec3, v2::Vec3) = hypot(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z)
 
+"""Interpolates the components of two vectors."""
+lerp(v1::Vec2, v2::Vec2, t::Float64) = v1 + scale(v2 - v1, t)
+lerp(v1::Vec3, v2::Vec3, t::Float64) = v1 + scale(v2 - v1, t)
+
 """Computes the unit vector of a vector."""
 function normalize(v::Vec2)
     m = mag(v)
-    x = v.x
-    y = v.y
-    Vec2(x / m, y / m)
+    Vec2(v.x / m, v.y / m)
 end
 
 function normalize(v::Vec3)
     m = mag(v)
-    x = v.x
-    y = v.y
-    z = v.z
-    Vec3(x / m, y / m, z / m)
+    Vec3(v.x / m, v.y / m, v.z / m)
 end
 
 # TODO: Will add rounding method after I better understand the rounding mechanism in Julia.
 # Rounding is more complex than I originally thought.
 
 end # module Vectors
-
