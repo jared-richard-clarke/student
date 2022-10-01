@@ -2,7 +2,7 @@ module Vectors
 
 import Base: +, -, *
 
-export Vec2, Vec3, add, +, sub, -, neg, invert, mag, scale, *, dot, distance, lerp, normalize
+export Vec2, Vec3, add, +, sub, -, neg, invert, mag, scale, *, dot, distance, normalize
 
 """
 A cartesian representation of a vector in two dimensions.
@@ -59,20 +59,6 @@ dot(v1::Vec3, v2::Vec3) = (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z)
 distance(v1::Vec2, v2::Vec2) = hypot(v2.x - v1.x, v2.y - v1.y)
 distance(v1::Vec3, v2::Vec3) = hypot(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z)
 
-"""Interpolates a vector point along a line between two vector points."""
-function lerp(v1::Vec2, v2::Vec2, t::Float64)
-    x = v1.x + (v2.x - v1.x) * t
-    y = v1.y + (v2.y - v1.y) * t
-    Vec2(x, y)
-end
-
-function lerp(v1::Vec3, v2::Vec3, t::Float64)
-    x = v1.x + (v2.x - v1.x) * t
-    y = v1.y + (v2.y - v1.y) * t
-    z = v1.z + (v2.z - v1.z) * t
-    Vec3(x, y, z)
-end
-
 """Computes the unit vector of a vector."""
 function normalize(v::Vec2)
     m = mag(v)
@@ -93,3 +79,4 @@ end
 # Rounding is more complex than I originally thought.
 
 end # module Vectors
+
