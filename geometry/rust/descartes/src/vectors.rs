@@ -1,4 +1,3 @@
-
 use std::iter::Sum;
 use std::ops::{Add, Neg, Sub};
 
@@ -89,12 +88,6 @@ impl Vector2D {
     // Calculates the distance between the tips of two vectors.
     pub fn distance(self, other: Self) -> f64 {
         (self - other).mag()
-    }
-    // Interpolates point between the tips of two vectors.
-    pub fn lerp(self, other: Self, t: f64) -> Self {
-        let x = self.x + (other.x - self.x) * t;
-        let y = self.y + (other.y - self.y) * t;
-        Self { x, y }
     }
 
     pub fn normalize(self) -> Self {
@@ -200,12 +193,6 @@ mod tests {
     fn test_distance() {
         let expect = 7.0;
         let result = vec2(8.0, 0.0).distance(vec2(1.0, 0.0));
-        assert_eq!(result, expect);
-    }
-    #[test]
-    fn test_lerp() {
-        let expect = vec2(5.0, 0.0);
-        let result = vec2(0.0, 0.0).lerp(vec2(10.0, 0.0), 0.5);
         assert_eq!(result, expect);
     }
     #[test]
