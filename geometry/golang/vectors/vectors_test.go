@@ -290,6 +290,43 @@ func TestDistance(t *testing.T) {
 	}
 }
 
+func TestLerp(t *testing.T) {
+	lerpVec2 := vecTests[Vec2]{
+		{
+			expect: Vec2{2.0, 1.5},
+			result: Lerp(Vec2{1.0, 1.0}, Vec2{3.0, 2.0}, 0.5),
+		},
+		{
+			expect: Vec2{2.5, 3.0},
+			result: Lerp(Vec2{1.0, 3.0}, Vec2{4.0, 3.0}, 0.5),
+		},
+	}
+	for _, v := range lerpVec2 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Lerp Vec2 failed. Expected: %v, Got: %v", expect, result)
+		}
+	}
+	lerpVec3 := vecTests[Vec3]{
+		{
+			expect: Vec3{2.0, 3.0, 4.0},
+			result: Lerp(Vec3{3.0, 4.0, 5.0}, Vec3{1.0, 2.0, 3.0}, 0.5),
+		},
+		{
+			expect: Vec3{11.0, 8.5, 7.0},
+			result: Lerp(Vec3{7.0, 7.0, 7.0}, Vec3{15.0, 10.0, 7.0}, 0.5),
+		},
+	}
+	for _, v := range lerpVec3 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Lerp Vec3 failed. Expected: %v, Got: %v", expect, result)
+		}
+	}
+}
+
 func TestNormalize(t *testing.T) {
 	vec2Expect := Vec2{0.6, 0.8}
 	vec2Result := Normalize(Vec2{3.0, 4.0})
