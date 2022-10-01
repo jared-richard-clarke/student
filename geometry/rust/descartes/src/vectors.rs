@@ -62,7 +62,7 @@ impl Vector2D {
             y: 1.0 / y,
         }
     }
-
+    // Returns the magnitude of a vector.
     pub fn mag(self) -> f64 {
         let x = self.x;
         let y = self.y;
@@ -89,23 +89,23 @@ impl Vector2D {
     pub fn distance(self, other: Self) -> f64 {
         (self - other).mag()
     }
+    // Interpolates two vectors.
+    pub fn lerp(self, other: Self, t: f64) -> Self {
+        self + (other - self).scale(t)
+    }
 
     pub fn normalize(self) -> Self {
         let mag = self.mag();
-        let x = self.x;
-        let y = self.y;
         Self {
-            x: x / mag,
-            y: y / mag,
+            x: self.x / mag,
+            y: self.y / mag,
         }
     }
 
     pub fn round(self) -> Self {
-        let x = self.x;
-        let y = self.y;
         Self {
-            x: x.round(),
-            y: y.round(),
+            x: self.x.round(),
+            y: self.y.round(),
         }
     }
 }
@@ -193,6 +193,12 @@ mod tests {
     fn test_distance() {
         let expect = 7.0;
         let result = vec2(8.0, 0.0).distance(vec2(1.0, 0.0));
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_lerp() {
+        let expect = vec2(2.0, 1.5);
+        let result = vec2(1.0, 1.0).lerp(vec2(3.0, 2.0), 0.5);
         assert_eq!(result, expect);
     }
     #[test]
