@@ -55,35 +55,25 @@ impl<'a> Sum<&'a Self> for Vector2D {
 
 impl Vector2D {
     pub fn invert(self) -> Self {
-        let x = self.x;
-        let y = self.y;
         Self {
-            x: 1.0 / x,
-            y: 1.0 / y,
+            x: 1.0 / self.x,
+            y: 1.0 / self.y,
         }
     }
     // Returns the magnitude of a vector.
     pub fn mag(self) -> f64 {
-        let x = self.x;
-        let y = self.y;
-        (x * x + y * y).sqrt()
+        (self.x * self.x + self.y * self.y).sqrt()
     }
 
     pub fn scale(self, scalar: f64) -> Self {
-        let x = self.x;
-        let y = self.y;
         Self {
-            x: x * scalar,
-            y: y * scalar,
+            x: self.x * scalar,
+            y: self.y * scalar,
         }
     }
     // Dot product.
     pub fn dot(self, other: Self) -> f64 {
-        let x1 = self.x;
-        let y1 = self.y;
-        let x2 = other.x;
-        let y2 = other.y;
-        x1 * x2 + y1 * y2
+        self.x * other.x + self.y * other.y
     }
     // Calculates the distance between the tips of two vectors.
     pub fn distance(self, other: Self) -> f64 {
