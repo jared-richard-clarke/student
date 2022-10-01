@@ -4,7 +4,7 @@
 // === WARNING ===
 // This library is flawed. JavaScript functions are strictly-evaluated, meaning
 // all arguments to a function are evaluated before the function is applied.
-// Therefore, functions cannot replicate the short-circuiting behavior of 
+// JavaScript functions cannot replicate the short-circuiting behavior of 
 // operators && and ||.
 
 const lookup = new Map([
