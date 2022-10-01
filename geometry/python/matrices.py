@@ -8,8 +8,8 @@ Provides affine transformation matrices, methods, and functions.
 
 class Mat3:
     """
-    A 2d transformation implemented as a column-major, 3 × 3 matrix.
-    The third row is implicit.
+    A 3 × 3 affine transformation matrix implemented as a 6-part array.
+    Parameters are described in column-major order. Constants are implied.
     """
 
     def __init__(self, a, b, c, d, e, f):
