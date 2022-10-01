@@ -1,5 +1,10 @@
-// cond acts as module providing functional replacements for operators "&&", "||", and "!"
-// An internal lookup table intercepts and normalizes JavaScript's unusual bottom values:
+// Module "cond" provides functional replacements for operators "&&", "||", and "!"
+// An internal lookup table intercepts and normalizes JavaScript's unusual bottom values.
+//
+// === WARNING ===
+// This library is flawed. JavaScript functions are strictly-evaluated, meaning
+// all arguments to a function are evaluated before the function is applied.
+// Functions cannot replicate the short-circuiting behavior of operators && and ||.
 
 const lookup = new Map([
     [0, true],
