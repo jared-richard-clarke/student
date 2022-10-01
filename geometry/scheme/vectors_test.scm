@@ -49,9 +49,6 @@
 (assert-equal (vec-dist (vec2 8 0) (vec2 1 0))
               7)
 
-(assert-equal (vec-lerp 1/2 (vec2 0 0) (vec2 10 0))
-              (vec2 5 0))
-
 ;; rational division
 (assert-equal (vec-normalize (vec2 3 4))
               '#(3/5 4/5))
