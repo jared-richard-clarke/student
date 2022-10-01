@@ -107,14 +107,6 @@ func Distance[T Vector](v1, v2 T) float64 {
 	return math.Sqrt(accum)
 }
 
-// Linearly interpolates each component between two vectors.
-func Lerp[T Vector](v1, v2 T, t float64) T {
-	for i := 0; i < len(v1); i += 1 {
-		v1[i] += (v2[i] - v1[i]) * t
-	}
-	return v1
-}
-
 // Returns a vectors unit vector.
 func Normalize[T Vector](v T) T {
 	mag := Mag(v)
