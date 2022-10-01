@@ -72,6 +72,12 @@ class Vector:
                   x2 in zip(self.point, other.point, strict=True)]
         return math.hypot(*result)
 
+    def lerp(self, other, t):
+        """Interpolate the components of two vectors."""
+        result = [x1 + (x2 - x1) * t for x1,
+                  x2 in zip(self.point, other.point, strict=True)]
+        return type(self)(*result)
+
     def normalize(self):
         """Returns the unit vector of a vector."""
         mag = self.mag()
