@@ -8,29 +8,6 @@ import (
 
 // A 3 × 3 affine transformation matrix implemented as a 6-part array.
 // Parameters are described in column-major order. Constants are implied.
-//
-// Matrix Notation
-//
-// | A C E |
-// | B D F |
-// | 0 0 1 |
-//
-// Array Notation
-//
-// [ A B C D <--- linear transformations
-//   E F ] <----- translations
-//
-//        |-------|-------|---- implied constants
-// [ A B (0) C D (0) E F (1) ]
-//   0 1     2 3     4 5
-//
-// A: scale-x
-// B: skew-y
-// C: skew-x
-// D: scale-y
-// E: translate-x
-// F: translate-y
-
 type Mat3 [6]float64
 
 // As opposed to operator "==", method "ApproxEq" checks whether floating-point matrix components are approximately equal.
