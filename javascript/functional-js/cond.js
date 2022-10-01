@@ -5,7 +5,7 @@
 // This library is flawed. JavaScript functions are strictly-evaluated, meaning
 // all arguments to a function are evaluated before the function is applied.
 // JavaScript functions cannot replicate the short-circuiting behavior of 
-// operators && and || because they will evaluate all their arguments no
+// operators && and || because all function arguments will be evaluated no
 // matter the outcome of their boolean values.
 
 const lookup = new Map([
