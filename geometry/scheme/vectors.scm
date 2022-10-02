@@ -16,6 +16,7 @@
                  vec-scale
                  vec-dot
                  vec-dist
+                 vec-lerp
                  vec-normalize
                  vec-round)
          (import (rnrs base)
@@ -148,6 +149,14 @@
            (apply hypotenuse (vector->list (vector-map (lambda (x y) (- y x))
                                                        v1
                                                        v2))))
+         ;; (vec-lerp vector vector number) -> vector
+         ;; Interpolates the components of two vectors.
+         ;; (vec-lerp (vec2 1 1) (vec2 3 2) 0.5) -> (vec2 2 1.5)
+
+         (define (vec-lerp v1 v2 t)
+           (vector-map (lambda (x y) (+ x (* (- y x) t)))
+                       v1
+                       v2))
 
          ;; (vec-normalize (vector number ...)) -> (vector number ...)
          ;; Returns the unit vector of a vector.
