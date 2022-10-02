@@ -33,7 +33,14 @@ Provides two-dimensional transformations and transformation composition.
 - `e`: translate-x
 - `f`: translate-y
 
-## Transform
+## Transform 2D Vector
+
+```
+x' = ax + cy + e
+y' = bx + dy + f
+```
+
+## Transformations
 
 ### Identity
 
