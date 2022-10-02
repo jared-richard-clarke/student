@@ -33,7 +33,7 @@ Provides two-dimensional transformations and transformation composition.
 - `e`: translate-x
 - `f`: translate-y
 
-## Transform 2D Vector
+## Application
 
 ```
 x' = ax + cy + e
