@@ -16,8 +16,10 @@ struct Mat3
 end
 
 # Matrices are multiplied right to left. Reversing the arguments
-# "a" and "b" allows function foldl to iterate over a list of matrices
-# from left to right while multiplying them as if right to left.
+# The reverse arrangement of "m" and "n" allows function foldl to 
+# iterate over a list of matrices from left to right while 
+# multiplying them as if right to left.
+
 function multiply(n::Mat3, m::Mat3)
     Mat3(
         m.a * n.a + m.b * n.c,
@@ -29,8 +31,11 @@ function multiply(n::Mat3, m::Mat3)
     )
 end
 
+# Flip arguments "m" and "n" again for right to left multiplication
+# with infix operator (*).
+
 """Combines matrix transformations through multiplication."""
-(*)(a::Mat3, b::Mat3) = multiply(b, a)
+(*)(m::Mat3, n::Mat3) = multiply(n, m)
 
 """Creates a 3x3 identity matrix."""
 function identity()
@@ -38,24 +43,24 @@ function identity()
 end
 
 """Creates a 3x3 translation matrix."""
-function translate(x::Float64, y::Float64)
+function translate(x::Real, y::Real)
     Mat3(1, 0, 0, 1, x, y)
 end
 
 """Creates a 3x3 scaling matrix."""
-function scale(x::Float64, y::Float64)
+function scale(x::Real, y::Real)
     Mat3(x, 0, 0, y, 0, 0)
 end
 
 """Creates a 3x3 rotation matrix."""
-function rotate(angle::Float64)
+function rotate(angle::Real)
     c = cos(angle)
     s = sin(angle)
     Mat3(c, s, -s, c, 0, 0)
 end
 
 """Creates a 3x3 shearing matrix."""
-function shear(x::Float64, y::Float64)
+function shear(x::Real, y::Real)
     Mat3(1, y, x, 1, 0, 0)
 end
 
