@@ -1,7 +1,7 @@
 package matrices
 
 import (
-	"didact/geometry/golang/angles"
+	"didact/geometry/golang/utils"
 	"testing"
 )
 
@@ -44,7 +44,7 @@ func TestScale(t *testing.T) {
 
 func TestRotate(t *testing.T) {
 	expect := Identity()
-	result := Identity().Rotate(angles.Degs2Rads(90.0)).Rotate(angles.Degs2Rads(-90.0))
+	result := Identity().Rotate(utils.Degs2Rads(90.0)).Rotate(utils.Degs2Rads(-90.0))
 	if expect != result {
 		t.Errorf("Test Rotate failed. Expected: %v, Got: %v", expect, result)
 	}
