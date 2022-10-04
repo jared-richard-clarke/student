@@ -2,16 +2,6 @@ using VectorGraph
 using Test
 
 @testset "vectors" begin
-    Vec2 = Vectors.Vec2
-    Vec3 = Vectors.Vec3
-    invert = Vectors.invert
-    mag = Vectors.mag
-    scale = Vectors.scale
-    dot = Vectors.dot
-    distance = Vectors.distance
-    lerp = Vectors.lerp
-    normalize = Vectors.normalize
-
     # addition
     @test Vec2(1, 2) + Vec2(3, 4) == Vec2(4, 6)
     @test Vec3(1, 2, 1) + Vec3(3, 4, 1) == Vec3(4, 6, 2)
@@ -50,21 +40,10 @@ using Test
 end
 
 @testset "matrices" begin
-    Mat3 = Matrices.Mat3
-    ID = Matrices.identity()
-    translate = Matrices.translate
-    scale = Matrices.scale
-    rotate = Matrices.rotate
-    shear = Matrices.shear
-    transform = Matrices.transform
-
-    @test Mat3(1, 0, 0, 1, 0, 0) == ID
+    @test Mat3(1, 0, 0, 1, 0, 0) == MAT3_ID
     @test translate(3, 4) * Mat3(1, 2, 3, 1, 0, 0) == Mat3(1, 2, 3, 1, 15, 10)
     @test scale(2, 2) * Mat3(1, 0, 3, 2, 0, 0) == Mat3(2, 0, 6, 4, 0, 0)
-    
-    rotation = rotate(deg2rad(90)) * ID
-    @test ID == rotate(deg2rad(-90)) * rotation
-    
-    @test shear(2, 2) * ID == Mat3(1, 2, 2, 1, 0, 0)
-    @test transform(rotate(deg2rad(90)), rotate(deg2rad(-90))) == ID
+    @test MAT3_ID == (rotate(deg2rad(-90)) * rotate(deg2rad(90)) * MAT3_ID)
+    @test shear(2, 2) * MAT3_ID == Mat3(1, 2, 2, 1, 0, 0)
+    @test transform(rotate(deg2rad(90)), rotate(deg2rad(-90))) == MAT3_ID
 end
