@@ -24,9 +24,7 @@
          ;;   0 1     2 3     4 5
 
          (define (mat3 a b c d e f)
-           (vector a b
-                   c d
-                   e f))
+           (vector a b c d e f))
 
 
          ;; (m3-multiply mat3 mat3) -> mat3
@@ -45,25 +43,19 @@
          ;; A 3 × 3 identity matrix constant.
 
          (define m3-ID 
-           (mat3 1 0
-                 0 1
-                 0 0))
+           (mat3 1 0 0 1 0 0))
 
          ;; (m3-translate number number) -> mat3
          ;; Creates a translation matrix.
 
          (define (m3-translate x y)
-           (mat3 1 0
-                 0 1
-                 x y))
+           (mat3 1 0 0 1 x y))
 
          ;; (m3-scale number number) -> mat3
          ;; Creates a scaling matrix.
 
          (define (m3-scale x y)
-           (mat3 x 0
-                 0 y
-                 0 0))
+           (mat3 x 0 0 y 0 0))
 
          ;; (m3-rotate number) -> mat3
          ;; Creates a rotation matrix. Argument, "angle", measured in radians.
@@ -71,17 +63,13 @@
          (define (m3-rotate angle)
            (let* ([c (cos angle)]
                   [s (sin angle)])
-             (mat3    c  s
-                   (- s) c
-                      0  0)))
+             (mat3 c s (- s) c 0  0)))
 
          ;; (m3-shear number number) -> mat3
          ;; Creates a shearing matrix.
 
          (define (m3-shear x y)
-           (mat3 1 y
-                 x 1
-                 0 0))
+           (mat3 1 y x 1 0 0))
 
          ;; (m3-transform mat3 ...) -> mat3
          ;; Multiplies a list of transformation matrices pairwise to create a combined transform.
