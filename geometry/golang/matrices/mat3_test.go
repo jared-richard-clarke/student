@@ -1,6 +1,7 @@
 package matrices
 
 import (
+	"didact/geometry/golang/angles"
 	"testing"
 )
 
@@ -8,8 +9,12 @@ func TestApproxEq(t *testing.T) {
 	ep := 0.000001
 	m1 := Mat3{1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep}
 	m2 := Mat3{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}
-	if !m1.ApproxEq(m2) {
+	if m1.ApproxEq(m2) != true {
 		t.Errorf("Test ApproxEq failed. Check test epsilon (ep).")
+	}
+	m1 = Mat3{1.0 + ep*10, 1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep, 1.0 + ep}
+	if m1.ApproxEq(m2) == true {
+		t.Errorf("Test not ApproxEq failed. Check test epsilon (ep).")
 	}
 }
 
@@ -38,8 +43,8 @@ func TestScale(t *testing.T) {
 }
 
 func TestRotate(t *testing.T) {
-	expect := Mat3{0.2836621854632263, -0.9589242746631385, 0.9589242746631385, 0.2836621854632263, 0.0, 0.0}
-	result := Identity().Rotate(5.0)
+	expect := Identity()
+	result := Identity().Rotate(angles.Degs2Rads(90.0)).Rotate(angles.Degs2Rads(-90.0))
 	if expect != result {
 		t.Errorf("Test Rotate failed. Expected: %v, Got: %v", expect, result)
 	}
