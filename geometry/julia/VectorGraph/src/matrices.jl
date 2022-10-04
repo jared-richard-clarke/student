@@ -1,5 +1,3 @@
-module Matrices
-
 import Base: *
 
 """
@@ -37,10 +35,8 @@ end
 """Combines matrix transformations through multiplication."""
 (*)(m::Mat3, n::Mat3) = multiply(n, m)
 
-"""Creates a 3x3 identity matrix."""
-function identity()
-    Mat3(1, 0, 0, 1, 0, 0)
-end
+"""A 3x3 identity matrix."""
+const MAT3_ID = Mat3(1, 0, 0, 1, 0, 0)
 
 """Creates a 3x3 translation matrix."""
 function translate(x::Real, y::Real)
@@ -69,7 +65,5 @@ Multiplies a collection of 3x3 transformation matrices pairwise
 to create a combined transform. Initial value is an identity matrix.
 """
 function transform(matrices::Mat3...)
-    foldl(multiply, matrices; init=identity())
+    foldl(multiply, matrices; init=MAT3_ID)
 end
-
-end # module Matrices
