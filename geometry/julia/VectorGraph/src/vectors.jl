@@ -1,5 +1,3 @@
-module Vectors
-
 import Base: +, -, *
 
 """
@@ -74,5 +72,3 @@ end
 
 # TODO: Will add rounding method after I better understand the rounding mechanism in Julia.
 # Rounding is more complex than I originally thought.
-
-end # module Vectors
