@@ -3,7 +3,7 @@
 (library (matrices)
          (export mat3
                  m3-multiply
-                 m3-identity
+                 m3-ID
                  m3-translate
                  m3-scale
                  m3-rotate
@@ -41,10 +41,10 @@
                    [+ (* (v m 4) (v n 0)) (* (v m 5) (v n 2)) (v n 4)]
                    [+ (* (v m 4) (v n 1)) (* (v m 5) (v n 3)) (v n 5)])))
 
-         ;; (m3-identity) -> mat3
-         ;; Creates an identity matrix.
+         ;; m3-ID
+         ;; A 3 × 3 identity matrix constant.
 
-         (define (m3-identity)
+         (define m3-ID 
            (mat3 1 0
                  0 1
                  0 0))
@@ -90,7 +90,7 @@
          (define (m3-transform . matrices)
            (let ([len (length matrices)])
              (cond
-               [(= len 0) (m3-identity)]
+               [(= len 0) m3-ID]
                [(= len 1) (car matrices)]
                [else (fold-left m3-multiply
                                 (car matrices)
