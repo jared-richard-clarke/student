@@ -1,7 +1,7 @@
-use crate::vectors::Vector2D;
+use crate::vectors::{Vector2D, Vector3D};
+use std::ops::Sub;
 
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
-// A cartesian representation of a point in two dimensions.
 pub struct Point2D {
     pub x: f64,
     pub y: f64,
@@ -11,36 +11,65 @@ pub fn pt2(x: f64, y: f64) -> Point2D {
     Point2D { x, y }
 }
 
-impl Point2D {
-    // Returns a vector by subtracting two points.
-    pub fn sub(self, other: Self) -> Vector2D {
+impl Sub for Point2D {
+    type Output = Vector2D;
+    fn sub(self, other: Self) -> Vector2D {
         Vector2D {
             x: self.x - other.x,
             y: self.y - other.y,
         }
     }
-    // Returns the distance between two points.
+}
+
+impl Point2D {
     pub fn distance(self, other: Self) -> f64 {
-        let x1 = self.x;
-        let y1 = self.y;
-        let x2 = other.x;
-        let y2 = other.y;
-        (x2 - x1).hypot(y2 - y1)
+        (other.x - self.x).hypot(other.y - self.y)
     }
-    // Interpolates a point along a line between two points.
     pub fn lerp(self, other: Self, t: f64) -> Self {
-        let x1 = self.x;
-        let y1 = self.y;
-        let x2 = other.x;
-        let y2 = other.y;
-        let x = x1 + (x2 - x1) * t;
-        let y = y1 + (y2 - y1) * t;
-        Self { x, y }
+        Self {
+            x: self.x + (other.x - self.x) * t,
+            y: self.y + (other.y - self.y) * t,
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Debug, Default)]
+pub struct Point3D {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+}
+
+pub fn pt3(x: f64, y: f64, z: f64) -> Point3D {
+    Point3D { x, y, z }
+}
+
+impl Sub for Point3D {
+    type Output = Vector3D;
+    fn sub(self, other: Self) -> Vector3D {
+        Vector3D {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+        }
+    }
+}
+
+impl Point3D {
+    pub fn distance(self, other: Self) -> f64 {
+        (other - self).mag()
+    }
+    pub fn lerp(self, other: Self, t: f64) -> Self {
+        Self {
+            x: self.x + (other.x - self.x) * t,
+            y: self.y + (other.y - self.y) * t,
+            z: self.z + (other.z - self.z) * t,
+        }
     }
 }
 
 #[cfg(test)]
-mod tests {
+mod pt2_tests {
     use crate::{
         points::{pt2, Point2D},
         vectors::vec2,
@@ -60,7 +89,7 @@ mod tests {
     #[test]
     fn test_sub() {
         let expect = vec2(5.0, 1.0);
-        let result = pt2(10.0, 7.0).sub(pt2(5.0, 6.0));
+        let result = pt2(10.0, 7.0) - pt2(5.0, 6.0);
         assert_eq!(expect, result);
     }
     #[test]
