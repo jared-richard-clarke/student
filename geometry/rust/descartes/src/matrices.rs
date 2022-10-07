@@ -151,15 +151,10 @@ mod tests {
 
     #[test]
     fn test_rotate() {
-        let expect = mat3(
-            0.2836621854632263,
-            -0.9589242746631385,
-            0.9589242746631385,
-            0.2836621854632263,
-            0.0,
-            0.0,
-        );
-        let result = Mat3::identity().rotate(5.0);
+        let expect = Mat3::identity();
+        let result = Mat3::identity()
+            .rotate((90.0_f64).to_radians())
+            .rotate((-90.0_f64).to_radians());
         assert_eq!(result, expect);
     }
 
