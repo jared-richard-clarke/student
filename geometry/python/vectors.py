@@ -1,5 +1,5 @@
 import math
-import approximate
+import utils
 
 """
 Provides cartesian vectors and methods.
@@ -23,7 +23,7 @@ class Vector:
         As opposed to operator "==", method "approx_eq" checks whether 
         floating-point vector components are approximately equal.
         """
-        eq = approximate.equals
+        eq = utils.equals
         for x1, x2 in zip(self.point, other.point, strict=True):
             if not eq(x1, x2):
                 return False
