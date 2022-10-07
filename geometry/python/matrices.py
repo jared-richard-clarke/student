@@ -1,5 +1,6 @@
 import math
 import utils
+from vectors import Vec2
 
 """
 Provides affine transformation matrices, methods, and functions.
@@ -82,6 +83,9 @@ class Mat3:
         Shears matrix by scalars "x" and "y". Transformation can be chained.
         """
         return shear(x, y) * self
+
+    def transform_vector(self, v):
+        return Vec2(self.a * v.x + self.c * v.y, self.b * v.x + self.d * v.y)
 
     def __str__(self):
         return f"Mat3({self.a}, {self.b}, {self.c}, {self.d}, {self.e}, {self.f})"
