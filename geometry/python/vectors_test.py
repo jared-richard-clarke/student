@@ -1,6 +1,6 @@
 import unittest
 from vectors import Vec2, Vec3
-from approximate import EPSILON
+from utils import EPSILON
 
 
 class TestMatrices(unittest.TestCase):
