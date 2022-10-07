@@ -3,7 +3,7 @@ import math
 from matrices import Mat3
 from utils import EPSILON
 
-ID = Mat3(1, 0, 0, 1, 0, 0)
+ID = Mat3.identity()
 
 
 class TestMatrices(unittest.TestCase):
