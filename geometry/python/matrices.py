@@ -51,6 +51,11 @@ class Mat3:
                     self.e * other.a + self.f * other.c + other.e,
                     self.e * other.b + self.f * other.d + other.f)
 
+    @staticmethod
+    def identity():
+        """Creates a 3 × 3 identity matrix."""
+        return Mat3(1, 0, 0, 1, 0, 0)
+
     def translate(self, x, y):
         """
         Translates matrix by scalars "x" and "y". 
@@ -82,38 +87,23 @@ class Mat3:
         return f"Mat3({self.a}, {self.b}, {self.c}, {self.d}, {self.e}, {self.f})"
 
 
-def identity():
-    """Creates an identity matrix."""
-    return Mat3(1, 0,
-                0, 1,
-                0, 0)
-
-
 def translate(x, y):
     """Creates a translation matrix."""
-    return Mat3(1, 0,
-                0, 1,
-                x, y)
+    return Mat3(1, 0, 0, 1, x, y)
 
 
 def scale(x, y):
     """Creates a scaling matrix."""
-    return Mat3(x, 0,
-                0, y,
-                0, 0)
+    return Mat3(x, 0, 0, y, 0, 0)
 
 
 def rotate(angle):
     """Creates a rotation matrix."""
     c = math.cos(angle)
     s = math.sin(angle)
-    return Mat3(c, s,
-                -s, c,
-                0, 0)
+    return Mat3(c, s, -s, c, 0, 0)
 
 
 def shear(x, y):
     """Creates a shearing matrix."""
-    return Mat3(1, y,
-                x, 1,
-                0, 0)
+    return Mat3(1, y, x, 1, 0, 0)
