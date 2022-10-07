@@ -1,6 +1,7 @@
 import unittest
+import math
 from matrices import Mat3
-from approximate import EPSILON
+from utils import EPSILON
 
 ID = Mat3(1, 0, 0, 1, 0, 0)
 
@@ -26,9 +27,8 @@ class TestMatrices(unittest.TestCase):
         self.assertEqual(expect, result)
 
     def test_rotate(self):
-        expect = Mat3(0.2836621854632263, -0.9589242746631385,
-                      0.9589242746631385, 0.2836621854632263, 0.0, 0.0,)
-        result = ID.rotate(5)
+        expect = ID
+        result = ID.rotate(math.radians(90)).rotate(math.radians(-90))
         self.assertEqual(expect, result)
 
     def test_shear(self):
