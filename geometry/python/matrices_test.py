@@ -2,6 +2,7 @@ import unittest
 import math
 from matrices import Mat3
 from utils import EPSILON
+from vectors import Vec2
 
 ID = Mat3.identity()
 
@@ -39,6 +40,11 @@ class TestMatrices(unittest.TestCase):
     def test_transform(self):
         expect = Mat3(2, 4, 2, 2, 3, 4)
         result = ID.translate(3, 4).scale(2, 2).shear(1, 2)
+        self.assertEqual(expect, result)
+
+    def test_transform_vector(self):
+        expect = Vec2(6, 8)
+        result = ID.scale(2, 2).transform_vector(Vec2(3, 4))
         self.assertEqual(expect, result)
 
 
