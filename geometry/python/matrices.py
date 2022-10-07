@@ -1,5 +1,5 @@
 import math
-import approximate
+import utils
 
 """
 Provides affine transformation matrices, methods, and functions.
@@ -34,7 +34,7 @@ class Mat3:
         As opposed to operator "==", method "approx_eq" checks whether 
         floating-point matrix components are approximately equal.
         """
-        eq = approximate.equals
+        eq = utils.equals
         return (eq(self.a, other.a) and
                 eq(self.b, other.b) and
                 eq(self.c, other.c) and
