@@ -105,3 +105,40 @@ mod pt2_tests {
         assert_eq!(expect, result);
     }
 }
+
+#[cfg(test)]
+mod vec3_tests {
+    use crate::{
+        points::{pt3, Point3D},
+        vectors::vec3,
+    };
+    #[test]
+    fn test_default() {
+        let p = Point3D::default();
+        assert_eq!(p, pt3(0.0, 0.0, 0.0));
+    }
+    #[test]
+    fn test_equal() {
+        let p1 = pt3(3.0, 4.0, 5.0);
+        let p2 = pt3(3.0, 4.0, 5.0);
+        assert!(p1 == p2);
+    }
+    #[test]
+    fn test_sub() {
+        let expect = vec3(5.0, 1.0, 0.0);
+        let result = pt3(10.0, 7.0, 5.0) - pt3(5.0, 6.0, 5.0);
+        assert_eq!(expect, result);
+    }
+    #[test]
+    fn test_distance() {
+        let expect = 5.0;
+        let result = pt3(10.0, 0.0, 0.0).distance(pt3(5.0, 0.0, 0.0));
+        assert_eq!(expect, result);
+    }
+    #[test]
+    fn test_lerp() {
+        let expect = pt3(5.0, 0.0, 0.0);
+        let result = pt3(0.0, 0.0, 0.0).lerp(pt3(10.0, 0.0, 0.0), 0.5);
+        assert_eq!(expect, result);
+    }
+}
