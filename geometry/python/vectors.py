@@ -29,6 +29,11 @@ class Vector:
                 return False
         return True
 
+    def __abs__(self):
+        """Returns a vector with the absolute values of the original vector components."""
+        result = [abs(x) for x in self.point]
+        return type(self)(*result)
+
     def __add__(self, other):
         """Returns the sum of two vectors."""
         result = [x + y for x, y in zip(self.point, other.point, strict=True)]
