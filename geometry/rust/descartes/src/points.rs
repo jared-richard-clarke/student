@@ -1,5 +1,5 @@
 use crate::vectors::{Vector2D, Vector3D};
-use std::ops::Sub;
+use std::ops::{Add, Sub};
 
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub struct Point2D {
@@ -11,12 +11,33 @@ pub fn pt2(x: f64, y: f64) -> Point2D {
     Point2D { x, y }
 }
 
+// lhs: Point2D + rhs: Vector2D -> Point2D
+impl Add<Vector2D> for Point2D {
+    type Output = Self;
+    fn add(self, rhs: Vector2D) -> Self {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
+}
+// lhs: Vector2D + rhs: Point2D -> Point2D
+impl Add<Point2D> for Vector2D {
+    type Output = Point2D;
+    fn add(self, rhs: Point2D) -> Self::Output {
+        Self::Output {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
+}
+// lhs: Point2D - rhs: Point2d -> Vector2D
 impl Sub for Point2D {
     type Output = Vector2D;
-    fn sub(self, other: Self) -> Vector2D {
-        Vector2D {
-            x: self.x - other.x,
-            y: self.y - other.y,
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self::Output {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
         }
     }
 }
@@ -44,10 +65,33 @@ pub fn pt3(x: f64, y: f64, z: f64) -> Point3D {
     Point3D { x, y, z }
 }
 
+// lhs: Point3D + rhs: Vector3D -> Point3D
+impl Add<Vector3D> for Point3D {
+    type Output = Self;
+    fn add(self, rhs: Vector3D) -> Self {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+// lhs: Vector3D + rhs: Point3D -> Point3D
+impl Add<Point3D> for Vector3D {
+    type Output = Point3D;
+    fn add(self, rhs: Point3D) -> Self::Output {
+        Self::Output {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+// lhs: Point3D - rhs: Point3D -> Vector3D
 impl Sub for Point3D {
     type Output = Vector3D;
-    fn sub(self, other: Self) -> Vector3D {
-        Vector3D {
+    fn sub(self, other: Self) -> Self::Output {
+        Self::Output {
             x: self.x - other.x,
             y: self.y - other.y,
             z: self.z - other.z,
@@ -87,6 +131,14 @@ mod pt2_tests {
         assert!(p1 == p2);
     }
     #[test]
+    fn test_add() {
+        let expect = pt2(4.0, 6.0);
+        let result = pt2(3.0, 4.0) + vec2(1.0, 2.0);
+        assert_eq!(expect, result);
+        let result = vec2(1.0, 2.0) + pt2(3.0, 4.0);
+        assert_eq!(expect, result);
+    }
+    #[test]
     fn test_sub() {
         let expect = vec2(5.0, 1.0);
         let result = pt2(10.0, 7.0) - pt2(5.0, 6.0);
@@ -122,6 +174,14 @@ mod vec3_tests {
         let p1 = pt3(3.0, 4.0, 5.0);
         let p2 = pt3(3.0, 4.0, 5.0);
         assert!(p1 == p2);
+    }
+    #[test]
+    fn test_add() {
+        let expect = pt3(10.0, 9.0, 8.0);
+        let result = pt3(5.0, 4.5, 4.0) + vec3(5.0, 4.5, 4.0);
+        assert_eq!(expect, result);
+        let result = vec3(5.0, 4.5, 4.0) + pt3(5.0, 4.5, 4.0);
+        assert_eq!(expect, result);
     }
     #[test]
     fn test_sub() {
