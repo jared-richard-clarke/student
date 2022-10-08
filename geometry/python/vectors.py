@@ -30,7 +30,7 @@ class Vector:
         return True
 
     def __abs__(self):
-        """Returns a vector with the absolute values of the original vector components."""
+        """Returns a vector with the absolute values of the original vector's components."""
         result = [abs(x) for x in self.point]
         return type(self)(*result)
 
