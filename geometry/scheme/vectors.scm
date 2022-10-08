@@ -10,6 +10,7 @@
                  vec-add
                  vec-sub
                  vec-neg
+                 vec-abs
                  vec-invert
                  vec-sum
                  vec-mag
@@ -100,6 +101,14 @@
            (vector-map (lambda (x) (- x))
                        vec))
 
+         ;; (vec-abs vector) -> vector
+         ;; Returns vector with the absolute values of its vector components.
+         ;; (vec-abs (vec2 -3 -4)) -> (vec2 3 4)
+
+         (define (vec-abs vec)
+           (vector-map (lambda (x) (abs x))
+                       vec))
+
          ;; (vec-invert vector) -> vector
          ;; Inverts the vector components.
          ;; (vec-invert (vec2 2 2)) -> '#(0.5 0.5)
@@ -149,7 +158,7 @@
            (apply hypotenuse (vector->list (vector-map (lambda (x y) (- y x))
                                                        v1
                                                        v2))))
-         
+
          ;; (vec-lerp vector vector number) -> vector
          ;; Interpolates the components of two vectors.
          ;; (vec-lerp (vec2 1 1) (vec2 3 2) 0.5) -> (vec2 2 1.5)
