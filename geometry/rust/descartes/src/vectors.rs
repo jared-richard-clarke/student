@@ -54,6 +54,12 @@ impl<'a> Sum<&'a Self> for Vector2D {
 }
 
 impl Vector2D {
+    pub fn abs(self) -> Self {
+        Self {
+            x: self.x.abs(),
+            y: self.y.abs(),
+        }
+    }
     pub fn invert(self) -> Self {
         Self {
             x: 1.0 / self.x,
@@ -158,6 +164,13 @@ impl<'a> Sum<&'a Self> for Vector3D {
 }
 
 impl Vector3D {
+    pub fn abs(self) -> Self {
+        Self {
+            x: self.x.abs(),
+            y: self.y.abs(),
+            z: self.z.abs(),
+        }
+    }
     pub fn invert(self) -> Self {
         Self {
             x: 1.0 / self.x,
@@ -245,6 +258,12 @@ mod vec2_tests {
     fn test_neg() {
         let expect = vec2(3.0, -4.0);
         let result = -vec2(-3.0, 4.0);
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_abs() {
+        let expect = vec2(3.0, 4.0);
+        let result = vec2(-3.0, -4.0).abs();
         assert_eq!(result, expect);
     }
     #[test]
@@ -352,6 +371,12 @@ mod vec3_tests {
     fn test_neg() {
         let expect = vec3(3.0, -4.0, 5.0);
         let result = -vec3(-3.0, 4.0, -5.0);
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_abs() {
+        let expect = vec3(3.0, 4.0, 5.0);
+        let result = vec3(-3.0, 4.0, -5.0).abs();
         assert_eq!(result, expect);
     }
     #[test]
