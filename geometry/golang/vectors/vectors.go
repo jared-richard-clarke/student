@@ -29,6 +29,13 @@ func ApproxEq[T Vector](v1, v2 T) bool {
 	return true
 }
 
+func Abs[T Vector](v T) T {
+	for i := 0; i < len(v); i += 1 {
+		v[i] = math.Abs(v[i])
+	}
+	return v
+}
+
 // Returns a vector that is the sum of two vectors.
 func Add[T Vector](v1, v2 T) T {
 	for i := 0; i < len(v1); i += 1 {
