@@ -1,5 +1,5 @@
 use std::iter::Sum;
-use std::ops::{Add, Neg, Sub};
+use std::ops::{Add, Mul, Neg, Sub};
 
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub struct Vector2D {
@@ -27,6 +27,26 @@ impl Sub for Vector2D {
         Self {
             x: self.x - other.x,
             y: self.y - other.y,
+        }
+    }
+}
+// lhs: Vector2D * rhs: f64 -> Vector2D
+impl Mul<f64> for Vector2D {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+        }
+    }
+}
+// lhs: f64 * rhs: Vector2D -> Vector2D
+impl Mul<Vector2D> for f64 {
+    type Output = Vector2D;
+    fn mul(self, rhs: Vector2D) -> Self::Output {
+        Self::Output {
+            x: self * rhs.x,
+            y: self * rhs.y,
         }
     }
 }
@@ -135,6 +155,28 @@ impl Sub for Vector3D {
             x: self.x - other.x,
             y: self.y - other.y,
             z: self.z - other.z,
+        }
+    }
+}
+// lhs: Vector3D * rhs: f64 -> Vector3D
+impl Mul<f64> for Vector3D {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+// lhs: f64 * rhs: Vector3D -> Vector3D
+impl Mul<Vector3D> for f64 {
+    type Output = Vector3D;
+    fn mul(self, rhs: Vector3D) -> Self::Output {
+        Self::Output {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
         }
     }
 }
@@ -255,6 +297,14 @@ mod vec2_tests {
         assert_eq!(result, expect);
     }
     #[test]
+    fn test_mul() {
+        let expect = vec2(6.0, 8.0);
+        let result = vec2(3.0, 4.0) * 2_f64;
+        assert_eq!(expect, result);
+        let result = 2_f64 * vec2(3.0, 4.0);
+        assert_eq!(expect, result);
+    }
+    #[test]
     fn test_neg() {
         let expect = vec2(3.0, -4.0);
         let result = -vec2(-3.0, 4.0);
@@ -366,6 +416,14 @@ mod vec3_tests {
         let expect = vec3(2.0, 2.0, 2.0);
         let result = vec3(3.0, 4.0, 5.0) - vec3(1.0, 2.0, 3.0);
         assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_mul() {
+        let expect = vec3(10.0, 8.0, 6.0);
+        let result = vec3(5.0, 4.0, 3.0) * 2_f64;
+        assert_eq!(expect, result);
+        let result = 2_f64 * vec3(5.0, 4.0, 3.0);
+        assert_eq!(expect, result);
     }
     #[test]
     fn test_neg() {
