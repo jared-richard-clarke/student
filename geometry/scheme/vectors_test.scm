@@ -51,6 +51,14 @@
 (assert-equal (vec-neg (vec3 0 0 0))
               '#(0 0 0))
 
+;; Absolute
+
+(assert-equal (vec-abs (vec2 -3 -4))
+              '#(3 4))
+
+(assert-equal (vec-abs (vec3 -3 -4 -5))
+              '#(3 4 5))
+
 ;; Inversion
 
 (assert-equal (vec-invert (vec2 2 2))
