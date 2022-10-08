@@ -16,6 +16,16 @@ class TestMatrices(unittest.TestCase):
         result = Vec3(3, 4, 5).approx_eq(Vec3(3 + ep, 4, 5 + ep))
         self.assertTrue(result)
 
+    def test_abs(self):
+        # Vec2
+        expect = Vec2(3, 4)
+        result = abs(Vec2(-3, -4))
+        self.assertEqual(expect, result)
+        # Vec3
+        expect = Vec3(3, 4, 5)
+        result = abs(Vec3(-3, -4, -5))
+        self.assertEqual(expect, result)
+
     def test_add(self):
         # Vec2
         expect = Vec2(4, 6)
