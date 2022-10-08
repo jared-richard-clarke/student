@@ -21,6 +21,43 @@ func TestApproxEq(t *testing.T) {
 	}
 }
 
+func TestAbs(t *testing.T) {
+	absVec2 := vecTests[Vec2]{
+		{
+			expect: Vec2{3.0, 4.0},
+			result: Abs(Vec2{-3.0, -4.0}),
+		},
+		{
+			expect: Vec2{1.0, 2.0},
+			result: Abs(Vec2{-1.0, 2.0}),
+		},
+	}
+	for _, v := range absVec2 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Abs Vec2 failed. Expected: %v, Got: %v", expect, result)
+		}
+	}
+	absVec3 := vecTests[Vec3]{
+		{
+			expect: Vec3{3.0, 4.0, 5.0},
+			result: Abs(Vec3{-3.0, -4.0, -5.0}),
+		},
+		{
+			expect: Vec3{1.0, 2.0, 3.0},
+			result: Abs(Vec3{-1.0, 2.0, -3.0}),
+		},
+	}
+	for _, v := range absVec3 {
+		expect := v.expect
+		result := v.result
+		if expect != result {
+			t.Errorf("Test Abs Vec3 failed. Expected: %v, Got: %v", expect, result)
+		}
+	}
+}
+
 func TestAdd(t *testing.T) {
 	addVec2 := vecTests[Vec2]{
 		{
