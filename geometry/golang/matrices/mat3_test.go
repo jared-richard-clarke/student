@@ -2,6 +2,7 @@ package matrices
 
 import (
 	"didact/geometry/golang/utils"
+	"didact/geometry/golang/vectors"
 	"testing"
 )
 
@@ -55,5 +56,13 @@ func TestShear(t *testing.T) {
 	result := Identity().Shear(3.0, 4.0)
 	if expect != result {
 		t.Errorf("Test Shear failed. Expected: %v, Got: %v", expect, result)
+	}
+}
+
+func TestTransformVector(t *testing.T) {
+	expect := vectors.Vec2{6.0, 8.0}
+	result := Identity().Scale(2.0, 2.0).TransformVector(vectors.Vec2{3.0, 4.0})
+	if expect != result {
+		t.Errorf("Test TransformVector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
