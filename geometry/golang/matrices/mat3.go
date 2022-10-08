@@ -3,6 +3,7 @@ package matrices
 
 import (
 	"didact/geometry/golang/utils"
+	"didact/geometry/golang/vectors"
 	"math"
 )
 
@@ -36,49 +37,29 @@ func (m Mat3) Multiply(n Mat3) Mat3 {
 
 // Creates an identity matrix.
 func Identity() Mat3 {
-	return Mat3{
-		1, 0,
-		0, 1,
-		0, 0,
-	}
+	return Mat3{1, 0, 0, 1, 0, 0}
 }
 
 // Creates a translation matrix.
 func Translate(x, y float64) Mat3 {
-	return Mat3{
-		1, 0,
-		0, 1,
-		x, y,
-	}
+	return Mat3{1, 0, 0, 1, x, y}
 }
 
 // Creates a scaling matrix.
 func Scale(x, y float64) Mat3 {
-	return Mat3{
-		x, 0,
-		0, y,
-		0, 0,
-	}
+	return Mat3{x, 0, 0, y, 0, 0}
 }
 
 // Creates a rotation matrix.
 func Rotate(angle float64) Mat3 {
 	c := math.Cos(angle)
 	s := math.Sin(angle)
-	return Mat3{
-		c, s,
-		-s, c,
-		0, 0,
-	}
+	return Mat3{c, s, -s, c, 0, 0}
 }
 
 // Creates a shearing matrix.
 func Shear(x, y float64) Mat3 {
-	return Mat3{
-		1, y,
-		x, 1,
-		0, 0,
-	}
+	return Mat3{1, y, x, 1, 0, 0}
 }
 
 // Translates matrix by scalars "x" and "y". Transformation can be chained.
@@ -99,4 +80,11 @@ func (m Mat3) Rotate(angle float64) Mat3 {
 // Shears matrix by scalars "x" and "y". Transformation can be chained.
 func (m Mat3) Shear(x, y float64) Mat3 {
 	return Shear(x, y).Multiply(m)
+}
+
+func (m Mat3) TransformVector(v vectors.Vec2) vectors.Vec2 {
+	return vectors.Vec2{
+		m[0]*v[0] + m[2]*v[1],
+		m[1]*v[0] + m[3]*v[1],
+	}
 }
