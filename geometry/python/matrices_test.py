@@ -42,14 +42,9 @@ class TestMatrices(unittest.TestCase):
         result = ID.shear(3, 4)
         self.assertEqual(expect, result)
 
-    def test_transform(self):
+    def test_compose(self):
         expect = Mat3(2, 4, 2, 2, 3, 4)
         result = ID.translate(3, 4).scale(2, 2).shear(1, 2)
-        self.assertEqual(expect, result)
-
-    def test_transform_vector(self):
-        expect = Vec2(6, 8)
-        result = ID.scale(2, 2).transform_vector(Vec2(3, 4))
         self.assertEqual(expect, result)
 
 
