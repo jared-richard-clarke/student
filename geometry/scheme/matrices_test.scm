@@ -13,7 +13,7 @@
 (assert-equal (m3-compose m3-ID (m3-scale 2 2))
               (mat3 2 0 0 2 0 0))
 
-(define m3-ID-float (mat3 1.0 0.0 0.0 1.0 0.0 0.0))
+(define m3-ID-float (vector-map (lambda (n) (fixnum->flonum n)) m3-ID))
 
 (assert-equal (m3-compose m3-ID-float
                          (m3-rotate (deg->rad 90))
