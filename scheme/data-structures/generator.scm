@@ -13,3 +13,12 @@
                  (set! start (+ start step))
                  result))
              (error "call 'next to generate subsequent number"))))]))
+
+;; Yield numbers from 1 through 5000 piecemeal.
+;; (define yield (generate-numbers 1 5000))
+
+;; (list (yield 'next) (yield 'next) (yield 'next)) -> '(1 2 3)
+
+;; (list (yield 'next) (yield 'next)) -> '(4 5)
+
+;; ...5000 then nothing.
