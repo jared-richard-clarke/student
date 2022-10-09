@@ -39,14 +39,10 @@ end
 const MAT3_ID = Mat3(1, 0, 0, 1, 0, 0)
 
 """Creates a 3x3 translation matrix."""
-function translate(x::Real, y::Real)
-    Mat3(1, 0, 0, 1, x, y)
-end
+translate(x::Real, y::Real) = Mat3(1, 0, 0, 1, x, y)
 
 """Creates a 3x3 scaling matrix."""
-function scale(x::Real, y::Real)
-    Mat3(x, 0, 0, y, 0, 0)
-end
+scale(x::Real, y::Real) = Mat3(x, 0, 0, y, 0, 0)
 
 """Creates a 3x3 rotation matrix."""
 function rotate(angle::Real)
@@ -56,14 +52,20 @@ function rotate(angle::Real)
 end
 
 """Creates a 3x3 shearing matrix."""
-function shear(x::Real, y::Real)
-    Mat3(1, y, x, 1, 0, 0)
-end
+shear(x::Real, y::Real) = Mat3(1, y, x, 1, 0, 0)
 
 """
 Multiplies a collection of 3x3 transformation matrices pairwise 
 to create a combined transform. Initial value is an identity matrix.
 """
-function transform(matrices::Mat3...)
-    foldl(multiply, matrices; init=MAT3_ID)
+compose(matrices::Mat3...) = foldl(multiply, matrices; init=MAT3_ID)
+
+function transform(v::Vec2, m::Mat3)
+    a = m.a
+    b = m.b
+    c = m.c
+    d = m.d
+    x = v.x
+    y = v.y
+    Vec2(a*x + c*y, b*x + d*y)
 end
