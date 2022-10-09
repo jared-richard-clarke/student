@@ -88,7 +88,7 @@ impl Vector2D {
     }
     // Returns the magnitude of a vector.
     pub fn mag(self) -> f64 {
-        (self.x * self.x + self.y * self.y).sqrt()
+        (self.x.powi(2) + self.y.powi(2)).sqrt()
     }
 
     pub fn scale(self, scalar: f64) -> Self {
@@ -222,7 +222,7 @@ impl Vector3D {
     }
     // Returns the magnitude of a vector.
     pub fn mag(self) -> f64 {
-        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
+        (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt()
     }
 
     pub fn scale(self, scalar: f64) -> Self {
