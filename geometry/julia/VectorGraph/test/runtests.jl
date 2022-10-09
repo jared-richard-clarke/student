@@ -48,5 +48,8 @@ end
     @test scale(2, 2) * Mat3(1, 0, 3, 2, 0, 0) == Mat3(2, 0, 6, 4, 0, 0)
     @test MAT3_ID == (rotate(deg2rad(-90)) * rotate(deg2rad(90)) * MAT3_ID)
     @test shear(2, 2) * MAT3_ID == Mat3(1, 2, 2, 1, 0, 0)
-    @test transform(rotate(deg2rad(90)), rotate(deg2rad(-90))) == MAT3_ID
+    @test compose(rotate(deg2rad(90)), rotate(deg2rad(-90))) == MAT3_ID
+
+    mt = compose(scale(2, 2))
+    @test transform(Vec2(3, 4), mt) == Vec2(6, 8)
 end
