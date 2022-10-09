@@ -13,9 +13,9 @@ struct Mat3
     f::Float64
 end
 
-# Matrices are multiplied right to left. Reversing the arguments
-# The reverse arrangement of "m" and "n" allows function foldl to 
-# iterate over a list of matrices from left to right while 
+# Matrices are multiplied right to left.
+# Reversing the arguments of "m" and "n" allows function foldl
+# to iterate over a list of matrices from left to right while 
 # multiplying them as if right to left.
 
 function multiply(n::Mat3, m::Mat3)
