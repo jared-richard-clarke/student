@@ -90,19 +90,12 @@ func (v1 Vec2) Dot(v2 Vec2) float64 {
 
 // Calculates the distance between two 2D vector points.
 func (v1 Vec2) Distance(v2 Vec2) float64 {
-	accum := 0.0
-	for i := range v1 {
-		accum += math.Pow(v2[i]-v1[i], 2)
-	}
-	return math.Sqrt(accum)
+	return v2.Sub(v1).Mag()
 }
 
 // Interpolates the components of the two 2D vectors.
 func (v1 Vec2) Lerp(t float64, v2 Vec2) Vec2 {
-	for i := range v1 {
-		v1[i] += (v2[i] - v1[i]) * t
-	}
-	return v1
+	return v1.Add(v2.Sub(v1).Scale(t))
 }
 
 // Returns the unit vector of a 2D vector.
