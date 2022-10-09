@@ -17,6 +17,11 @@ class TestMatrices(unittest.TestCase):
         result = ID.approx_eq(expect)
         self.assertTrue(result)
 
+    def test_abs(self):
+        expect = Mat3(1, 2, 3, 0, 3, 4)
+        result = abs(Mat3(-1, 2, -3, 0, -3, 4))
+        self.assertEqual(expect, result)
+
     def test_translate(self):
         expect = Mat3(1, 0, 0, 1, 3, 4)
         result = ID.translate(3, 4)
