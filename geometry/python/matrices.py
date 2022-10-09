@@ -43,6 +43,10 @@ class Mat3:
                 eq(self.e, other.e) and
                 eq(self.f, other.f))
 
+    def __abs__(self):
+        """Returns a matrix with the absolute values of its components."""
+        return Mat3(abs(self.a), abs(self.b), abs(self.c), abs(self.d), abs(self.e), abs(self.f))
+
     def __mul__(self, other):
         """Combines two transformations through matrix multiplication."""
         return Mat3(self.a * other.a + self.b * other.c,
