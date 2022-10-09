@@ -103,6 +103,10 @@ class Vec2(Vector):
         self.x = x
         self.y = y
 
+    def transform_by(self, mat):
+        """Transforms 2D vector by a 3 × 3 matrix."""
+        return Vec2(mat.a * self.x + mat.c * self.y, mat.b * self.x + mat.d * self.y)
+
     def __str__(self):
         return f"Vec2{self.point}"
 
@@ -120,3 +124,4 @@ class Vec3(Vector):
 
     def __str__(self):
         return f"Vec3{self.point}"
+
