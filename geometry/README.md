@@ -2,8 +2,13 @@
 
 I'm teaching myself computer graphics and related geometry.
 
+I believe language influences how people understand and solve problems, so I implemented 
+the same library  in multiple programming languages to better understand my subject matter.
+
 > "Geometry(noun): the branch of mathematics concerned with the properties and relations of points, 
 > lines, surfaces, solids, and higher dimensional analogs."
+> 
+> [Geometry](https://en.wikipedia.org/wiki/Geometry) from *Wikipedia, The Free Encyclopedia*
 
 > "The process of abstraction is a powerful one...Take whole numbers, for instance. 
 > Like vectors, they are abstractions. We could say that whole numbers are what is 
