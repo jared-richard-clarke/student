@@ -2,13 +2,12 @@
 
 (library (matrices)
          (export mat3
-                 m3-multiply
                  m3-ID
                  m3-translate
                  m3-scale
                  m3-rotate
                  m3-shear
-                 m3-transform)
+                 m3-compose)
          (import (rnrs base)
                  (rnrs lists))
 
@@ -71,11 +70,11 @@
          (define (m3-shear x y)
            (mat3 1 y x 1 0 0))
 
-         ;; (m3-transform mat3 ...) -> mat3
+         ;; (m3-compose mat3 ...) -> mat3
          ;; Multiplies a list of transformation matrices pairwise to create a combined transform.
          ;; If no matrices are provided, function returns a mat3-identity matrix.
 
-         (define (m3-transform . matrices)
+         (define (m3-compose . matrices)
            (let ([len (length matrices)])
              (cond
                [(= len 0) m3-ID]
