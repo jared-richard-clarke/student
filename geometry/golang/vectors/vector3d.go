@@ -90,19 +90,12 @@ func (v1 Vec3) Dot(v2 Vec3) float64 {
 
 // Calculates the distance between two 3D vector points.
 func (v1 Vec3) Distance(v2 Vec3) float64 {
-	accum := 0.0
-	for i := range v1 {
-		accum += math.Pow(v2[i]-v1[i], 2)
-	}
-	return math.Sqrt(accum)
+	return v2.Sub(v1).Mag()
 }
 
 // Interpolates the components of the two 3D vectors.
 func (v1 Vec3) Lerp(t float64, v2 Vec3) Vec3 {
-	for i := range v1 {
-		v1[i] += (v2[i] - v1[i]) * t
-	}
-	return v1
+	return v1.Add(v2.Sub(v1).Scale(t))
 }
 
 // Returns the unit vector of a 3D vector.
