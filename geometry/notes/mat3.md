@@ -5,19 +5,21 @@ order. Constants are implied.
 
 Provides two-dimensional transformations and transformation composition.
 
-## Matrix Notation
+## Column-Major Matrix Notation
 
-```
-| a c e |
-| b d f |
-| 0 0 1 |
-```
+$$
+\begin{bmatrix}
+a & c & e \\
+b & d & f \\
+0 & 0 & 1
+\end{bmatrix}
+$$
 
 ## Array Notation
 
 ```
-[ A B C D <--- linear transformations
-  E F ] <----- translations
+[ a b c d <--- linear transformations
+  e f ] <----- translations
 
        |-------|-------|---- implied constants
 [ a b (0) c d (0) e f (1) ]
@@ -26,50 +28,57 @@ Provides two-dimensional transformations and transformation composition.
 
 ## Parameters
 
-- `a`: scale-x
-- `b`: skew-y
-- `c`: skew-x
-- `d`: scale-y
-- `e`: translate-x
-- `f`: translate-y
+- $a$: scale-x
+- $b$: skew-y
+- $c$: skew-x
+- $d$: scale-y
+- $e$: translate-x
+- $f$: translate-y
 
 ## Application
 
-```
-x' = ax + cy + e
-y' = bx + dy + f
-```
+$$x' = ax + cy + e$$
+
+$$y' = bx + dy + f$$
 
 ## Transformations
 
 ### Identity
 
-```
-| 1 0 0 |
-| 0 1 0 |
-| 0 0 1 |
-```
+$$
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+$$
 
 ### Translate
 
-```
-| 1 0 x |
-| 0 1 y |
-| 0 0 1 |
-```
+$$
+\begin{bmatrix}
+1 & 0 & x \\
+0 & 1 & y \\
+0 & 0 & 1
+\end{bmatrix}
+$$
 
 ### Scale
 
-```
-| x 0 0 |
-| 0 y 0 |
-| 0 0 1 |
-```
+$$
+\begin{bmatrix}
+x & 0 & 0 \\
+0 & y & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+$$
 
 ### Rotate
 
-```
-| cosθ -sinθ 0 |
-| sinθ  cosθ 0 |
-| 0     0    1 |
-```
+$$
+\begin{bmatrix}
+\cos\theta & −\sin\theta & 0 \\
+\sin\theta & \cos\theta & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+$$
