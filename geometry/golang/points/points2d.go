@@ -33,7 +33,7 @@ func (p1 Pt2) Lerp(t float64, p2 Pt2) Pt2 {
 	return p1
 }
 
-func (p Pt2) Transform(m matrices.Mat3) Pt2 {
+func (p Pt2) TransformBy(m matrices.Mat3) Pt2 {
 	return Pt2{
 		m[0]*p[0] + m[2]*p[1] + m[4],
 		m[1]*p[0] + m[3]*p[1] + m[5],
