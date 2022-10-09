@@ -64,11 +64,7 @@ func (v Vec2) Invert() Vec2 {
 
 // Returns the magnitude of a 2D vector.
 func (v Vec2) Mag() float64 {
-	accum := 0.0
-	for i := range v {
-		accum += math.Pow(v[i], 2)
-	}
-	return math.Sqrt(accum)
+	return math.Hypot(v[0], v[1])
 }
 
 // Multiplies a 2D vector by a scalar.
@@ -81,11 +77,11 @@ func (v Vec2) Scale(s float64) Vec2 {
 
 // Computes the dot product of two 2D vectors.
 func (v1 Vec2) Dot(v2 Vec2) float64 {
-	accum := 0.0
+	s := 0.0
 	for i := range v1 {
-		accum += v1[i] * v2[i]
+		s += v1[i] * v2[i]
 	}
-	return accum
+	return s
 }
 
 // Calculates the distance between two 2D vector points.
