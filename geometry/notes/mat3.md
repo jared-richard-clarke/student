@@ -35,11 +35,17 @@ $$
 - $e$: translate-x
 - $f$: translate-y
 
-## Application
+## Transformation of a Point
 
 $$x' = ax + cy + e$$
 
 $$y' = bx + dy + f$$
+
+## Transformation of a Vector
+
+$$x' = ax + cy$$
+
+$$y' = bx + dy$$
 
 ## Transformations
 
