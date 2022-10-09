@@ -1,6 +1,7 @@
 package vectors
 
 import (
+	"didact/geometry/golang/matrices"
 	"didact/geometry/golang/utils"
 	"fmt"
 	"math"
@@ -109,6 +110,13 @@ func (v Vec2) Round() Vec2 {
 		v[i] = math.Round(v[i])
 	}
 	return v
+}
+
+func (v Vec2) Transform(m matrices.Mat3) Vec2 {
+	return Vec2{
+		m[0]*v[0] + m[2]*v[1],
+		m[1]*v[0] + m[3]*v[1],
+	}
 }
 
 // Fulfills the Stringer interface for Vec2.
