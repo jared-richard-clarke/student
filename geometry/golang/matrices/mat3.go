@@ -3,7 +3,6 @@ package matrices
 
 import (
 	"didact/geometry/golang/utils"
-	"didact/geometry/golang/vectors"
 	"math"
 )
 
@@ -80,11 +79,4 @@ func (m Mat3) Rotate(angle float64) Mat3 {
 // Shears matrix by scalars "x" and "y". Transformation can be chained.
 func (m Mat3) Shear(x, y float64) Mat3 {
 	return Shear(x, y).Multiply(m)
-}
-
-func (m Mat3) TransformVector(v vectors.Vec2) vectors.Vec2 {
-	return vectors.Vec2{
-		m[0]*v[0] + m[2]*v[1],
-		m[1]*v[0] + m[3]*v[1],
-	}
 }
