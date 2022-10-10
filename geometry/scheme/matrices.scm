@@ -30,13 +30,13 @@
          ;; Combines matrix transformations through multiplication.
 
          (define (m3-multiply n m)
-           (let ([v vector-ref])
-             (mat3 [+ (* (v m 0) (v n 0)) (* (v m 1) (v n 2))]
-                   [+ (* (v m 0) (v n 1)) (* (v m 1) (v n 3))]
-                   [+ (* (v m 2) (v n 0)) (* (v m 3) (v n 2))]
-                   [+ (* (v m 2) (v n 1)) (* (v m 3) (v n 3))]
-                   [+ (* (v m 4) (v n 0)) (* (v m 5) (v n 2)) (v n 4)]
-                   [+ (* (v m 4) (v n 1)) (* (v m 5) (v n 3)) (v n 5)])))
+           (let ([r vector-ref])
+             (mat3 [+ (* (r m 0) (r n 0)) (* (r m 1) (r n 2))]
+                   [+ (* (r m 0) (r n 1)) (* (r m 1) (r n 3))]
+                   [+ (* (r m 2) (r n 0)) (* (r m 3) (r n 2))]
+                   [+ (* (r m 2) (r n 1)) (* (r m 3) (r n 3))]
+                   [+ (* (r m 4) (r n 0)) (* (r m 5) (r n 2)) (r n 4)]
+                   [+ (* (r m 4) (r n 1)) (* (r m 5) (r n 3)) (r n 5)])))
 
          ;; m3-ID
          ;; A 3 × 3 identity matrix constant.
