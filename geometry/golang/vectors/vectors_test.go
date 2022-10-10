@@ -1,6 +1,7 @@
 package vectors
 
 import (
+	"didact/geometry/golang/matrices"
 	"testing"
 )
 
@@ -116,6 +117,15 @@ func TestRound(t *testing.T) {
 	}
 }
 
+func TestTransformBy(t *testing.T) {
+	mat := matrices.Scale(10.0, 10.0)
+	expect := Vec2{30.0, 40.0}
+	result := Vec2{3.0, 4.0}.TransformBy(mat)
+	if expect != result {
+		t.Errorf("Test Vec2 TransformBy failed. Expected: %v, Got: %v", expect, result)
+	}
+}
+
 func TestStringer(t *testing.T) {
 	expect := "vec2(3.00, 4.00)"
 	result := Vec2{3.0, 4.0}.String()
@@ -123,4 +133,3 @@ func TestStringer(t *testing.T) {
 		t.Errorf("Test Stringer Vec2 failed. Expected: %v, Got: %v", expect, result)
 	}
 }
-
