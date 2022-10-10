@@ -60,8 +60,8 @@
          ;; Creates a rotation matrix. Argument, "angle", measured in radians.
 
          (define (m3-rotate angle)
-           (let* ([c (cos angle)]
-                  [s (sin angle)])
+           (let ([c (cos angle)]
+                 [s (sin angle)])
              (mat3 c s (- s) c 0  0)))
 
          ;; (m3-shear number number) -> mat3
