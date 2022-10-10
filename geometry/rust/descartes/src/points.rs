@@ -1,4 +1,7 @@
-use crate::vectors::{Vector2D, Vector3D};
+use crate::{
+    matrices::Mat3,
+    vectors::{Vector2D, Vector3D},
+};
 use std::ops::{Add, Sub};
 
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
@@ -50,6 +53,12 @@ impl Point2D {
         Self {
             x: self.x + (other.x - self.x) * t,
             y: self.y + (other.y - self.y) * t,
+        }
+    }
+    pub fn transform_by(self, m: Mat3) -> Self {
+        Self {
+            x: m.a * self.x + m.c * self.y + m.e,
+            y: m.b * self.x + m.d * self.y + m.f,
         }
     }
 }
@@ -115,6 +124,7 @@ impl Point3D {
 #[cfg(test)]
 mod pt2_tests {
     use crate::{
+        matrices::Mat3,
         points::{pt2, Point2D},
         vectors::vec2,
     };
@@ -154,6 +164,13 @@ mod pt2_tests {
     fn test_lerp() {
         let expect = pt2(5.0, 0.0);
         let result = pt2(0.0, 0.0).lerp(pt2(10.0, 0.0), 0.5);
+        assert_eq!(expect, result);
+    }
+    #[test]
+    fn test_transform_by() {
+        let mat = Mat3::identity().translate(3.0, 4.0);
+        let expect = pt2(3.0, 4.0);
+        let result = pt2(0.0, 0.0).transform_by(mat);
         assert_eq!(expect, result);
     }
 }
