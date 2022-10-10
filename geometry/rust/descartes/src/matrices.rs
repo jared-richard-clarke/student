@@ -1,5 +1,3 @@
-use crate::points::Point2D;
-use crate::vectors::Vector2D;
 use std::ops::Mul;
 
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
@@ -99,27 +97,11 @@ impl Mat3 {
     pub fn shear(self, x: f64, y: f64) -> Self {
         shear(x, y) * self
     }
-    pub fn transform_vector(self, v: Vector2D) -> Vector2D {
-        Vector2D {
-            x: self.a * v.x + self.c * v.y,
-            y: self.b * v.x + self.d * v.y,
-        }
-    }
-    pub fn transform_point(self, p: Point2D) -> Point2D {
-        Point2D {
-            x: self.a * p.x + self.c * p.y + self.e,
-            y: self.b * p.x + self.d * p.y + self.f,
-        }
-    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        matrices::{mat3, Mat3},
-        points::pt2,
-        vectors::vec2,
-    };
+    use crate::matrices::{mat3, Mat3};
 
     #[test]
     fn test_default() {
@@ -166,30 +148,12 @@ mod tests {
     }
 
     #[test]
-    fn test_transform() {
+    fn test_compose() {
         let expect = mat3(2.0, 4.0, 2.0, 2.0, 3.0, 4.0);
         let result = Mat3::identity()
             .translate(3.0, 4.0)
             .scale(2.0, 2.0)
             .shear(1.0, 2.0);
         assert_eq!(result, expect);
-    }
-
-    #[test]
-    fn test_transform_vector() {
-        let expect = vec2(6.0, 8.0);
-        let result = Mat3::identity()
-            .scale(2.0, 2.0)
-            .transform_vector(vec2(3.0, 4.0));
-        assert_eq!(expect, result);
-    }
-
-    #[test]
-    fn test_transform_point() {
-        let expect = pt2(4.0, 6.0);
-        let result = Mat3::identity()
-            .translate(3.0, 4.0)
-            .transform_point(pt2(1.0, 2.0));
-        assert_eq!(expect, result);
     }
 }
