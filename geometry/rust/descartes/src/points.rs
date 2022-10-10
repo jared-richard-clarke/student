@@ -159,7 +159,7 @@ mod pt2_tests {
 }
 
 #[cfg(test)]
-mod vec3_tests {
+mod pt3_tests {
     use crate::{
         points::{pt3, Point3D},
         vectors::vec3,
