@@ -19,7 +19,8 @@
                  vec-dist
                  vec-lerp
                  vec-normalize
-                 vec-round)
+                 vec-round
+                 vec2-transform)
          (import (rnrs base)
                  (rnrs lists)
                  (utils))
@@ -182,5 +183,20 @@
 
          (define (vec-round vec)
            (vector-map (lambda (x) (round x)) vec))
+
+         ;; (vec2-transform vec2 mat3) -> vec2
+         ;; Transforms a 2D vector using a 3 × 3 matrix.
+         ;; (vec2-transform (vec2 3 4) (m3-compose m3-ID (m3-scale 10 10))) -> (vec2 30 40)
+         
+         (define (vec2-transform vec mat)
+           (let* ([r vector-ref]
+                  [a (r mat 0)]
+                  [b (r mat 1)]
+                  [c (r mat 2)]
+                  [d (r mat 3)]
+                  [x (r vec 0)]
+                  [y (r vec 1)])
+             (vec2 (+ (* a x) (* c y))
+                   (+ (* b x) (* d y)))))
 
          )
