@@ -1,6 +1,8 @@
 use std::iter::Sum;
 use std::ops::{Add, Mul, Neg, Sub};
 
+use crate::matrices::Mat3;
+
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub struct Vector2D {
     pub x: f64,
@@ -122,6 +124,13 @@ impl Vector2D {
         Self {
             x: self.x.round(),
             y: self.y.round(),
+        }
+    }
+
+    pub fn transform_by(self, m: Mat3) -> Self {
+        Self {
+            x: m.a * self.x + m.c * self.y,
+            y: m.b * self.x + m.d * self.y,
         }
     }
 }
@@ -265,7 +274,10 @@ impl Vector3D {
 
 #[cfg(test)]
 mod vec2_tests {
-    use crate::vectors::{vec2, Vector2D};
+    use crate::{
+        matrices::Mat3,
+        vectors::{vec2, Vector2D},
+    };
     use std::vec;
     #[test]
     fn test_default() {
@@ -374,8 +386,15 @@ mod vec2_tests {
     }
     #[test]
     fn test_round() {
-        let result = vec2(0.25, 6.73).round();
         let expect = vec2(0.0, 7.0);
+        let result = vec2(0.25, 6.73).round();
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_transform_by() {
+        let mat = Mat3::identity().scale(10.0, 10.0);
+        let expect = vec2(30.0, 40.0);
+        let result = vec2(3.0, 4.0).transform_by(mat);
         assert_eq!(result, expect);
     }
 }
