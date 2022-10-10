@@ -1,5 +1,6 @@
 (import (rnrs base)
         (vectors)
+        (matrices)
         (utils))
 
 ;; === unit tests ===
@@ -144,3 +145,8 @@
 
 (assert-equal (vec-round (vec3 2.5 1.75 0.25))
               '#(2.0 2.0 0.0))
+
+;; Transform
+
+(assert-equal (vec2-transform (vec2 3 4) (m3-compose m3-ID (m3-scale 10 10)))
+              '#(30 40))
