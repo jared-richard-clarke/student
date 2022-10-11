@@ -7,6 +7,27 @@ less than or equal to 0 instead of raising an error.
 
 > n! is the product of all positive integers less than or equal to n.
 
+## C
+
+```c
+#include <stdio.h>
+
+int main(){
+    int i, f = 1, num;
+
+    printf("Input the number: ");
+    scanf("%d", &num);
+
+    for(i = 1; i <= num; i++) {
+        f *= i;
+    }
+
+    printf("The Factorial of %d is: %d\n", num, f);
+
+    return 0;
+}
+```
+
 ## OCaml
 
 ```ocaml
