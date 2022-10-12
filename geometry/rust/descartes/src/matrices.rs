@@ -1,89 +1,45 @@
 use std::ops::Mul;
 
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
-pub struct Mat3 {
-    pub a: f64,
-    pub b: f64,
-    pub c: f64,
-    pub d: f64,
-    pub e: f64,
-    pub f: f64,
-}
-
-pub fn mat3(a: f64, b: f64, c: f64, d: f64, e: f64, f: f64) -> Mat3 {
-    Mat3 { a, b, c, d, e, f }
-}
+pub struct Mat3(pub f64, pub f64, pub f64, pub f64, pub f64, pub f64);
 
 impl Mul for Mat3 {
     type Output = Self;
     fn mul(self, other: Self) -> Self {
-        Mat3 {
-            a: self.a * other.a + self.b * other.c,
-            b: self.a * other.b + self.b * other.d,
-            c: self.c * other.a + self.d * other.c,
-            d: self.c * other.b + self.d * other.d,
-            e: self.e * other.a + self.f * other.c + other.e,
-            f: self.e * other.b + self.f * other.d + other.f,
-        }
+        let Self(a1, b1, c1, d1, e1, f1) = self;
+        let Self(a2, b2, c2, d2, e2, f2) = other;
+        Self(
+            a1 * a2 + b1 * c2,
+            a1 * b2 + b1 * d2,
+            c1 * a2 + d1 * c2,
+            c1 * b2 + d1 * d2,
+            e1 * a2 + f1 * c2 + e2,
+            e1 * b2 + f1 * d2 + f2,
+        )
     }
 }
 
 fn translate(x: f64, y: f64) -> Mat3 {
-    Mat3 {
-        a: 1.0,
-        b: 0.0,
-        c: 0.0,
-        d: 1.0,
-        e: x,
-        f: y,
-    }
+    Mat3(1.0, 0.0, 0.0, 1.0, x, y)
 }
 
 fn scale(x: f64, y: f64) -> Mat3 {
-    Mat3 {
-        a: x,
-        b: 0.0,
-        c: 0.0,
-        d: y,
-        e: 0.0,
-        f: 0.0,
-    }
+    Mat3(x, 0.0, 0.0, y, 0.0, 0.0)
 }
 
 fn rotate(angle: f64) -> Mat3 {
     let c = angle.cos();
     let s = angle.sin();
-    Mat3 {
-        a: c,
-        b: s,
-        c: -s,
-        d: c,
-        e: 0.0,
-        f: 0.0,
-    }
+    Mat3(c, s, -s, c, 0.0, 0.0)
 }
 
 fn shear(x: f64, y: f64) -> Mat3 {
-    Mat3 {
-        a: 1.0,
-        b: y,
-        c: x,
-        d: 1.0,
-        e: 0.0,
-        f: 0.0,
-    }
+    Mat3(1.0, y, x, 1.0, 0.0, 0.0)
 }
 
 impl Mat3 {
     pub fn identity() -> Self {
-        Self {
-            a: 1.0,
-            b: 0.0,
-            c: 0.0,
-            d: 1.0,
-            e: 0.0,
-            f: 0.0,
-        }
+        Self(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
     }
     pub fn translate(self, x: f64, y: f64) -> Self {
         translate(x, y) * self
@@ -101,32 +57,32 @@ impl Mat3 {
 
 #[cfg(test)]
 mod tests {
-    use crate::matrices::{mat3, Mat3};
+    use crate::matrices::Mat3;
 
     #[test]
     fn test_default() {
-        let expect = mat3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        let expect = Mat3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         let result = Mat3::default();
         assert_eq!(result, expect);
     }
 
     #[test]
     fn test_identity() {
-        let expect = mat3(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+        let expect = Mat3(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
         let result = Mat3::identity();
         assert_eq!(result, expect);
     }
 
     #[test]
     fn test_translate() {
-        let expect = mat3(1.0, 0.0, 0.0, 1.0, 3.0, 4.0);
+        let expect = Mat3(1.0, 0.0, 0.0, 1.0, 3.0, 4.0);
         let result = Mat3::identity().translate(3.0, 4.0);
         assert_eq!(result, expect);
     }
 
     #[test]
     fn test_scale() {
-        let expect = mat3(3.0, 0.0, 0.0, 4.0, 0.0, 0.0);
+        let expect = Mat3(3.0, 0.0, 0.0, 4.0, 0.0, 0.0);
         let result = Mat3::identity().scale(3.0, 4.0);
         assert_eq!(result, expect);
     }
@@ -142,14 +98,14 @@ mod tests {
 
     #[test]
     fn test_shear() {
-        let expect = mat3(1.0, 4.0, 3.0, 1.0, 0.0, 0.0);
+        let expect = Mat3(1.0, 4.0, 3.0, 1.0, 0.0, 0.0);
         let result = Mat3::identity().shear(3.0, 4.0);
         assert_eq!(result, expect);
     }
 
     #[test]
     fn test_compose() {
-        let expect = mat3(2.0, 4.0, 2.0, 2.0, 3.0, 4.0);
+        let expect = Mat3(2.0, 4.0, 2.0, 2.0, 3.0, 4.0);
         let result = Mat3::identity()
             .translate(3.0, 4.0)
             .scale(2.0, 2.0)
