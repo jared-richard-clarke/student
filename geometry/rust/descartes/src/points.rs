@@ -48,7 +48,8 @@ impl Pt2 {
     }
     pub fn transform_by(self, m: Mat3) -> Self {
         let Self(x, y) = self;
-        Self(m.a * x + m.c * y + m.e, m.b * x + m.d * y + m.f)
+        let Mat3(a, b, c, d, e, f) = m;
+        Self(a * x + c * y + e, b * x + d * y + f)
     }
 }
 
