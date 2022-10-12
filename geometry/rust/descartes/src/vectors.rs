@@ -108,7 +108,8 @@ impl Vec2 {
 
     pub fn transform_by(self, m: Mat3) -> Self {
         let Self(x, y) = self;
-        Self(m.a * x + m.c * y, m.b * x + m.d * y)
+        let Mat3(a, b, c, d, _, _) = m;
+        Self(a * x + c * y, b * x + d * y)
     }
 }
 
