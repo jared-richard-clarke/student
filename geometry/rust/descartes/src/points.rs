@@ -1,221 +1,187 @@
 use crate::{
     matrices::Mat3,
-    vectors::{Vector2D, Vector3D},
+    vectors::{Vec2, Vec3},
 };
 use std::ops::{Add, Sub};
 
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
-pub struct Point2D {
-    pub x: f64,
-    pub y: f64,
-}
+pub struct Pt2(pub f64, pub f64);
 
-pub fn pt2(x: f64, y: f64) -> Point2D {
-    Point2D { x, y }
-}
-
-// lhs: Point2D + rhs: Vector2D -> Point2D
-impl Add<Vector2D> for Point2D {
+// lhs: Pt2 + rhs: Vec2 -> Pt2
+impl Add<Vec2> for Pt2 {
     type Output = Self;
-    fn add(self, rhs: Vector2D) -> Self {
-        Self {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-        }
+    fn add(self, rhs: Vec2) -> Self {
+        let Self(x1, y1) = self;
+        let Vec2(x2, y2) = rhs;
+        Self(x1 + x2, y1 + y2)
     }
 }
-// lhs: Vector2D + rhs: Point2D -> Point2D
-impl Add<Point2D> for Vector2D {
-    type Output = Point2D;
-    fn add(self, rhs: Point2D) -> Self::Output {
-        Self::Output {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-        }
+// lhs: Vec2 + rhs: Pt2 -> Pt2
+impl Add<Pt2> for Vec2 {
+    type Output = Pt2;
+    fn add(self, rhs: Pt2) -> Pt2 {
+        let Self(x1, y1) = self;
+        let Pt2(x2, y2) = rhs;
+        Pt2(x1 + x2, y1 + y2)
     }
 }
-// lhs: Point2D - rhs: Point2d -> Vector2D
-impl Sub for Point2D {
-    type Output = Vector2D;
-    fn sub(self, rhs: Self) -> Self::Output {
-        Self::Output {
-            x: self.x - rhs.x,
-            y: self.y - rhs.y,
-        }
+// lhs: Pt2 - rhs: Pt2 -> Vec2
+impl Sub for Pt2 {
+    type Output = Vec2;
+    fn sub(self, rhs: Self) -> Vec2 {
+        let Self(x1, y1) = self;
+        let Self(x2, y2) = rhs;
+        Vec2(x1 - x2, y1 - y2)
     }
 }
 
-impl Point2D {
+impl Pt2 {
     pub fn distance(self, other: Self) -> f64 {
-        (other.x - self.x).hypot(other.y - self.y)
+        let Self(x1, y1) = self;
+        let Self(x2, y2) = other;
+        (x2 - x1).hypot(y2 - y1)
     }
     pub fn lerp(self, other: Self, t: f64) -> Self {
-        Self {
-            x: self.x + (other.x - self.x) * t,
-            y: self.y + (other.y - self.y) * t,
-        }
+        let Self(x1, y1) = self;
+        let Self(x2, y2) = other;
+        Self(x1 + (x2 - x1) * t, y1 + (y2 - y1) * t)
     }
     pub fn transform_by(self, m: Mat3) -> Self {
-        Self {
-            x: m.a * self.x + m.c * self.y + m.e,
-            y: m.b * self.x + m.d * self.y + m.f,
-        }
+        let Self(x, y) = self;
+        Self(m.a * x + m.c * y + m.e, m.b * x + m.d * y + m.f)
     }
 }
 
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
-pub struct Point3D {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
-}
+pub struct Pt3(pub f64, pub f64, pub f64);
 
-pub fn pt3(x: f64, y: f64, z: f64) -> Point3D {
-    Point3D { x, y, z }
-}
-
-// lhs: Point3D + rhs: Vector3D -> Point3D
-impl Add<Vector3D> for Point3D {
+// lhs: Pt3 + rhs: Vec3 -> Pt3
+impl Add<Vec3> for Pt3 {
     type Output = Self;
-    fn add(self, rhs: Vector3D) -> Self {
-        Self {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-            z: self.z + rhs.z,
-        }
+    fn add(self, rhs: Vec3) -> Self {
+        let Self(x1, y1, z1) = self;
+        let Vec3(x2, y2, z2) = rhs;
+        Self(x1 + x2, y1 + y2, z1 + z2)
     }
 }
-// lhs: Vector3D + rhs: Point3D -> Point3D
-impl Add<Point3D> for Vector3D {
-    type Output = Point3D;
-    fn add(self, rhs: Point3D) -> Self::Output {
-        Self::Output {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-            z: self.z + rhs.z,
-        }
+// lhs: Vec3 + rhs: Pt3 -> Pt3
+impl Add<Pt3> for Vec3 {
+    type Output = Pt3;
+    fn add(self, rhs: Pt3) -> Pt3 {
+        let Self(x1, y1, z1) = self;
+        let Pt3(x2, y2, z2) = rhs;
+        Pt3(x1 + x2, y1 + y2, z1 + z2)
     }
 }
-// lhs: Point3D - rhs: Point3D -> Vector3D
-impl Sub for Point3D {
-    type Output = Vector3D;
-    fn sub(self, other: Self) -> Self::Output {
-        Self::Output {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-        }
+// lhs: Pt3 - rhs: Pt3 -> Vec3
+impl Sub for Pt3 {
+    type Output = Vec3;
+    fn sub(self, other: Self) -> Vec3 {
+        let Self(x1, y1, z1) = self;
+        let Self(x2, y2, z2) = other;
+        Vec3(x1 - x2, y1 - y2, z1 - z2)
     }
 }
 
-impl Point3D {
+impl Pt3 {
     pub fn distance(self, other: Self) -> f64 {
         (other - self).mag()
     }
     pub fn lerp(self, other: Self, t: f64) -> Self {
-        Self {
-            x: self.x + (other.x - self.x) * t,
-            y: self.y + (other.y - self.y) * t,
-            z: self.z + (other.z - self.z) * t,
-        }
+        let Self(x1, y1, z1) = self;
+        let Self(x2, y2, z2) = other;
+        Self(x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, z1 + (z2 - z1) * t)
     }
 }
 
 #[cfg(test)]
 mod pt2_tests {
-    use crate::{
-        matrices::Mat3,
-        points::{pt2, Point2D},
-        vectors::vec2,
-    };
+    use crate::{matrices::Mat3, points::Pt2, vectors::Vec2};
 
     #[test]
     fn test_default() {
-        let p = Point2D::default();
-        assert_eq!(p, pt2(0.0, 0.0));
+        let p = Pt2::default();
+        assert_eq!(p, Pt2(0.0, 0.0));
     }
     #[test]
     fn test_equal() {
-        let p1 = pt2(3.0, 4.0);
-        let p2 = pt2(3.0, 4.0);
+        let p1 = Pt2(3.0, 4.0);
+        let p2 = Pt2(3.0, 4.0);
         assert!(p1 == p2);
     }
     #[test]
     fn test_add() {
-        let expect = pt2(4.0, 6.0);
-        let result = pt2(3.0, 4.0) + vec2(1.0, 2.0);
+        let expect = Pt2(4.0, 6.0);
+        let result = Pt2(3.0, 4.0) + Vec2(1.0, 2.0);
         assert_eq!(expect, result);
-        let result = vec2(1.0, 2.0) + pt2(3.0, 4.0);
+        let result = Vec2(1.0, 2.0) + Pt2(3.0, 4.0);
         assert_eq!(expect, result);
     }
     #[test]
     fn test_sub() {
-        let expect = vec2(5.0, 1.0);
-        let result = pt2(10.0, 7.0) - pt2(5.0, 6.0);
+        let expect = Vec2(5.0, 1.0);
+        let result = Pt2(10.0, 7.0) - Pt2(5.0, 6.0);
         assert_eq!(expect, result);
     }
     #[test]
     fn test_distance() {
         let expect = 5.0;
-        let result = pt2(10.0, 0.0).distance(pt2(5.0, 0.0));
+        let result = Pt2(10.0, 0.0).distance(Pt2(5.0, 0.0));
         assert_eq!(expect, result);
     }
     #[test]
     fn test_lerp() {
-        let expect = pt2(5.0, 0.0);
-        let result = pt2(0.0, 0.0).lerp(pt2(10.0, 0.0), 0.5);
+        let expect = Pt2(5.0, 0.0);
+        let result = Pt2(0.0, 0.0).lerp(Pt2(10.0, 0.0), 0.5);
         assert_eq!(expect, result);
     }
     #[test]
     fn test_transform_by() {
         let mat = Mat3::identity().translate(3.0, 4.0);
-        let expect = pt2(3.0, 4.0);
-        let result = pt2(0.0, 0.0).transform_by(mat);
+        let expect = Pt2(3.0, 4.0);
+        let result = Pt2(0.0, 0.0).transform_by(mat);
         assert_eq!(expect, result);
     }
 }
 
 #[cfg(test)]
 mod pt3_tests {
-    use crate::{
-        points::{pt3, Point3D},
-        vectors::vec3,
-    };
+    use crate::{points::Pt3, vectors::Vec3};
     #[test]
     fn test_default() {
-        let p = Point3D::default();
-        assert_eq!(p, pt3(0.0, 0.0, 0.0));
+        let p = Pt3::default();
+        assert_eq!(p, Pt3(0.0, 0.0, 0.0));
     }
     #[test]
     fn test_equal() {
-        let p1 = pt3(3.0, 4.0, 5.0);
-        let p2 = pt3(3.0, 4.0, 5.0);
+        let p1 = Pt3(3.0, 4.0, 5.0);
+        let p2 = Pt3(3.0, 4.0, 5.0);
         assert!(p1 == p2);
     }
     #[test]
     fn test_add() {
-        let expect = pt3(10.0, 9.0, 8.0);
-        let result = pt3(5.0, 4.5, 4.0) + vec3(5.0, 4.5, 4.0);
+        let expect = Pt3(10.0, 9.0, 8.0);
+        let result = Pt3(5.0, 4.5, 4.0) + Vec3(5.0, 4.5, 4.0);
         assert_eq!(expect, result);
-        let result = vec3(5.0, 4.5, 4.0) + pt3(5.0, 4.5, 4.0);
+        let result = Vec3(5.0, 4.5, 4.0) + Pt3(5.0, 4.5, 4.0);
         assert_eq!(expect, result);
     }
     #[test]
     fn test_sub() {
-        let expect = vec3(5.0, 1.0, 0.0);
-        let result = pt3(10.0, 7.0, 5.0) - pt3(5.0, 6.0, 5.0);
+        let expect = Vec3(5.0, 1.0, 0.0);
+        let result = Pt3(10.0, 7.0, 5.0) - Pt3(5.0, 6.0, 5.0);
         assert_eq!(expect, result);
     }
     #[test]
     fn test_distance() {
         let expect = 5.0;
-        let result = pt3(10.0, 0.0, 0.0).distance(pt3(5.0, 0.0, 0.0));
+        let result = Pt3(10.0, 0.0, 0.0).distance(Pt3(5.0, 0.0, 0.0));
         assert_eq!(expect, result);
     }
     #[test]
     fn test_lerp() {
-        let expect = pt3(5.0, 0.0, 0.0);
-        let result = pt3(0.0, 0.0, 0.0).lerp(pt3(10.0, 0.0, 0.0), 0.5);
+        let expect = Pt3(5.0, 0.0, 0.0);
+        let result = Pt3(0.0, 0.0, 0.0).lerp(Pt3(10.0, 0.0, 0.0), 0.5);
         assert_eq!(expect, result);
     }
 }
