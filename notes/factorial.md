@@ -10,21 +10,26 @@ less than or equal to 0 instead of raising an error.
 ## C
 
 ```c
-#include <stdio.h>
-
-int main(){
-    int i, f = 1, num;
-
-    printf("Input the number: ");
-    scanf("%d", &num);
-
-    for(i = 1; i <= num; i++) {
-        f *= i;
+// loop
+int factorial(int x) {
+    if (x <= 0) {
+        return 1;
+    } else {
+        int i, p = 1;
+        for (i = 1; i <= x; i++) {
+            p *= i;
+        }
+        return p;
     }
+}
 
-    printf("The Factorial of %d is: %d\n", num, f);
-
-    return 0;
+// recursive
+int factorial(int x) {
+    if (x <= 0) {
+        return 1;
+    } else {
+        return x * factorial(x - 1);
+    }
 }
 ```
 
