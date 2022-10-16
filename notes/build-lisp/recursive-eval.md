@@ -1,4 +1,4 @@
-# Build Your Own LISP
+# Recursive Evaluation
 
 > "It is called an Abstract Syntax Tree, and it represents the structure of the
 > program based on the input entered by the user. At the leaves of this tree are
