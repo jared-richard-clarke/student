@@ -180,13 +180,12 @@ let make_parse = function () {
         return this;
     };
 
-    // "The original_scope is the prototype for all scope objects. It contains
-    // a define method that is used to define new variables in the scope.
-    // The define method transforms a name token into a variable token.
-    // It produces an error if the variable has already been defined in
-    // the scope or if the name has already been used as a reserved word."
+    // "The original_scope is the prototype for all scope objects.
 
     let original_scope = {
+        // The define method transforms a name token into a variable token.
+        // It produces an error if the variable has already been defined in
+        // the scope or if the name has already been used as a reserved word."
         define: function (n) {
             let t = this.def[n.value];
             if (typeof t === "object") {
