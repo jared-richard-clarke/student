@@ -140,4 +140,17 @@ str.any = function (fn, str) {
     return [...str].some(fn);
 };
 
+// from_codepoint(number) -> string
+// Pulled from https://github.com/acornjs/acorn/blob/master/acorn/src/util.js
+// Converts code point to UTF-16 encoded string.
+// from_codepoint(0x0041) -> "A"
+
+str.from_codepoint = function (code) {
+    // UTF-16 Decoding
+    if (code <= 0xffff) return String.fromCharCode(code);
+    code -= 0x10000;
+    return String.fromCharCode((code >> 10) + 0xd800, (code & 1023) + 0xdc00);
+};
+
+
 export default Object.freeze(str);
