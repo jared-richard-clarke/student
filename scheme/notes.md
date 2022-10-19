@@ -2,6 +2,9 @@
 
 ## Scope
 
+**Lexical scoping** means a function's scope does not inherit from its caller's scope,
+but from the scope in which the function was defined.
+
 Examples pulled from [Chapter 3.4.4 Lexical Scope](https://www.gnu.org/software/guile/manual/guile.html#About-Closure) 
 of the Guile Reference Manual
 
