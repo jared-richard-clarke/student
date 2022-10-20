@@ -147,9 +147,12 @@ str.any = function (fn, str) {
 
 str.from_codepoint = function (code) {
     // UTF-16 Decoding
-    if (code <= 0xffff) return String.fromCharCode(code);
-    code -= 0x10000;
-    return String.fromCharCode((code >> 10) + 0xd800, (code & 1023) + 0xdc00);
+    if (code <= 0xffff) { 
+        return String.fromCharCode(code) 
+    } else {
+        code -= 0x10000;
+        return String.fromCharCode((code >> 10) + 0xd800, (code & 1023) + 0xdc00);
+    }
 };
 
 
