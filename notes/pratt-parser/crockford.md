@@ -469,8 +469,8 @@ let make_parse = function () {
     // "We could use `infixr` to define our assignment operators, but we will make
     // a specialized assignment function because we want it to do two extra bits
     // of business: examine the left operand to make sure that it is a proper
-    // lvalue, and set an assignment member so that we can later quickly identify
-    // assignment statements."
+    // [left value], and set an assignment member so that we can later quickly
+    // identify assignment statements."
 
     let assignment = function (id) {
         return infixr(id, 10, function (left) {
