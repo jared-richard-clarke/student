@@ -1,6 +1,25 @@
-# Equivalent Constructors
+# Constructors
 
-## Default Constructor
+## Outer Constructor
+
+```julia
+struct Point
+    x::Real
+    y::Real
+end
+
+# default constructor
+
+Point() = Point(0, 0)
+
+# single-argument constructor
+
+Point(n) = Point(n, n)
+```
+
+## Equivalent Constructors
+
+### Default Constructor
 
 ```julia
 struct Point
@@ -9,7 +28,7 @@ struct Point
 end
 ```
 
-## Inner Constructor
+### Inner Constructor
 
 ```julia
 struct Point
