@@ -1,6 +1,6 @@
 # Constructors
 
-## Outer Constructor
+## Outer Constructors
 
 ```julia
 struct Point
