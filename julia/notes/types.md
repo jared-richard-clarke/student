@@ -64,6 +64,16 @@ v = Vector(3, 4)
 > where `T` can be any type and `Nothing` is the singleton type whose 
 > only instance is the object `nothing`. This pattern is the Julia 
 > equivalent of `Nullable`, `Option` or `Maybe` types in other languages.
+>
+> ...
+> 
+> `Some{T}`
+>
+> A wrapper type used in `Union{Some{T}, Nothing}` to distinguish between the
+> absence of a value (nothing) and the presence of a nothing value (i.e.
+> `Some(nothing)`).
+>
+> Use `something` to access the value wrapped by a `Some` object.
 > 
 > — **Julia Manual**
 
