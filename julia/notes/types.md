@@ -76,3 +76,12 @@ end
 
 Type `T` is restricted to being a subtype of `Integer`. A ratio of integers represents
 a value on the real number line, therefore `Rational` is an instance of `Real`.
+
+## `Union{T, Nothing}`
+
+> A particularly useful case of a Union type is `Union{T, Nothing}`, 
+> where `T` can be any type and `Nothing` is the singleton type whose 
+> only instance is the object `nothing`.
+>
+> This pattern is the Julia equivalent of `Nullable`, `Option` or 
+> `Maybe` types in other languages. 
