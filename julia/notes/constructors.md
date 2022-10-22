@@ -44,7 +44,7 @@ end
 > restricted to being a subtype of `Integer`, and a ratio of integers represents a value 
 > on the real number line, so any `Rational` is an instance of the `Real` abstraction."
 >
-> - **Julia Manuel**
+> — **Julia Manual**
 
 ```julia
 module Example
