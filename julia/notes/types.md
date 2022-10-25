@@ -53,6 +53,19 @@ abstract type «name» end
 abstract type «name» <: «supertype» end
 ```
 
+### Numerical Hierarchy
+
+Julia's numerical hierarchy as implemented by abstract types.
+
+```julia
+abstract type Number end
+abstract type Real          <: Number end
+abstract type AbstractFloat <: Real end
+abstract type Integer       <: Real end
+abstract type Signed        <: Integer end
+abstract type Unsigned      <: Integer end
+```
+
 ## Primitive Types
 
 A primitive type is a concrete type whose data consists of bits. The standard primitive
