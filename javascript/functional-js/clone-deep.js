@@ -1,5 +1,5 @@
 // clone_deep(object) -> object
-// Recursively copies an object or array.
+// Recursively copies a JavaScript object and its contents.
 // clone_deep({1, [2, 3]}) -> {1, [2, 3]}
 
 function clone_deep(value) {
