@@ -34,6 +34,7 @@ function monoid(operation, identity) {
 const op = Object.create(null);
 
 op.neg = prefix((x) => -x);
+
 op.add = binary((x, y) => x + y);
 op.sub = binary((x, y) => x - y);
 op.mul = binary((x, y) => x * y);
