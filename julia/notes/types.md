@@ -42,9 +42,13 @@ sum::Float64 = 1.0 + 2.0
 
 - Cannot be instantiated.
 - Serve only as nodes in the type graph, describing sets of related concrete types.
-- Form the conceptual hierarchy that makes Julia's type system more than a collection of object implementations.
+- Form the conceptual hierarchy that makes Julia's type system more than a collection 
+  of object implementations.
 - `Any` is the supertype for all object instances.
 - No object is an instance of `Union{}`. All types are its supertype.
+- Provides default implementations for concrete types.
+- Allows programmers to write generic functions that can later be used as the 
+  default method by many combinations of concrete types.
 
 ### Syntax
 
