@@ -136,7 +136,9 @@ or presence of a value.
 
 > "An important and powerful feature of Julia's type system is that it is parametric: 
 > types can take parameters, so that type declarations actually introduce a whole family 
-> of new types – one for each possible combination of parameter values." — **Julia Manual**
+> of new types – one for each possible combination of parameter values." 
+> 
+> — **Julia Manual**
 
 Below is the definition of Julia's immutable `Rational` number type, representing
 an exact ratio of integers. The constructor is omitted for brevity.
@@ -150,13 +152,3 @@ end
 
 Type `T` is restricted to being a subtype of `Integer`. A ratio of integers represents
 a value on the real number line, therefore `Rational` is an instance of `Real`.
-
-## Parametric Primitive Types
-
-```julia
-# 32-bit system:
-primitive type Ptr{T} 32 end
-
-# 64-bit system:
-primitive type Ptr{T} 64 end
-```
