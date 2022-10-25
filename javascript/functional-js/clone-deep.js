@@ -1,4 +1,6 @@
-// function pulled from the Tailwind framework.
+// clone_deep(object) -> object
+// Recursively copies an object or array.
+// clone_deep({1, [2, 3]}) -> {1, [2, 3]}
 
 function clone_deep(value) {
     if (Array.isArray(value)) {
