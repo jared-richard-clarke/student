@@ -120,25 +120,15 @@ end
 # application
 v = Vector(3, 4)
 ```
+## Type Unions
 
-## `Union{T, Nothing}`
+A type union is a special abstract type which includes as objects all instances
+of any of its argument types, constructed using the special `Union` keyword
 
-> A particularly useful case of a Union type is `Union{T, Nothing}`, 
-> where `T` can be any type and `Nothing` is the singleton type whose 
-> only instance is the object `nothing`. This pattern is the Julia 
-> equivalent of `Nullable`, `Option` or `Maybe` types in other languages.
->
-> ...
-> 
-> `Some{T}`
->
-> A wrapper type used in `Union{Some{T}, Nothing}` to distinguish between the
-> absence of a value (nothing) and the presence of a nothing value (i.e.
-> `Some(nothing)`).
->
-> Use `something` to access the value wrapped by a `Some` object.
-> 
-> — **Julia Manual**
+### `Union{Some{T}, Nothing}`
+
+`Union{Some{T}, Nothing}` is used to distinguish between the absence
+or presence of a value.
 
 ## Parametric Types
 
