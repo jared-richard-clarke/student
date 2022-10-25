@@ -1,13 +1,20 @@
 // Provides arithmetic functions.
 // module op = readonly {
-//     1. add(number, number) -> number
-//     2. sub(number, number) -> number
-//     3. mul(number, number) -> number
-//     4. div(number, number) -> number
-//     5. exp(number, number) -> number
-//     6. sum(...number)      -> number
-//     7. product(...number)  -> number
+//     1. neg(number) ---------> number
+//     2. add(number, number) -> number
+//     3. sub(number, number) -> number
+//     4. mul(number, number) -> number
+//     5. div(number, number) -> number
+//     6. exp(number, number) -> number
+//     7. sum(...number) ------> number
+//     8. product(...number) --> number
 // }
+
+function prefix(operation) {
+    return Object.freeze(function (x) {
+        return operation(x);
+    });
+}
 
 function binary(operation) {
     return Object.freeze(function (x, y) {
@@ -26,6 +33,7 @@ function monoid(operation, identity) {
 
 const op = Object.create(null);
 
+op.neg = prefix((x) => -x);
 op.add = binary((x, y) => x + y);
 op.sub = binary((x, y) => x - y);
 op.mul = binary((x, y) => x * y);
