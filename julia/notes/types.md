@@ -16,6 +16,28 @@ These annotations serve three purposes:
 > uses types. Some kinds of programming, however, become clearer, simpler, faster 
 > and more robust with declared types." — **Julia Manual**
 
+## Type Declaration: the `::` operator
+
+### Value Declaration
+
+The `::` operator is read as "is an instance of" when appended to an expression computing a value.
+
+```julia
+# asserts expression must evaluate to a 64-bit, floating-point number.
+sum = (1.0 + 2.0)::Float64
+```
+
+### Variable Declaration
+
+When appended to a variable on the left-hand side of an assignment, or as part of a local declaration, 
+the `::` operator declares the variable to always have the specified type, like a type declaration 
+in a statically-typed language such as C.
+
+```julia
+# asserts the variable "sum" must contain a 64-bit, floating-point number.
+sum::Float64 = 1.0 + 2.0
+```
+
 ## Abstract Types
 
 - Cannot be instantiated.
