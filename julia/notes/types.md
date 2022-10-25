@@ -84,7 +84,9 @@ primitive type «name» <: «supertype» «bits» end
 
 ### Primitive Definitions
 
-Julia's primitives are defined in the language itself.
+Julia's primitives are defined in the language itself. Although types `Bool`,
+`Int8`, and `Uint8` are the same, Julia's nominal type system dictates that
+they are different.
 
 ```julia
 primitive type Float16 <: AbstractFloat 16 end
