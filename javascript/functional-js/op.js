@@ -10,7 +10,7 @@
 //     8. product(...number) --> number
 // }
 
-function prefix(operation) {
+function unary(operation) {
     return Object.freeze(function (x) {
         return operation(x);
     });
@@ -33,7 +33,7 @@ function monoid(operation, identity) {
 
 const op = Object.create(null);
 
-op.neg = prefix((x) => -x);
+op.neg = unary((x) => -x);
 
 op.add = binary((x, y) => x + y);
 op.sub = binary((x, y) => x - y);
