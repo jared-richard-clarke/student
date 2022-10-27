@@ -5,8 +5,13 @@
 **Lexical scoping** means a function's scope does not inherit from its caller's scope,
 but from the scope in which the function was defined. 
 
+> "A variable usage refers to the preceding declaration with the same name in the 
+> innermost scope that encloses the expression where the variable is used."
+> 
+>  ...
+>  
 > "\[Closures\] should capture a frozen snapshot of the environment as 
-> it existed at the moment the function was declared.
+> it existed at the moment the function was declared."
 >
 > — [Crafting Interpreters](https://craftinginterpreters.com/resolving-and-binding.html)
 
