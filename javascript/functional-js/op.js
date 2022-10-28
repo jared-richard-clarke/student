@@ -6,8 +6,9 @@
 //     4. mul(number, number) -> number
 //     5. div(number, number) -> number
 //     6. exp(number, number) -> number
-//     7. sum(...number) ------> number
-//     8. product(...number) --> number
+//     7. rem(number, number) -> number
+//     8. sum(...number) ------> number
+//     9. product(...number) --> number
 // }
 
 function unary(operation) {
@@ -40,6 +41,7 @@ op.sub = binary((x, y) => x - y);
 op.mul = binary((x, y) => x * y);
 op.div = binary((x, y) => x / y);
 op.exp = binary((x, y) => x ** y);
+op.rem = binary((x, y) => x % y);
 
 op.sum = monoid((x, y) => x + y, 0);
 op.product = monoid((x, y) => x * y, 1);
