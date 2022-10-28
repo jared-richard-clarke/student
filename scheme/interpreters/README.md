@@ -9,6 +9,7 @@ understand the problem domain.
 - `compute.ml`: an OCaml arithmetic interpreter and symbolic processor as defined by **The OCaml Manual**
 - `compute.scm`: an arithmetic interpreter and symbolic processor as defined by me.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
+- `peter-norvig.py`: a Scheme interpreter written in Python as defined by Peter Norvig.
 
 ## Grammar
 **LISP** is defined in terms of the evaluation of data structures, **not** in terms of the syntax of character streams or files.
