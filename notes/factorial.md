@@ -16,7 +16,7 @@ int factorial(int x) {
         return 1;
     } else {
         int i, p = 1;
-        for (i = 1; i <= x; i++) {
+        for (i = 1; i <= x; i += 1) {
             p *= i;
         }
         return p;
