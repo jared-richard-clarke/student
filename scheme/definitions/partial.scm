@@ -3,8 +3,9 @@
 ;; Applies function to combined arguments.
 ;; (define add1 (partial + 1)) -> (add1 10) -> 11
 
-(define (partial f x)
-  (lambda args (apply f x args)))
+(define (partial fn . x)
+  (lambda y
+    (apply fn (append x y))))
 
 ;; Functions F2, F3, and F4 return partial functions implemented via currying.
 
