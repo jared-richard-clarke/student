@@ -48,7 +48,7 @@ str.reverse = function (str) {
 // split("hello") -> ["h", "e", "l", "l", "o"]
 
 str.split = function (str, sep = "") {
-    return sep === "" ? [...str] : str.split(sep);
+    return str.split(sep);
 };
 
 // join([string], string) -> string
