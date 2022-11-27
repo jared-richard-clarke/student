@@ -140,3 +140,18 @@ end
     dup 1 >  if   dup 1-  recurse  *  then
  ;
 ```
+
+## Factor
+
+```factor
+! tail recursive
+: tail-factorial ( accumulator n -- n! )
+    dup 0 =
+    [ drop ]
+    [ [ * ] [ 1 - ] bi tail-factorial ]
+    if ;
+
+! recursive
+: factorial ( n -- n! )
+    1 swap (factorial) ;
+```
