@@ -151,7 +151,8 @@ end
     [ [ * ] [ 1 - ] bi tail-factorial ]
     if ;
 
-! recursive
+! using libraries
+USE: math.ranges
 : factorial ( n -- n! )
-    1 swap (factorial) ;
+    1 [a, b] product ;
 ```
