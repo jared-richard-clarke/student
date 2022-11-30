@@ -123,24 +123,6 @@ function factorial(n::Integer)
 end
 ```
 
-## Forth
-
-- Forth programmers use a special stack notation to describe their programs.
-- The basic form is `( before -- after )`
-- The dashes separate what is on the stack before and after a `word` executes.
-
-```forth
- : factorial  ( n -- n! )  recursive
-    dup 1 >  if   dup 1-  factorial  *  then
- ;
- 
- ( or )
- 
- : factorial  ( n -- n! )
-    dup 1 >  if   dup 1-  recurse  *  then
- ;
-```
-
 ## Factor
 
 ```factor
