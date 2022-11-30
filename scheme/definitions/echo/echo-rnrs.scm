@@ -1,6 +1,6 @@
 #! /usr/bin/scheme --program
 
-;; Script file treated as an RNRS top-level program.
+;; Program as an RNRS top-level program.
 
 (import (rnrs))
 (let ([args (cdr (command-line))])
