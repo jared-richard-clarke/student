@@ -1,6 +1,6 @@
 #! /usr/bin/scheme --script
 
-;; Program treated as a shell script.
+;; Program as a shell script.
 
 (let ([args (cdr (command-line))])
   (unless (null? args)
