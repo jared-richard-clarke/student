@@ -17,6 +17,17 @@ understand the problem domain.
 Most **LISP** programs begin life as text files. The reader parses text and produces the data structures for the interpreter or compiler. 
 **LISP** data is, in many ways, like **JSON** or **XML**.
 
+## Syntax
+
+According to the R6RS specification, Scheme syntax is divided into three levels:
+
+1. *Lexical syntax* describes how a program text is split into a sequence of lexemes.
+2. *Datum syntax*, formulated in terms of the lexical syntax, structures the lexeme 
+   sequence as a sequence of syntactic data, where a syntactic datum is a 
+   recursively structured entity.
+3. *Program syntax*, formulated in terms of the read syntax, imposes further 
+   structure and assigns meaning to syntactic data.
+
 ## REPL
 
 Being one of the first high-level programming languages, **LISP** pioneered the **REPL**, the **Read-Evaluate-Print Loop**.
