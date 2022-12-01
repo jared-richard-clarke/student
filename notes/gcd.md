@@ -29,6 +29,13 @@ func gcd(x, y int) int {
 ```ocaml
 let rec gcd x y =
   if b = 0 then x else gcd y (x mod y);;
+  
+(* or *)
+
+let rec gcd x y =
+  match y with
+    0 -> x
+  | _ -> gcd y (x mod y)
 ```
 
 ## Scheme
