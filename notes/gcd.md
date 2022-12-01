@@ -4,6 +4,15 @@ Euclid's algorithm for finding the greatest common divisor of two numbers
 is a common example used in code tutorials. It is therefore an excellent
 method for comparing the syntax of different programming languages.
 
+## Factor
+
+```factor
+: gcd ( a b -- c )
+    [ abs ] [
+        [ nip ] [ mod ] 2bi gcd
+    ] if-zero ;
+```
+
 ## Go
 
 ```go
