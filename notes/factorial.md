@@ -53,7 +53,9 @@ let factorial n = (range 1 n) |> product
 
 (* alternative without all the pomp and syntax *)
 let rec factorial n =
-  if n <= 1 then 1 else n * factorial (n - 1)
+  match n with
+    1 -> 1
+  | _ -> n * factorial (n - 1)
 ```
 
 ## Scheme
