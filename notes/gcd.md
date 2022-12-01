@@ -15,6 +15,16 @@ func gcd(x, y int) int {
 }
 ```
 
+## Haskell
+
+```haskell
+gcd :: (Integral a) => a -> a -> a
+gcd x y = gcd' (abs x) (abs y)
+  where
+    gcd' a 0 = a
+    gcd' a b = gcd' b (a `rem` b)
+```
+
 ## OCaml
 
 ```ocaml
