@@ -1,0 +1,32 @@
+# Greatest Common Divisor
+
+Euclid's algorithm for finding the greatest common divisor of two numbers
+is a common example used in code tutorials. It is therefore an excellent
+method for comparing the syntax of different programming languages.
+
+## Go
+
+```go
+func gcd(x, y int) int {
+    for y != 0 {
+        x, y = y, x%y
+    }
+    return x
+}
+```
+
+## OCaml
+
+```ocaml
+let rec gcd x y =
+  if b = 0 then x else gcd y (x mod y);;
+```
+
+## Scheme
+
+```scheme
+(define (GCD x y)
+  (if (= y 0)
+      x
+      (GCD y (remainder x y))))
+```
