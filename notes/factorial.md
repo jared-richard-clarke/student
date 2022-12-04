@@ -97,22 +97,38 @@ let factorial x =
   (let ([x (+ x 1)])
     (cdr (iota x))))
       
-(define (factorial x)
-  (product (range x)))
+(define (compose . functions)
+  (lambda (arg)
+    (fold-left (lambda (value function)
+                 (function value))
+	       arg
+	       functions)))
+
+(define factorial (compose range product))
 ```
 
 ## Go
 
 ```go
-func factorial(n int) int {
-	if n < 0 {
+// loop
+func factorial(x int) int {
+	if x <= 0 {
 		return 1
 	}
-	product := 1
-	for i := 1; i <= n; i += 1 {
-		product *= i
+	p := 1
+	for i := 1; i <= x; i += 1 {
+		p *= i
 	}
-	return product
+	return p
+}
+
+// recursive
+func factorial(x int) int {
+	if x <= 0 {
+		return 1
+	} else {
+		return x * factorial(x-1)
+	}
 }
 ```
 
