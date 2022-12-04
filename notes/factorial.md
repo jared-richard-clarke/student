@@ -1,7 +1,7 @@
 # Factorial
 
 The factorial function is a common example used in many programming tutorials. 
-It is therefore an excellent tool for comparing the syntax and semantics of different programming languages.
+It is therefore an excellent tool for comparing the syntax of different programming languages.
 
 - A majority of these implementations (my programs) return the multiplicative identity for any number 
   less than or equal to 0 instead of raising an error.
