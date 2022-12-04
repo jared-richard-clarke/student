@@ -3,7 +3,7 @@
 ;; (hypotenuse 3 4) -> 5
 
 (define (hypotenuse . numbers)
-  (sqrt (foldl (lambda (number accum)
-                 (+ accum (sqr number)))
-               0
-               numbers)))
+  (sqrt (fold-left (lambda (accum number)
+                     (+ accum (sqr number)))
+                   0
+                   numbers)))
