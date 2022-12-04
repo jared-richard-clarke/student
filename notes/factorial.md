@@ -40,22 +40,26 @@ int factorial(int x) {
 let (|>) x f = f x
 
 (* partial function application through currying *)    
-let product = List.fold_left (fun x y -> x * y) 1
+let product = List.fold_left (fun x y -> x * y) 1             
+let range x = List.init x (fun x -> x + 1)
 
-(* tail-recursive loop *)              
-let range start stop =
-  let rec loop count total =
-    if count < start then total else loop (count - 1) (count :: total)
-  in loop stop []
+(* function composition *)    
+let factorial x = range x |> product
 
-(* putting it all together *)    
-let factorial n = (range 1 n) |> product
-
-(* alternative without all the pomp and syntax *)
-let rec factorial n =
-  match n with
-    1 -> 1
-  | _ -> n * factorial (n - 1)
+(* recursive *)
+let rec factorial x =
+  match x with
+  | 1 -> 1
+  | _ -> x * factorial (x - 1)
+  
+(* tail recursive *)
+let factorial x =
+  let rec loop x product =
+    if x <= 1
+    then product
+    else loop (x - 1) (product * x)
+  in
+  loop x 1
 ```
 
 ## Scheme
