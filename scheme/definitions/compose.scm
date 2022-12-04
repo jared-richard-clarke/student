@@ -5,10 +5,10 @@
 ;; (pipe 1 add1 div2) -> 1
 
 (define (pipe arg . functions)
-  (foldl (lambda (function value)
-           (function value))
-         arg
-         functions))
+  (fold-left (lambda (value function)
+               (function value))
+             arg
+             functions))
 
 ;; (compose function ...) -> (function any) -> any
 ;; Composes a series of functions into a single function expression.
@@ -18,10 +18,10 @@
 
 (define (compose . functions)
   (lambda (arg)
-    (foldl (lambda (function value)
-             (function value))
-           arg
-           functions)))
+    (fold-left (lambda (function value)
+                 (function value))
+               arg
+               functions)))
 
 ;; (>> functions ...) -> (function any) -> any
 ;; Alias for compose. Named after the composition operator in #F.
