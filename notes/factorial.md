@@ -139,7 +139,7 @@ end
     [ [ * ] [ 1 - ] bi tail-factorial ]
     if ;
 
-! using libraries
+! word composition
 USE: math.ranges
 : factorial ( n -- n! )
     1 [a, b] product ;
