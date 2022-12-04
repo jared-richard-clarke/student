@@ -14,12 +14,12 @@
 
 ;; (foldl function any list) -> any
 ;; Evaluates left to right. Tail recursive.
-;; (foldl list 'init '(a b c)) -> '(c (b (a init)))
-;; (foldl cons '() '(1 2 3)) -> '(3 2 1)
+;; (foldl list 'init '(a b c)) -> '(((init a) b) c)
+;; (foldl cons '() '(1 2 3)) -> '(((() . 1) . 2) . 3)
 
 (define (foldl fn accum lst)
   (if (null? lst)
       accum
       (foldl fn
-             (fn (car lst) accum)
+             (fn accum (car lst))
              (cdr lst))))
