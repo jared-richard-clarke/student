@@ -18,7 +18,7 @@
 
 (define (compose . functions)
   (lambda (arg)
-    (fold-left (lambda (function value)
+    (fold-left (lambda (value function)
                  (function value))
                arg
                functions)))
