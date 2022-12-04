@@ -2,8 +2,11 @@
 
 The factorial function is a common example used in many programming tutorials. 
 It is therefore an excellent tool for comparing the syntax and semantics of different programming languages.
-A majority of these implementations (my programs) return the multiplicative identity for any number 
-less than or equal to 0 instead of raising an error.
+
+- A majority of these implementations (my programs) return the multiplicative identity for any number 
+  less than or equal to 0 instead of raising an error.
+- Many of these definitions are inefficient — consuming too much time and space.
+  They are defined here solely to demonstrate the syntax of a particular language.
 
 > n! is the product of all positive integers less than or equal to n.
 
@@ -85,6 +88,17 @@ let factorial x =
   (do ([number n (- number 1)]
        [product 1 (* product number)])
     ((< number 1) product)))
+    
+;; function composition
+(define (product lst)
+  (fold-left * 1 lst))
+    
+(define (range x)
+  (let ([x (+ x 1)])
+    (cdr (iota x))))
+      
+(define (factorial x)
+  (product (range x)))
 ```
 
 ## Go
