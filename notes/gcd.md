@@ -1,8 +1,8 @@
 # Greatest Common Divisor
 
 Euclid's algorithm for finding the greatest common divisor of two numbers
-is a common example used in code tutorials. It is therefore an excellent
-strategy for comparing the syntax of different programming languages.
+is a common example used in code tutorials. It is therefore an excellent 
+tool for comparing the syntax of different programming languages.
 
 ## Factor
 
