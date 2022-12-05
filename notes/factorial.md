@@ -36,6 +36,18 @@ int factorial(int x) {
 }
 ```
 
+## Haskell
+
+```haskell
+-- recursive
+factorial :: int -> int 
+factorial 0 = 1  
+factorial n = n * factorial (n - 1)
+
+-- composition
+factorial x = product [1..x]
+```
+
 ## OCaml
 
 ```ocaml
