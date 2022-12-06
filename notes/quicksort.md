@@ -14,3 +14,22 @@ quicksort (x:xs) =     
         right = quicksort (filter (>x) xs)   
     in  left ++ [x] ++ right 
 ```
+
+## Scheme
+
+```scheme
+(define (le x)
+  (lambda (y) (<= y x)))
+
+(define (gt x)
+  (lambda (y) (> y x)))
+
+(define (quick-sort lst)
+  (if (null? lst)
+      '()
+      (let ([x (car lst)]
+            [xs (cdr lst)])
+        (let ([left (quick-sort (filter (le x) xs))]
+              [right (quick-sort (filter (gt x) xs))])
+          (append left (list x) right)))))
+```
