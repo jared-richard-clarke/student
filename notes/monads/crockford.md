@@ -3,7 +3,7 @@
 [Monads and Gonads](https://www.youtube.com/watch?v=b0EF0VTs9Dc)
 by Douglas Crockford
 
-```javascript
+```text
 // All three functions return a monad.
 
 function unit(value)
