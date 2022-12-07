@@ -15,6 +15,19 @@ quicksort (x:xs) =     
     in  left ++ [x] ++ right 
 ```
 
+## OCaml
+
+```ocaml
+let rec quicksort list =
+  match list with
+    [] -> []
+  | x::xs -> 
+      let left = quicksort (List.filter ((>) x) xs)
+      and right = quicksort (List.filter ((<=) x) xs)
+      in 
+      left @ [x] @ right
+```
+
 ## Scheme
 
 ```scheme
