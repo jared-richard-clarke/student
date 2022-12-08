@@ -22,8 +22,14 @@ let rec quicksort list =
   match list with
     [] -> []
   | x::xs -> 
-      let left = quicksort (List.filter ((>) x) xs)
-      and right = quicksort (List.filter ((<=) x) xs)
+      let left = 
+        xs 
+        |> List.filter ((>) x) 
+        |> quicksort
+      and right = 
+        xs 
+        |> List.filter ((<=) x) 
+        |> quicksort
       in 
       left @ [x] @ right
 ```
