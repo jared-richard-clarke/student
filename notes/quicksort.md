@@ -46,9 +46,9 @@ let rec quicksort list =
 (define (quick-sort lst)
   (if (null? lst)
       '()
-      (let ([x (car lst)]
+      (let ([x  (car lst)]
             [xs (cdr lst)])
-        (let ([left (quick-sort (filter (le x) xs))]
+        (let ([left  (quick-sort (filter (le x) xs))]
               [right (quick-sort (filter (gt x) xs))])
           (append left (list x) right)))))
 ```
