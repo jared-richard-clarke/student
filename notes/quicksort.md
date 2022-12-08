@@ -20,7 +20,7 @@ quicksort (x:xs) =     
 ```ocaml
 let rec quicksort list =
   match list with
-    [] -> []
+  | [] -> []
   | x::xs -> 
       let left = 
         xs 
