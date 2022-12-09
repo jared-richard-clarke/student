@@ -4,11 +4,8 @@
 ;; (length '()) -> 0
 
 (define (length lst)
-  (define improper-list
-    (lambda ()
-      (error 'length "argument not a proper list")))
   (if (not (list? lst))
-      (improper-list)
+      (error 'length "argument not a proper list")
       (let loop ([lst lst]
                  [count 0])
         (if (null? lst)
