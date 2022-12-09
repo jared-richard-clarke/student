@@ -1,25 +1,18 @@
-; function: (assoc obj list)
-; purpose: Either finds first element of an associative list whose car equals obj or returns false.
-; assv and assq are defined similarly, with eqv? and eq? in place of equal?
-; (assoc 'b '((a . 1) (b . 2))) -> (b . 2)
+(define (find compare)
+  (lambda (x xs)
+    (let loop ([x x] [xs xs])
+      (cond
+        [(null? xs) #f]
+        [(compare (caar xs) x) (car xs)]
+        [else (loop x (cdr xs))]))))
 
-(define assoc
-  (lambda (x ls)
-    (cond
-      [(null? ls) #f]
-      [(equal? (caar ls) x) (car ls)]
-      [else (assoc x (cdr ls))])))
+;; (assoc any list) -> pair or boolean
+;; Either finds first element of an associative list whose car equals obj or returns false.
+;; assv and assq are defined similarly, with eqv? and eq? in place of equal?
+;; (assoc 'b '((a . 1) (b . 2))) -> (b . 2)
 
-(define assq
-  (lambda (x ls)
-    (cond
-      [(null? ls) #f]
-      [(eq? (caar ls) x) (car ls)]
-      [else (assq x (cdr ls))])))
+(define assoc (find equal?))
 
-(define assv
-  (lambda (x ls)
-    (cond
-      [(null? ls) #f]
-      [(eqv? (caar ls) x) (car ls)]
-      [else (assv x (cdr ls))])))
+(define assq (find eq?))
+
+(define assv (find eqv?))
