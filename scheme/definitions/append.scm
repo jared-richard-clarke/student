@@ -1,7 +1,7 @@
 ;; (append list ... obj)
-;; Concatenates lists. ("cons up" a list while "cdring" down another)
+;; Combines lists.
 ;; (append '(1 2 3) '())  -> '(1 2 3)
-;; (append '(1 2) '(3 4)) -> '(1 2 3 4)
+;; (append '(1 2) '(3 4) '(5 6 7)) -> '(1 2 3 4 5 6 7)
 
 (define append
   (lambda args
