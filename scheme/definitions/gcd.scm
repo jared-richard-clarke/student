@@ -1,15 +1,29 @@
-;; (GCD integer integer) -> integer
-;; The greatest common divisor of x and y is the largest integer that divides both x and y with no remainder.
-;; (GCD 10 5) -> 5
+;; (gcd integer integer) -> integer
+;; Returns the greatest common divisor of two integers.
+;; (gcd 10 5) -> 5
 
-(define (GCD x y)
+(define (gcd x y)
   (if (= y 0)
       x
-      (GCD y (remainder x y))))
+      (gcd y (remainder x y))))
 
-;; (LCM integer integer) -> integer
+;; (gcds integer ...)
+;; Returns the greatest common divisor of a variable number of integers.
+;; (gcds 10 8 4) -> 2
+
+(define (gcds . xs)
+  (fold-left gcd 0 xs))
+
+;; (lcm integer integer) -> integer
 ;; Returns the least common multiple — the smallest integer that is divisible by "x" and "y".
-;; (LCM 10 5) -> 10
+;; (lcm 10 5) -> 10
 
-(define (LCM x y)
-    (/ (* x y) (GCD x y)))
+(define (lcm x y)
+    (/ (* x y) (gcd x y)))
+
+;; (lcms integer ...)
+;; Returns the least common multiple of a variable number of integers
+;; (lcms 10 5 3) -> 30
+
+(define (lcms . xs)
+  (fold-left lcm 1 xs))
