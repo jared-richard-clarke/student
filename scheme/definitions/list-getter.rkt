@@ -1,7 +1,7 @@
 #lang racket
 
-; Copied from the Racket Library's list.rkt module.
-; (define-lgetter second 2) -> (define (second l0) ...)
+;; Copied from the Racket Library's list.rkt module.
+;; (define-lgetter second 2) -> (define (second l0) ...)
 (define-syntax define-lgetter
   (syntax-rules ()
     [(_ name npos)
@@ -29,8 +29,8 @@
 (define-lgetter ninth   9)
 (define-lgetter tenth   10)
 
-; I rewrote list-getter definitions using functional composition.
-; (create-getter '2nd 2) -> (lambda (lst) ...)
+;; I rewrote list-getter definitions using functional composition.
+;; (create-getter '2nd 2) -> (lambda (lst) ...)
 (define (create-getter name npos)
   (lambda (lst)
     (if (list? lst)
@@ -46,12 +46,12 @@
                                      "list" lst)))
         (raise-argument-error name "list?" lst))))
 
-(define 2nd (create-getter '2nd 2))
-(define 3rd (create-getter '3rd 3))
-(define 4th (create-getter '4th 4))
-(define 5th (create-getter '5th 5))
-(define 6th (create-getter '6th 6))
-(define 7th (create-getter '7th 7))
-(define 8th (create-getter '8th 8))
-(define 9th (create-getter '9th 9))
+(define 2nd  (create-getter '2nd 2))
+(define 3rd  (create-getter '3rd 3))
+(define 4th  (create-getter '4th 4))
+(define 5th  (create-getter '5th 5))
+(define 6th  (create-getter '6th 6))
+(define 7th  (create-getter '7th 7))
+(define 8th  (create-getter '8th 8))
+(define 9th  (create-getter '9th 9))
 (define 10th (create-getter '10th 10))
