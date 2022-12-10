@@ -11,3 +11,10 @@
 
 (define (tail lst)
   (apply (lambda (x . y) y) lst))
+
+;; (head-tail list) -> any list
+;; Returns both the head and tail of a list.
+;; (head-tail '(1 2 3)) -> 1 '(2 3)
+
+(define (head-tail lst)
+  (values (head lst) (tail lst)))
