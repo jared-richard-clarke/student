@@ -5,7 +5,8 @@
 ;; — The Scheme Programming Language, chapter 5.7, by R. Kent Dybvig
 
 ;; Side Note: These are example implementations. 'promise' and 'delay'
-;; are most likely implemented differently.
+;; are implemented very differently. 'force', for example, must raise 
+;; an exception with condition type '&assertion' if its argument is not a promise
 
 (define-syntax delay
   (syntax-rules ()
