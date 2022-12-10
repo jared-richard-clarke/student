@@ -1,3 +1,7 @@
+;; Side Note: Both 'head' and 'tail' can be more efficiently
+;; implemented with 'car' and 'cdr'. I include these examples
+;; only to demonstrate an interesting use case for 'apply'.
+
 ;; (head list) -> any
 ;; Returns the first element in a list.
 ;; (head '(1 2 3)) -> 1
