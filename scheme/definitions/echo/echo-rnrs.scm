@@ -3,6 +3,7 @@
 ;; Program as an RNRS top-level program.
 
 (import (rnrs))
+
 (let ([args (cdr (command-line))])
   (unless (null? args)
     (let-values ([(newline? args)
