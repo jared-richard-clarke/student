@@ -1,5 +1,5 @@
 ;; (memoize function) -> function
-;; Wraps a function in a function that caches previously-computed values.
+;; Wraps a function in a function that caches values so that they need not be recomputed.
 ;; (define fib-cache (memoize fibonacci))
 
 (define (memoize fn)
