@@ -15,7 +15,7 @@ import (
 	"regexp"
 )
 
-const delimiter = '.'
+const delimiter = '\n'
 
 // command flags and errors
 var (
