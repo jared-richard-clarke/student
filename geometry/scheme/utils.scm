@@ -44,7 +44,7 @@
          ;; (approx-eq? 0.2 0.19999999) -> #t
 
          (define (approx-eq? x y)
-           (let ([EPSILON 0.000001]) ;; <- arbitrary maximum allowable difference
+           (let ([EPSILON 0.0000001]) ;; <- arbitrary maximum allowable difference: 1e-7
              (<= (abs (- x y))
                  (* EPSILON 
                     (max 1.0 
