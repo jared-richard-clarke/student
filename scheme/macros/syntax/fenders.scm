@@ -4,10 +4,10 @@
 (define-syntax let
   (lambda (x)
     (define ids?
-      (lambda (ls)
-        (or (null? ls)
-            (and (identifier? (car ls))
-                 (ids? (cdr ls))))))
+      (lambda (lst)
+        (or (null? lst)
+            (and (identifier? (car lst))
+                 (ids? (cdr lst))))))
     (syntax-case x ()
       [(_ ((i e) ...) b1 b2 ...)
        (ids? #'(i ...))
