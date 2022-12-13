@@ -30,8 +30,7 @@ p >>= (na -> (f a >>= g)) = (p >>= (na -> f a)) >>= g
 ## Monad
 
 ```haskell
--- That is, a parser is a function that takes a string of characters as its argument, 
--- and returns a list of results.
+-- A Parser wraps a function that takes a string as its argument, and returns a list of results.
 newtype Parser a = Parser (String -> [(a, String)])
 
 -- parse is a deconstructor function. It pulls the parser function out of the Parser data type.
