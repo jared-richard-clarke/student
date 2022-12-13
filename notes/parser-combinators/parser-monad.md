@@ -30,7 +30,12 @@ p >>= (na -> (f a >>= g)) = (p >>= (na -> f a)) >>= g
 ## Monad
 
 ```haskell
+-- That is, a parser is a function that takes a string of characters as its argument, 
+-- and returns a list of results.
 newtype Parser a = Parser (String -> [(a, String)])
+
+-- parse is a deconstructor function. It pulls the parser function out of the Parser data type.
+parse (Parser p) = p
 
 -- built-in class definition
 class Monad m where
@@ -40,6 +45,13 @@ class Monad m where
 -- Make parser instance of Monad
 instance Monad Parser where
     return a = Parser (\cs -> [(a, cs)])
-    p >>= f  = Parser (\cs -> concat [parse (f a) cs' | 
-                                  (a, cs') <- parse p cs])
+    p >>= f  = Parser (\cs -> concat [parse (f a) cs' | (a, cs') <- parse p cs]) 
 ```
+
+> [T]he parser `p >>= f` first applies the parser `p` to the argument string `cs` 
+> to give a list of results of the form `(a, cs')`, where `a` is a value and `cs'` 
+> is a string. For each such pair, `(f a)` is a parser which is applied to the 
+> string `cs'`. The result is a list of lists, which is then concatenated to 
+> give the final list of results.
+>
+> **Parser Pearls** by Graham Hutton and Erik Meijer
