@@ -15,8 +15,8 @@ class Monad m where
 ```haskell
  -- A parser implementation of a monad.
 instance Monad Parser where
-    return a = Parser (\cs -> [(a,cs)])
-    p >>=  f = Parser (\cs -> concat [parse (f a) cs' | (a,cs') <- parse p cs])
+    return a = Parser (\cs -> [(a, cs)])
+    p >>=  f = Parser (\cs -> concat [parse (f a) cs' | (a, cs') <- parse p cs])
     
 -- parse is a deconstructor function. It pulls the parser function out of the Parser data type.
 parse (Parser p) = p
