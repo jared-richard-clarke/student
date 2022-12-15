@@ -1,5 +1,5 @@
-;; A "let" macro wherein a fender verifies that
-;; certain subforms of an input form are identifiers
+;; A "let" macro wherein a fender verifies
+;; that certain subforms are identifiers
 
 (define-syntax let
   (lambda (x)
