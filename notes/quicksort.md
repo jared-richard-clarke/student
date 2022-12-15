@@ -10,7 +10,7 @@ into two sub-arrays, according to whether they are less than or greater than the
 quicksort :: (Ord a) => [a] -> [a]    
 quicksort [] = []    
 quicksort (x:xs) =     
-    let left = quicksort (filter (<=x) xs)  
+    let left  = quicksort (filter (<=x) xs)  
         right = quicksort (filter (>x) xs)   
     in  left ++ [x] ++ right 
 ```
