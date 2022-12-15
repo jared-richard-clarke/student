@@ -41,8 +41,8 @@ let rec gcd x y =
 ## Scheme
 
 ```scheme
-(define (GCD x y)
+(define (gcd x y)
   (if (= y 0)
       x
-      (GCD y (remainder x y))))
+      (gcd y (remainder x y))))
 ```
