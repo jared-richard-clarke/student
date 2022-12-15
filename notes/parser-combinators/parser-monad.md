@@ -8,11 +8,11 @@ bind   :: Parser a -> (a -> Parser b) -> Parser b
 
  -- otherwise
 
-result :: a -> M a
-bind   :: M a -> (a -> M b) -> M b
+result :: a -> m a
+bind   :: m a -> (a -> m b) -> m b
 ```
 
-A monad is type constructor `M`
+A monad is type constructor `m`
 
 ### Sidenote
 
