@@ -6,7 +6,7 @@
 result :: a -> Parser a
 bind   :: Parser a -> (a -> Parser b) -> Parser b
 
- -- otherwise
+ -- implementation of ...
 
 result :: a -> m a
 bind   :: m a -> (a -> m b) -> m b
