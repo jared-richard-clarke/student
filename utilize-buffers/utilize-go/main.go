@@ -1,6 +1,6 @@
 // utilize replaces variations of "utilize" with variations of "use",
 // writing the content of one plain text file into the body of another.
-// Call program with commands -input "old.txt" -output "new.txt". Files must be plain text.
+// Call program with commands -input "old.txt" -output "new.txt".
 
 package main
 
