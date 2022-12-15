@@ -6,7 +6,7 @@
 (defn failure [& args]
   '())
 
-(defn bind [v f]
+(defn bind [v f] ;; <- Better if it were named "parse" or "run". -- JC
   (f v))
 
 (defn return [v]
