@@ -1,12 +1,12 @@
 ;; The 'or' macro as defined by 'syntax-case' and 'syntax'
 
 (define-syntax or
-  (lambda (x)
-    (syntax-case x ()
+  (lambda (stx)
+    (syntax-case stx ()
       [(_) (syntax #f)]
-      [(_ e) (syntax e)]
-      [(_ e1 e2 e3 ...)
-       (syntax (let ([t e1]) 
+      [(_ x) (syntax x)]
+      [(_ x y z ...)
+       (syntax (let ([t x]) 
                  (if t 
                      t 
-                     (or e2 e3 ...))))])))
+                     (or y z ...))))])))
