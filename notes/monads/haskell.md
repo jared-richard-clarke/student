@@ -9,7 +9,7 @@ class Monad m where
     (>>=)  :: m a -> (a -> m b) -> m b
 ```
 
-## Maybe Implementation
+## Implementation: `maybe`
 
 ```haskell
 return :: a -> Maybe a
