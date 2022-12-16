@@ -14,13 +14,11 @@ class Monad m where
 ```haskell
 data Maybe a = Just a | Nothing
 
-return :: a -> Maybe a
-return x  = Just x
-
-(>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b
-(>>=) m g = case m of
-               Nothing -> Nothing
-               Just x  -> g x
+instance Monad Maybe where
+    return x  = Just x
+    m >>= g = case m of
+                   Nothing -> Nothing
+                   Just x  -> g x
 ```
 
 ## Implementation: `Parser`
