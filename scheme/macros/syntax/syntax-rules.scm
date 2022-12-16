@@ -1,9 +1,9 @@
 ;; syntax-rules defined in terms of syntax-case.
 
 (define-syntax syntax-rules
-  (lambda (x)
-    (syntax-case x ()
+  (lambda (stx)
+    (syntax-case stx ()
       [(_ (i ...) ((keyword . pattern) template) ...)
-       (syntax (lambda (x)
-                 (syntax-case x (i ...)
+       (syntax (lambda (stx)
+                 (syntax-case stx (i ...)
                    [(_ . pattern) (syntax template)] ...)))])))
