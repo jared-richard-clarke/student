@@ -1,10 +1,7 @@
-#!r6rs
 (import (rnrs) (rnrs mutable-pairs))
 
 ;; meta-circular Scheme interpreter as defined by R. Kent Dybvig
 ;; in the fourth edition of The Scheme Programming Language — chapter 12.7
-;; Sidenote: Although this particular interpreter is written in Scheme,
-;; its environment is embedded in the Racket runtime.
 
 ;; primitive-environment contains a small number of primitive procedures.
 ;; It can be extended easily with additional primitives.
