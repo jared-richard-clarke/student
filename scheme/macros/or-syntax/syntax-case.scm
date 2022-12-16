@@ -3,7 +3,7 @@
 (define-syntax or
   (lambda (stx)
     (syntax-case stx ()
-      [(_) (syntax #f)]
+      [(_)   (syntax #f)]
       [(_ x) (syntax x)]
       [(_ x y z ...)
        (syntax (let ([t x]) 
