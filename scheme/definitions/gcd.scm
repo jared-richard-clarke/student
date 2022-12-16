@@ -19,7 +19,7 @@
 ;; (lcm 10 5) -> 10
 
 (define (lcm x y)
-    (/ (* x y) (gcd x y)))
+  (/ (* x y) (gcd x y)))
 
 ;; (lcms integer ...)
 ;; Returns the least common multiple of a variable number of integers
