@@ -77,8 +77,7 @@ impl Vec2 {
     }
 
     pub fn scale(self, scalar: f64) -> Self {
-        let Self(x, y) = self;
-        Self(x * scalar, y * scalar)
+        self * scalar
     }
     // Dot product.
     pub fn dot(self, other: Self) -> f64 {
@@ -92,7 +91,7 @@ impl Vec2 {
     }
     // Interpolates two vectors.
     pub fn lerp(self, other: Self, t: f64) -> Self {
-        self + (other - self).scale(t)
+        self + (other - self) * t
     }
 
     pub fn normalize(self) -> Self {
@@ -181,12 +180,11 @@ impl Vec3 {
     // Returns the magnitude of a vector.
     pub fn mag(self) -> f64 {
         let Self(x, y, z) = self;
-        (x.powi(2) + y.powi(2) + z.powi(2)).sqrt()
+        (x * x + y * y + z * z).sqrt()
     }
 
     pub fn scale(self, scalar: f64) -> Self {
-        let Self(x, y, z) = self;
-        Self(x * scalar, y * scalar, z * scalar)
+        self * scalar
     }
     // Dot product.
     pub fn dot(self, other: Self) -> f64 {
@@ -200,7 +198,7 @@ impl Vec3 {
     }
     // Interpolates two vectors.
     pub fn lerp(self, other: Self, t: f64) -> Self {
-        self + (other - self).scale(t)
+        self + (other - self) * t
     }
 
     pub fn normalize(self) -> Self {
@@ -451,3 +449,4 @@ mod vec3_tests {
         assert_eq!(result, expect);
     }
 }
+
