@@ -5,12 +5,12 @@ the sequencing of parsers with the processing of their results.
 
 ```haskell
 seq :: Parser a -> Parser b -> Parser (a,b)
-p ‘seq‘ q = \inp -> [((v,w),inp’’) | (v,inp’) <- p inp, 
-                                     (w,inp’’) <- q inp’]
+p ‘seq‘ q = \inp -> [((v, w), inp’’) | (v, inp’) <- p inp, 
+                                       (w, inp’’) <- q inp’]
 -- Becomes ...
 
 bind :: Parser a -> (a -> Parser b) -> Parser b
-p ‘bind‘ f = \inp -> concat [f v inp’ | (v,inp’) <- p inp]
+p ‘bind‘ f = \inp -> concat [f v inp’ | (v, inp’) <- p inp]
 ```
 
 ## Parser Monad
