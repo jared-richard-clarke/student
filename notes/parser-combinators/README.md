@@ -1,10 +1,10 @@
 # Parser Combinators
 
-> In functional programming, a popular approach to building recursive descent 
-> parsers is to model parsers as functions, and to define higher-order functions 
-> (or combinators) that implement grammar constructions such as sequencing, 
-> choice, and repetition. Such parsers form an instance of a monad, an algebraic
-> structure from mathematics that has proved useful for addressing a number of 
-> computational problems.
+> "In computer programming, a parser combinator is a higher-order function that accepts 
+>  several parsers as input and returns a new parser as its output. In this context, a parser 
+>  is a function accepting strings as input and returning some structure as output, typically 
+>  a parse tree or a set of indices representing locations in the string where parsing stopped 
+>  successfully. Parser combinators enable a recursive descent parsing strategy that facilitates 
+>  modular piecewise construction and testing. This parsing technique is called combinatory parsing." 
 >
-> **Monadic Parser Combinators** by Graham Hutton and Erik Meijer
+> — [Parser Combinator](https://en.wikipedia.org/wiki/Parser_combinator) - Wikipedia
