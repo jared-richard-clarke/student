@@ -1,5 +1,5 @@
-EPSILON = 0.000001
-"""The arbitrary maximum allowable difference in precision between floating-point numbers."""
+EPSILON = 1e-7
+"""An arbitrary maximum allowable difference in precision between floating-point numbers."""
 
 
 def equals(x, y):
