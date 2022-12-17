@@ -2,11 +2,12 @@ package vectors
 
 import (
 	"didact/geometry/golang/matrices"
+	"didact/geometry/golang/utils"
 	"testing"
 )
 
 func TestApproxEq(t *testing.T) {
-	ep := 0.000001
+	ep := utils.Epsilon
 
 	v1 := Vec2{3.0 + ep, 4.0 + ep}
 	v2 := Vec2{3.0, 4.0}
