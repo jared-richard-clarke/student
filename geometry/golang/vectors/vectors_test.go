@@ -7,18 +7,18 @@ import (
 )
 
 func TestApproxEq(t *testing.T) {
-	ep := utils.Epsilon
+	tolerance := utils.Tolerance
 
-	v1 := Vec2{3.0 + ep, 4.0 + ep}
+	v1 := Vec2{3.0 + tolerance, 4.0 + tolerance}
 	v2 := Vec2{3.0, 4.0}
 	if v1.ApproxEq(v2) == false {
-		t.Errorf("Test ApproxEq Vec2 failed: false negative. Check epsilon (ep) in test.")
+		t.Errorf("Test ApproxEq Vec2 failed: false negative. Check tolerance in test.")
 	}
 	// Push values past threshold for approximate equality
 	// by pushing epsilon into one figure higher in significance.
-	v1 = Vec2{3.0 + ep*10, 4.0 + ep}
+	v1 = Vec2{3.0 + tolerance*10, 4.0 + tolerance}
 	if v1.ApproxEq(v2) == true {
-		t.Errorf("Test ApproxEq Vec2 failed: false positive. Check epsilon (ep) in test.")
+		t.Errorf("Test ApproxEq Vec2 failed: false positive. Check tolerance in test.")
 	}
 }
 
