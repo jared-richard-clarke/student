@@ -8,12 +8,11 @@ class TestMatrices(unittest.TestCase):
         self.assertTrue(Vec2(3, 4) == Vec2(3, 4))
 
     def test_approx_eq(self):
-        ep = TOLERANCE
         # Vec2
-        result = Vec2(3, 4).approx_eq(Vec2(3 + ep, 4 + ep))
+        result = Vec2(3, 4).approx_eq(Vec2(3 + TOLERANCE, 4 + TOLERANCE))
         self.assertTrue(result)
         # Vec3
-        result = Vec3(3, 4, 5).approx_eq(Vec3(3 + ep, 4, 5 + ep))
+        result = Vec3(3, 4, 5).approx_eq(Vec3(3 + TOLERANCE, 4, 5 + TOLERANCE))
         self.assertTrue(result)
 
     def test_abs(self):
