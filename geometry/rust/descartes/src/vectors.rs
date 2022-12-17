@@ -24,7 +24,7 @@ impl Sub for Vec2 {
     }
 }
 
-// lhs: Vec2 * rhs: f64 -> Vec2
+// Vec2 * f64 -> Vec2
 impl Mul<f64> for Vec2 {
     type Output = Self;
     fn mul(self, rhs: f64) -> Self {
@@ -33,7 +33,7 @@ impl Mul<f64> for Vec2 {
     }
 }
 
-// lhs: f64 * rhs: Vec2 -> Vec2
+// f64 * Vec2 -> Vec2
 impl Mul<Vec2> for f64 {
     type Output = Vec2;
     fn mul(self, rhs: Vec2) -> Vec2 {
@@ -132,7 +132,7 @@ impl Sub for Vec3 {
         Self(x1 - x2, y1 - y2, z1 - z2)
     }
 }
-// lhs: Vec3 * rhs: f64 -> Vec3
+// Vec3 * f64 -> Vec3
 impl Mul<f64> for Vec3 {
     type Output = Self;
     fn mul(self, rhs: f64) -> Self {
@@ -140,7 +140,7 @@ impl Mul<f64> for Vec3 {
         Self(x * rhs, y * rhs, z * rhs)
     }
 }
-// lhs: f64 * rhs: Vec3 -> Vec3
+// f64 * Vec3 -> Vec3
 impl Mul<Vec3> for f64 {
     type Output = Vec3;
     fn mul(self, rhs: Vec3) -> Vec3 {
@@ -449,4 +449,3 @@ mod vec3_tests {
         assert_eq!(result, expect);
     }
 }
-
