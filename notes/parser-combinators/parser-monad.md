@@ -1,5 +1,18 @@
 # Haskell: Monadic Parsers
 
+A monadic sequencing combinator (commonly known as `bind`) integrates 
+the sequencing of parsers with the processing of their results.
+
+```haskell
+seq :: Parser a -> Parser b -> Parser (a,b)
+p ‘seq‘ q = \inp -> [((v,w),inp’’) | (v,inp’) <- p inp, 
+                                     (w,inp’’) <- q inp’]
+-- Becomes ...
+
+bind :: Parser a -> (a -> Parser b) -> Parser b
+p ‘bind‘ f = \inp -> concat [f v inp’ | (v,inp’) <- p inp]
+```
+
 ## Parser Monad
 
 ```haskell
