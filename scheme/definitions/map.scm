@@ -1,6 +1,7 @@
-;; map function as defined in The Scheme Programming Language.
-;; Unlike the map-simple definition below, this implementation can iterate over multiple lists.
-;; Both definitions omit error handling for simplificity.
+;; (map function list ...) -> list
+;; Applies function to the corresponding elements of one or more lists
+;; and returns a list of resulting values.
+;; (map + '(1 2 3) '(1 2 3)) -> '(2 4 6)
 
 (define (map fun x . xs)
   (if (null? xs)
