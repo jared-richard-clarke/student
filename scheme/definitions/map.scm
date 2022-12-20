@@ -14,14 +14,3 @@
             '()
             (cons (apply fun (car x) (map car xs))
                   (map-xs (cdr x) (map cdr xs)))))))
-
-;; (map-simple function list) -> list
-;; Constructs a new sequence populated with the results of calling 
-;; the provided function on each element of the provided sequence.
-;; (map-simple add-1 '(1 2 3)) -> '(2 3 4)
-
-(define (map-simple fun x)
-  (if (null? x)
-      '()
-      (cons (fun (car x))
-            (map-simple fun (cdr x)))))
