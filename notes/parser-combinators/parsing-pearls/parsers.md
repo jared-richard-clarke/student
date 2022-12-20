@@ -1,7 +1,7 @@
 # Parser Combinators
 
 The following code is a series of parser combinators as implemented in
-**Functional Pearls: Monadic Parsing in Haskell** by Graham Hutton and Erik Meijer
+**Functional Pearls** by Graham Hutton and Erik Meijer
 
 ```haskell
 -- Parser wraps a function that inputs a string
