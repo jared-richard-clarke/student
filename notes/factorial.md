@@ -138,7 +138,7 @@ let factorial x = range x |> product
 (* recursive *)
 let rec factorial x =
   match x with
-  | 1 -> 1
+  | x when x <= 1 -> 1
   | _ -> x * factorial (x - 1)
   
 (* tail recursive *)
