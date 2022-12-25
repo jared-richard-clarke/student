@@ -102,12 +102,21 @@ let factorial x =
     ((< number 1) product)))
     
 ;; function composition
+(define (product lst)
+  (fold-left * 1 lst))
+    
 (define (range x)
   (let ([x (+ x 1)])
     (cdr (iota x))))
       
-(define (factorial x)
-  (apply * (range x)))
+(define (compose . functions)
+  (lambda (arg)
+    (fold-left (lambda (value function)
+                 (function value))
+	       arg
+	       functions)))
+
+(define factorial (compose range product))
 ```
 
 ## Go
