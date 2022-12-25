@@ -4,18 +4,18 @@ The factorial function is a common example used in many programming tutorials.
 It is therefore an excellent tool for comparing the syntax of different programming languages.
 
 - A majority of these implementations (my programs) return the multiplicative identity for any number 
-  less than or equal to 0 instead of raising an error.
+  less than or equal to 1 instead of raising an error.
 - Many of these definitions are inefficient — consuming too much time and space.
   They are defined here solely to demonstrate the syntax of a particular language.
 
-> n! is the product of all positive integers less than or equal to n.
+> x! is the product of all positive integers less than or equal to x.
 
 ## C
 
 ```c
 // iterative
 int factorial(int x) {
-    if (x <= 0) {
+    if (x <= 1) {
         return 1;
     } else {
         int i, p = 1;
@@ -28,7 +28,7 @@ int factorial(int x) {
 
 // recursive
 int factorial(int x) {
-    if (x <= 0) {
+    if (x <= 1) {
         return 1;
     } else {
         return x * factorial(x - 1);
@@ -69,7 +69,7 @@ func factorial(x int) int {
 
 // recursive
 func factorial(x int) int {
-	if x <= 0 {
+	if x <= 1 {
 		return 1
 	} else {
 		return x * factorial(x-1)
@@ -156,7 +156,7 @@ let factorial x =
 ```python
 # iterative
 def factorial(x):
-    if x < 0:
+    if x <= 1:
         return 1
     product = 1
     for i in range(1, x + 1):
@@ -165,7 +165,7 @@ def factorial(x):
     
 # recursive
 def factorial(n):
-    return x * factorial(x - 1) if x > 0 else 1
+    return x * factorial(x - 1) if x > 1 else 1
 ```
 
 ## Rust
@@ -189,15 +189,15 @@ fn factorial(x: i64) -> i64 {
 ```scheme
 ;; recursive
 (define (factorial x)
-  (if (= n 0)
+  (if (<= x 1)
       1
-      (* n (factorial (- x 1)))))
+      (* x (factorial (- x 1)))))
 
 ;; tail-recursive
 (define (factorial x)
   (let loop ([product 1]
              [number x])
-    (if (< number 1)
+    (if (<= number 1)
         product
         (loop (* product number) 
               (- number 1)))))
