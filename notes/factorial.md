@@ -13,7 +13,7 @@ It is therefore an excellent tool for comparing the syntax of different programm
 ## C
 
 ```c
-// loop
+// iterative
 int factorial(int x) {
     if (x <= 0) {
         return 1;
@@ -36,16 +36,90 @@ int factorial(int x) {
 }
 ```
 
+## Factor
+
+```factor
+! tail recursive
+: tail-factorial ( accumulator n -- n! )
+    dup 0 =
+    [ drop ]
+    [ [ * ] [ 1 - ] bi tail-factorial ]
+    if ;
+
+! word composition
+USE: math.ranges
+: factorial ( n -- n! )
+    1 [a, b] product ;
+```
+
+## Go
+
+```go
+// iterative
+func factorial(x int) int {
+	if x <= 0 {
+		return 1
+	}
+	p := 1
+	for i := 1; i <= x; i += 1 {
+		p *= i
+	}
+	return p
+}
+
+// recursive
+func factorial(x int) int {
+	if x <= 0 {
+		return 1
+	} else {
+		return x * factorial(x-1)
+	}
+}
+```
+
 ## Haskell
 
 ```haskell
 -- recursive
 factorial :: int -> int 
 factorial 0 = 1  
-factorial n = n * factorial (n - 1)
+factorial x = x * factorial (x - 1)
 
 -- composition
 factorial x = product [1..x]
+```
+
+## Julia 
+
+- As implemented in Julia's Base library.
+
+```julia
+function factorial(n::Integer)
+    n < 0 && throw(DomainError(n, "`n` must be nonnegative."))
+    f::typeof(n*n) = 1
+    for i::typeof(n*n) = 2:n
+        f *= i
+    end
+    return f
+end
+```
+
+## Lua
+
+```lua
+-- recursive
+function factorial(x)
+  return n > 0 and x * fact(x - 1) or 1
+end
+
+-- tail recursive
+function factorial(x)
+  product = 1
+  if n == 0 then
+    return product
+  end
+  return fact(x - 1, x * product)
+end
 ```
 
 ## OCaml
@@ -77,19 +151,52 @@ let factorial x =
   loop x 1
 ```
 
+## Python
+
+```python
+# iterative
+def factorial(x):
+    if x < 0:
+        return 1
+    product = 1
+    for i in range(1, x + 1):
+        product *= i
+    return product
+    
+# recursive
+def factorial(n):
+    return x * factorial(x - 1) if x > 0 else 1
+```
+
+## Rust
+
+```rust
+// recursive
+fn factorial(x: i64) -> i64 {
+    match x {
+        x if x <= 1 => 1,
+        _ => x * factorial(x - 1),
+    }
+}
+// iterative
+fn factorial(x: i64) -> i64 {
+    (1..=x).product()
+}
+```
+
 ## Scheme
 
 ```scheme
 ;; recursive
-(define (factorial n)
+(define (factorial x)
   (if (= n 0)
       1
-      (* n (factorial (- n 1)))))
+      (* n (factorial (- x 1)))))
 
 ;; tail-recursive
-(define (factorial n)
+(define (factorial x)
   (let loop ([product 1]
-             [number n])
+             [number x])
     (if (< number 1)
         product
         (loop (* product number) 
@@ -102,8 +209,8 @@ let factorial x =
     ((< number 1) product)))
     
 ;; function composition
-(define (product lst)
-  (fold-left * 1 lst))
+(define (product xs)
+  (fold-left * 1 xs))
     
 (define (range x)
   (let ([x (+ x 1)])
@@ -117,72 +224,4 @@ let factorial x =
 	       functions)))
 
 (define factorial (compose range product))
-```
-
-## Go
-
-```go
-// loop
-func factorial(x int) int {
-	if x <= 0 {
-		return 1
-	}
-	p := 1
-	for i := 1; i <= x; i += 1 {
-		p *= i
-	}
-	return p
-}
-
-// recursive
-func factorial(x int) int {
-	if x <= 0 {
-		return 1
-	} else {
-		return x * factorial(x-1)
-	}
-}
-```
-
-## Python
-
-```python
-def factorial(n):
-    if n < 0:
-        return 1
-    product = 1
-    for i in range(1, n + 1):
-        product *= i
-    return product
-```
-
-## Julia 
-
-- As implemented in Julia's Base library.
-
-```julia
-function factorial(n::Integer)
-    n < 0 && throw(DomainError(n, "`n` must be nonnegative."))
-    f::typeof(n*n) = 1
-    for i::typeof(n*n) = 2:n
-        f *= i
-    end
-    return f
-end
-```
-
-## Factor
-
-```factor
-! tail recursive
-: tail-factorial ( accumulator n -- n! )
-    dup 0 =
-    [ drop ]
-    [ [ * ] [ 1 - ] bi tail-factorial ]
-    if ;
-
-! word composition
-USE: math.ranges
-: factorial ( n -- n! )
-    1 [a, b] product ;
 ```
