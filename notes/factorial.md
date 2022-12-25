@@ -225,3 +225,24 @@ fn factorial(x: i64) -> i64 {
 
 (define factorial (compose range product))
 ```
+
+## Web Assembly: `.wat` notation
+
+```wasm
+(module
+  (func $factorial (param f64) (result f64)
+    local.get 0
+    f64.const 1
+    f64.lt
+    if (result f64)
+      f64.const 1
+    else
+      local.get 0
+      local.get 0
+      f64.const 1
+      f64.sub
+      call $factorial
+      f64.mul
+    end)
+  (export "factorial" (func $factorial)))
+```
