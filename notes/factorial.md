@@ -104,24 +104,6 @@ function factorial(n::Integer)
 end
 ```
 
-## Lua
-
-```lua
--- recursive
-function factorial(x)
-  return n > 0 and x * fact(x - 1) or 1
-end
-
--- tail recursive
-function factorial(x)
-  product = 1
-  if n == 0 then
-    return product
-  end
-  return fact(x - 1, x * product)
-end
-```
-
 ## OCaml
 
 ```ocaml
@@ -206,7 +188,7 @@ fn factorial(x: i64) -> i64 {
 (define (factorial n)
   (do ([number n (- number 1)]
        [product 1 (* product number)])
-    ((< number 1) product)))
+    ((<= number 1) product)))
     
 ;; function composition
 (define (product xs)
