@@ -185,10 +185,10 @@ fn factorial(x: i64) -> i64 {
               (- number 1)))))
               
 ;; do loop
-(define (factorial n)
-  (do ([number n (- number 1)]
+(define (factorial x)
+  (do ([number x  (- number 1)]
        [product 1 (* product number)])
-    ((<= number 1) product)))
+    [(<= number 1) product]))
     
 ;; function composition
 (define (product xs)
