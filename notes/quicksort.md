@@ -37,11 +37,13 @@ let rec quicksort list =
 ## Scheme
 
 ```scheme
-(define (le x)
-  (lambda (y) (<= y x)))
+(define le
+  (lambda (x)
+    (lambda (y) (<= y x))))
 
-(define (gt x)
-  (lambda (y) (> y x)))
+(define gt
+  (lambda (x)
+    (lambda (y) (> y x))))
 
 (define (quick-sort lst)
   (if (null? lst)
