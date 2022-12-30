@@ -10,7 +10,8 @@
 
 (define-syntax delay
   (syntax-rules ()
-    [(_ expr) (promise (lambda () expr))]))
+    [(_ expr) 
+     (promise (lambda () expr))]))
 
 (define (promise fn)
   (let ([value #f] [set? #f])
