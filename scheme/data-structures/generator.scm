@@ -1,24 +1,24 @@
+;; (generate-numbers number number? number?) -> function -> number | 'end
+;; Returns a function that yields a number incremented until it reaches
+;; the end of its specified range. Every subsequent call returns the symbol 'end.
+;;
+;; (define yield (generate-numbers 2))     -> (list (yield) (yield) (yield)) -> '(1 2 end)
+;; (define yield (generate-numbers 1 2))   -> (list (yield) (yield) (yield)) -> '(1 2 end)
+;; (define yield (generate-numbers 1 6 5)) -> (list (yield) (yield) (yield)) -> '(1 6 end)
+
 (define generate-numbers
-  (case-lambda
-    [(stop)
-     (generate-numbers 1 stop 1)]
-    [(start stop)
-     (generate-numbers start stop 1)]
-    [(start stop step)
-     (unless (<= step 0)
-       (lambda (message)
-         (if (eq? message 'next)
-             (unless (> start stop)
-               (let ([result start])
-                 (set! start (+ start step))
-                 result))
-             (error "call 'next to generate subsequent number"))))]))
-
-;; Yield numbers from 1 through 5000 piecemeal.
-;; (define yield (generate-numbers 1 5000))
-
-;; (list (yield 'next) (yield 'next) (yield 'next)) -> '(1 2 3)
-
-;; (list (yield 'next) (yield 'next)) -> '(4 5)
-
-;; ...5000 then nothing.
+  (let ([STOP 'end])
+    (case-lambda
+      [(stop)
+       (generate-numbers 1 stop 1)]
+      [(start stop)
+       (generate-numbers start stop 1)]
+      [(start stop step)
+       (if (<= step 0)
+           STOP
+           (lambda ()
+             (if (> start stop)
+                 STOP
+                 (let ([result start])
+                   (set! start (+ start step))
+                   result))))])))
