@@ -3,23 +3,18 @@
 ;; (λ (x y) (+ x y)) -> (lambda (x y) (+ x y))
 
 (define-syntax λ
-  (syntax-rules ()
-    [(_ x y z ...)
-     (lambda x y z ...)]))
+  (lambda (stx)
+    (syntax-case stx ()
+      [(_ x y z ...)
+       (syntax (lambda x y z ...))])))
 
-;; Inspired by OCaml's anonymous function keyword.
+;; Replicates the "defun" syntax from Common Lisp
+;;
+;; (defun add (x y) (+ x y)) ->
+;; (define add (lambda (x y) (+ x y)))
 
-(define-syntax fun
-  (syntax-rules ()
-    [(_ x y z ...)
-     (lambda x y z ...)]))
-
-;; ᓴᓐᓇ translates to Sedna. She is the Inuit goddess of the sea and marine mammals.
-;; A function/procedure in Scheme is a an identifier, a list of formals, and a body of one or more expressions.
-;; The identifier for a Scheme function is "lambda" in reference to the lambda calculus.
-;; This symbol could have been anything.
-
-(define-syntax ᓴᓐᓇ
-  (syntax-rules ()
-    [(_ x y z ...)
-     (lambda x y z ...)]))
+(define-syntax defun
+  (lambda (stx)
+    (syntax-case stx ()
+      [(_ x y z)
+       (syntax (define x (lambda y z)))])))
