@@ -7,7 +7,7 @@
 ;; (define yield (generate-numbers 1 6 5)) -> (list (yield) (yield) (yield)) -> '(1 6 end)
 
 (define generate-numbers
-  (let ([STOP 'end])
+  (let ([END 'end])
     (case-lambda
       [(stop)
        (generate-numbers 1 stop 1)]
@@ -15,10 +15,10 @@
        (generate-numbers start stop 1)]
       [(start stop step)
        (if (<= step 0)
-           STOP
+           END
            (lambda ()
              (if (> start stop)
-                 STOP
+                 END
                  (let ([result start])
                    (set! start (+ start step))
                    result))))])))
