@@ -51,8 +51,9 @@ let rec quicksort list =
 
 ```clojure
 (defn quick-sort [[x & xs]]
-  (when x
-    (concat (quick-sort (filter #(< % x) xs))
-            [x]
-            (quick-sort (filter #(>= % x) xs)))))
+  (if (nil? x)
+      []
+      (let [left  (quick-sort (filter #(<  % x) xs))
+            right (quick-sort (filter #(>= % x) xs))]
+        (concat left [x] right))))
 ```
