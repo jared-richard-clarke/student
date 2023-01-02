@@ -37,30 +37,22 @@ let rec quicksort list =
 ## Scheme
 
 ```scheme
-(define le
-  (lambda (x)
-    (lambda (y) (<= y x))))
-
-(define gt
-  (lambda (x)
-    (lambda (y) (> y x))))
-
 (define (quick-sort lst)
   (if (null? lst)
       '()
       (let ([x  (car lst)]
             [xs (cdr lst)])
-        (let ([left  (quick-sort (filter (le x) xs))]
-              [right (quick-sort (filter (gt x) xs))])
+        (let ([left  (quick-sort (filter (lambda (y) (<  y x)) xs))]
+              [right (quick-sort (filter (lambda (y) (>= y x)) xs))])
           (append left (list x) right)))))
 ```
 
 ## Clojure
 
 ```clojure
-(defn quicksort [[x & xs]]
+(defn quick-sort [[x & xs]]
   (when x
-    (concat (quicksort (filter #(< % x) xs))
+    (concat (quick-sort (filter #(< % x) xs))
             [x]
-            (quicksort (filter #(>= % x) xs)))))
+            (quick-sort (filter #(>= % x) xs)))))
 ```
