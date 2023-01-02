@@ -2,19 +2,11 @@
 ;; Sorts a list of numbers from least to greatest using the quick-sort algorithm.
 ;; (quick-sort '(3 -4 11 2 11)) -> '(-4 2 3 11 11)
 
-(define le
-  (lambda (x)
-    (lambda (y) (<= y x))))
-
-(define gt
-  (lambda (x)
-    (lambda (y) (> y x))))
-
 (define (quick-sort lst)
   (if (null? lst)
       '()
       (let ([x  (car lst)]
             [xs (cdr lst)])
-        (let ([left  (quick-sort (filter (le x) xs))]
-              [right (quick-sort (filter (gt x) xs))])
+        (let ([left  (quick-sort (filter (lambda (y) (<  y x)) xs))]
+              [right (quick-sort (filter (lambda (y) (>= y x)) xs))])
           (append left (list x) right)))))
