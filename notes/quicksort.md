@@ -54,3 +54,13 @@ let rec quicksort list =
               [right (quick-sort (filter (gt x) xs))])
           (append left (list x) right)))))
 ```
+
+## Clojure
+
+```clojure
+(defn quicksort [[x & xs]]
+  (when x
+    (concat (quicksort (filter #(< % x) xs))
+            [x]
+            (quicksort (filter #(>= % x) xs)))))
+```
