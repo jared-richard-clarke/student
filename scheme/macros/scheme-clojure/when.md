@@ -6,9 +6,9 @@
 (define-syntax when
   (lambda (stx)
     (syntax-case stx ()
-      [(when test x y ...)
-       (syntax (if test
-                   (begin x y ...)
+      [(_ x y z ...)
+       (syntax (if x
+                   (begin y z ...)
                    (void)))])))
 ```
 
