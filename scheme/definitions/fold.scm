@@ -6,20 +6,20 @@
 ;; (foldr list 'init '(a b c)) -> '(a (b (c init)))
 ;; (foldr cons '() '(1 2 3)) -> '(1 2 3)
 
-(define (foldr fn accum lst)
+(define (fold-right fn accum lst)
   (if (null? lst)
       accum
       (fn (car lst)
-          (foldr fn accum (cdr lst)))))
+          (fold-right fn accum (cdr lst)))))
 
 ;; (foldl function any list) -> any
 ;; Evaluates left to right. Tail recursive.
 ;; (foldl list 'init '(a b c)) -> '(((init a) b) c)
 ;; (foldl cons '() '(1 2 3)) -> '(((() . 1) . 2) . 3)
 
-(define (foldl fn accum lst)
+(define (fold-left fn accum lst)
   (if (null? lst)
       accum
-      (foldl fn
-             (fn accum (car lst))
-             (cdr lst))))
+      (fold-left fn
+                (fn accum (car lst))
+                (cdr lst))))
