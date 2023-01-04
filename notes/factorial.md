@@ -200,12 +200,12 @@ fn factorial(x: i64) -> i64 {
       
 (define (compose . functions)
   (lambda (arg)
-    (fold-left (lambda (value function)
-                 (function value))
-	       arg
-	       functions)))
+    (fold-right (lambda (function value)
+                  (function value))
+                arg
+                functions)))
 
-(define factorial (compose range product))
+(define factorial (compose product range))
 ```
 
 ## Web Assembly: `.wat` notation
