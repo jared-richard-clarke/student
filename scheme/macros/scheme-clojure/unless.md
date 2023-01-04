@@ -6,9 +6,9 @@
 (define-syntax unless
   (lambda (stx)
     (syntax-case stx ()
-      [(unless test x y ...)
-       (syntax (if (not test)
-                   (begin x y ...)
+      [(_ x y z ...)
+       (syntax (if (not x)
+                   (begin y z ...)
                    (void)))])))
 ```
 
