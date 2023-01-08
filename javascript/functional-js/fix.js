@@ -1,12 +1,22 @@
-// fix(Object) -> Object: immutable, null prototype
-// Takes an object literal and returns a new object with the same
-// key-value pairs but is immutable and inherits null.
+// fix(value) -> immutable value
+// Copies objects and freezes them with a null prototype.
+// Copies and freezes arrays but preserves prototype.
+// Copies primitive values.
+// Recursively copies and freezes nested objects and arrays.
 
-function fix(obj) {
-    return Object.freeze(
-        Object.entries(obj).reduce((accum, [key, value]) => {
-            accum[key] = value;
-            return accum;
-        }, Object.create(null))
-    );
+function fix(value) {
+    if (Array.isArray(value)) {
+        return Object.freeze(value.map((child) => fix(child)));
+    }
+
+    if (typeof value === "object" && value !== null) {
+        return Object.freeze(
+            Object.entries(value).reduce((accum, [key, value]) => {
+                accum[key] = fix(value);
+                return accum;
+            }, Object.create(null))
+        );
+    }
+
+    return value;
 }
