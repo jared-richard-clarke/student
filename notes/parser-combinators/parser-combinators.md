@@ -1,4 +1,4 @@
-# List of Combinator Parsers
+# Combinator Parsers
 
 `.>>.` (`andThen`): applies two parsers in sequence and returns a tuple.
 
