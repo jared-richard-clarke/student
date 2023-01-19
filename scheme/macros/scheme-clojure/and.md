@@ -6,10 +6,10 @@
 (define-syntax and
   (lambda (stx)
     (syntax-case stx ()
-      [(_) (syntax #t)]
+      [(_)   (syntax #t)]
       [(_ x) (syntax x)]
-      [(_ x y ...)
-       (syntax (if x (and y ...) #f))])))
+      [(_ x y z ...)
+       (syntax (if x (and y z ...) #f))])))
 ```
 
 ## Clojure
