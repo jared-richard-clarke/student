@@ -6,8 +6,7 @@
       [(_)   (syntax #t)]
       [(_ x) (syntax x)]
       [(_ x y z ...)
-       (syntax (let ([t x])
-                 (if t t (and y z ...))))])))
+       (syntax (if x (and y z ...) #f))])))
 
 (define-syntax or
   (lambda (stx)
