@@ -3,9 +3,10 @@
 ;; "var" within "expr" to the value of "expr".
 
 (define-syntax rec
-  (syntax-rules ()
-    [(_ x e)
-     (letrec ([x e]) x)]))
+  (lambda (stx)
+    (syntax-case stx ()
+      [(_ x e)
+       (syntax (letrec ([x e]) x))])))
 
 ;; === example ===
 
