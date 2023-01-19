@@ -8,7 +8,7 @@ by Graham Hutton and Erik Meijer
 
 ## Side Note
 
-This parser implementation is implemented in Gofer, a teaching language very similar to Haskell.
+This parser implementation is implemented in Gofer, a teaching language similar to Haskell.
 
 ## Monad Comprehension Syntax
 
