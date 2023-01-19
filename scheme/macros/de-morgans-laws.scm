@@ -1,29 +1,22 @@
 ;; "and" and "or" syntax as defined in the Revised7 Report on the Algorithmic Language Scheme
 
 (define-syntax and
-  (syntax-rules ()
-    [(_) #t]
-    [(_ e) e]
-    [(_ e1 e2 e3 ...)
-     (if e1 (and e2 e3 ...) #f)]))
+  (lambda (stx)
+    (syntax-case stx ()
+      [(_)   (syntax #t)]
+      [(_ x) (syntax x)]
+      [(_ x y z ...)
+       (syntax (let ([t x])
+                 (if t t (and y z ...))))])))
 
 (define-syntax or
-  (syntax-rules ()
-    [(_) #f]
-    [(_ e) e]
-    [(_ e1 e2 e3 ...)
-     (let ([t e1])
-       (if t t (or e2 e3 ...)))]))
-
-;; "or" defined using "syntax" and "syntax-case" in place of "syntax-rules".
-
-(define-syntax or
-  (lambda (x)
-    (syntax-case x ()
-      [(_) #'#f]
-      [(_ e) #'e]
-      [(_ e1 e2 e3 ...)
-       #'(let ([t e1]) (if t t (or e2 e3 ...)))])))
+  (lambda (stx)
+    (syntax-case stx ()
+      [(_)   (syntax #f)]
+      [(_ x) (syntax x)]
+      [(_ x y z ...)
+       (syntax (let ([t x]) 
+                 (if t t (or y z ...))))])))
 
 ;; === De Morgan's Laws ===
 
