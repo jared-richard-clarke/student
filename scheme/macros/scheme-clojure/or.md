@@ -6,11 +6,11 @@
 (define-syntax or
   (lambda (stx)
     (syntax-case stx ()
-      [(_) (syntax #f)]
-      [(_ y) (syntax y)]
-      [(_ y z ...)
-       (syntax (let ([x y])
-                 (if x x (or z ...))))])))
+      [(_)   (syntax #f)]
+      [(_ x) (syntax y)]
+      [(_ x y z ...)
+       (syntax (let ([t x])
+                 (if t t (or y z ...))))])))
 ```
 
 ## Clojure
