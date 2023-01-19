@@ -16,5 +16,5 @@
 (define-syntax defun
   (lambda (stx)
     (syntax-case stx ()
-      [(_ x y z)
-       (syntax (define x (lambda y z)))])))
+      [(_ x y z w ...)
+       (syntax (define x (lambda y z w ...)))])))
