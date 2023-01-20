@@ -25,6 +25,5 @@
                 (cdr lst))))
 
 ;; === Side Note ===
-;;
 ;; Racket:      (foldl cons 'a '(b c)) -----> '(c b . a)
 ;; Chez Scheme: (fold-left cons 'a '(b c)) -> '((a . b) . c)
