@@ -80,6 +80,7 @@ func factorial(x int) int {
 ## Haskell
 
 ```haskell
+-- Using Integer over Int because Integer has larger range.
 -- recursive
 factorial :: Integer -> Integer
 factorial x
