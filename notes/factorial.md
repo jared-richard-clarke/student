@@ -81,11 +81,13 @@ func factorial(x int) int {
 
 ```haskell
 -- recursive
-factorial :: int -> int 
-factorial 0 = 1  
-factorial x = x * factorial (x - 1)
+factorial :: Integer -> Integer
+factorial x
+    | x <= 0 = 1
+    | otherwise = x * factorial (x - 1)
 
 -- composition
+factorial :: Integer -> Integer
 factorial x = product [1..x]
 ```
 
