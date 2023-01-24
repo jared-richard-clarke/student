@@ -67,8 +67,9 @@ sat :: (Char -> Bool) -> Parser Char
 sat predicate = [ x | x <- item, predicate x ]
 
 {-
-    sat :: (Char -> Bool) -> Parser Char
-    sat predicate = do { x <- item ; if (predicate x) ; result x }
+   === sat using do syntax ===
+   sat :: (Char -> Bool) -> Parser Char
+   sat predicate = do { x <- item ; if (predicate x) ; result x }
 -}
 
 many :: Parser a -> Parser [a]
@@ -109,12 +110,12 @@ string "" = [""]
 string (x:xs) = [ x:xs | _ <- char x, _ <- string xs ]
 
 {-
-=== string without monad comprehension syntax ===
-string :: String -> Parser String
-string ""     = result ""
-string (x:xs) = char x    ‘bind‘ \_ ->
-                string xs ‘bind‘ \_ ->
-                result (x:xs)
+   === string without monad comprehension syntax ===
+   string :: String -> Parser String
+   string ""     = result ""
+   string (x:xs) = char x    ‘bind‘ \_ ->
+                   string xs ‘bind‘ \_ ->
+                   result (x:xs)
 -}
 
 ident :: Parser String
