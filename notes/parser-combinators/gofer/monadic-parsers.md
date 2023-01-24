@@ -108,6 +108,15 @@ string :: String -> Parser String
 string "" = [""]
 string (x:xs) = [ x:xs | _ <- char x, _ <- string xs ]
 
+{-
+=== string without monad comprehension syntax ===
+string :: String -> Parser String
+string ""     = result ""
+string (x:xs) = char x    ‘bind‘ \_ ->
+                string xs ‘bind‘ \_ ->
+                result (x:xs)
+-}
+
 ident :: Parser String
 ident = [ x:xs | x <- lower, xs <- many alphanum ]
 
