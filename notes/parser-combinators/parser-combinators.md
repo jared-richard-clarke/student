@@ -1,5 +1,10 @@
 # Combinator Parsers
 
+Within the context of parsing, combinators are higher-order functions that implement 
+grammar constructions such as choice, sequencing, and repetition.
+
+## Combinators
+
 `.>>.` (`andThen`): applies two parsers in sequence and returns a tuple.
 
 `<|>` (`orElse`): applies the first parser, and if that fails, applies the second parser.
