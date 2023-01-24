@@ -67,9 +67,10 @@ sat :: (Char -> Bool) -> Parser Char
 sat predicate = [ x | x <- item, predicate x ]
 
 {-
-   === sat using do syntax ===
+   === sat without monad comprehension syntax ===
    sat :: (Char -> Bool) -> Parser Char
-   sat predicate = do { x <- item ; if (predicate x) ; result x }
+   sat predicate = item `bind` \x ->
+                   if predicate x then result x else zero
 -}
 
 many :: Parser a -> Parser [a]
