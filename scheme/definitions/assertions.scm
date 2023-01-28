@@ -20,7 +20,7 @@
 ;; macro prints failed test to the current-output port.
 ;; (assert-left-right equal? (+ 1 6) (- 1 6)) ->
 ;; "Test failed:
-;;  rhs: (+ 1 6) -> 7, lhs: (- 1 6) -> -5"
+;;  lhs: (+ 1 6) -> 7, rhs: (- 1 6) -> -5"
 
 (define-syntax assert-left-right
   (lambda (stx)
@@ -29,7 +29,7 @@
        (syntax (let ([computed-x x]
                      [computed-y y])
                  (unless (compare computed-x computed-y)
-                   (printf "Test failed:\nrhs: ~a -> ~a, lhs: ~a -> ~a\n"
+                   (printf "Test failed:\nlhs: ~a -> ~a, rhs: ~a -> ~a\n"
                            (quote x)
                            x
                            (quote y)
