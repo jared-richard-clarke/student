@@ -20,9 +20,6 @@
     (syntax-case stx (<-)
       [(_ expression)
        (syntax expression)]
-      [(_ (px) expression ...)
-       (syntax (bind px (lambda ()
-                          (do expression ...))))]
       [(_ (x <- px) expression ...)
        (syntax (bind px (lambda (x) 
                           (do expression ...))))])))
