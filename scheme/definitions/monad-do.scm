@@ -3,9 +3,9 @@
 ;;
 ;; (define and-then
 ;;   (lambda (px py)
-;;     (do (x <- px)
-;;         (y <- py)
-;;        (return (cons x y)))))
+;;     (monad-do (x <- px)
+;;               (y <- py)
+;;               (return (cons x y)))))
 ;;
 ;; expands ->
 ;;
@@ -15,11 +15,11 @@
 ;;                (bind py (lambda (y)
 ;;                           (return (cons x y))))))))
 
-(define-syntax do
+(define-syntax monad-do
   (lambda (stx)
     (syntax-case stx (<-)
       [(_ expression)
        (syntax expression)]
       [(_ (x <- px) expression ...)
        (syntax (bind px (lambda (x) 
-                          (do expression ...))))])))
+                          (monad-do expression ...))))])))
