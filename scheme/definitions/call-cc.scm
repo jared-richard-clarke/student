@@ -1,7 +1,7 @@
 ;; Nonlocal exit allows product to return immediately, without performing
 ;; the pending multiplications if a zero value is detected.
 
-(define (product . lst)
+(define (product-cc . lst)
   (call/cc
    (lambda (return)
      (let fn ([lst lst])
@@ -10,10 +10,10 @@
          [(= (car lst) 0) (return 0)] ;; <------- nonlocal exit
          [else (* (car lst) (fn (cdr lst)))])))))
 
-;; "prod" doesn't need a nonlocal exit to return early.
-;; "prod" is tail-recursive. It need not return out of a nested stack.
+;; "product-tail" doesn't need a nonlocal exit to return early.
+;; "product-tail" is tail-recursive. It need not return out of a nested stack.
 
-(define (prod . lst)
+(define (product-tail . lst)
   (let loop ([lst lst]
              [id 1])
     (cond
