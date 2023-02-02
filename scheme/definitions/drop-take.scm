@@ -1,6 +1,6 @@
 ;; (drop number (list any)) -> (list any)
-;; Drops the first "n" elements of list "xs". Evaluates to
-;; an empty list if "n" is greater than the length of "xs".
+;; Drops the first "n" elements of list "xs". Drops the
+;; whole list if "n" is greater than the length of "xs".
 ;; (drop 2 '(1 2 3)) -> '(3)
 
 (define drop
