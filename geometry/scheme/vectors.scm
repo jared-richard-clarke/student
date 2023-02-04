@@ -189,14 +189,14 @@
          ;; (vec2-transform (vec2 3 4) (m3-compose m3-ID (m3-scale 10 10))) -> (vec2 30 40)
          
          (define (vec2-transform vec mat)
-           (let* ([r vector-ref]
-                  [a (r mat 0)]
-                  [b (r mat 1)]
-                  [c (r mat 2)]
-                  [d (r mat 3)]
-                  [x (r vec 0)]
-                  [y (r vec 1)])
-             (vec2 (+ (* a x) (* c y))
-                   (+ (* b x) (* d y)))))
+           (let ([r vector-ref])
+             (let ([a (r mat 0)]
+                   [b (r mat 1)]
+                   [c (r mat 2)]
+                   [d (r mat 3)]
+                   [x (r vec 0)]
+                   [y (r vec 1)])
+               (vec2 (+ (* a x) (* c y))
+                     (+ (* b x) (* d y))))))
 
          )
