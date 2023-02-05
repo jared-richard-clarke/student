@@ -1,6 +1,5 @@
 ;; (append (list any) ... any)
-;; Combines a variable number of lists. In this implementation,
-;; the final argument need not be a list.
+;; Combines a variable number of lists. The final argument need not be a list.
 ;; (append '(1 2 3) '())  -> '(1 2 3)
 ;; (append '(1 2) '(3 4) '(5 6 7)) -> '(1 2 3 4 5 6 7)
 
