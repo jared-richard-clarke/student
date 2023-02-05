@@ -12,3 +12,9 @@
             count
             (loop (cdr lst)
                   (+ count 1))))))
+
+;; === alternative ===
+
+(define length
+  (lambda (xs)
+    (fold-left (lambda (x acc) (+ acc 1)) 0 xs)))
