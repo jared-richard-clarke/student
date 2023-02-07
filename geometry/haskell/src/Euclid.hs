@@ -5,7 +5,7 @@ module Euclid
     invert,
     magnitude,
     scale,
-    dot,
+    dotProduct,
     distance,
     lerp,
     normalize,
@@ -45,8 +45,8 @@ scale v n =
     Vec2 x y -> Vec2 (x * n) (y * n)
     Vec3 x y z -> Vec3 (x * n) (y * n) (z * n)
 
-dot :: Vector -> Vector -> Double
-dot v1 v2 =
+dotProduct :: Vector -> Vector -> Double
+dotProduct v1 v2 =
   case (v1, v2) of
     (Vec2 x1 y1, Vec2 x2 y2) -> (x1 * x2) + (y1 * y2)
     (Vec3 x1 y1 z1, Vec3 x2 y2 z2) -> (x1 * x2) + (y1 * y2) + (z1 * z2)
