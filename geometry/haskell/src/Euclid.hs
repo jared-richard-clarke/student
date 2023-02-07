@@ -1,5 +1,5 @@
 module Euclid
-  ( Vector,
+  ( Vector (..),
     add,
     sub,
     invert,
@@ -17,15 +17,15 @@ data Vector = Vec2 Double Double | Vec3 Double Double Double
 
 add :: Vector -> Vector -> Vector
 add v1 v2 =
-    case (v1, v2) of
-        (Vec2 x1 y1, Vec2 x2 y2) -> Vec2 (x1 + x2) (y1 + y2)
-        (Vec3 x1 y1 z1, Vec3 x2 y2 z2) -> Vec3 (x1 + x2) (y1 + y2) (z1 + z2)
+  case (v1, v2) of
+    (Vec2 x1 y1, Vec2 x2 y2) -> Vec2 (x1 + x2) (y1 + y2)
+    (Vec3 x1 y1 z1, Vec3 x2 y2 z2) -> Vec3 (x1 + x2) (y1 + y2) (z1 + z2)
 
 sub :: Vector -> Vector -> Vector
 sub v1 v2 =
-    case (v1, v2) of
-        (Vec2 x1 y1, Vec2 x2 y2) -> Vec2 (x1 - x2) (y1 - y2)
-        (Vec3 x1 y1 z1, Vec3 x2 y2 z2) -> Vec3 (x1 - x2) (y1 - y2) (z1 - z2)
+  case (v1, v2) of
+    (Vec2 x1 y1, Vec2 x2 y2) -> Vec2 (x1 - x2) (y1 - y2)
+    (Vec3 x1 y1 z1, Vec3 x2 y2 z2) -> Vec3 (x1 - x2) (y1 - y2) (z1 - z2)
 
 invert :: Vector -> Vector
 invert v =
