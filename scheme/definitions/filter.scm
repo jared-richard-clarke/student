@@ -3,11 +3,11 @@
 ;; (filter odd? '(1 2 3 4 5 6 7)) -> '(1 3 5 7)
 
 (define (filter test xs)
-  (cond [(null? sequence) '()]
+  (cond [(null? xs) '()]
         [(test (car xs))
          (cons (car xs)
                (filter test (cdr xs)))]
-        [else (filter test (cdr xs))]))
+        [else  (filter test (cdr xs))]))
 
 ;; === alternate ===
 
