@@ -9,8 +9,11 @@ module Vectors
     distance,
     lerp,
     normalize,
+    transform,
   )
 where
+
+import Matrices (Matrix (..))
 
 data Vector = Vec2 Double Double | Vec3 Double Double Double
   deriving (Eq, Show)
@@ -79,3 +82,16 @@ normalize v =
    in case v of
         Vec2 x y -> Vec2 (x / m) (y / m)
         Vec3 x y z -> Vec3 (x / m) (y / m) (z / m)
+
+transform :: Vector -> Matrix -> Vector
+transform v m =
+  let Vec2 x y = v
+      Mat3
+        { a = a,
+          b = b,
+          c = c,
+          d = d,
+          e = _,
+          f = _
+        } = m
+   in Vec2 (a * x + c * y) (b * x + d * y)
