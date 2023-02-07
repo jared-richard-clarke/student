@@ -1,3 +1,8 @@
-module Euclid (module Vectors) where
+module Euclid
+  ( module Matrices,
+    module Vectors,
+  )
+where
 
-import Vectors
+import qualified Matrices
+import qualified Vectors
