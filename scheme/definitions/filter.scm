@@ -2,9 +2,20 @@
 ;; Returns list whose elements satisfy the given predicate function.
 ;; (filter odd? '(1 2 3 4 5 6 7)) -> '(1 3 5 7)
 
-(define (filter predicate sequence)
-  (cond [(null? sequence) null]
-        [(predicate (car sequence))
-         (cons (car sequence)
-               (filter predicate (cdr sequence)))]
-        [else (filter predicate (cdr sequence))]))
+(define (filter test xs)
+  (cond [(null? sequence) '()]
+        [(test (car xs))
+         (cons (car xs)
+               (filter test (cdr xs)))]
+        [else (filter test (cdr xs))]))
+
+;; === alternate ===
+
+(define filter
+  (lambda (test xs)
+    (fold-right (lambda (x acc)
+                  (if (test x)
+                      (cons x acc)
+                      acc))
+                '()
+                xs)))
