@@ -104,5 +104,5 @@ shear x y =
       f = 0
     }
 
-compose :: (Foldable t, Num a) => p -> t (Matrix a) -> Matrix a
-compose xs = foldr multiply identity
+compose :: (Foldable s, Num t) => s (Matrix t) -> Matrix t
+compose = foldr multiply identity
