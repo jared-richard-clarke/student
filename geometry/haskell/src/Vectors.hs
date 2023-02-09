@@ -30,9 +30,6 @@ hypot x y = sqrt $ x ** 2 + y ** 2
 data Vector = Vec2 Double Double
   deriving (Eq, Show)
 
-identity :: Vector
-identity = Vec2 0.0 0.0
-
 add :: Vector -> Vector -> Vector
 add (Vec2 a b) (Vec2 c d) = Vec2 (a + c) (b + d)
 
@@ -51,7 +48,7 @@ invert :: Vector -> Vector
 invert (Vec2 x y) = Vec2 (1 / x) (1 / y)
 
 sum :: Foldable t => p -> t Vector -> Vector
-sum xs = foldr add identity
+sum xs = foldr1 add
 
 magnitude :: Vector -> Double
 magnitude (Vec2 x y) = hypot x y
@@ -91,4 +88,3 @@ transform v m =
           f = _
         } = m
    in Vec2 (a * x + c * y) (b * x + d * y)
-
