@@ -31,7 +31,7 @@ hypot x y = sqrt $ x ** 2 + y ** 2
 
 -- vectors
 data Vector = Vec2 Double Double
-  deriving (Eq, Show)
+  deriving (Eq, Show, Read)
 
 add :: Vector -> Vector -> Vector
 add (Vec2 a b) (Vec2 c d) = Vec2 (a + c) (b + d)
