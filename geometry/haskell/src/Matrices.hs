@@ -18,7 +18,7 @@ data Matrix = Mat3
     e :: Double,
     f :: Double
   }
-  deriving (Eq, Show)
+  deriving (Eq, Show, Read)
 
 multiply :: Matrix -> Matrix -> Matrix
 multiply m n =
