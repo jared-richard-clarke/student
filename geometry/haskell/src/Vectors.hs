@@ -1,8 +1,11 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
+{-# HLINT ignore "Use negate" #-}
 module Vectors
   ( Vector (..),
     add,
     sub,
-    neg,
+    negate,
     abs,
     invert,
     sum,
@@ -17,10 +20,10 @@ module Vectors
 where
 
 import Matrices (Matrix (..))
-import Prelude hiding (abs, sum)
+import Prelude hiding (abs, negate, sum)
 
 -- There's probably a more elegant solution to creating my own
--- definitions for "abs" and "sum"
+-- definitions for "abs", "negate", and "sum"
 
 -- utils
 hypot :: Double -> Double -> Double
@@ -36,13 +39,13 @@ add (Vec2 a b) (Vec2 c d) = Vec2 (a + c) (b + d)
 sub :: Vector -> Vector -> Vector
 sub (Vec2 a b) (Vec2 c d) = Vec2 (a - c) (b - d)
 
-neg :: Vector -> Vector
-neg (Vec2 x y) = Vec2 (negate x) (negate y)
+negate :: Vector -> Vector
+negate (Vec2 x y) = Vec2 (0 - x) (0 - y)
 
 abs :: Vector -> Vector
 abs (Vec2 x y) = Vec2 (absolute x) (absolute y)
   where
-    absolute n = if n < 0 then negate n else n
+    absolute n = if n < 0 then 0 - n else n
 
 invert :: Vector -> Vector
 invert (Vec2 x y) = Vec2 (1 / x) (1 / y)
