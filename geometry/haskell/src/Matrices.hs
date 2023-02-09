@@ -10,17 +10,17 @@ module Matrices
   )
 where
 
-data Matrix = Mat3
-  { a :: Double,
-    b :: Double,
-    c :: Double,
-    d :: Double,
-    e :: Double,
-    f :: Double
+data Matrix t = Mat3
+  { a :: t,
+    b :: t,
+    c :: t,
+    d :: t,
+    e :: t,
+    f :: t
   }
   deriving (Eq, Show, Read)
 
-multiply :: Matrix -> Matrix -> Matrix
+multiply :: Num t => Matrix t -> Matrix t -> Matrix t
 multiply m n =
   let Mat3
         { a = a1,
@@ -47,40 +47,40 @@ multiply m n =
           f = e1 * b2 + f1 * d2 + f2
         }
 
-identity :: Matrix
+identity :: Num t => Matrix t
 identity =
   Mat3
-    { a = 1.0,
-      b = 0.0,
-      c = 0.0,
-      d = 1.0,
-      e = 0.0,
-      f = 0.0
+    { a = 1,
+      b = 0,
+      c = 0,
+      d = 1,
+      e = 0,
+      f = 0
     }
 
-translate :: Double -> Double -> Matrix
+translate :: Num t => t -> t -> Matrix t
 translate x y =
   Mat3
-    { a = 1.0,
-      b = 0.0,
-      c = 0.0,
-      d = 1.0,
+    { a = 1,
+      b = 0,
+      c = 0,
+      d = 1,
       e = x,
       f = y
     }
 
-scale :: Double -> Double -> Matrix
+scale :: Num t => t -> t -> Matrix t
 scale x y =
   Mat3
     { a = x,
-      b = 0.0,
-      c = 0.0,
+      b = 0,
+      c = 0,
       d = y,
-      e = 0.0,
-      f = 0.0
+      e = 0,
+      f = 0
     }
 
-rotate :: Double -> Matrix
+rotate :: Floating t => t -> Matrix t
 rotate angle =
   let x = cos angle
       y = sin angle
@@ -89,20 +89,20 @@ rotate angle =
           b = y,
           c = negate x,
           d = y,
-          e = 0.0,
-          f = 0.0
+          e = 0,
+          f = 0
         }
 
-shear :: Double -> Double -> Matrix
+shear :: Num t => t -> t -> Matrix t
 shear x y =
   Mat3
-    { a = 1.0,
+    { a = 1,
       b = y,
       c = x,
-      d = 1.0,
-      e = 0.0,
-      f = 0.0
+      d = 1,
+      e = 0,
+      f = 0
     }
 
-compose :: [Matrix] -> Matrix
-compose = foldr multiply identity
+compose :: (Foldable t, Num a) => p -> t (Matrix a) -> Matrix a
+compose xs = foldr multiply identity
