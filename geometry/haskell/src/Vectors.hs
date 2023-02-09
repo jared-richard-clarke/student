@@ -34,10 +34,10 @@ data Vec2 t = Vec2 t t
   deriving (Eq, Show, Read)
 
 add :: Num t => Vec2 t -> Vec2 t -> Vec2 t
-add (Vec2 a b) (Vec2 c d) = Vec2 (a + c) (b + d)
+add (Vec2 x1 y1) (Vec2 x2 y2) = Vec2 (x1 + x2) (y1 + y2)
 
 sub :: Num t => Vec2 t -> Vec2 t -> Vec2 t
-sub (Vec2 a b) (Vec2 c d) = Vec2 (a - c) (b - d)
+sub (Vec2 x1 y1) (Vec2 x2 y2) = Vec2 (x1 - x2) (y1 - y2)
 
 negate :: Num t => Vec2 t -> Vec2 t
 negate (Vec2 x y) = Vec2 (0 - x) (0 - y)
@@ -60,16 +60,16 @@ scale :: Num t => Vec2 t -> t -> Vec2 t
 scale (Vec2 x y) n = Vec2 (n * x) (n * y)
 
 dot :: Num t => Vec2 t -> Vec2 t -> t
-dot (Vec2 a b) (Vec2 c d) = a * c + b * d
+dot (Vec2 x1 y1) (Vec2 x2 y2) = x1 * x2 + y1 * y2
 
 distance :: Floating t => Vec2 t -> Vec2 t -> t
-distance (Vec2 a b) (Vec2 c d) =
-  let x = c - a
-      y = d - b
+distance (Vec2 x1 y1) (Vec2 x2 y2) =
+  let x = x2 - x1
+      y = y2 - y1
    in hypot x y
 
 lerp :: Num t => Vec2 t -> Vec2 t -> t -> Vec2 t
-lerp (Vec2 a b) (Vec2 c d) n = Vec2 (interp a c n) (interp b d n)
+lerp (Vec2 x1 y1) (Vec2 x2 y2) n = Vec2 (interp x1 x2 n) (interp y1 y2 n)
   where
     interp x y t = (y - x) * t + x
 
