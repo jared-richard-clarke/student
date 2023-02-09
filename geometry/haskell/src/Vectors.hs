@@ -2,10 +2,13 @@ module Vectors
   ( Vector (..),
     add,
     sub,
+    neg,
+    abs,
     invert,
+    sum,
     magnitude,
     scale,
-    dotProduct,
+    dot,
     distance,
     lerp,
     normalize,
@@ -14,74 +17,67 @@ module Vectors
 where
 
 import Matrices (Matrix (..))
+import Prelude hiding (abs, sum)
 
-data Vector = Vec2 Double Double | Vec3 Double Double Double
+-- There's probably a more elegant solution to creating my own
+-- definitions for "abs" and "sum"
+
+-- utils
+hypot :: Double -> Double -> Double
+hypot x y = sqrt $ x ** 2 + y ** 2
+
+-- vectors
+data Vector = Vec2 Double Double
   deriving (Eq, Show)
 
+identity :: Vector
+identity = Vec2 0.0 0.0
+
 add :: Vector -> Vector -> Vector
-add v1 v2 =
-  case (v1, v2) of
-    (Vec2 x1 y1, Vec2 x2 y2) -> Vec2 (x1 + x2) (y1 + y2)
-    (Vec3 x1 y1 z1, Vec3 x2 y2 z2) -> Vec3 (x1 + x2) (y1 + y2) (z1 + z2)
+add (Vec2 a b) (Vec2 c d) = Vec2 (a + c) (b + d)
 
 sub :: Vector -> Vector -> Vector
-sub v1 v2 =
-  case (v1, v2) of
-    (Vec2 x1 y1, Vec2 x2 y2) -> Vec2 (x1 - x2) (y1 - y2)
-    (Vec3 x1 y1 z1, Vec3 x2 y2 z2) -> Vec3 (x1 - x2) (y1 - y2) (z1 - z2)
+sub (Vec2 a b) (Vec2 c d) = Vec2 (a - c) (b - d)
+
+neg :: Vector -> Vector
+neg (Vec2 x y) = Vec2 (negate x) (negate y)
+
+abs :: Vector -> Vector
+abs (Vec2 x y) = Vec2 (absolute x) (absolute y)
+  where
+    absolute n = if n < 0 then negate n else n
 
 invert :: Vector -> Vector
-invert v =
-  case v of
-    Vec2 x y -> Vec2 (1 / x) (1 / y)
-    Vec3 x y z -> Vec3 (1 / x) (1 / y) (1 / z)
+invert (Vec2 x y) = Vec2 (1 / x) (1 / y)
+
+sum :: Foldable t => p -> t Vector -> Vector
+sum xs = foldr add identity
 
 magnitude :: Vector -> Double
-magnitude v =
-  case v of
-    Vec2 x y -> sqrt $ (x * x) + (y * y)
-    Vec3 x y z -> sqrt $ (x * x) + (y * y) + (z * z)
+magnitude (Vec2 x y) = hypot x y
 
 scale :: Vector -> Double -> Vector
-scale v n =
-  case v of
-    Vec2 x y -> Vec2 (x * n) (y * n)
-    Vec3 x y z -> Vec3 (x * n) (y * n) (z * n)
+scale (Vec2 x y) n = Vec2 (n * x) (n * y)
 
-dotProduct :: Vector -> Vector -> Double
-dotProduct v1 v2 =
-  case (v1, v2) of
-    (Vec2 x1 y1, Vec2 x2 y2) -> (x1 * x2) + (y1 * y2)
-    (Vec3 x1 y1 z1, Vec3 x2 y2 z2) -> (x1 * x2) + (y1 * y2) + (z1 * z2)
+dot :: Vector -> Vector -> Double
+dot (Vec2 a b) (Vec2 c d) = a * c + b * d
 
 distance :: Vector -> Vector -> Double
-distance v1 v2 =
-  case (v1, v2) of
-    (Vec2 x1 y1, Vec2 x2 y2) ->
-      let x = x2 - x1
-          y = y2 - y1
-       in sqrt $ (x * x) + (y * y)
-    (Vec3 x1 y1 z1, Vec3 x2 y2 z2) ->
-      let x = x2 - x1
-          y = y2 - y1
-          z = z2 - z1
-       in sqrt $ (x * x) + (y * y) + (z * z)
+distance (Vec2 a b) (Vec2 c d) =
+  let x = c - a
+      y = d - b
+   in hypot x y
 
 lerp :: Vector -> Vector -> Double -> Vector
-lerp v1 v2 n =
-  let interp x y t = (y - x) * t + x
-   in case (v1, v2) of
-        (Vec2 x1 y1, Vec2 x2 y2) ->
-          Vec2 (interp x1 x2 n) (interp y1 y2 n)
-        (Vec3 x1 y1 z1, Vec3 x2 y2 z2) ->
-          Vec3 (interp x1 x2 n) (interp y1 y2 n) (interp z1 z2 n)
+lerp (Vec2 a b) (Vec2 c d) n = Vec2 (interp a c n) (interp b d n)
+  where
+    interp x y t = (y - x) * t + x
 
 normalize :: Vector -> Vector
 normalize v =
-  let m = magnitude v
-   in case v of
-        Vec2 x y -> Vec2 (x / m) (y / m)
-        Vec3 x y z -> Vec3 (x / m) (y / m) (z / m)
+  let Vec2 x y = v
+      m = magnitude v
+   in Vec2 (x / m) (y / m)
 
 transform :: Vector -> Matrix -> Vector
 transform v m =
@@ -95,3 +91,4 @@ transform v m =
           f = _
         } = m
    in Vec2 (a * x + c * y) (b * x + d * y)
+
