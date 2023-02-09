@@ -50,8 +50,8 @@ abs (Vec2 x y) = Vec2 (absolute x) (absolute y)
 invert :: Vector -> Vector
 invert (Vec2 x y) = Vec2 (1 / x) (1 / y)
 
-sum :: Foldable t => p -> t Vector -> Vector
-sum xs = foldr1 add
+sum :: [Vector] -> Vector
+sum = foldr1 add
 
 magnitude :: Vector -> Double
 magnitude (Vec2 x y) = hypot x y
