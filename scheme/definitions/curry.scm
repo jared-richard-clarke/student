@@ -1,10 +1,11 @@
 ;; Transforms a multi-parameter function into a sequence of functions
 ;; wherein each argument is called with a single function.
-;; (define add (curry (x y) (+ x y))
+;; (define add (curry (x y z) (+ x y z))
 ;; ->
 ;; (define add
 ;;   (lambda (x)
-;;     (lambda (y) (+ x y))))
+;;     (lambda (y)
+;;       (lambda (z) (+ x y z)))))
 
 (define-syntax curry
   (lambda (stx)
