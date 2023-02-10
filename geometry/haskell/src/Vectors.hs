@@ -20,7 +20,6 @@ module Vectors
   )
 where
 
-import Control.Applicative (liftA2)
 import Matrices (Matrix (..))
 import Prelude hiding (abs, negate, sum)
 
@@ -29,7 +28,7 @@ import Prelude hiding (abs, negate, sum)
 
 -- utils
 hypot :: Floating t => t -> t -> t
-hypot x y = sqrt $ x ** 2 + y ** 2
+hypot x y = sqrt $ x * x + y * y
 
 -- 2D vector
 data Vec2 a = Vec2 a a
@@ -39,19 +38,11 @@ instance Functor Vec2 where
   fmap :: (a -> b) -> Vec2 a -> Vec2 b
   fmap fn (Vec2 x y) = Vec2 (fn x) (fn y)
 
-instance Applicative Vec2 where
-  pure :: a -> Vec2 a
-  pure x = Vec2 x x
-  (<*>) :: Vec2 (a -> b) -> Vec2 a -> Vec2 b
-  (<*>) = liftA2 id
-  liftA2 :: (a -> b -> c) -> Vec2 a -> Vec2 b -> Vec2 c
-  liftA2 fn v1 v2 = fn <$> v1 <*> v2
-
 add :: Num a => Vec2 a -> Vec2 a -> Vec2 a
-add = liftA2 (+)
+add (Vec2 x1 y1) (Vec2 x2 y2) = Vec2 (x1 + x2) (y1 + y2)
 
 sub :: Num a => Vec2 a -> Vec2 a -> Vec2 a
-sub = liftA2 (-)
+sub (Vec2 x1 y1) (Vec2 x2 y2) = Vec2 (x1 - x2) (y1 - y2)
 
 negate :: Num a => Vec2 a -> Vec2 a
 negate = fmap (0 -)
@@ -83,9 +74,9 @@ distance (Vec2 x1 y1) (Vec2 x2 y2) =
    in hypot x y
 
 lerp :: Num a => a -> Vec2 a -> Vec2 a -> Vec2 a
-lerp n = liftA2 (interp n)
+lerp t (Vec2 x1 y1) (Vec2 x2 y2) = Vec2 (interp x1 x2) (interp y1 y2)
   where
-    interp t x y = (y - x) * t + x
+    interp x y = (y - x) * t + x
 
 normalize :: Floating a => Vec2 a -> Vec2 a
 normalize v = fmap (/ m) v where m = magnitude v
