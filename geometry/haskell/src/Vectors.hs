@@ -31,7 +31,7 @@ hypot :: Floating t => t -> t -> t
 hypot x y = sqrt $ x * x + y * y
 
 -- 2D vector
-data Vec2 a = Vec2 a a
+data Vec2 a = Vec2 !a !a
   deriving (Eq, Show, Read)
 
 instance Functor Vec2 where
