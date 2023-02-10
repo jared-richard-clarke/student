@@ -1,6 +1,7 @@
+{-# HLINT ignore "Use negate" #-}
+{-# LANGUAGE InstanceSigs #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
-{-# HLINT ignore "Use negate" #-}
 module Vectors
   ( Vec2 (..),
     add,
@@ -33,6 +34,10 @@ hypot x y = sqrt $ x ** 2 + y ** 2
 data Vec2 t = Vec2 t t
   deriving (Eq, Show, Read)
 
+instance Functor Vec2 where
+  fmap :: (a -> b) -> Vec2 a -> Vec2 b
+  fmap fn (Vec2 x y) = Vec2 (fn x) (fn y)
+
 add :: Num t => Vec2 t -> Vec2 t -> Vec2 t
 add (Vec2 x1 y1) (Vec2 x2 y2) = Vec2 (x1 + x2) (y1 + y2)
 
@@ -40,15 +45,15 @@ sub :: Num t => Vec2 t -> Vec2 t -> Vec2 t
 sub (Vec2 x1 y1) (Vec2 x2 y2) = Vec2 (x1 - x2) (y1 - y2)
 
 negate :: Num t => Vec2 t -> Vec2 t
-negate (Vec2 x y) = Vec2 (0 - x) (0 - y)
+negate = fmap (0 -)
 
 abs :: (Num t, Ord t) => Vec2 t -> Vec2 t
-abs (Vec2 x y) = Vec2 (absolute x) (absolute y)
+abs = fmap absolute
   where
-    absolute n = if n < 0 then 0 - n else n
+    absolute n = if n < 0 then (-n) else n
 
 invert :: Fractional t => Vec2 t -> Vec2 t
-invert (Vec2 x y) = Vec2 (1 / x) (1 / y)
+invert = fmap (1 /)
 
 sum :: (Foldable s, Num t) => s (Vec2 t) -> Vec2 t
 sum = foldr1 add
@@ -56,8 +61,8 @@ sum = foldr1 add
 magnitude :: Floating t => Vec2 t -> t
 magnitude (Vec2 x y) = hypot x y
 
-scale :: Num t => Vec2 t -> t -> Vec2 t
-scale (Vec2 x y) n = Vec2 (n * x) (n * y)
+scale :: Num t => t -> Vec2 t -> Vec2 t
+scale n = fmap (n *)
 
 dot :: Num t => Vec2 t -> Vec2 t -> t
 dot (Vec2 x1 y1) (Vec2 x2 y2) = x1 * x2 + y1 * y2
@@ -75,9 +80,8 @@ lerp (Vec2 x1 y1) (Vec2 x2 y2) n = Vec2 (interp x1 x2 n) (interp y1 y2 n)
 
 normalize :: Floating t => Vec2 t -> Vec2 t
 normalize v =
-  let Vec2 x y = v
-      m = magnitude v
-   in Vec2 (x / m) (y / m)
+  let m = magnitude v
+   in fmap (/ m) v
 
 transform :: Num t => Vec2 t -> Matrix t -> Vec2 t
 transform v m =
