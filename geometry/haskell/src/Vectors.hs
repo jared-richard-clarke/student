@@ -32,7 +32,7 @@ hypot :: Floating t => t -> t -> t
 hypot x y = sqrt $ x ** 2 + y ** 2
 
 -- 2D vector
-data Vec2 t = Vec2 t t
+data Vec2 a = Vec2 a a
   deriving (Eq, Show, Read)
 
 instance Functor Vec2 where
@@ -45,52 +45,52 @@ instance Applicative Vec2 where
   (<*>) :: Vec2 (a -> b) -> Vec2 a -> Vec2 b
   (<*>) = liftA2 id
   liftA2 :: (a -> b -> c) -> Vec2 a -> Vec2 b -> Vec2 c
-  liftA2 fn v1 v2 = fmap fn v1 <*> v2
+  liftA2 fn v1 v2 = fn <$> v1 <*> v2
 
-add :: Num t => Vec2 t -> Vec2 t -> Vec2 t
+add :: Num a => Vec2 a -> Vec2 a -> Vec2 a
 add = liftA2 (+)
 
-sub :: Num t => Vec2 t -> Vec2 t -> Vec2 t
+sub :: Num a => Vec2 a -> Vec2 a -> Vec2 a
 sub = liftA2 (-)
 
-negate :: Num t => Vec2 t -> Vec2 t
+negate :: Num a => Vec2 a -> Vec2 a
 negate = fmap (0 -)
 
-abs :: (Num t, Ord t) => Vec2 t -> Vec2 t
+abs :: (Num a, Ord a) => Vec2 a -> Vec2 a
 abs = fmap absolute
   where
     absolute n = if n < 0 then (-n) else n
 
-invert :: Fractional t => Vec2 t -> Vec2 t
+invert :: Fractional a => Vec2 a -> Vec2 a
 invert = fmap (1 /)
 
-sum :: (Foldable s, Num t) => s (Vec2 t) -> Vec2 t
+sum :: (Foldable b, Num a) => b (Vec2 a) -> Vec2 a
 sum = foldr add $ Vec2 0 0
 
-magnitude :: Floating t => Vec2 t -> t
+magnitude :: Floating a => Vec2 a -> a
 magnitude (Vec2 x y) = hypot x y
 
-scale :: Num t => t -> Vec2 t -> Vec2 t
+scale :: Num a => a -> Vec2 a -> Vec2 a
 scale n = fmap (n *)
 
-dot :: Num t => Vec2 t -> Vec2 t -> t
+dot :: Num a => Vec2 a -> Vec2 a -> a
 dot (Vec2 x1 y1) (Vec2 x2 y2) = x1 * x2 + y1 * y2
 
-distance :: Floating t => Vec2 t -> Vec2 t -> t
+distance :: Floating a => Vec2 a -> Vec2 a -> a
 distance (Vec2 x1 y1) (Vec2 x2 y2) =
   let x = x2 - x1
       y = y2 - y1
    in hypot x y
 
-lerp :: Num t => t -> Vec2 t -> Vec2 t -> Vec2 t
+lerp :: Num a => a -> Vec2 a -> Vec2 a -> Vec2 a
 lerp n = liftA2 (interp n)
   where
     interp t x y = (y - x) * t + x
 
-normalize :: Floating t => Vec2 t -> Vec2 t
+normalize :: Floating a => Vec2 a -> Vec2 a
 normalize v = fmap (/ m) v where m = magnitude v
 
-transform :: Num t => Vec2 t -> Matrix t -> Vec2 t
+transform :: Num a => Vec2 a -> Matrix a -> Vec2 a
 transform v m =
   let Vec2 x y = v
       Mat3
