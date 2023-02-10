@@ -11,12 +11,12 @@ module Matrices
 where
 
 data Matrix t = Mat3
-  { a :: t,
-    b :: t,
-    c :: t,
-    d :: t,
-    e :: t,
-    f :: t
+  { a :: !t,
+    b :: !t,
+    c :: !t,
+    d :: !t,
+    e :: !t,
+    f :: !t
   }
   deriving (Eq, Show, Read)
 
