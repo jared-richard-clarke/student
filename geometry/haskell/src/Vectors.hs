@@ -20,6 +20,7 @@ module Vectors
   )
 where
 
+import Control.Applicative (liftA2)
 import Matrices (Matrix (..))
 import Prelude hiding (abs, negate, sum)
 
@@ -38,11 +39,17 @@ instance Functor Vec2 where
   fmap :: (a -> b) -> Vec2 a -> Vec2 b
   fmap fn (Vec2 x y) = Vec2 (fn x) (fn y)
 
+instance Applicative Vec2 where
+  pure :: a -> Vec2 a
+  pure a = Vec2 a a
+  liftA2 :: (a -> b -> c) -> Vec2 a -> Vec2 b -> Vec2 c
+  liftA2 fn v1 v2 = fn <$> v1 <*> v2
+
 add :: Num a => Vec2 a -> Vec2 a -> Vec2 a
-add (Vec2 x1 y1) (Vec2 x2 y2) = Vec2 (x1 + x2) (y1 + y2)
+add = liftA2 (+)
 
 sub :: Num a => Vec2 a -> Vec2 a -> Vec2 a
-sub (Vec2 x1 y1) (Vec2 x2 y2) = Vec2 (x1 - x2) (y1 - y2)
+sub = liftA2 (-)
 
 negate :: Num a => Vec2 a -> Vec2 a
 negate = fmap (0 -)
@@ -74,7 +81,7 @@ distance (Vec2 x1 y1) (Vec2 x2 y2) =
    in hypot x y
 
 lerp :: Num a => a -> Vec2 a -> Vec2 a -> Vec2 a
-lerp t (Vec2 x1 y1) (Vec2 x2 y2) = Vec2 (interp x1 x2) (interp y1 y2)
+lerp t = liftA2 interp
   where
     interp x y = (y - x) * t + x
 
