@@ -22,7 +22,7 @@ library
     exposed-modules:  Euclid
 
     -- Modules included in this library but not exported.
-    other-modules: Matrices, Vectors
+    other-modules: Matrices, Vectors.Vec2, Vectors.Vec3
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
