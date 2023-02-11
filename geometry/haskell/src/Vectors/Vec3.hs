@@ -56,7 +56,7 @@ invert :: Fractional a => Vec3 a -> Vec3 a
 invert = fmap (1 /)
 
 sum :: (Foldable b, Num a) => b (Vec3 a) -> Vec3 a
-sum = foldr add $ Vec3 0 0 0
+sum = foldr add (Vec3 0 0 0)
 
 magnitude :: Floating a => Vec3 a -> a
 magnitude (Vec3 x y z) = hypot x y z
