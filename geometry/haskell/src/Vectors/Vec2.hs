@@ -109,8 +109,6 @@ transform v m =
         { a = a,
           b = b,
           c = c,
-          d = d,
-          e = _,
-          f = _
+          d = d
         } = m
    in Vec2 (a * x + c * y) (b * x + d * y)
