@@ -23,6 +23,7 @@ module Vectors.Vec2
 where
 
 import Control.Applicative (liftA2)
+import Data.Foldable (foldl')
 import Matrices (Matrix (..))
 import Prelude hiding (abs, negate, sum)
 
@@ -75,7 +76,7 @@ invert :: Fractional a => Vec2 a -> Vec2 a
 invert = fmap (1 /)
 
 sum :: (Foldable b, Num a) => b (Vec2 a) -> Vec2 a
-sum = foldr add (Vec2 0 0)
+sum = foldl' add (Vec2 0 0)
 
 magnitude :: Floating a => Vec2 a -> a
 magnitude (Vec2 x y) = hypot x y
