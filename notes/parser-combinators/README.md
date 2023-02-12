@@ -9,7 +9,7 @@
 >
 > — [Parser Combinator](https://en.wikipedia.org/wiki/Parser_combinator) - Wikipedia
 
-> "Monadic combinator parsers consist of a monad `Parser` a (typically of the form
+> "Monadic combinator parsers consist of a monad `Parser a` (typically of the form
 >  `String -> Result a` for some functor `Result`) with a unit `return` and bind
 >  (`>>=`) operation, and a number of parser specific operations, usually a choice
 >  combinator (`<|>`) and a function `satisfy` for constructing elementary parsers
