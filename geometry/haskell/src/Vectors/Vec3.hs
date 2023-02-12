@@ -48,11 +48,15 @@ add = liftA2 (+)
 (^+^) :: Num a => Vec3 a -> Vec3 a -> Vec3 a
 (^+^) = liftA2 (+)
 
+infixl 6 ^+^
+
 sub :: Num a => Vec3 a -> Vec3 a -> Vec3 a
 sub = liftA2 (-)
 
 (^-^) :: Num a => Vec3 a -> Vec3 a -> Vec3 a
 (^-^) = liftA2 (-)
+
+infixl 6 ^-^
 
 negate :: Num a => Vec3 a -> Vec3 a
 negate = fmap (0 -)
@@ -77,8 +81,12 @@ scale n = fmap (n *)
 (*^) :: Num a => a -> Vec3 a -> Vec3 a
 (*^) n = fmap (n *)
 
+infixl 7 *^
+
 (^*) :: Num a => Vec3 a -> a -> Vec3 a
 (^*) v n = fmap (n *) v
+
+infixl 7 ^*
 
 dot :: Num a => Vec3 a -> Vec3 a -> a
 dot (Vec3 x1 y1 z1) (Vec3 x2 y2 z2) = x1 * x2 + y1 * y2 + z1 * z2
