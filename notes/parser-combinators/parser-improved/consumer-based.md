@@ -39,11 +39,10 @@ p >>= f =
     Consumed reply1
       -> Consumed -- < partially-applied constructor
          (case reply1 of
-            Ok x rest
-              -> case f x rest of
-                   Consumed reply2 -> reply2
-                   Empty reply2    -> reply2
-            error -> error
+            Ok x rest -> case f x rest of
+                           Consumed reply2 -> reply2
+                           Empty reply2    -> reply2
+            error     -> error
          )
 ```
 
