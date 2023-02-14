@@ -1,5 +1,7 @@
 # Consumer-Base Parsing
 
+Source: **Parsec: Direct Style Parser Combinators For The Real World** by Daan Leijen and Erik Meijer
+
 ## Basic Combinators
 
 ```haskell
@@ -22,7 +24,8 @@ satisfy test = \input -> case input of
 ## `>>=`: input consumption
 
 > "Due to laziness, a parser (p >>= f) directly returns with a Consumed constructor
->  if p consumes input. The computation of the final reply is delayed." 
+>  if p consumes input. The computation of the final reply is delayed."
+>  
 >   — Daan Leijen and Erik Meijer
 
 ```haskell
@@ -35,7 +38,7 @@ p >>= f =
            Error     -> Empty Error
     Consumed reply1
       -> Consumed
-         (case (reply1) of
+         (case reply1 of
             Ok x rest
               -> case f x rest of
                    Consumed reply2 -> reply2
