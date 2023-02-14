@@ -77,7 +77,7 @@ p <|> q =
 
 ## Try
 
-> "For `try p <|> q`, if parser `p` fails, the choice operator will try the alternativ `q`
+> "For `try p <|> q`, if parser `p` fails, the choice operator will try the alternative `q`
 >  since the `try` combinator has changed the `Consumed` constructor to `Empty`."
 >  
 >  — Daan Leijen and Erik Meijer
