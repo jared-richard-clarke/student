@@ -26,7 +26,7 @@ satisfy test = \input -> case input of
 > "Due to laziness, a parser `p >>= f` directly returns with a `Consumed` constructor
 >  if `p` consumes input. The computation of the final `Reply` is delayed."
 >  
->   — Daan Leijen and Erik Meijer
+>  — Daan Leijen and Erik Meijer
 
 ```haskell
 (>>=) :: Parser a -> (a -> Parser b) -> Parser b
@@ -59,6 +59,8 @@ p >>= f =
 >  consumed any input...Now that the `>>=` combinator immediately returns a `Consumed`
 >  constructor as soon as some input has been consumed, the choice combinator
 >  can choose an alternative as soon as some input has been consumed."
+>  
+>  — Daan Leijen and Erik Meijer
 
 ```haskell
 {- If 'p' succeeds without consuming input, the second alternative is favored. 
@@ -71,4 +73,19 @@ p <|> q =
                      Empty _  -> Empty ok
                      consumed -> consumed
     consumed -> consumed
+```
+
+## Try
+
+> "For `try p <|> q`, if parser `p` fails, the choice operator will try the alternativ `q`
+>  since the `try` combinator has changed the `Consumed` constructor to `Empty`."
+>  
+>  — Daan Leijen and Erik Meijer
+
+```haskell
+try :: Parser a -> Parser a
+try p =
+  \input -> case p input of
+              Consumed Error -> Empty Error
+              other          -> other
 ```
