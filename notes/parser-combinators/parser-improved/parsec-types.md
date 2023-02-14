@@ -1,6 +1,6 @@
 # Parsec Types
 
-A small sample of Parsec types that implement consumer-based parsing as described in
+A small sample of types in **Parsec** that implement consumer-based parsing as described in
 **Parsec: Direct Style Parser Combinators For The Real World** by Daan Leijen and Erik Meijer
 
 ```haskell
