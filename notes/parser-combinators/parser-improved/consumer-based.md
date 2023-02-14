@@ -23,8 +23,8 @@ satisfy test = \input -> case input of
 
 ## `>>=`: input consumption
 
-> "Due to laziness, a parser (p >>= f) directly returns with a Consumed constructor
->  if p consumes input. The computation of the final reply is delayed."
+> "Due to laziness, a parser `p >>= f` directly returns with a `Consumed` constructor
+>  if `p` consumes input. The computation of the final `Reply` is delayed."
 >  
 >   — Daan Leijen and Erik Meijer
 
@@ -57,7 +57,7 @@ p >>= f =
 ## Choice
 
 > "An LL(1) choice combinator only looks at its second alternative if the first hasn’t
->  consumed any input...Now that the (>>=) combinator immediately returns a Consumed
+>  consumed any input...Now that the `>>=` combinator immediately returns a `Consumed`
 >  constructor as soon as some input has been consumed, the choice combinator
 >  can choose an alternative as soon as some input has been consumed."
 
