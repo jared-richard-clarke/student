@@ -37,7 +37,7 @@ p >>= f =
            Ok x rest -> f x rest
            Error     -> Empty Error
     Consumed reply1
-      -> Consumed
+      -> Consumed -- < partially-applied constructor
          (case reply1 of
             Ok x rest
               -> case f x rest of
