@@ -19,6 +19,7 @@ instance Monad Maybe where
     m >>= g = case m of
                    Nothing -> Nothing
                    Just x  -> g x
+    fail _ = []
 ```
 
 ## Implementation: `Parser`
@@ -32,4 +33,28 @@ parse (Parser p) = p
 instance Monad Parser where
     return a = Parser (\cs -> [(a, cs)])
     p >>= f  = Parser (\cs -> concat [parse (f a) cs' | (a, cs') <- parse p cs]) 
+```
+
+## List Comprehensions
+
+List comprehensions are syntactic sugar for using lists as monads.
+
+```haskell
+instance Monad [] where
+    return x = [x]
+    xs >>= f = concat (map f xs)
+    fail _   = []
+
+[1,2] >>= \n -> ['a','b'] >>= \ch -> return (n,ch)
+
+-- equals...
+
+listOfTuples = do
+    n  <- [1,2]
+    ch <- ['a','b']
+    return (n,ch)
+
+-- equals...
+
+[ (n,ch) | n <- [1,2], ch <- ['a','b'] ]
 ```
