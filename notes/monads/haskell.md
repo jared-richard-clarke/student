@@ -37,7 +37,7 @@ instance Monad Parser where
 
 ## List Comprehensions
 
-List comprehensions are syntactic sugar for using lists as monads.
+List comprehensions are syntactic sugar for generating lists in a monadic context.
 
 ```haskell
 instance Monad [] where
