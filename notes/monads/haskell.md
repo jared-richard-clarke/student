@@ -45,16 +45,18 @@ instance Monad [] where
     xs >>= f = concat (map f xs)
     fail _   = []
 
-[1,2] >>= \n -> ['a','b'] >>= \ch -> return (n,ch)
+[(i,j) | i <- [1,2],
+         j <- [1..4] ]
 
 -- equals...
 
-listOfTuples = do
-    n  <- [1,2]
-    ch <- ['a','b']
-    return (n,ch)
+do i <- [1,2]
+   j <- [1..4]
+   return (i,j)
 
 -- equals...
 
-[ (n,ch) | n <- [1,2], ch <- ['a','b'] ]
+[1,2]  >>= \i ->
+[1..4] >>= \j ->
+return (i, j)
 ```
