@@ -82,6 +82,14 @@
                          v1 
                          v2)))
 
+         ;; (unary function) -> (function vector) -> vector
+         ;; Creates functions that perform unary operations over a vector.
+         ;; (define vec-neg (unary -)) -> (vec-neg (vec2 3 4)) -> #(-3 -4)
+
+         (define (unary operation)
+           (lambda (vec)
+             (vector-map (lambda (x) (operation x)) vec)))
+
          ;; (vec-add (vector number number) (vector number number)) -> (vector number number)
          ;; Returns the sum of two vectors.
          ;; (vec-add (vec2 3 4) (vec2 7 11)) -> #(10 15)
@@ -98,25 +106,20 @@
          ;; Flips the signs of the vector components.
          ;; (vec-neg (vec2 3 4)) -> (vec2 -3 -4)
 
-         (define (vec-neg vec)
-           (vector-map (lambda (x) (- x))
-                       vec))
+         (define vec-neg (unary -))
 
          ;; (vec-abs vector) -> vector
          ;; Returns vector with the absolute values of its vector components.
          ;; (vec-abs (vec2 -3 -4)) -> (vec2 3 4)
 
-         (define (vec-abs vec)
-           (vector-map (lambda (x) (abs x))
-                       vec))
+         (define vec-abs (unary abs))
 
          ;; (vec-invert vector) -> vector
          ;; Inverts the vector components.
          ;; (vec-invert (vec2 2 2)) -> '#(0.5 0.5)
 
-         (define (vec-invert vec)
-           (vector-map (lambda (x) (/ 1 x))
-                       vec))
+         (define vec-invert
+           (unary (lambda (x) (/ 1 x))))
 
          ;; (vec-sum vector ...) -> vector
          ;; Returns the sum of a series of vectors.
@@ -181,8 +184,7 @@
          ;; Rounds the vector components.
          ;; (vec-round (vec2 1.3 1.7)) -> #(1.0 2.0)
 
-         (define (vec-round vec)
-           (vector-map (lambda (x) (round x)) vec))
+         (define vec-round (unary round))
 
          ;; (vec2-transform vec2 mat3) -> vec2
          ;; Transforms a 2D vector using a 3 × 3 matrix.
