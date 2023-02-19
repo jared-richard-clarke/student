@@ -87,3 +87,78 @@ try p input =
         Consumed Error -> Empty Error
         other          -> other
 ```
+
+## Parsing with Error Handling
+
+```haskell
+type Parser a = State -> Consumed a
+
+data State = State String Pos
+
+data Message = Message Pos String [String]
+
+data Reply a = Ok a State Message | Error Message
+
+return :: a -> Parser a
+return x state = Empty (Ok x state (Message pos [] []))
+
+satisfy :: (Char -> Bool) -> Parser Char
+satisfy test =
+    \(State input pos) ->
+        case input of
+            (c:cs) | test c
+                   -> let newPos   = nextPos pos c
+                          newState = State cs newPos
+                      in seq newPos
+                             (Consumed
+                                 (Ok c newState
+                                     (Msg pos [] [])))
+            (c:cs) -> Empty (Error
+                          (Msg pos [c] []))
+            []     -> Empty (Error
+                          (Msg pos "end of input" []))
+
+(<|>) :: Parser a -> Parser a -> Parser a
+p <|> q =
+    \state -> 
+        case p state of
+            Empty (Error msg1)
+                      -> case q state of
+                             Empty (Error msg2)
+                                 -> mergeError msg1 msg2
+                             Empty (Ok x inp msg2)
+                                 -> mergeOk x inp msg1 msg2
+                             consumed
+                                 -> consumed
+            Empty (Ok x inp msg1)
+                      -> case q state of
+                             Empty (Error msg2)
+                                 -> mergeOk x inp msg1 msg2
+                             Empty (Ok _ _ msg2)
+                                 -> mergeOk x inp msg1 msg2
+                             consumed
+                                 -> consumed
+            consumed -> consumed
+
+mergeOk x inp msg1 msg2 =
+    Empty (Ok x inp (merge inp1 inp2))
+
+mergeError msg1 msg2 =
+    Empty (Error (merge msg1 msg2))
+
+merge (Msg pos inp exp1) (Msg _ _ exp2) =
+    Msg pos inp (exp1 ++ exp2)
+
+(<?>) :: Parser a -> String -> Parser a
+p <?> exp =
+    \state ->
+        case p state of
+            Empty (Error msg)
+                  -> Empty (Error (expect msg exp))
+            Empty (Ok x st msg)
+                  -> Empty (Ok x st (expect msg exp))
+            other -> other
+
+expect (Msg pos inp _) exp =
+    Msg pos inp [exp]
+```
