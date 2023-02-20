@@ -3,8 +3,8 @@
 ;; expands ->
 ;;
 ;; (bind '(1 2 3) (lambda (x)
-;;                 (bind '(4 5 6) (lambda (y)
-;;                                  (return (+ x y))))))
+;;                  (bind '(4 5 6) (lambda (y)
+;;                                   (return (+ x y))))))
 ;;
 ;; returns ->
 ;;
