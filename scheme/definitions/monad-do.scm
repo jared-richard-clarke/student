@@ -1,6 +1,5 @@
 ;; The Haskell "do" syntax (simplified). Makes monads readable.
 ;; "bind" must be defined in order for this macro to work.
-;;
 
 (define-syntax monad-do
   (lambda (stx)
