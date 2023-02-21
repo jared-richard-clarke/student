@@ -23,6 +23,8 @@ function binary(operation) {
     });
 }
 
+// A monoid is a set that is closed under a binary operation and has an identity element.
+// Computationally, a monoid is an aggregation pattern.
 function monoid(operation, identity) {
     return Object.freeze(function (...operands) {
         return operands.reduce(
