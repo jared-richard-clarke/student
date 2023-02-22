@@ -1,5 +1,3 @@
-{-# LANGUAGE InstanceSigs #-}
-
 module Vectors.Vec3
   ( Vec3 (..),
     add,
@@ -21,6 +19,7 @@ module Vectors.Vec3
   )
 where
 
+import Control.Applicative (liftA2)
 import Data.Foldable (foldl')
 import Prelude hiding (abs, negate, sum)
 
@@ -33,11 +32,14 @@ data Vec3 a = Vec3 !a !a !a
   deriving (Eq, Show, Read)
 
 instance Functor Vec3 where
-  fmap :: (a -> b) -> Vec3 a -> Vec3 b
   fmap fn (Vec3 x y z) = Vec3 (fn x) (fn y) (fn z)
 
+instance Applicative Vec3 where
+  pure a = Vec3 a a a
+  Vec3 a b c <*> Vec3 d e f = Vec3 (a d) (b e) (c f)
+
 add :: Num a => Vec3 a -> Vec3 a -> Vec3 a
-add (Vec3 x1 y1 z1) (Vec3 x2 y2 z2) = Vec3 (x1 + x2) (y1 + y2) (z1 + z2)
+add = liftA2 (+)
 
 (^+^) :: Num a => Vec3 a -> Vec3 a -> Vec3 a
 (^+^) = add
@@ -45,7 +47,7 @@ add (Vec3 x1 y1 z1) (Vec3 x2 y2 z2) = Vec3 (x1 + x2) (y1 + y2) (z1 + z2)
 infixl 6 ^+^
 
 sub :: Num a => Vec3 a -> Vec3 a -> Vec3 a
-sub (Vec3 x1 y1 z1) (Vec3 x2 y2 z2) = Vec3 (x1 - x2) (y1 - y2) (z1 - z2)
+sub = liftA2 (-)
 
 (^-^) :: Num a => Vec3 a -> Vec3 a -> Vec3 a
 (^-^) = sub
@@ -92,8 +94,8 @@ distance (Vec3 x1 y1 z1) (Vec3 x2 y2 z2) =
       z = z2 - z1
    in hypot x y z
 
-lerp :: Num a => Vec3 a -> Vec3 a -> a -> Vec3 a
-lerp (Vec3 x1 y1 z1) (Vec3 x2 y2 z2) t = Vec3 (interp x1 x2) (interp y1 y2) (interp z1 z2)
+lerp :: Num a => a -> Vec3 a -> Vec3 a -> Vec3 a
+lerp t = liftA2 interp
   where
     interp x y = (y - x) * t + x
 
