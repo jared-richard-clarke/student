@@ -10,17 +10,19 @@ module Matrices
   )
 where
 
-data Matrix t = Mat3
-  { a :: !t,
-    b :: !t,
-    c :: !t,
-    d :: !t,
-    e :: !t,
-    f :: !t
+import Data.Foldable (foldl')
+
+data Matrix a = Mat3
+  { a :: !a,
+    b :: !a,
+    c :: !a,
+    d :: !a,
+    e :: !a,
+    f :: !a
   }
   deriving (Eq, Show, Read)
 
-multiply :: Num t => Matrix t -> Matrix t -> Matrix t
+multiply :: Num a => Matrix a -> Matrix a -> Matrix a
 multiply m n =
   let Mat3
         { a = a1,
@@ -47,7 +49,7 @@ multiply m n =
           f = e1 * b2 + f1 * d2 + f2
         }
 
-identity :: Num t => Matrix t
+identity :: Num a => Matrix a
 identity =
   Mat3
     { a = 1,
@@ -58,7 +60,7 @@ identity =
       f = 0
     }
 
-translate :: Num t => t -> t -> Matrix t
+translate :: Num a => a -> a -> Matrix a
 translate x y =
   Mat3
     { a = 1,
@@ -69,7 +71,7 @@ translate x y =
       f = y
     }
 
-scale :: Num t => t -> t -> Matrix t
+scale :: Num a => a -> a -> Matrix a
 scale x y =
   Mat3
     { a = x,
@@ -80,7 +82,7 @@ scale x y =
       f = 0
     }
 
-rotate :: Floating t => t -> Matrix t
+rotate :: Floating a => a -> Matrix a
 rotate angle =
   let x = cos angle
       y = sin angle
@@ -93,7 +95,7 @@ rotate angle =
           f = 0
         }
 
-shear :: Num t => t -> t -> Matrix t
+shear :: Num a => a -> a -> Matrix a
 shear x y =
   Mat3
     { a = 1,
@@ -104,5 +106,5 @@ shear x y =
       f = 0
     }
 
-compose :: (Foldable s, Num t) => s (Matrix t) -> Matrix t
-compose = foldr multiply identity
+compose :: (Foldable b, Num a) => b (Matrix a) -> Matrix a
+compose = foldl' multiply identity
