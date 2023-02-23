@@ -32,6 +32,11 @@ return (x, y)
 
 ## Process
 
+> "When you have non-deterministic values interacting, you can view their computation as 
+>  a tree where every possible result in a list represents a separate branch."
+>
+> — **Learn You A Haskell For Great Good** by Miran Lipovača
+
 ```text
                 ['a', 'b']
                 /        \
