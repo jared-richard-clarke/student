@@ -17,7 +17,7 @@
      (bind mx (lambda (x)
                 (if predicate
                     (return expression)
-                    (fail expression))))]
+                    fail)))]
     [(_ expression [(x <- mx) (y <- my) ...] predicate)
      (bind mx (lambda (x)
                 (for-list expression [(y <- my) ...] predicate)))]))
@@ -31,8 +31,7 @@
   (lambda (xs f)
     (concat (map f xs))))
 
-(define fail
-  (lambda (x) (list)))
+(define fail '())
 
 ;; === utils ===
 
