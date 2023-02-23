@@ -38,9 +38,9 @@ return (x, y)
 > — **Learn You A Haskell For Great Good** by Miran Lipovača
 
 ```text
-                ['a', 'b']
-                /        \
-       [1, 2]                [1, 2]
-       /    \               /     \
-['a', 1]    ['a', 2] ['b', 1]     ['b', 2]
+                 ['a', 'b']
+                 /        \
+       [1, 2]                 [1, 2]
+       /    \                /     \
+['a', 1]    ['a', 2]  ['b', 1]     ['b', 2]
 ```
