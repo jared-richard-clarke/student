@@ -45,18 +45,21 @@ instance Monad [] where
     xs >>= f = concat (map f xs)
     fail _   = []
 
-[(i,j) | i <- [1,2],
-         j <- [1..4] ]
+[(x, y) | x <- [1, 2], y <- [3, 4]]
 
--- equals...
+-- expands ->
 
-do i <- [1,2]
-   j <- [1..4]
-   return (i,j)
+do x <- [1, 2]
+   y <- [3, 4]
+   return (x, y)
 
--- equals...
+-- expands ->
 
-[1,2]  >>= \i ->
-[1..4] >>= \j ->
-return (i, j)
+[1, 2] >>= \x ->
+[3, 4] >>= \y ->
+return (x, y)
+
+-- evaluates ->
+
+[(1,3),(1,4),(2,3),(2,4)]
 ```
