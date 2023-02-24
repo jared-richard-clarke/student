@@ -31,7 +31,7 @@
 
 ;; I rewrote list-getter definitions using functional composition.
 ;; (create-getter '2nd 2) -> (lambda (lst) ...)
-(define (create-getter name npos)
+(define (list-getter name npos)
   (lambda (lst)
     (if (list? lst)
         (let loop ([l lst]
@@ -46,12 +46,12 @@
                                      "list" lst)))
         (raise-argument-error name "list?" lst))))
 
-(define 2nd  (create-getter '2nd 2))
-(define 3rd  (create-getter '3rd 3))
-(define 4th  (create-getter '4th 4))
-(define 5th  (create-getter '5th 5))
-(define 6th  (create-getter '6th 6))
-(define 7th  (create-getter '7th 7))
-(define 8th  (create-getter '8th 8))
-(define 9th  (create-getter '9th 9))
-(define 10th (create-getter '10th 10))
+(define 2nd  (list-getter '2nd 2))
+(define 3rd  (list-getter '3rd 3))
+(define 4th  (list-getter '4th 4))
+(define 5th  (list-getter '5th 5))
+(define 6th  (list-getter '6th 6))
+(define 7th  (list-getter '7th 7))
+(define 8th  (list-getter '8th 8))
+(define 9th  (list-getter '9th 9))
+(define 10th (list-getter '10th 10))
