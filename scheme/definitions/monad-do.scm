@@ -1,9 +1,12 @@
 ;; The Haskell "do" syntax (simplified). Makes monads readable.
-;; "bind" must be defined in order for this macro to work.
+;; "bind", "return", and their semantics are defined separately.
 
 (define-syntax monad-do
   (syntax-rules (<-)
     [(_ expression) expression]
+    [(_ mx expression ...)
+     (bind mx (lambda ()
+		            (monad-do expression ...)))]
     [(_ (x <- mx) expression ...)
      (bind mx (lambda (x) 
                 (monad-do expression ...)))]))
