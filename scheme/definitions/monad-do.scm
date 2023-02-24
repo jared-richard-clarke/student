@@ -4,9 +4,6 @@
 (define-syntax monad-do
   (syntax-rules (<-)
     [(_ expression) expression]
-    [(_ mx expression ...)
-     (bind mx (lambda ()
-                (monad-do expression ...)))]
     [(_ (x <- mx) expression ...)
      (bind mx (lambda (x) 
                 (monad-do expression ...)))]))
