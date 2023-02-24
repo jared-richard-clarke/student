@@ -29,8 +29,7 @@
 (define-lgetter ninth   9)
 (define-lgetter tenth   10)
 
-;; I rewrote list-getter definitions using functional composition.
-;; (create-getter '2nd 2) -> (lambda (lst) ...)
+;; list-getter definitions rewritten using partial application and functional composition.
 (define (list-getter name npos)
   (lambda (lst)
     (if (list? lst)
