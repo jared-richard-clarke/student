@@ -3,6 +3,7 @@
                  rad->deg
                  PI
                  π
+                 sqr
                  hypotenuse
                  approx-eq?
                  assert-equal)
