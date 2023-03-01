@@ -12,30 +12,36 @@
 
          (define PI 3.141592653589793)
          (define π PI)
+         
+         ;; (sqr number) -> number
+         ;; Multiplies a number by itself.
+         ;; (sqr 5) -> 25
+         
+         (define (sqr x) (* x x))
 
          ;; (deg->rad number) -> number
          ;; Converts degrees to radians.
          ;; (deg->rad 7) -> 0.12217304763960307
 
          (define (deg->rad degrees)
-           (* degrees (/ PI 180)))
+           (* degrees (/ π 180)))
 
          ;; (rad->deg number) -> number
          ;; Converts radians to degrees.
          ;; (rad->deg 0.12217304763960307) -> 7.0
 
          (define (rad->deg radians)
-           (* radians (/ 180 PI)))
+           (* radians (/ 180 π)))
 
          ;; (hypotenuse number number) -> number
          ;; Returns the square root of the sum of the squares of its arguments.
          ;; (hypotenuse 3 4) -> 5
 
-         (define (hypotenuse . numbers)
-           (sqrt (fold-left (lambda (accum number)
-                              (+ accum (* number number)))
+         (define (hypotenuse . xs)
+           (sqrt (fold-left (lambda (acc x)
+                              (+ acc (sqr x)))
                             0
-                            numbers)))
+                            xs)))
 
          ;; (approx-eq? number number) -> boolean
          ;; Tests for approximate equality between two floating-point numbers within an absolute
