@@ -153,6 +153,17 @@ def factorial(n):
     return x * factorial(x - 1) if x > 1 else 1
 ```
 
+## Prolog
+
+```prolog
+% recursive
+factorial(X, Y) :- 
+      X > 0, 
+      X2 is X - 1,
+      factorial(X2, Y2), 
+      Y is X * Y2.
+```
+
 ## Rust
 
 ```rust
