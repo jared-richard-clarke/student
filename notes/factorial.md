@@ -168,7 +168,7 @@ def factorial(n):
 ## Prolog
 
 ```prolog
-% recursive
+% reads as "the factorial of X is Y"
 factorial(X, Y) :- 
       X > 0, 
       X2 is X - 1,
