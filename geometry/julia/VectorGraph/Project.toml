@@ -1,7 +1,0 @@
-name = "VectorGraph"
-uuid = "96b752d1-aaef-43b0-9a5a-7f6024cb1f7e"
-authors = ["Jared Clarke <jaredclarke.developer@gmail.com>"]
-version = "0.1.0"
-
-[deps]
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
