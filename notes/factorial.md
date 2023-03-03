@@ -234,6 +234,21 @@ fn factorial(x: i64) -> i64 {
 (define factorial (compose product range))
 ```
 
+```smalltalk
+Number extend [
+  factorial [
+    (self <= 0) 
+        ifTrue: [ ^1 ]
+        ifFalse: [                 
+	    ^ (1 to: self) fold: [ :a :b | a * b ]
+        ]
+  ]
+].
+
+"-> 24"
+4 factorial.
+```
+
 ## Web Assembly: `.wat` notation
 
 ```wasm
