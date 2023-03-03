@@ -10,6 +10,18 @@ It is therefore an excellent tool for comparing the syntax of different programm
 
 > x! is the product of all positive integers less than or equal to x.
 
+## APL
+
+```apl
+⍝ built-in definition: !
+!4 ⍝ -> 24
+
+⍝ multiply a vector of integers from 1 through "n"
+Factorial←{×/⍳⍵}
+
+Factorial 4 ⍝ -> 24
+```
+
 ## C
 
 ```c
