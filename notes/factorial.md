@@ -234,6 +234,8 @@ fn factorial(x: i64) -> i64 {
 (define factorial (compose product range))
 ```
 
+## Smalltalk
+
 ```smalltalk
 Number extend [
   factorial [
