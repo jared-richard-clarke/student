@@ -1,3 +1,5 @@
+{-# LANGUAGE NamedFieldPuns #-}
+
 module Vectors.Vec2
   ( Vec2 (..),
     add,
@@ -108,10 +110,5 @@ normalize v = fmap (/ m) v where m = magnitude v
 transform :: Num a => Vec2 a -> Matrix a -> Vec2 a
 transform v m =
   let Vec2 x y = v
-      Mat3
-        { a = a,
-          b = b,
-          c = c,
-          d = d
-        } = m
+      Mat3 {a, b, c, d} = m
    in Vec2 (a * x + c * y) (b * x + d * y)
