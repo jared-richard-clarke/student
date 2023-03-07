@@ -23,11 +23,8 @@ where
 
 import Control.Applicative (liftA2)
 import Matrices (Matrix (..))
+import Utils (hypot)
 import Prelude hiding (abs, negate)
-
--- utils
-hypot :: Floating t => t -> t -> t
-hypot x y = sqrt $ x ** 2 + y ** 2
 
 -- 2D Vector
 data Vec2 a = Vec2 !a !a
@@ -74,7 +71,7 @@ invert :: Fractional a => Vec2 a -> Vec2 a
 invert = fmap (1 /)
 
 magnitude :: Floating a => Vec2 a -> a
-magnitude (Vec2 x y) = hypot x y
+magnitude (Vec2 x y) = hypot [x, y]
 
 scale :: Num a => a -> Vec2 a -> Vec2 a
 scale n = fmap (n *)
@@ -96,7 +93,7 @@ distance :: Floating a => Vec2 a -> Vec2 a -> a
 distance (Vec2 x1 y1) (Vec2 x2 y2) =
   let x = x2 - x1
       y = y2 - y1
-   in hypot x y
+   in hypot [x, y]
 
 lerp :: Num a => a -> Vec2 a -> Vec2 a -> Vec2 a
 lerp t = liftA2 interp
