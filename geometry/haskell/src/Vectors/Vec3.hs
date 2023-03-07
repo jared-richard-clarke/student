@@ -19,7 +19,6 @@ module Vectors.Vec3
 where
 
 import Control.Applicative (liftA2)
-import Data.Foldable (foldl')
 import Prelude hiding (abs, negate)
 
 -- utils
