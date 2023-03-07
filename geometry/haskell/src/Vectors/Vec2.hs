@@ -22,7 +22,6 @@ module Vectors.Vec2
 where
 
 import Control.Applicative (liftA2)
-import Data.Foldable (foldl')
 import Matrices (Matrix (..))
 import Prelude hiding (abs, negate)
 
