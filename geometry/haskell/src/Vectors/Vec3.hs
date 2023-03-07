@@ -19,11 +19,8 @@ module Vectors.Vec3
 where
 
 import Control.Applicative (liftA2)
+import Utils (hypot)
 import Prelude hiding (abs, negate)
-
--- utils
-hypot :: Floating t => t -> t -> t -> t
-hypot x y z = sqrt $ x ** 2 + y ** 2 + z ** 2
 
 -- 3D Vector
 data Vec3 a = Vec3 !a !a !a
@@ -70,7 +67,7 @@ invert :: Fractional a => Vec3 a -> Vec3 a
 invert = fmap (1 /)
 
 magnitude :: Floating a => Vec3 a -> a
-magnitude (Vec3 x y z) = hypot x y z
+magnitude (Vec3 x y z) = hypot [x, y, z]
 
 scale :: Num a => a -> Vec3 a -> Vec3 a
 scale n = fmap (n *)
@@ -93,7 +90,7 @@ distance (Vec3 x1 y1 z1) (Vec3 x2 y2 z2) =
   let x = x2 - x1
       y = y2 - y1
       z = z2 - z1
-   in hypot x y z
+   in hypot [x, y, z]
 
 lerp :: Num a => a -> Vec3 a -> Vec3 a -> Vec3 a
 lerp t = liftA2 interp
