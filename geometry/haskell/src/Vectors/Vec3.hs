@@ -7,7 +7,6 @@ module Vectors.Vec3
     negate,
     abs,
     invert,
-    sum,
     magnitude,
     scale,
     (*^),
@@ -21,7 +20,7 @@ where
 
 import Control.Applicative (liftA2)
 import Data.Foldable (foldl')
-import Prelude hiding (abs, negate, sum)
+import Prelude hiding (abs, negate)
 
 -- utils
 hypot :: Floating t => t -> t -> t -> t
@@ -37,6 +36,12 @@ instance Functor Vec3 where
 instance Applicative Vec3 where
   pure a = Vec3 a a a
   Vec3 a b c <*> Vec3 d e f = Vec3 (a d) (b e) (c f)
+
+instance Num a => Semigroup (Vec3 a) where
+  (<>) = add
+
+instance Num a => Monoid (Vec3 a) where
+  mempty = Vec3 0 0 0
 
 add :: Num a => Vec3 a -> Vec3 a -> Vec3 a
 add = liftA2 (+)
@@ -64,9 +69,6 @@ abs = fmap absolute
 
 invert :: Fractional a => Vec3 a -> Vec3 a
 invert = fmap (1 /)
-
-sum :: (Foldable b, Num a) => b (Vec3 a) -> Vec3 a
-sum = foldl' add (Vec3 0 0 0)
 
 magnitude :: Floating a => Vec3 a -> a
 magnitude (Vec3 x y z) = hypot x y z
