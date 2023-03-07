@@ -12,14 +12,7 @@ where
 
 import Data.Foldable (foldl')
 
-data Matrix a = Mat3
-  { a :: !a,
-    b :: !a,
-    c :: !a,
-    d :: !a,
-    e :: !a,
-    f :: !a
-  }
+data Matrix a = Mat3 {a, b, c, d, e, f :: !a}
   deriving (Eq, Show, Read)
 
 multiply :: Num a => Matrix a -> Matrix a -> Matrix a
