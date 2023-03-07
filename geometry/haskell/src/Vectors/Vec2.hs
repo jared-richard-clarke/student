@@ -7,7 +7,6 @@ module Vectors.Vec2
     negate,
     abs,
     invert,
-    sum,
     magnitude,
     scale,
     (^*),
@@ -23,10 +22,7 @@ where
 import Control.Applicative (liftA2)
 import Data.Foldable (foldl')
 import Matrices (Matrix (..))
-import Prelude hiding (abs, negate, sum)
-
--- There's probably a more elegant solution to creating my own
--- definitions for "abs", "negate", and "sum"
+import Prelude hiding (abs, negate)
 
 -- utils
 hypot :: Floating t => t -> t -> t
@@ -42,6 +38,12 @@ instance Functor Vec2 where
 instance Applicative Vec2 where
   pure a = Vec2 a a
   Vec2 a b <*> Vec2 c d = Vec2 (a c) (b d)
+
+instance Num a => Semigroup (Vec2 a) where
+  (<>) = add
+
+instance Num a => Monoid (Vec2 a) where
+  mempty = Vec2 0 0
 
 add :: Num a => Vec2 a -> Vec2 a -> Vec2 a
 add = liftA2 (+)
@@ -69,9 +71,6 @@ abs = fmap absolute
 
 invert :: Fractional a => Vec2 a -> Vec2 a
 invert = fmap (1 /)
-
-sum :: (Foldable b, Num a) => b (Vec2 a) -> Vec2 a
-sum = foldl' add (Vec2 0 0)
 
 magnitude :: Floating a => Vec2 a -> a
 magnitude (Vec2 x y) = hypot x y
