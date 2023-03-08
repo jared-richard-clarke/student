@@ -9,6 +9,12 @@ be deprecated as well.
   
 **Side Note:** In true Gofer code, type synonyms must be supplied all their
 arguments. The `Monad` instance declaration for `result` is therefore invalid.
+
+> "In the first versions of Haskell, the comprehension syntax was available 
+>  for all monads. Later the comprehension syntax was restricted to lists."
+>  
+>  — [Haskell Wiki](https://wiki.haskell.org/List_comprehension)
+
 ```haskell
 type Parser a = String -> [(a, String)]
 
