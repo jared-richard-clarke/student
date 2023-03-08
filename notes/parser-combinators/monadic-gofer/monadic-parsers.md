@@ -7,7 +7,7 @@ implementation of the Haskell programming language. Its syntax is closer
 to Miranda. Gofer was eventually replaced by Hugs, which would eventually 
 be deprecated as well.
   
-Side Note: In true Gofer code, type synonyms must be supplied all their
+**Side Note:** In true Gofer code, type synonyms must be supplied all their
 arguments. The `Monad` instance declaration for `result` is therefore invalid.
 ```haskell
 type Parser a = String -> [(a, String)]
