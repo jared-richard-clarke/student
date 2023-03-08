@@ -16,6 +16,7 @@
 >  for terminal symbols."
 >
 > — *Parsec: Direct Style Monadic Parser Combinators For The Real World*, by Daan Leijen and Erik Meijer
+
 > "In functional programming, a popular approach to building recursive descent parsers
 >  is to model parsers as functions, and to define higher-order functions (or combinators) 
 >  that implement grammar constructions such as sequencing, choice, and repetition."
