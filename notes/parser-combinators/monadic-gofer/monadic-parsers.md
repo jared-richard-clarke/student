@@ -16,25 +16,47 @@ arguments. The `Monad` instance declaration for `result` is therefore invalid.
 >  — [Haskell Wiki](https://wiki.haskell.org/List_comprehension)
 
 ```haskell
+{-
+  The code below is Gofer (Good For Equational Reasoning), a now deprecated
+  implementation of the Haskell programming language. Its syntax is closer
+  to Miranda. Gofer was eventually replaced by Hugs, which would eventually 
+  be deprecated as well.
+  Side Note: In true Gofer code, type synonyms must be supplied all their
+  arguments. The instance declaration for "result" is therefore invalid.
+-}
+
 type Parser a = String -> [(a, String)]
 
--- primitive parsers
+-- primitives
 
 instance Monad Parser where
-  result v   = \inp -> [(v, inp)]
+  result v = \inp -> [(v, inp)]
   p `bind` f = \inp -> concat [f v out | (v, out) <- p inp]
 
 instance MonadOPlus Parser where
-  zero   = \inp -> []
+  zero = \inp -> []
   p ++ q = \inp -> (p inp ++ q inp)
 
--- parser combinators
+-- combinators
 
 bind :: Parser a -> (a -> Parser b) -> Parser b
 p `bind` f = \inp -> concat [f v inp' | (v, inp') <- p inp]
 
 sat :: (Char -> Bool) -> Parser Char
 sat p = [x | x <- item, p x]
+
+many :: Parser a -> Parser [a]
+many p = [x:xs | x <- p, xs <- many p] ++ [[]]
+
+many1 :: Parser a -> Parser [a]
+many1 p = [x:xs | x <- p, xs <- many p]
+
+sepby :: Parser a -> Parser b -> Parser [a]
+p `sepby` sep = (p `sepby1` sep) ++ [[]]
+
+sepby1 :: Parser a -> Parser b -> Parser [a]
+p `sepby1` sep = [x:xs | x <- p,
+		       , xs <- many [y | _ <- sep, y <- p]]
 
 -- parsers
 
@@ -60,6 +82,15 @@ string :: String -> Parser String
 string ""     = [""]
 string (x:xs) = [x:xs | _ <- char x, _ <- string xs]
 
+{-
+=== expands ===
+string :: String -> Parser String
+string "" = result ""
+string (x:xs) = char x    `bind` \_ ->
+                string xs `bind` \_ ->
+                result (x:xs)
+-}
+
 ident :: Parser String
 ident = [x:xs | x <- lower, xs <- many alphanum]
 
@@ -74,25 +105,6 @@ int = [f n | f <- op, n <- nat]
       where
         op = [negate | _ <- char '-'] ++ [id]
 
-{-
-=== expands ===
-string :: String -> Parser String
-string "" = result ""
-string (x:xs) = char x    `bind` \_ ->
-                string xs `bind` \_ ->
-                result (x:xs)
--}
-
-many :: Parser a -> Parser [a]
-many p = [x:xs | x <- p, xs <- many p] ++ [[]]
-
-many1 :: Parser a -> Parser [a]
-many1 p = [x:xs | x <- p, xs <- many p]
-
-sepby :: Parser a -> Parser b -> Parser [a]
-p `sepby` sep = (p `sepby1` sep) ++ [[]]
-
-sepby1 :: Parser a -> Parser b -> Parser [a]
-p `sepby1` sep = [x:xs | x <- p,
-		       , xs <- many [y | _ <- sep, y <- p]]
+bracket :: Parser a -> Parser b -> Parser c -> Parser b
+bracket open p close = [x | _ <- open, x <- p, _ <- close]
 ```
