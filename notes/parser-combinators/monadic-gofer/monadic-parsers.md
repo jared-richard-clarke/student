@@ -73,10 +73,10 @@ upper :: Parser Char
 upper = sat (\x -> 'A' <= x && x <= 'Z')
 
 letter :: Parser Char
-letter = lower `plus` upper
+letter = lower ++ upper
 
 alphanum :: Parser Char
-alphanum = letter `plus` digit
+alphanum = letter ++ digit
 
 string :: String -> Parser String
 string ""     = [""]
