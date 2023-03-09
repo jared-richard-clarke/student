@@ -30,9 +30,6 @@ instance MonadOPlus Parser where
 
 -- combinators
 
-bind :: Parser a -> (a -> Parser b) -> Parser b
-p `bind` f = \inp -> concat [f v inp' | (v, inp') <- p inp]
-
 sat :: (Char -> Bool) -> Parser Char
 sat p = [x | x <- item, p x]
 
