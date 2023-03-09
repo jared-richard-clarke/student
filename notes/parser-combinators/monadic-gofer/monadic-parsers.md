@@ -16,6 +16,8 @@ arguments. The `Monad` instance declaration for `result` is therefore invalid.
 >  — [Haskell Wiki](https://wiki.haskell.org/List_comprehension)
 
 ```haskell
+-- Parser is a function that inputs a string and outputs a
+-- list of zero or more pairs of a value and postfix string.
 type Parser a = String -> [(a, String)]
 
 -- primitives
