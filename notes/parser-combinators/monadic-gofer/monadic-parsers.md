@@ -16,15 +16,6 @@ arguments. The `Monad` instance declaration for `result` is therefore invalid.
 >  — [Haskell Wiki](https://wiki.haskell.org/List_comprehension)
 
 ```haskell
-{-
-  The code below is Gofer (Good For Equational Reasoning), a now deprecated
-  implementation of the Haskell programming language. Its syntax is closer
-  to Miranda. Gofer was eventually replaced by Hugs, which would eventually 
-  be deprecated as well.
-  Side Note: In true Gofer code, type synonyms must be supplied all their
-  arguments. The instance declaration for "result" is therefore invalid.
--}
-
 type Parser a = String -> [(a, String)]
 
 -- primitives
