@@ -30,11 +30,11 @@ type Parser a = String -> [(a, String)]
 -- primitives
 
 instance Monad Parser where
-  result v = \inp -> [(v, inp)]
+  result v   = \inp -> [(v, inp)]
   p `bind` f = \inp -> concat [f v out | (v, out) <- p inp]
 
 instance MonadOPlus Parser where
-  zero = \inp -> []
+  zero   = \inp -> []
   p ++ q = \inp -> (p inp ++ q inp)
 
 -- combinators
