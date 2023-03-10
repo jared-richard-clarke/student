@@ -32,11 +32,15 @@ type Parser a = String -> [(a, String)]
 -}
 
 instance Monad Parser where
+  -- result :: a -> Parser a
   result v   = \inp -> [(v, inp)]
+  -- bind :: Parser a -> (a -> Parser b) -> Parser b
   p `bind` f = \inp -> concat [f v out | (v, out) <- p inp]
 
 instance MonadOPlus Parser where
+  -- Parser a
   zero   = \inp -> []
+  -- Parser a -> Parser a -> Parser a
   p ++ q = \inp -> (p inp ++ q inp)
 
 -- combinators
