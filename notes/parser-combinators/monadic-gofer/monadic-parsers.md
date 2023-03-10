@@ -44,6 +44,13 @@ instance MonadOPlus Parser where
 sat :: (Char -> Bool) -> Parser Char
 sat p = [x | x <- item, p x]
 
+{-
+=== equivalent ===
+sat :: (Char -> Bool) -> Parser Char
+sat p = item `bind` \x ->
+        if p x then result x else zero
+-}
+
 many :: Parser a -> Parser [a]
 many p = [x:xs | x <- p, xs <- many p] ++ [[]]
 
@@ -82,7 +89,7 @@ string ""     = [""]
 string (x:xs) = [x:xs | _ <- char x, _ <- string xs]
 
 {-
-=== expands ===
+=== equivalent ===
 string :: String -> Parser String
 string "" = result ""
 string (x:xs) = char x    `bind` \_ ->
