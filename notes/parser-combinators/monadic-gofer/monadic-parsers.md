@@ -45,20 +45,20 @@ sat :: (Char -> Bool) -> Parser Char
 sat p = [x | x <- item, p x]
 
 {-
-=== equivalent ===
-sat :: (Char -> Bool) -> Parser Char
-sat p = item `bind` \x ->
-        if p x then result x else zero
+  === equivalent ===
+  sat :: (Char -> Bool) -> Parser Char
+  sat p = item `bind` \x ->
+          if p x then result x else zero
 -}
 
 many :: Parser a -> Parser [a]
 many p = [x:xs | x <- p, xs <- many p] ++ [[]]
 
 {-
-"++" is non-deterministic so ...
-(many letter) "No!" -> [("No", "!"), ("N", "o!"), ("", "No!")]
-Non-determinism means both alternatives can be evaluated,
-even if the first alternative is successful.
+  "++" is non-deterministic so ...
+  (many letter) "No!" -> [("No", "!"), ("N", "o!"), ("", "No!")]
+  Non-determinism means both alternatives can be evaluated,
+  even if the first alternative is successful.
 -}
 
 many1 :: Parser a -> Parser [a]
@@ -96,12 +96,12 @@ string ""     = [""]
 string (x:xs) = [x:xs | _ <- char x, _ <- string xs]
 
 {-
-=== equivalent ===
-string :: String -> Parser String
-string "" = result ""
-string (x:xs) = char x    `bind` \_ ->
-                string xs `bind` \_ ->
-                result (x:xs)
+  === equivalent ===
+  string :: String -> Parser String
+  string "" = result ""
+  string (x:xs) = char x    `bind` \_ ->
+                  string xs `bind` \_ ->
+                  result (x:xs)
 -}
 
 ident :: Parser String
