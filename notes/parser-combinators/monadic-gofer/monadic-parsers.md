@@ -54,6 +54,11 @@ sat p = item `bind` \x ->
 many :: Parser a -> Parser [a]
 many p = [x:xs | x <- p, xs <- many p] ++ [[]]
 
+{-
+"++" is non-deterministic so ...
+(many letter) "No!" -> [("No", "!"), ("N", "o!"), ("", "No!")]
+-}
+
 many1 :: Parser a -> Parser [a]
 many1 p = [x:xs | x <- p, xs <- many p]
 
