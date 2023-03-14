@@ -11,6 +11,9 @@ A monad is defined by three things:
 
 ### The Three Monad Laws
 
+The monad laws are not so much laws as generally-agreed-upon rules for predictable
+behaviors among different monad implementations.
+
 ```haskell
 m >>= return     =  m                        -- right unit
 return x >>= f   =  f x                      -- left unit
