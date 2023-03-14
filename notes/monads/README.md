@@ -25,6 +25,24 @@ return x >>= f   =  f x                      -- left unit
 
 **Associativity** ensures `>>=` cares only about the order of computations, not their nesting.
 
+## Categorical Definition
+
+Category Theory treats monads as functors with two additional combinators.
+
+```haskell
+fmap   :: (a -> b) -> M a -> M b  -- functor
+
+return :: a -> M a
+join   :: M (M a) -> M a          -- similar to concat for lists, where concat :: [[a]] -> [a]
+
+-- bind can be defined as ...
+m >>= g = join (fmap g m)
+
+-- likewise ...
+fmap f x = x >>= (return . f)
+join x   = x >>= id
+```
+
 ## Uses
 
 > "[M]onads are by no means limited to input and output. 
