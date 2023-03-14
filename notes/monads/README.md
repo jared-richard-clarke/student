@@ -21,6 +21,10 @@ return x >>= f   =  f x                      -- left unit
 (m >>= f) >>= g  =  m >>= (\x -> f x >>= g)  -- associativity
 ```
 
+**Right and Left Unit** ensure `return` is a neutral element in that it doesn't perform any computation.
+
+**Associativity** ensures `>>=` cares only about the order of computations, not their nesting.
+
 ## Uses
 
 > "[M]onads are by no means limited to input and output. 
