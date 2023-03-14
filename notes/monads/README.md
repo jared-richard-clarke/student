@@ -16,3 +16,15 @@ A monad is defined by three things:
 >  state, non-determinism, continuations, coroutines, and more."
 >
 > — [Haskell Wiki: Understanding Monads](https://en.wikibooks.org/wiki/Haskell/Understanding_monads)
+
+## Monads and Equivalent Imperative Semantics
+
+| Monad    | Imperative                |
+| -------- | ------------------------- |
+| `Maybe`  | Exception (anonymous)     |
+| `Either` | Exception (error message) |
+| `IO`     | Input / Output            |
+| `[]`     | Nondeterminism            |
+| `Reader` | Environment               |
+| `Writer` | Logger                    |
+| `State`  | Global State              |
