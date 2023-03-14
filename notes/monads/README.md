@@ -9,6 +9,15 @@ A monad is defined by three things:
 2. A function `return`.
 3. An operator `(>>=)`, which is pronounced "bind".
 
+### The Three Monad Laws
+
+```haskell
+m >>= return     =  m                        -- right unit
+return x >>= f   =  f x                      -- left unit
+
+(m >>= f) >>= g  =  m >>= (\x -> f x >>= g)  -- associativity
+```
+
 ## Uses
 
 > "[M]onads are by no means limited to input and output. 
