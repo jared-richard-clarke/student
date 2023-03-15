@@ -13,6 +13,15 @@ quicksort (x:xs) =     
     let left  = quicksort [a | a <- xs, a <= x]  
         right = quicksort [a | a <- xs, a >  x]   
     in  left ++ [x] ++ right 
+    
+-- or ...
+
+import Data.List (partition)
+
+quicksort :: (Ord a) => [a] -> [a]    
+quicksort [] = []
+quicksort (x:xs) = let (left, right) = partition (<= x) xs
+                   in quicksort left ++ [x] ++ right
 ```
 
 ## OCaml
