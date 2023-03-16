@@ -38,11 +38,11 @@ Haskell expression syntax has nine constructs.
 data Expr
   = Var      Id
   | Lit      Literal
-  | App      Expr Expr
-  | Lam      Var Expr
-  | Let      Bind Expr
-  | Case     Expr Var Type [Alt]
-  | Cast     Expr Coercion
+  | App      Expr    Expr
+  | Lam      Var     Expr
+  | Let      Bind    Expr
+  | Case     Expr    Var Type [Alt]
+  | Cast     Expr    Coercion
   | Type     Type
   | Coercion Coercion
   | Tick  ...  -- unimportant
@@ -56,16 +56,16 @@ data AltCon
 
 data Bind
   = NonRec Var Expr
-  | Rec [(Var, Expr)]
+  | Rec    [(Var, Expr)]
 
 data Type
-  = TyVarTy Var
-  | AppTy Type Type
-  | TyConApp TyCon [Type]
-  | ForAllTy TyCoVarBinder Type
-  | FunTy Mult Type Type
-  | LitTy TyLit
-  | CastTy Type Coercion
+  = TyVarTy    Var
+  | AppTy      Type          Type
+  | TyConApp   TyCon         [Type]
+  | ForAllTy   TyCoVarBinder Type
+  | FunTy      Mult          Type Type
+  | LitTy      TyLit
+  | CastTy     Type          Coercion
   | CoercionTy Coercion
 ```
 
