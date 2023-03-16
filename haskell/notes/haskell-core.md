@@ -13,7 +13,7 @@ by Vladislav Zavialov
 
 1. Text
 2. Lexical Analysis   -> Tokens
-3. Syntactiv Analysis -> Syntax Tree
+3. Syntactic Analysis -> Syntax Tree
 4. Name Resolution    -> Well-Scoped Syntax Tree
 5. Type Checking      -> Well-Typed Syntax Tree
 6. Desugaring         -> Core
