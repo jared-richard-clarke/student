@@ -205,8 +205,8 @@ if c then a else b
 
 -- Core
 case c of
-  False -> b
   True  -> a
+  False -> b
 ```
 
 ## `seq`
