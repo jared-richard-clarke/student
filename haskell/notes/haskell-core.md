@@ -313,8 +313,8 @@ f = \act ->
 
 -- Core
 f = \ @(m :: Type -> Type) ->
-    \ ($dMonad :: Monad m) ->
-    \ (act :: m Bool) ->
+    \  ($dMonad :: Monad m) ->
+    \  (act :: m Bool) ->
       (>>=)  @m $dMonad @Bool @Bool act (\x ->
       (>>=)  @m $dMonad @Bool @Bool act (\y ->
       return @m $dMonad @Bool ((&&) x y)))
