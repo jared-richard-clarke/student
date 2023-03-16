@@ -1,5 +1,7 @@
 ;; The Haskell "do" syntax (simplified). Makes monads readable.
-;; "bind", "return", and their semantics are defined separately.
+;; "bind" or ">>=", "return", and their semantics are defined separately.
+;;
+;; The syntax for the "then" or ">>" operator is omitted for simplicity.
 
 (define-syntax monad-do
   (syntax-rules (<-)
