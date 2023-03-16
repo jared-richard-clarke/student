@@ -5,3 +5,4 @@ To better understand Scheme, Racket, and other LISP dialects, I started a collec
 - Procedure definitions
 - Examples of The Lambda Calculus
 - Data structures
+- General notes and documentation
