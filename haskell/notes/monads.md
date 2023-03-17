@@ -58,3 +58,36 @@ join x   = x >>= id
 | `Reader` | Environment               |
 | `Writer` | Logger                    |
 | `State`  | Global State              |
+
+## Defining Functors, Applicatives, and Monads
+
+Functor and Applicative must be defined for an instances of Monad.
+Either you can implement types moving down the class hierarchy from
+Functor to Applicative to Monad ...
+
+```haskell
+instance Functor M where
+    fmap = -- etc.
+
+instance Applicative M where
+    pure = -- etc.
+    (<*>) = -- etc.
+
+instance Monad M where
+    (>>=) = -- etc.
+```
+
+... or you can move bottom up, defining Functor and Applicative in terms of Monad.
+
+```haskell
+instance Monad M where
+    return = -- etc.
+    (>>=) = -- etc.
+
+instance Applicative M where
+    pure = return
+    (<*>) = ap
+
+instance Functor M where
+    fmap = liftM
+```
