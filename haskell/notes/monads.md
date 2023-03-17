@@ -1,6 +1,6 @@
 # Monads in Haskell
 
-A monad is defined by three things:
+A monad in Haskell is defined by three elements:
 1. A type constructor `m`.
 2. A function `return`.
 3. An operator `(>>=)`, which is pronounced "bind".
