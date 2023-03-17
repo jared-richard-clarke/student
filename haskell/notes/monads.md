@@ -62,7 +62,7 @@ join x   = x >>= id
 ## Defining Functors, Applicatives, and Monads
 
 Functor and Applicative must be defined for an instances of Monad.
-Either you can implement types moving down the class hierarchy from
+You can implement types moving down the class hierarchy from
 Functor to Applicative to Monad.
 
 ```haskell
