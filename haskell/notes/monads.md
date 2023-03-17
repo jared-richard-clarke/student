@@ -63,7 +63,7 @@ join x   = x >>= id
 
 Functor and Applicative must be defined for an instances of Monad.
 Either you can implement types moving down the class hierarchy from
-Functor to Applicative to Monad ...
+Functor to Applicative to Monad.
 
 ```haskell
 instance Functor M where
@@ -77,7 +77,7 @@ instance Monad M where
     (>>=) = -- etc.
 ```
 
-... or you can move bottom up, defining Functor and Applicative in terms of Monad.
+Coversely, Functor and Applicative can be derived from Monad.
 
 ```haskell
 instance Monad M where
