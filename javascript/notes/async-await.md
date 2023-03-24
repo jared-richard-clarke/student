@@ -1,6 +1,9 @@
 # Asynchronous JavaScript
 
-Source: [The Odin Project](https://www.theodinproject.com/lessons/node-path-javascript-async-and-await)
+### Sources 
+
+- [The Odin Project](https://www.theodinproject.com/lessons/node-path-javascript-async-and-await)
+- [MDN](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous)
 
 ## Promises
 
@@ -24,4 +27,32 @@ const img = document.querySelector('img');
     const catData = await response.json();
     img.src = catData.data.images.original.url;
 })();
+```
+
+## Avoiding "Callback Hell"
+
+### Callback Hell
+
+```javascript
+const fetchPromise = fetch('https://mdn.github.io/learning-area/javascript/apis/fetching-data/can-store/products.json');
+
+fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((data) => {
+        console.log(data[0].name);
+    });
+});
+```
+
+### Promise Chaining
+
+```javascript
+const fetchPromise = fetch('https://mdn.github.io/learning-area/javascript/apis/fetching-data/can-store/products.json');
+
+fetchPromise
+    .then((response) => response.json())
+    .then((data) => {
+        console.log(data[0].name);
+    });
+
 ```
