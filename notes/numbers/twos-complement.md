@@ -1,6 +1,6 @@
 # Two's Complement
 
-Source: [Two's Complement](https://en.wikipedia.org/wiki/Two%27s_complement)
+**Source**: [Two's Complement](https://en.wikipedia.org/wiki/Two%27s_complement)
 
 ## Three-Bit Integers
 
