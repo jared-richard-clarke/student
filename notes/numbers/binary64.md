@@ -6,7 +6,7 @@ Source: [Double-precision floating-point format](https://en.wikipedia.org/wiki/D
 - Exponent: 11 bits
 - Significand (mantissa): 53 bits (52 explicitly stored)
 
-![binary-64](https://user-images.githubusercontent.com/80301412/228358697-0b99964b-d8fe-44e6-8b4f-fafb26b7e3a7.png)
+![binary-64](https://user-images.githubusercontent.com/80301412/228359369-9090a259-e227-472e-8826-0e614069bc0f.png)
 
 ## Conversion
 
