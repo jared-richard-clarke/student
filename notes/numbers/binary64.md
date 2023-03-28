@@ -1,6 +1,6 @@
 # IEEE 754 Binary64 (Double)
 
-Source: [Double-precision floating-point format](https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
+**Source**: [Double-precision floating-point format](https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
 
 - Sign: 1 bit
 - Exponent: 11 bits
