@@ -9,7 +9,7 @@ Source: [Double-precision floating-point format](https://en.wikipedia.org/wiki/D
 ## Conversion
 
 The real value assumed by a given 64-bit double precision datum with a given
-biased exponent e and a 52-bit fraction:
+biased exponent $e$ and a 52-bit fraction:
 
 ### Formula 1:
 
