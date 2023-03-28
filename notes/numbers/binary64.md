@@ -6,6 +6,8 @@ Source: [Double-precision floating-point format](https://en.wikipedia.org/wiki/D
 - Exponent: 11 bits
 - Significand (mantissa): 53 bits (52 explicitly stored)
 
+![binary-64](https://user-images.githubusercontent.com/80301412/228358697-0b99964b-d8fe-44e6-8b4f-fafb26b7e3a7.png)
+
 ## Conversion
 
 The real value assumed by a given 64-bit double precision datum with a given
