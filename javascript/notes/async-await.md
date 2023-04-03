@@ -56,3 +56,15 @@ fetchPromise
     });
 
 ```
+
+## `async`, `await`, and `Promise.prototype.all`
+
+```javascript
+async function get_price() {
+  const [choice, prices] = await Promise.all([
+    prompt_choice(),
+    fetch_prices(),
+  ]);
+  return prices[choice];
+}
+```
