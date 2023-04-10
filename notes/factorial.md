@@ -263,7 +263,7 @@ fn factorial(x: i64) -> i64 {
 Number extend [
   factorial [
     (self <= 0) 
-        ifTrue: [ ^1 ]
+        ifTrue: [ ^ 1 ]
         ifFalse: [                 
 	    ^ (1 to: self) fold: [ :a :b | a * b ]
         ]
