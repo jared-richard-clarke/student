@@ -43,26 +43,39 @@ let rec quicksort list =
       left @ [x] @ right
 ```
 
+## Ruby
+
+```ruby
+def quicksort(array)
+    return array if array.size < 2
+  
+    pivot = array[0]
+    less = array[1..].select { |element| element <= pivot }
+    greater = array[1..].select { |element| element > pivot }
+    return *quicksort(less), pivot, *quicksort(greater)
+end
+```
+
 ## Scheme
 
 ```scheme
-(define (quick-sort compare lst)
+(define (quicksort compare lst)
   (if (null? lst)
       '()
       (let ([x  (car lst)]
             [xs (cdr lst)])
-        (let ([left  (quick-sort compare (filter (lambda (y) (compare y x)) xs))]
-              [right (quick-sort compare (filter (lambda (y) (not (compare y x))) xs))])
+        (let ([left  (quicksort compare (filter (lambda (y) (compare y x)) xs))]
+              [right (quicksort compare (filter (lambda (y) (not (compare y x))) xs))])
           (append left (list x) right)))))
 ```
 
 ## Clojure
 
 ```clojure
-(defn quick-sort [[x & xs]]
+(defn quicksort [[x & xs]]
   (if (nil? x)
       []
-      (let [left  (quick-sort (filter #(<  % x) xs))
-            right (quick-sort (filter #(>= % x) xs))]
+      (let [left  (quicksort (filter #(<  % x) xs))
+            right (quicksort (filter #(>= % x) xs))]
         (concat left [x] right))))
 ```
