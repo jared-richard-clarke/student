@@ -176,6 +176,29 @@ factorial(X, Y) :-
       Y is X * Y2.
 ```
 
+## Ruby
+
+```ruby
+class Integer
+    def factorial_recur
+        self <= 1 ? 1 : self * (self - 1).factorial_recur
+    end
+    def factorial_iter
+        f = 1 
+        for i in 1..self
+            f *= i 
+        end 
+        f
+    end
+    def factorial_reduce
+        (1..self).reduce(:*) || 1
+    end
+    alias :factorial :factorial_iter
+end
+
+4.factorial # -> 24
+```
+
 ## Rust
 
 ```rust
