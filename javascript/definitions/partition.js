@@ -1,4 +1,4 @@
-// partition([...any], (x) -> boolean) -> [[...any], [...any]]
+// partition([any], (x) -> boolean) -> [[any], [any]]
 // Returns an array of two arrays, where the first
 // contains all the elements that satisfy the predicate,
 // and the second contains all the elements that don't.
