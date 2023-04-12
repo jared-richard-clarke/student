@@ -1,4 +1,4 @@
-// chunk(xs: [any ...], size: number) -> [[any ...] ...]
+// chunk([any], number) -> [[any]]
 // Splits the given array into an array of arrays of the given size.
 // chunk([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 4); -> [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10]]
 
