@@ -9,7 +9,17 @@
 
 ## Borrow Checker
 
-The borrow checker looks for potentially unsafe operations involving references.
+References provide the ability to read and write data without consuming ownership of it. 
+References are created with borrows (`&` and `&mut`) and used with dereferences (`*`), often implicitly.
+
+Rust's borrow checker enforces a system of permissions that ensures references are used safely:
+
+- All variables can read, own, and (optionally) write their data.
+- Creating a reference will transfer permissions from the borrowed path to the reference.
+- Permissions are returned once the reference's lifetime has ended.
+- Data must outlive all references that point to it.
+
+
 The core idea behind the borrow checker is that variables have three kinds of permissions on their data.
 
 - **Read( R )**: data can be copied to another location.
@@ -34,7 +44,3 @@ can put on the left-hand side of an assignment. Paths include:
 
 - **immutable references ( shared references )**: permit aliasing but disallow mutation.
 - **mutable references ( unique references )**: temporarily provide mutable access to data without moving it — one alias at a time.
-
-## Pointer Safety Principle
-
-Data must outlive any references to it.
