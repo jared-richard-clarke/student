@@ -1,9 +1,33 @@
-
-;; (for-list x [(x <- '(1 2 3 4 5 6 7 8 9 10))] (even? x))
+;; (for-list expression [(x <- mx) ...] predicate?)
+;; A simplified list comprehension pulled from the Haskell programming language.
+;; === example ===
+;; (define py-triple
+;;   (lambda (n)
+;;     (for-list (list x y z)
+;;               [(x <- (range 1 n))
+;;                (y <- (range x n))
+;;                (z <- (range y n))]
+;;               (= (+ (sqr x) (sqr y))
+;;                  (sqr z)))))
 ;;
-;; evaluates ->
+;; - expands ->
+;; (define py-triple
+;;   (lambda (n)
+;;     (bind (range 1 n)
+;;           (lambda (x)
+;;             (bind (range x n)
+;;                   (lambda (y)
+;;                     (bind (range y n)
+;;                           (lambda (z)
+;;                             (if (= (+ (sqr x) (sqr y))
+;;                                    (sqr z))
+;;                                 (return (list x y z))
+;;                                 empty)))))))))
 ;;
-;; '(2 4 6 8 10)
+;; - so that ->
+;; (py-triple 21)
+;; - evaluates ->
+;; '((3 4 5) (5 12 13) (6 8 10) (8 15 17) (9 12 15) (12 16 20))
 
 (define-syntax for-list
   (syntax-rules (<-)
