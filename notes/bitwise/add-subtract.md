@@ -1,6 +1,6 @@
 # Bitwise Addition and Subtraction
 
-[add **and** subtract](https://www.crockford.com/add.html) 
+[**add** and **subtract**](https://www.crockford.com/add.html) 
 by Douglas Crockford
 
 ---
