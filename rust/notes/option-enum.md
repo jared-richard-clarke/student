@@ -33,10 +33,10 @@ Returns the contained `Some` value or a provided default.
 
 ```rust
 impl<T> Option<T> {
-  fn unwrap_or(self, other: T) -> T {
+  fn unwrap_or(self, default: T) -> T {
     match self {
       Some(t) => t,
-      None => other
+      None => default
     }
   }
 }
