@@ -10,3 +10,34 @@ enum Option<T> {
     Some(T),
 }
 ```
+
+## `unwrap`
+
+Returns the contained `Some` value, consuming the `self` value.
+Panics otherwise.
+
+```rust
+impl<T> Option<T> {
+  fn unwrap(self) -> T {
+    match self {
+      Some(t) => t,
+      None => panic("called `Option::unwrap()` on a `None` value"),
+    }
+  }
+}
+```
+
+## `unwrap_or`
+
+Returns the contained `Some` value or a provided default.
+
+```rust
+impl<T> Option<T> {
+  fn unwrap_or(self, other: T) -> T {
+    match self {
+      Some(t) => t,
+      None => other
+    }
+  }
+}
+```
