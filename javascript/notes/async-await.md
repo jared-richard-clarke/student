@@ -57,7 +57,7 @@ fetchPromise
 
 ```
 
-## `async`, `await`, and `Promise.prototype.all`
+## `async`, `await`, and `Promise.all`
 
 ```javascript
 async function get_price() {
