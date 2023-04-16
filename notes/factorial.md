@@ -260,18 +260,25 @@ fn factorial(x: i64) -> i64 {
 ## Smalltalk
 
 ```smalltalk
+"=== class ==="
 Number extend [
   factorial [
-    (self <= 0) 
-        ifTrue: [ ^ 1 ]
-        ifFalse: [                 
-	    ^ (1 to: self) fold: [ :a :b | a * b ]
-        ]
+    (self <= 1) 
+        ifTrue: [1]
+        ifFalse: [(1 to: self) fold: [:a :b | a * b]]
   ]
 ].
 
 "-> 24"
 4 factorial.
+
+"=== block ==="
+factorial := [:n | n <= 1
+                 ifTrue: [1]
+                 ifFalse: [n * (factorial value: n - 1)]].
+		 
+"-> 24"
+factorial value: 4
 ```
 
 ## Web Assembly: `.wat` notation
