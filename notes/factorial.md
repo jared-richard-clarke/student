@@ -191,7 +191,7 @@ class Integer
         f
     end
     def factorial_reduce
-        (1..self).reduce(:*) || 1
+        self <= 1 ? 1 : (1..self).reduce(:*)
     end
     alias :factorial :factorial_iter
 end
