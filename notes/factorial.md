@@ -106,6 +106,15 @@ factorial :: Integer -> Integer
 factorial x = product [1..x]
 ```
 
+## io
+
+```io
+Number ! := method(self * (self - 1)!) 
+0 ! := 1 
+
+4! // -> 24
+```
+
 ## Julia 
 
 - As implemented in Julia's Base library.
