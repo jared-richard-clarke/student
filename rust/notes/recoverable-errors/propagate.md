@@ -45,7 +45,7 @@ fn main() {
 }
 ```
 
-The `?` operator can only be used on functions that return `Result` or `Option`.
+The `?` operator can only be used in functions that return `Result` or `Option`.
 In order to propagate errors in the main executable, `main` must return the `Result` type.
 
 ```rust
