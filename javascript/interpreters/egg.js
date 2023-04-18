@@ -1,5 +1,5 @@
 // My interpreter for the Egg programming language.
-// Egg was created by Marijn Haverbeke for "Eloquent Javascript" (https://eloquentjavascript.net/12_language.html)
+// Egg was created by Marijn Haverbeke for [Eloquent Javascript](https://eloquentjavascript.net/12_language.html)
 // This implmentation closely follows Haverbeke's original program.
 // I namespaced key components within function closures to provide better modularity. 
 // I also added extensive inline documentation.
