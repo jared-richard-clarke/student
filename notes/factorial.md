@@ -8,6 +8,8 @@ It is therefore an excellent tool for comparing the syntax of different programm
 - Many of these definitions are inefficient — consuming too much time and space.
   They are defined here solely to demonstrate the syntax of a particular language.
 
+## Definition
+
 > x! is the product of all positive integers less than or equal to x.
 
 ## APL
