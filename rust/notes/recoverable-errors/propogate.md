@@ -46,7 +46,7 @@ fn main() {
 ```
 
 The `?` operator can only be used on functions that return `Result` or `Option`.
-In order to propagate errors in `main`, `main` must return `Result`.
+In order to propagate errors in the main executable, `main` must return the `Result` type.
 
 ```rust
 use std::error::Error;
