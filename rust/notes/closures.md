@@ -1,8 +1,10 @@
 # Closures in Rust
 
-To capture variables from their environment, closures are encoded by three `Fn` traits:
+To capture variables from their environment, closures are encoded by the `FnOnce` trait by default
+and `FnMut` and `Fn` by option.
 
-1. `FnOnce` takes ownership of captured variables. A closure cannot take ownership of the same variable more than once. The `move` keyword forces closures to take ownership of a value.
+1. `FnOnce` takes ownership of captured variables. A closure cannot take ownership of the same 
+    variable more than once. The `move` keyword forces closures to take ownership of a value.
 2. `FnMut` mutably borrows values.
 3. `Fn` immutably borrows values.
 
