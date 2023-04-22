@@ -4,7 +4,7 @@
 
 ## vec!
 
-A simplified definition of the `vec!` macro as defined in the standard library.
+A simplified version of the `vec!` macro as defined in the standard library.
 Rust macros, unlike functions, can accept a variable number of arguments.
 
 ```rust
