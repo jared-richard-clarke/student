@@ -7,6 +7,13 @@
 A simplified version of the `vec!` macro as defined in the standard library.
 Rust macros, unlike functions, can accept a variable number of arguments.
 
+> The structure in the `vec!` body is similar to the structure of a `match` expression. 
+> Here we have one arm with the pattern `( $( $x:expr ),* )`, followed by `=>` and the 
+> block of code associated with this pattern. If the pattern matches, the associated 
+> block of code will be emitted.
+>
+> — The Rust Programming Language
+
 ```rust
 #[macro_export]
 macro_rules! vec {
