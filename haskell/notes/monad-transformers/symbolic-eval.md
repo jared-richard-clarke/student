@@ -5,13 +5,13 @@
 ```haskell
 module Transformers where
 
-import Control.Monad.Error -- Deprecated in newer versions of Haskell
-import Control.Monad.Identity
+import Control.Monad.Error (ErrorT (runErrorT), MonadError (throwError)) -- Deprecated in newer versions of Haskell
+import Control.Monad.Identity (Identity (runIdentity))
 import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Writer
 import Data.Map qualified as Map
-import Data.Maybe
+import Data.Maybe (fromJust)
 
 type Name = String
 
@@ -71,4 +71,33 @@ eval2 env (Apply e1 e2) = do
   case x of
     FunVal env' n body ->
       eval2 (Map.insert n y env') body
+
+-- Monad Identity + Error
+
+type Eval3 a = ErrorT String Identity a
+
+runEval3 :: Eval3 a -> Either String a
+runEval3 ev = runIdentity (runErrorT ev)
+
+eval3 :: Environment -> Expression -> Eval3 Value
+eval3 env (Literal i) = return $ IntVal i
+eval3 env (Variable n) = case Map.lookup n env of
+  Nothing -> throwError ("unbound variable: " ++ n)
+  Just x -> return x
+eval3 env (Add x y) = do
+  x' <- eval3 env x
+  y' <- eval3 env y
+  case (x', y') of
+    (IntVal i, IntVal j) ->
+      return $ IntVal (i + j)
+    _ -> throwError "type error in addition"
+eval3 env (Lambda n e) = return $ FunVal env n e
+eval3 env (Apply e1 e2) = do
+  x <- eval3 env e1
+  y <- eval3 env e2
+  case x of
+    FunVal env' n body ->
+      eval3 (Map.insert n y env') body
+    _ -> throwError "type error in application"
+
 ```
