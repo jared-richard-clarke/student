@@ -1,5 +1,16 @@
 # Monads in Haskell
 
+```haskell
+class  Monad m  where
+    (>>=)  :: m a -> (a -> m b) -> m b
+    (>>)   :: m a -> m b -> m b
+    return :: a -> m a
+
+        -- Minimal complete definition:
+        --      (>>=), return
+    m >> k  =  m >>= \_ -> k
+```
+
 A monad in Haskell is defined by three elements:
 1. A type constructor `m`.
 2. A function `return`.
@@ -64,14 +75,6 @@ m >>= g = join (fmap g m)
 fmap f x = x >>= (return . f)
 join x   = x >>= id
 ```
-
-## Uses
-
-> "[M]onads are by no means limited to input and output. 
->  They can be used to provide a whole range of features, such as exceptions, 
->  state, non-determinism, continuations, coroutines, and more."
->
-> — [Haskell Wiki: Understanding Monads](https://en.wikibooks.org/wiki/Haskell/Understanding_monads)
 
 ## Monads and Equivalent Imperative Semantics
 
