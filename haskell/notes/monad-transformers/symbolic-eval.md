@@ -42,7 +42,29 @@ eval1 env (Apply e1 e2) = let x = eval1 env e1
                           in case x of
                             FunVal env' n body -> eval1 (Map.insert n y env') body
 
--- 12 + ((λx -> x) (4 + 2))
-example = Literal 12 `add` (Apply (Lambda "x" (Variable "x")) (Literal 4 `add` Literal 2))
-eval1 Map.empty example -- > IntVal 18
+{- 
+  12 + ((λx -> x) (4 + 2))
+  example = Literal 12 `add` (Apply (Lambda "x" (Variable "x")) (Literal 4 `add` Literal 2))
+  eval1 Map.empty example -> IntVal 18 
+-}
+
+-- Monad Identity
+
+type Eval2 a = Identity a
+
+runEval2 :: Eval1 a -> a
+runEval2 ev = runIdentity ev
+
+eval2 :: Environment -> Expression -> Eval2 Value
+eval2 env (Literal i) = return $ IntVal i
+eval2 env (Variable n) = maybe (fail ("undefined variable: " ++ n)) return $ Map.lookup n env
+eval2 env (Add x y) = do IntVal <- eval2 env x
+                         IntVal <- eval2 env y
+                         return $ IntVal (x + y)
+eval2 env (Lambda n e) = return $ FunVal env n e
+eval2 env (Apply e1 e2) = do x <- eval2 env e1
+                             y <- eval2 env e2
+                             case x of
+                                FunVal env' n body ->
+                                    eval2 (Map.insert n y env') body
 ```
