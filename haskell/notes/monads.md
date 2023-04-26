@@ -5,6 +5,16 @@ A monad in Haskell is defined by three elements:
 2. A function `return`.
 3. An operator `(>>=)`, which is pronounced "bind".
 
+> In short, a monad is a way to structure computations in terms of values and sequences 
+> of computations using typed values...For those coming from languages where the semicolon
+> is a statement separator in imperative control flow, the metaphor of "programmable semicolon"
+> has helped many understand the advantages of monads. The monad determines how combined
+> computations form a new computation and frees the programmer from having to code the
+> combination manually each time it is required. Think of monads as "statically typed filters"
+> (in the Unix sense of "pipes and filters") and you may be halfway there.
+>
+> — **All About Monads** - The Haskell Wiki
+
 ### The Three Monad Laws
 
 The monad laws are not so much laws as generally-agreed-upon rules for predictable
