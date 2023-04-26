@@ -15,7 +15,23 @@ A monad in Haskell is defined by three elements:
 >
 > — **All About Monads** - The Haskell Wiki
 
-### The Three Monad Laws
+## Why Monads?
+
+> 1. Modularity - They allow computations to be composed from simpler computations and separate 
+> the combination strategy from the actual computations being performed.
+> 
+> 2. Flexibility - They allow functional programs to be much more adaptable than equivalent programs 
+> written without monads. This is because the monad distills the computational strategy into a single 
+> place instead of requiring it be distributed throughout the entire program.
+> 
+> 3. Isolation - They can be used to create imperative-style computational structures which remain 
+> safely isolated from the main body of the functional program. This is useful for incorporating 
+> side-effects (such as I/O) and state (which violates referential transparency) into 
+> a pure functional language like Haskell.
+>
+> — **All About Monads** - The Haskell Wiki
+
+## The Three Monad Laws
 
 The monad laws are not so much laws as generally-agreed-upon rules for predictable
 behaviors among different monad implementations.
