@@ -76,17 +76,120 @@ fmap f x = x >>= (return . f)
 join x   = x >>= id
 ```
 
-## Monads and Equivalent Imperative Semantics
+## A Catalog of Standard Monads
 
-| Monad    | Imperative                |
-| -------- | ------------------------- |
-| `Maybe`  | Exception (anonymous)     |
-| `Either` | Exception (error message) |
-| `IO`     | Input / Output            |
-| `[]`     | Nondeterminism            |
-| `Reader` | Environment               |
-| `Writer` | Logger                    |
-| `State`  | Global State              |
+### Identity
+
+```haskell
+newtype Identity a = Identity { runIdentity :: a }
+
+instance Monad Identity where
+    return a           = Identity a   -- i.e. return = id
+    (Identity x) >>= f = f x          -- i.e. x >>= f = f x
+```
+
+### Maybe
+
+```haskell
+data Maybe a = Nothing | Just a
+
+instance Monad Maybe where
+    return         = Just
+    Nothing  >>= f = Nothing
+    (Just x) >>= f = f x
+
+instance MonadFail Maybe where
+    fail _         = Nothing
+
+instance MonadPlus Maybe where
+    mzero             = Nothing
+    Nothing `mplus` x = x
+    x `mplus` _       = x
+```
+
+### Error
+
+```haskell
+-- Error class
+class Error a where
+    noMsg :: a
+    strMsg :: String -> a
+
+class (Monad m) => MonadError e m | m -> e where
+    throwError :: e -> m a
+    catchError :: m a -> (e -> m a) -> m a
+ 
+ -- Either instance
+instance MonadError e (Either e) where
+    throwError = Left
+    (Left e) `catchError` handler = handler e
+    a        `catchError` _       = a
+```
+
+### List
+
+```haskell
+instance Monad [] where
+    m >>= f  = concatMap f m
+    return x = [x]
+    fail s   = []
+
+instance MonadPlus [] where
+    mzero = []
+    mplus = (++)
+```
+
+### IO
+
+The definition of the IO monad is platform specific. Its purpose is to isolate side effects
+from referentially transparent code.
+
+### State
+
+A State monad threads a state parameter through a sequence of bound functions so that the 
+same state value is never used twice, giving the illusion of in-place update.
+
+```haskell
+newtype State s a = State { runState :: (s -> (a,s)) }
+
+instance Monad (State s) where
+    return a        = State $ \s -> (a,s)
+    (State x) >>= f = State $ \s -> let (v,s') = x s in runState (f v) s'
+    
+class MonadState m s | m -> s where
+    get :: m s
+    put :: s -> m ()
+
+instance MonadState (State s) s where
+    get   = State $ \s -> (s,s)
+    put s = State $ \_ -> ((),s)
+```
+
+### Reader
+
+The `ask` function retrieves the environment and the `local` function executes a 
+computation in a modified environment. The `asks` function is a convenience function 
+that retrieves a function of the current environment, and is typically used with a 
+selector or lookup function. 
+
+```haskell
+newtype Reader e a = Reader { runReader :: (e -> a) }
+
+instance Monad (Reader e) where
+    return a         = Reader $ \e -> a
+    (Reader r) >>= f = Reader $ \e -> runReader (f (r e)) e
+
+class MonadReader e m | m -> e where
+    ask   :: m e
+    local :: (e -> e) -> m a -> m a
+
+instance MonadReader e (Reader e) where
+    ask       = Reader id
+    local f c = Reader $ \e -> runReader c (f e)
+
+asks :: (MonadReader e m) => (e -> a) -> m a
+asks selector = ask >>= return . selector
+```
 
 ## Defining Functors, Applicatives, and Monads
 
