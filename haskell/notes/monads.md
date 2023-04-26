@@ -3,7 +3,7 @@
 A monad in Haskell is defined by three elements:
 1. A type constructor `m`.
 2. A function `return`.
-3. An operator `(>>=)`, which is pronounced "bind".
+3. A combinator `(>>=)`, which is pronounced "bind".
 
 > In short, a monad is a way to structure computations in terms of values and sequences 
 > of computations using typed values...For those coming from languages where the semicolon
