@@ -5,9 +5,13 @@
 ```haskell
 module Transformers where
 
-import Control.Monad.Error (ErrorT (runErrorT), MonadError (throwError)) -- Deprecated in newer versions of Haskell
+-- Control.Monad.Error deprecated in newer versions of Haskell
+import Control.Monad.Error (ErrorT (runErrorT), MonadError (throwError))
 import Control.Monad.Identity (Identity (runIdentity))
 import Control.Monad.Reader
+  ( MonadReader (ask, local),
+    ReaderT (runReaderT),
+  )
 import Control.Monad.State
 import Control.Monad.Writer
 import Data.Map qualified as Map
@@ -100,4 +104,35 @@ eval3 env (Apply e1 e2) = do
       eval3 (Map.insert n y env') body
     _ -> throwError "type error in application"
 
+-- Monad Identity + Error + Reader
+
+type Eval4 a = ReaderT Environment (ErrorT String Identity) a
+
+runEval4 :: Environment -> Eval4 a -> Either String a
+runEval4 env ev = runIdentity (runErrorT (runReaderT ev env))
+
+eval4 :: Expression -> Eval4 Value
+eval4 (Literal i) = return $ IntVal i
+eval4 (Variable n) = do
+  env <- ask
+  case Map.lookup n env of
+    Nothing -> throwError ("unbound variable: " ++ n)
+    Just x -> return x
+eval4 (Add x y) = do
+  x' <- eval4 x
+  y' <- eval4 y
+  case (x', y') of
+    (IntVal i, IntVal j) ->
+      return $ IntVal (i + j)
+    _ -> throwError "type error in addition"
+eval4 (Lambda n e) = do
+  env <- ask
+  return $ FunVal env n e
+eval4 (Apply e1 e2) = do
+  x <- eval4 e1
+  y <- eval4 e2
+  case x of
+    FunVal env' n body ->
+      local (const (Map.insert n y env')) (eval4 body)
+    _ -> throwError "type error in application"
 ```
