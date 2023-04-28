@@ -1,4 +1,4 @@
-# Haskell Scheme Interpreter
+# Haskell: Scheme Interpreter
 
 By Jonathan Tang
 
