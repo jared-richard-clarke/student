@@ -6,12 +6,9 @@
 module Transformers where
 
 -- Control.Monad.Error deprecated in newer versions of Haskell
-import Control.Monad.Error (ErrorT (runErrorT), MonadError (throwError))
-import Control.Monad.Identity (Identity (runIdentity))
+import Control.Monad.Error
+import Control.Monad.Identity
 import Control.Monad.Reader
-  ( MonadReader (ask, local),
-    ReaderT (runReaderT),
-  )
 import Control.Monad.State
 import Control.Monad.Writer
 import Data.Map qualified as Map
@@ -134,5 +131,122 @@ eval4 (Apply e1 e2) = do
   case x of
     FunVal env' n body ->
       local (const (Map.insert n y env')) (eval4 body)
+    _ -> throwError "type error in application"
+
+-- Monad Identity + Error + Reader + State
+
+type Eval5 a = ReaderT Environment (ErrorT String (StateT Integer Identity)) a
+
+runEval5 :: Environment -> Integer -> Eval5 a -> (Either String a, Integer)
+runEval5 env st ev = runIdentity (runStateT (runErrorT (runReaderT ev env)) st)
+
+tick :: (Num s, MonadState s m) => m ()
+tick = do
+  st <- get
+  put (st + 1)
+
+eval5 :: Expression -> Eval5 Value
+eval5 (Literal i) = do
+  tick
+  return $ IntVal i
+eval5 (Variable n) = do
+  tick
+  env <- ask
+  case Map.lookup n env of
+    Nothing -> throwError ("unbound variable: " ++ n)
+    Just val -> return val
+eval5 (Add x y) = do
+  tick
+  x' <- eval5 x
+  y' <- eval5 y
+  case (x', y') of
+    (IntVal i, IntVal j) ->
+      return $ IntVal (i + j)
+    _ -> throwError "type error in addition"
+eval5 (Lambda n e) = do
+  tick
+  env <- ask
+  return $ FunVal env n e
+eval5 (Apply e1 e2) = do
+  tick
+  x <- eval5 e1
+  y <- eval5 e2
+  case x of
+    FunVal env' n body ->
+      local (const (Map.insert n y env')) (eval5 body)
+    _ -> throwError "type error in application"
+
+-- Monad Identity + Error + Reader + State + Writer
+
+type Eval6 a = ReaderT Environment (ErrorT String (WriterT [String] (StateT Integer Identity))) a
+
+runEval6 :: Environment -> Integer -> Eval6 a -> ((Either String a, [String]), Integer)
+runEval6 env st ev = runIdentity (runStateT (runWriterT (runErrorT (runReaderT ev env))) st)
+
+eval6 :: Expression -> Eval6 Value
+eval6 (Literal i) = do
+  tick
+  return $ IntVal i
+eval6 (Variable n) = do
+  tick
+  tell [n]
+  env <- ask
+  case Map.lookup n env of
+    Nothing -> throwError ("unbound variable: " ++ n)
+    Just val -> return val
+eval6 (Add x y) = do
+  tick
+  x' <- eval6 x
+  y' <- eval6 y
+  case (x', y') of
+    (IntVal i, IntVal j) -> return $ IntVal (i + j)
+    _ -> throwError "type error in addition"
+eval6 (Lambda n e) = do
+  tick
+  env <- ask
+  return $ FunVal env n e
+eval6 (Apply e1 e2) = do
+  tick
+  x <- eval6 e1
+  y <- eval6 e2
+  case x of
+    FunVal env' n body ->
+      local (const (Map.insert n y env')) (eval6 body)
+    _ -> throwError "type error in application"
+
+-- Monad Identity + Error + Reader + State + Writer + IO
+
+type Eval7 a = ReaderT Environment (ErrorT String (WriterT [String] (StateT Integer IO))) a
+
+eval7 :: Expression -> Eval7 Value
+eval7 (Literal i) = do
+  tick
+  liftIO $ print i
+  return $ IntVal i
+eval7 (Variable n) = do
+  tick
+  tell [n]
+  env <- ask
+  case Map.lookup n env of
+    Nothing -> throwError ("unbound variable: " ++ n)
+    Just val -> return val
+eval7 (Add x y) = do
+  tick
+  x' <- eval7 x
+  y' <- eval7 y
+  case (x', y') of
+    (IntVal i, IntVal j) -> return $ IntVal (i + j)
+    _ -> throwError "type error in addition"
+eval7 (Lambda n e) = do
+  tick
+  env <- ask
+  return $ FunVal env n e
+eval7 (Apply e1 e2) = do
+  tick
+  x <- eval7 e1
+  y <- eval7 e2
+  case x of
+    FunVal env' n body ->
+      local (const (Map.insert n y env')) (eval7 body)
     _ -> throwError "type error in application"
 ```
