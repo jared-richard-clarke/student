@@ -2,7 +2,7 @@
 
 By Jonathan Tang
 
-```scheme
+```haskell
 module Main where
 
 import Monad
