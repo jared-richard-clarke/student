@@ -37,6 +37,7 @@ Haskell expression syntax has nine constructs.
 8. Coercions (`Coercion`)
 
 ```haskell
+-- simplified example
 data Expr
   = Var      Id
   | Lit      Literal
