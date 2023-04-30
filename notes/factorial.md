@@ -114,19 +114,30 @@ fac :: Int -> Int -> Int
 fac a 0 = a
 fac a n = fac (n*a) (n-1)
 
--- Haskell Core
-Rec {
-fac :: Int -> Int -> Int
-fac =
-  \ (a :: Int) (ds :: Int) ->
-    case ds of wild { I# ds1 ->
-    case ds1 of _ {
-      __DEFAULT ->
-        fac (* @ Int $fNumInt wild a) (- @ Int $fNumInt wild (I# 1));
-      0 -> a
-    }
-    }
-end Rec }
+-- Haskell Core (naive compilation)
+fac = \ a n -> case n of 
+                   I# n# -> case n# of
+                                0# -> a
+                                _  -> let one = I# 1;
+                                          x = n - one
+                                          y = n * a;
+                                      in  fac y x
+
+-- Haskell Core (optimized)				      
+one = I# 0#
+
+-- worker :: Int# -> Int# -> Int#
+$wfac = \ a# n# -> case n# of
+                     0#  -> a#
+                     n'# -> case (n'# -# 1#) of
+                                m# -> case (n'# *# a#) of
+                                           x# -> $wfac x# m#
+
+-- wrapper :: Int -> Int -> Int
+fac = \ a n -> case a of
+                    I# a# -> case n of
+                                 I# n# -> case ($wfac a# n#) of
+                                              r# -> I# r#
 ```
 
 ## io
