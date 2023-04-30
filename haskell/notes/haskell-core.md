@@ -9,6 +9,8 @@ by Vladislav Zavialov
 >
 > — Vladislav Zavialov
 
+Haskell Core is a variant of **System FC**, which is itself a variant of **System F**
+
 ## GHC Pipeline
 
 1. Text
