@@ -106,6 +106,29 @@ factorial :: Integer -> Integer
 factorial x = product [1..x]
 ```
 
+## Haskell Core
+
+```haskell
+-- Haskell
+fac :: Int -> Int -> Int
+fac a 0 = a
+fac a n = fac (n*a) (n-1)
+
+-- Haskell Core
+Rec {
+fac :: Int -> Int -> Int
+fac =
+  \ (a :: Int) (ds :: Int) ->
+    case ds of wild { I# ds1 ->
+    case ds1 of _ {
+      __DEFAULT ->
+        fac (* @ Int $fNumInt wild a) (- @ Int $fNumInt wild (I# 1));
+      0 -> a
+    }
+    }
+end Rec }
+```
+
 ## io
 
 ```io
