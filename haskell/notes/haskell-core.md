@@ -26,9 +26,9 @@ The Haskell core as presented by Vladislav Zavialov on 11 August 2020.
 Haskell expression syntax has nine constructs.
 
 1. Variables (`Var`)
-2. Literal (`Lit`)
-3. Function Application (`App`)
-4. Lambdas (`Lam`)
+2. Literals (`Lit`)
+3. Function Applications (`App`)
+4. Lambda Abstractions (`Lam`)
 5. Let Bindings (`Let`)
 6. Case Expressions (`Case`)
 7. Casts (`Cast`)
