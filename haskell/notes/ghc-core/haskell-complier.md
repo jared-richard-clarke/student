@@ -10,7 +10,7 @@ Haskell is seen as a difficult language to understand from a compilation perspec
 2. Lazy evaluation
 3. Partial application
 4. Syntax that hides allocation
-5, Typechecker
+5. Typechecker
 
 ## Terminology
 
