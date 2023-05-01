@@ -40,9 +40,11 @@ data LispVal = Atom String
              | Bool Bool
              | Port Handle
              | PrimitiveFunc ([LispVal] -> ThrowsError LispVal)
-             | IOFunc ([LispVal] -> IOThrowsError LispVal)	
-             | Func {params :: [String], vararg :: (Maybe String), 
-                      body :: [LispVal], closure :: Env}
+             | IOFunc ([LispVal] -> IOThrowsError LispVal)
+             | Func { params :: [String],
+                      vararg :: (Maybe String),
+                      body :: [LispVal],
+                      closure :: Env }
 
 
 parseString :: Parser LispVal
