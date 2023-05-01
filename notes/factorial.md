@@ -110,33 +110,33 @@ factorial x = product [1..x]
 
 ```haskell
 -- Haskell
-fac :: Int -> Int -> Int
-fac a 0 = a
-fac a n = fac (n*a) (n-1)
+factorial :: Int -> Int -> Int
+factorial a 0 = a
+factorial a n = factorial (n*a) (n-1)
 
 -- Haskell Core (naive compilation)
-fac = \ a n -> case n of 
+factorial = \ a n -> case n of 
                    I# n# -> case n# of
                                 0# -> a
                                 _  -> let one = I# 1;
                                           x = n - one
                                           y = n * a;
-                                      in  fac y x
+                                      in  factorial y x
 
 -- Haskell Core (optimized)				      
 one = I# 0#
 
 -- worker :: Int# -> Int# -> Int#
-$wfac = \ a# n# -> case n# of
+$wfactorial = \ a# n# -> case n# of
                      0#  -> a#
                      n'# -> case (n'# -# 1#) of
                                 m# -> case (n'# *# a#) of
-                                           x# -> $wfac x# m#
+                                           x# -> $wfactorial x# m#
 
 -- wrapper :: Int -> Int -> Int
-fac = \ a n -> case a of
+factorial = \ a n -> case a of
                     I# a# -> case n of
-                                 I# n# -> case ($wfac a# n#) of
+                                 I# n# -> case ($wfactorial a# n#) of
                                               r# -> I# r#
 ```
 
