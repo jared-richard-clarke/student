@@ -80,6 +80,11 @@ join x   = x >>= id
 
 ### Identity
 
+- **Computation Type**: Function application.
+- **Binding Strategy**: The bound function is applied to the input value.
+- **Uses**: Monads can be derived from monad transformers applied to the identity monad.
+- **Zero and Plus**: None.
+
 ```haskell
 newtype Identity a = Identity { runIdentity :: a }
 
@@ -88,7 +93,20 @@ instance Monad Identity where
     (Identity x) >>= f = f x          -- i.e. x >>= f = f x
 ```
 
+An identity monad used to derive a monad from a monad transformer:
+
+```haskell
+type State s a = StateT s Identity a
+```
+
 ### Maybe
+
+- **Computation Type**: Computations that may return `Nothing`.
+- **Binding Strategy**: `Nothing` values bypass the bound function while other values
+  are used as inputs to the bound function.
+- **Uses**: Building computations from sequences of functions that may return `Nothing`.
+- **Zero and Plus**: `Nothing` is zero. The plus operation returns the first non-`Nothing`
+  value or `Nothing` if both inputs are `Nothing`.
 
 ```haskell
 data Maybe a = Nothing | Just a
@@ -109,6 +127,14 @@ instance MonadPlus Maybe where
 
 ### Error
 
+- **Computation Type**: Computations that may fail or throw exceptions.
+- **Binding Strategy**: Failure records information about the cause and/or location of the
+  failure. Failure values bypass the binding function. Success values are used as inputs.
+- **Uses**: Builds computations from function sequences that may fail or use exceptions to
+  structure error handling.
+- **Zero and Plus**: Zero is an empty error. Plus executes its second argument if the 
+  first fails.
+
 ```haskell
 -- Error class
 class Error a where
@@ -128,6 +154,13 @@ instance MonadError e (Either e) where
 
 ### List
 
+- **Computation Type**: Computations that may return 0 or more possible results.
+- **Binding Strategy**: The bound function is applied to all possible values in the input
+  list and the resulting lists are combined to produce a list of all possible results.
+- **Uses**: Building sequences of non-deterministic operations — like parsing 
+  ambiguous grammars.
+- **Zero and Plus**: `[]` is zero and `++` is the plus operation.
+
 ```haskell
 instance Monad [] where
     m >>= f  = concatMap f m
@@ -141,10 +174,22 @@ instance MonadPlus [] where
 
 ### IO
 
+- **Computation Type**: Performs I/O.
+- **Binding Strategy**: I/O actions are executed in the order in which they are bound.
+  Failures throw I/O errors, which can be caught and handled.
+- **Uses**: Performing input and output within a Haskell program.
+- **Zero and Plus**: None.
+
 The definition of the IO monad is platform specific. Its purpose is to isolate side effects
 from referentially transparent code.
 
 ### State
+
+- **Computation Type**: Computations that maintain state.
+- **Binding Strategy**: Threads a state parameter through a sequence of bound functions.
+  Creates the illusion of in-place update.
+- **Uses**: Building sequences of operations that require shared state.
+- **Zero and Plus**: None.
 
 A State monad threads a state parameter through a sequence of bound functions so that the 
 same state value is never used twice, giving the illusion of in-place update.
@@ -166,6 +211,13 @@ instance MonadState (State s) s where
 ```
 
 ### Reader
+
+- **Computation Type**: Reads values from a shared environment.
+- **Binding Strategy**: Monad values are functions from the environment to a value. 
+  The bound function is applied to the bound value. Both have access to the shared
+  environment.
+- **Uses**: Maintaining variable bindings or other shared environment.
+- **Zero and Plus**: None.
 
 The `ask` function retrieves the environment and the `local` function executes a 
 computation in a modified environment. The `asks` function is a convenience function 
