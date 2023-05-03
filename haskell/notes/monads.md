@@ -1,5 +1,7 @@
 # Monads in Haskell
 
+**Primary Source**: [All About Monads](https://wiki.haskell.org/All_About_Monads)
+
 ```haskell
 class  Monad m  where
     (>>=)  :: m a -> (a -> m b) -> m b
