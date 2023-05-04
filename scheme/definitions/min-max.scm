@@ -1,7 +1,10 @@
 (define compare
   (lambda (operation identity)
     (lambda (xs)
-      (fold-left (lambda (old new) (if (operation old new) old new))
+      (fold-left (lambda (old new) 
+                   (if (operation old new) 
+                       old 
+                       new))
                  identity
                  xs))))
 
