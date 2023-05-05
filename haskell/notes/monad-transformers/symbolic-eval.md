@@ -218,6 +218,9 @@ eval6 (Apply e1 e2) = do
 
 type Eval7 a = ReaderT Environment (ErrorT String (WriterT [String] (StateT Integer IO))) a
 
+runEval7 :: Environment -> Integer -> Eval7 a -> IO ((Either String a, [String]), Integer)
+runEval7 env st ev = runStateT (runWriterT (runErrorT (runReaderT ev env))) st
+
 eval7 :: Expression -> Eval7 Value
 eval7 (Literal i) = do
   tick
