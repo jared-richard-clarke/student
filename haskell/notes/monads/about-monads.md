@@ -131,6 +131,7 @@ instance MonadPlus Maybe where
 class Error a where
     noMsg :: a
     strMsg :: String -> a
+
 class (Monad m) => MonadError e m | m -> e where
     throwError :: e -> m a
     catchError :: m a -> (e -> m a) -> m a
@@ -140,6 +141,14 @@ instance MonadError e (Either e) where
     throwError = Left
     (Left e) `catchError` handler = handler e
     a        `catchError` _       = a
+```
+
+```haskell
+instance (Error e) => Monad (Either e) where  
+    return x = Right x   
+    Right x >>= f = f x  
+    Left err >>= f = Left err  
+    fail msg = Left (strMsg msg)
 ```
 
 ### List
