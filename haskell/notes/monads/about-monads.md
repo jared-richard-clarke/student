@@ -158,10 +158,10 @@ instance MonadError e (Either e) where
 
 ```haskell
 instance (Error e) => Monad (Either e) where  
-    return x = Right x   
-    Right x >>= f = f x  
+    return x       = Right x   
+    Right x >>= f  = f x  
     Left err >>= f = Left err  
-    fail msg = Left (strMsg msg)
+    fail msg       = Left (strMsg msg)
 ```
 
 ### List
