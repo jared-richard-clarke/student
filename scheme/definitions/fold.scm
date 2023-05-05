@@ -1,5 +1,5 @@
 ;; Fold takes a binary function, a starting accumulator, and a list and then folds that list
-;; into the accumulator from the left or right using the binary function.
+;; into the accumulator using the binary function. Folds either left or right.
 ;; Alternatively called "reduce", "compress", "accumulate", "aggregate", or "inject".
 
 ;; (fold-right function any list) -> any
