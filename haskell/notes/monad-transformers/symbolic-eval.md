@@ -5,7 +5,7 @@
 ```haskell
 module Transformers where
 
--- Control.Monad.Error deprecated in newer versions of Haskell
+-- Control.Monad.Error deprecated in newer versions of Haskell.
 import Control.Monad.Error
 import Control.Monad.Identity
 import Control.Monad.Reader
