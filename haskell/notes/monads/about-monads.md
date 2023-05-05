@@ -48,7 +48,9 @@ behaviors among different monad implementations.
 
 ```haskell
 m >>= return     =  m                        -- right unit
+
 return x >>= f   =  f x                      -- left unit
+
 (m >>= f) >>= g  =  m >>= (\x -> f x >>= g)  -- associativity
 ```
 
@@ -62,12 +64,19 @@ Category Theory treats monads as functors with two additional combinators.
 
 ```haskell
 fmap   :: (a -> b) -> M a -> M b  -- functor
+
 return :: a -> M a
+
 join   :: M (M a) -> M a          -- similar to concat for lists, where concat :: [[a]] -> [a]
+
 -- bind can be defined as ...
+
 m >>= g = join (fmap g m)
+
 -- likewise ...
+
 fmap f x = x >>= (return . f)
+
 join x   = x >>= id
 ```
 
