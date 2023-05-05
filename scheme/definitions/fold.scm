@@ -7,23 +7,23 @@
 ;; (fold-right list 'init '(a b c)) -> '(a (b (c init)))
 ;; (fold-right cons '() '(1 2 3)) -> '(1 2 3)
 
-(define (fold-right fn accum lst)
-  (if (null? lst)
+(define (fold-right fn accum xs)
+  (if (null? xs)
       accum
-      (fn (car lst)
-          (fold-right fn accum (cdr lst)))))
+      (fn (car xs)
+          (fold-right fn accum (cdr xs)))))
 
 ;; (fold-left function any list) -> any
 ;; Folds left to right. Tail recursive.
 ;; (fold-left list 'init '(a b c)) -> '(((init a) b) c)
 ;; (fold-left cons '() '(1 2 3)) -> '(((() . 1) . 2) . 3)
 
-(define (fold-left fn accum lst)
-  (if (null? lst)
+(define (fold-left fn accum xs)
+  (if (null? xs)
       accum
       (fold-left fn
-                (fn accum (car lst))
-                (cdr lst))))
+                (fn accum (car xs))
+                (cdr xs))))
 
 ;; === Side Note ===
 ;; Racket:      (foldl cons 'a '(b c)) -----> '(c b . a)
