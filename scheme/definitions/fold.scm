@@ -1,8 +1,9 @@
-;; Fold iterates over a list, recursively building a return value through a combining operation.
-;; Alternatively called reduce, compress, accumulate, aggregate, or inject.
+;; Fold takes a binary function, a starting accumulator, and a list and then folds that list
+;; into the accumulator from the left or right using the binary function.
+;; Alternatively called "reduce", "compress", "accumulate", "aggregate", or "inject".
 
 ;; (fold-right function any list) -> any
-;; Evaluates right to left. Stacks calls to combining operation.
+;; Folds right to left. Stacks calls to combining operation.
 ;; (fold-right list 'init '(a b c)) -> '(a (b (c init)))
 ;; (fold-right cons '() '(1 2 3)) -> '(1 2 3)
 
@@ -13,7 +14,7 @@
           (fold-right fn accum (cdr lst)))))
 
 ;; (fold-left function any list) -> any
-;; Evaluates left to right. Tail recursive.
+;; Folds left to right. Tail recursive.
 ;; (fold-left list 'init '(a b c)) -> '(((init a) b) c)
 ;; (fold-left cons '() '(1 2 3)) -> '(((() . 1) . 2) . 3)
 
