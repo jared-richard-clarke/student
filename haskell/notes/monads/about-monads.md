@@ -82,6 +82,7 @@ join x   = x >>= id
 
 ```haskell
 newtype Identity a = Identity { runIdentity :: a }
+
 instance Monad Identity where
     return a           = Identity a   -- i.e. return = id
     (Identity x) >>= f = f x          -- i.e. x >>= f = f x
@@ -104,12 +105,15 @@ type State s a = StateT s Identity a
 
 ```haskell
 data Maybe a = Nothing | Just a
+
 instance Monad Maybe where
     return         = Just
     Nothing  >>= f = Nothing
     (Just x) >>= f = f x
+
 instance MonadFail Maybe where
     fail _         = Nothing
+
 instance MonadPlus Maybe where
     mzero             = Nothing
     Nothing `mplus` x = x
@@ -165,6 +169,7 @@ instance Monad [] where
     m >>= f  = concatMap f m
     return x = [x]
     fail s   = []
+
 instance MonadPlus [] where
     mzero = []
     mplus = (++)
@@ -194,6 +199,7 @@ same state value is never used twice, giving the illusion of in-place update.
 
 ```haskell
 newtype State s a = State { runState :: (s -> (a,s)) }
+
 instance Monad (State s) where
     return a        = State $ \s -> (a,s)
     (State x) >>= f = State $ \s -> let (v,s') = x s in runState (f v) s'
@@ -201,6 +207,7 @@ instance Monad (State s) where
 class MonadState m s | m -> s where
     get :: m s
     put :: s -> m ()
+
 instance MonadState (State s) s where
     get   = State $ \s -> (s,s)
     put s = State $ \_ -> ((),s)
@@ -222,15 +229,19 @@ selector or lookup function.
 
 ```haskell
 newtype Reader e a = Reader { runReader :: (e -> a) }
+
 instance Monad (Reader e) where
     return a         = Reader $ \e -> a
     (Reader r) >>= f = Reader $ \e -> runReader (f (r e)) e
+
 class MonadReader e m | m -> e where
     ask   :: m e
     local :: (e -> e) -> m a -> m a
+
 instance MonadReader e (Reader e) where
     ask       = Reader id
     local f c = Reader $ \e -> runReader c (f e)
+
 asks :: (MonadReader e m) => (e -> a) -> m a
 asks selector = ask >>= return . selector
 ```
@@ -244,9 +255,11 @@ Functor to Applicative to Monad.
 ```haskell
 instance Functor M where
     fmap = -- etc.
+
 instance Applicative M where
     pure = -- etc.
     (<*>) = -- etc.
+
 instance Monad M where
     (>>=) = -- etc.
 ```
@@ -257,9 +270,11 @@ Coversely, Functor and Applicative can be derived from Monad.
 instance Monad M where
     return = -- etc.
     (>>=) = -- etc.
+
 instance Applicative M where
     pure = return
     (<*>) = ap
+
 instance Functor M where
     fmap = liftM
 ```
