@@ -16,7 +16,7 @@ expr = do x <- term
           y <- expr
           return (x+y)
        <|> term
-term = do x <- term
+term = do x <- factor
           char '*'
           y <- term
           return (x*y)
