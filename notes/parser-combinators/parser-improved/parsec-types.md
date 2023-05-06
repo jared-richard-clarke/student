@@ -1,7 +1,11 @@
 # Parsec Types
 
 A small sample of types in **Parsec** that implement consumer-based parsing as described in
-**Parsec: Direct Style Parser Combinators For The Real World** by Daan Leijen and Erik Meijer
+**Parsec: Direct Style Parser Combinators For The Real World** by Daan Leijen and Erik Meijer.
+
+**Side Note**: This particular version is implemented as a monad transformer, which is not covered
+in Leijen and Meijer's paper. The type alias `Parsec` for `ParsecT s u Identity` is closer to
+their original vision.
 
 ```haskell
 newtype ParsecT s u m a
