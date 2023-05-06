@@ -25,13 +25,13 @@ expr = term `chainl1` addop
 
 term = factor `chainl1` mulop
 
-factor = digit +++ do {symb "("; n <- expr; symb ")"; return n}
+factor = digit +++ do {symbol "("; n <- expr; symbol ")"; return n}
 
 digit = do {x <- token (sat isDigit); return (ord x - ord '0')}
 
-addop = do {symb "+"; return (+)} +++ do {symb "-"; return (-)}
+addop = do {symbol "+"; return (+)} +++ do {symbol "-"; return (-)}
 
-mulop = do {symb "*"; return (*)} +++ do {symb "/"; return (div)}
+mulop = do {symbol "*"; return (*)} +++ do {symbol "/"; return (div)}
 
 -- apply expr "1 - 2 * 3 + 4" -> [(-1, "")]
 ```
