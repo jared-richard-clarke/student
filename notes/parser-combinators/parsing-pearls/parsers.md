@@ -118,8 +118,8 @@ space = many (sat isSpace)
 token :: Parser a -> Parser a
 token p = do {a <- p; space; return a}
 
-symb :: String -> Parser String
-symb cs = token (string cs)
+symbol :: String -> Parser String
+symbol cs = token (string cs)
 
 -- Apply parser "p", throwing away any leading space.
 
