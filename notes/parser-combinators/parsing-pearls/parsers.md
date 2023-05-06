@@ -4,10 +4,10 @@ The following code is a series of parser combinators as implemented in
 **Functional Pearls** by Graham Hutton and Erik Meijer
 
 ```haskell
--- Parser wraps a function that inputs a string
--- and outputs a list of results — a pair of type "a"
--- and the remaining unparsed string.
--- An empty list denotes failure
+{- 
+  Parser wraps a function that inputs a string and outputs a list of results — a pair of type "a"
+  and the remaining unparsed string. An empty list denotes failure.
+-}
 
 newtype Parser a = Parser (String -> [(a, String)])
 
@@ -29,9 +29,13 @@ parse (Parser p) = p
 instance Monad Parser where
    return a = Parser (\cs -> [(a, cs)])
    p >>= f  = Parser (\cs -> concat [parse (f a) cs' | (a, cs') <- parse p cs])
--- p >>= f  = Parser (\cs -> concat (concatMap (\(a, cs') -> parse (f a) cs') parse p cs))
 
 {-
+  There are two monads in use here. The left side of the expression defines the "bind" operator
+  for the Parser Monad, whereas the right side uses the "bind" and "return" operators as 
+  implemented for the List Monad. Haskell's type class mechanism allows this overloading of the 
+  "bind" and "return" operators.
+  
   === do notation ===
   p >>= f = Parser $ \cs -> concat $ do (a, cs') <- parse p cs
                                         return $ parse (f a) cs'
@@ -39,6 +43,9 @@ instance Monad Parser where
   === bind notation ===
   p >>= f = Parser $ \cs -> concat $ parse p cs >>= \(a, cs') ->
                                      return $ parse (f a) cs'
+  
+  === function notation ===
+  p >>= f  = Parser (\cs -> concat (concatMap (\(a, cs') -> parse (f a) cs') parse p cs))
 -}
 
 -- class Monad m => MonadZero m where
@@ -82,8 +89,7 @@ many p = many1 p +++ return []
 many1 :: Parser a -> Parser [a]
 many1 p = do {a <- p; as <- many p; return (a:as)}
 
--- Parse repeated applications of parser separated
--- by parser "sep" whose results are thrown away.
+-- Parse repeated applications of parser separated by parser "sep" whose results are thrown away.
 
 sepby :: Parser a -> Parser b -> Parser [a]
 p `sepby` sep = (p `sepby1` sep) +++ return []
@@ -93,10 +99,11 @@ p `sepby1` sep = do a <- p
                     as <- many (do {sep; p})
                     return (a:as)
 
--- Parse repeated applications of a parser "p", separated
--- by applications of a parser "op" whose result value is
--- an operator that is assumed to associate to the left,
--- and which is used to combine the results from the "p" parsers.
+{- 
+  Parse repeated applications of a parser "p", separated by applications of a parser "op" 
+  whose result value is an operator that is assumed to associate to the left, and which 
+  is used to combine the results from the "p" parsers.
+-}
 
 chainl :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
 chainl p op a = (p `chainl1` op) +++ return a
