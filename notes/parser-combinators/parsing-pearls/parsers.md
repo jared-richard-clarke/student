@@ -30,21 +30,6 @@ instance Monad Parser where
    return a = Parser (\cs -> [(a, cs)])
    p >>= f  = Parser (\cs -> concat [parse (f a) cs' | (a, cs') <- parse p cs])
 
-{-
-  There are two monads in use here. The left side of the expression defines the "bind" operator
-  for the Parser Monad, whereas the right side uses the "bind" and "return" operators as 
-  implemented for the List Monad. Haskell's type class mechanism allows this overloading of the 
-  "bind" and "return" operators.
-  
-  === do notation ===
-  p >>= f = Parser $ \cs -> concat $ do (a, cs') <- parse p cs
-                                        return $ parse (f a) cs'
-
-  === bind notation ===
-  p >>= f = Parser $ \cs -> concat $ parse p cs >>= \(a, cs') ->
-                                     return $ parse (f a) cs' 
--}
-
 -- class Monad m => MonadZero m where
 --    zero :: m a
 
