@@ -1,4 +1,4 @@
-# Parsers in Gofer
+# Combinator Parsers in Gofer
 
 **Monadic Parser Combinators** by Graham Hutton and Erik Meijer
 
@@ -14,6 +14,23 @@ arguments. The `Monad` instance declaration for `result` is therefore invalid.
 >  for all monads. Later the comprehension syntax was restricted to lists."
 >  
 >  — [Haskell Wiki](https://wiki.haskell.org/List_comprehension)
+
+## About
+
+The basic idea behind monads is to distinguish the values that a computation can 
+produce from the computation itself. We can think of `m a` as the type of computations 
+the yield results of type `a`, with the nature of the computation captured by the type 
+constructor `m`. The combinators `result` and `bind` (with potentially `zero` and `(++)`)
+provide a means to structure the building of such computations.
+
+```haskell
+result :: m a
+bind   :: m a -> (a -> m a) -> m a
+zero   :: m a
+(++)   :: m a -> m a -> m a
+```
+
+## Parsers
 
 ```haskell
 -- Parser is a function that inputs a string and outputs a list 
@@ -42,6 +59,16 @@ instance MonadOPlus Parser where
   zero   = \inp -> []
   -- Parser a -> Parser a -> Parser a
   p ++ q = \inp -> (p inp ++ q inp)
+
+-- deterministic parsers
+
+first :: Parser a -> Parser a
+first p = \inp -> case p inp of
+                    [] -> []
+                    (x:xs) -> [x]
+
+(+++) :: Parser a -> Parser a -> Parser a
+p +++ q = first (p ++ q)
 
 -- combinators
 
@@ -74,6 +101,29 @@ p `sepby` sep = (p `sepby1` sep) ++ [[]]
 sepby1 :: Parser a -> Parser b -> Parser [a]
 p `sepby1` sep = [x:xs | x <- p,
 		       , xs <- many [y | _ <- sep, y <- p]]
+
+-- evaluating expressions
+
+chainl :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
+chainl p op v = (p `chainl1` op) ++ [v]
+
+chainl1 :: Parser a -> Parser (a -> a -> a) -> Parser a
+p `chainl1` op = p `bind` rest
+                 where
+                    rest x = (op `bind` \f ->
+                              p  `bind` \y ->
+                              rest (f x y)) ++ [x]
+
+chainr :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
+chainr p op v = (p `chainr1` op) ++ [v]
+
+chainr1 :: Parser a -> Parser (a -> a -> a) -> Parser a
+p `chainr1` op =
+    p `bind` \x ->
+        [f x y | f <- op, y <- p `chainr1` op] ++ [x]
+
+ops :: [(Parser a, b)] -> Parser b
+ops xs = foldr1 (++) [[op | _ <- p] | (p, op) <- xs]
 
 -- parsers
 
