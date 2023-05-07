@@ -39,6 +39,11 @@ type Parser a = String -> [(a, String)]
 
 -- primitives
 
+item :: Parser Char
+item = \inp -> case inp of
+                   []     -> []
+                   (x:xs) -> [(x,xs)]
+
 {-
   For "bind", the parser "p" is applied to the input string, yielding 
   a list of (value, string) pairs. Since "f" is a function that takes
