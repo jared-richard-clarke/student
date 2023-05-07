@@ -42,10 +42,7 @@ instance Monad Parser where
 
   === bind notation ===
   p >>= f = Parser $ \cs -> concat $ parse p cs >>= \(a, cs') ->
-                                     return $ parse (f a) cs'
-  
-  === function notation ===
-  p >>= f  = Parser (\cs -> concat (concatMap (\(a, cs') -> parse (f a) cs') parse p cs))
+                                     return $ parse (f a) cs' 
 -}
 
 -- class Monad m => MonadZero m where
