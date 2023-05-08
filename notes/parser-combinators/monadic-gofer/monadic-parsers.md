@@ -68,7 +68,7 @@ instance MonadOPlus Parser where
   -- Parser a -> Parser a -> Parser a
   p ++ q = \inp -> (p inp ++ q inp)
 
--- deterministic parsers
+-- deterministic parser
 
 first :: Parser a -> Parser a
 first p = \inp -> case p inp of
@@ -208,4 +208,38 @@ int = [f n | f <- op, n <- nat]
 
 bracket :: Parser a -> Parser b -> Parser c -> Parser b
 bracket open p close = [x | _ <- open, x <- p, _ <- close]
+
+-- whitespace, comments, and keywords
+spaces :: Parser ()
+spaces = [() | _ <- many1 (sat isSpace)]
+         where
+           isSpace x =
+           (x == ' ') || (x == '\n') || (x == '\t')
+	   
+comment :: Parser ()
+comment = [() | _ <- string "--"
+              , _ <- many (sat (\x -> x /= '\n'))]
+
+junk :: Parser ()
+junk = [() | _ <- many (spaces +++ comment)]
+
+parse :: Parser a -> Parser a
+parse p = [v | _ <- junk, v <- p]
+
+token :: Parser a -> Parser a
+token p = [v | v <- p, _ <- junk]
+
+-- complete parsers
+
+natural :: Parser Int
+natural = token nat
+
+integer :: Parser Int
+integer = token int
+
+symbol :: String -> Parser String
+symbol xs = token (string xs)
+
+identifier :: [String] -> Parser String
+identifier ks = token [x | x <- ident, not (elem x ks)]
 ```
