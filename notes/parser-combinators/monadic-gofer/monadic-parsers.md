@@ -110,7 +110,8 @@ sepby1 :: Parser a -> Parser b -> Parser [a]
 p `sepby1` sep = [x:xs | x <- p,
 		       , xs <- many [y | _ <- sep, y <- p]]
 
--- chain: repetition with meaningful separators
+-- chain: repetition with meaningful separators — the separator 
+-- usually being some kind of operation.
 
 chainl :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
 chainl p op v = (p `chainl1` op) ++ [v]
