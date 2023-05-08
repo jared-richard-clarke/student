@@ -90,8 +90,18 @@ sat p = [x | x <- item, p x]
           if p x then result x else zero
 -}
 
+-- force: ensures `many` has the expected behavior under lazy evaluation.
+force :: Parser a -> Parser a
+force p = \inp -> let x = p inp in
+                  (fst (head x), snd (head x)) : tail x
+
 many :: Parser a -> Parser [a]
-many p = [x:xs | x <- p, xs <- many p] ++ [[]]
+many p = force ([x:xs | x <- p, xs <- many p] ++ [[]])
+
+{-
+  many :: Parser a -> Parser [a]
+  many p = [x:xs | x <- p, xs <- many p] ++ [[]]
+-}
 
 {-
   "++" is non-deterministic so ...
