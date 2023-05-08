@@ -171,10 +171,18 @@ ident :: Parser String
 ident = [x:xs | x <- lower, xs <- many alphanum]
 
 nat :: Parser Int
+nat = [ord x - ord '0' | x <- digit] `chainl1` [op]
+      where
+        m `op` n = 10*m + n
+
+{-
+=== equivalent ===
+nat :: Parser Int
 nat = [eval xs | xs <- many1 digit]
       where
         eval xs = foldl1 op [ord x - ord '0' | x <- xs]
         m `op` n = 10*m + n
+-}
 
 int :: Parser Int
 int = [f n | f <- op, n <- nat]
