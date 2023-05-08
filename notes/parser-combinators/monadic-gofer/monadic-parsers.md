@@ -59,6 +59,9 @@ instance Monad Parser where
   -- bind :: Parser a -> (a -> Parser b) -> Parser b
   p `bind` f = \inp -> concat [f v out | (v, out) <- p inp]
 
+-- bind: equivalent definition
+-- p `bind` f = \inp -> concatMap ( \(v, out) -> f v out ) ( p inp )
+
 instance MonadOPlus Parser where
   -- Parser a
   zero   = \inp -> []
