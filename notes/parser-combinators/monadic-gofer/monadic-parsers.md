@@ -90,7 +90,14 @@ sat p = [x | x <- item, p x]
           if p x then result x else zero
 -}
 
--- force: ensures `many` has the expected behavior under lazy evaluation.
+{-
+  force: ensures `many` has the expected behavior under lazy evaluation.
+
+  For example, applying many (char 'a') to the partially-defined string
+  'a':⊥ gives the partially-defined result ('a':⊥,⊥):⊥. In contrast, with the old
+  version of many, the result for this example is the completely undefined value ⊥.
+-}
+
 force :: Parser a -> Parser a
 force p = \inp -> let x = p inp in
                   (fst (head x), snd (head x)) : tail x
