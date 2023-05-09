@@ -243,3 +243,50 @@ symbol xs = token (string xs)
 identifier :: [String] -> Parser String
 identifier ks = token [x | x <- ident, not (elem x ks)]
 ```
+
+## The Parser Type Revisited
+
+The parser monad — as implemented by Graham Hutton and Erik Meijer — can be defined in terms
+of two simpler monads: the list monad (non-deterministic computations) and the state monad 
+(stateful computations)
+
+```haskell
+-- non-determinism -----> |-----------|
+--           state ----------> |----|
+type Parser a = String -> [(a, String)]
+
+-- - generalizes ->
+
+type StateM m s a = s -> m (a, s)
+```
+
+### Parser Redefined
+
+```haskell
+type StateM m s a = s -> m (a, s)
+
+instance Monad m => Monad (StateM m s) where
+  result v = \s -> result (v, s)
+  stm `bind` f = \s -> stm s `bind` \(v, s') -> f v s'
+
+instance MonadOPlus m => MonadOPlus (StateM m s) where
+  zero = \s -> zero
+  stm ++ stm' = \s -> stm s ++ stm' s
+
+instance Monad m => StateMonad (StateM m s) s where
+  update f = \s -> result (s, f s)
+
+-- Non-deterministic computations that can return many results.
+type Parser a = StateM [] String a
+
+{-
+  Alternatively:
+  data Maybe a = Just a | Nothing
+  type Parser a = StateM Maybe String a
+-}
+
+-- The advantage of the monadic definition of `item` is that it does not depend upon
+-- the internal details of the `Parser` type.
+
+item = [x | (x : _) <- update tail]
+```
