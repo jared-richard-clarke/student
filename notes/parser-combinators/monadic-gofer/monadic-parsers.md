@@ -113,10 +113,13 @@ many p = force ([x:xs | x <- p, xs <- many p] ++ [[]])
 -}
 
 {-
-  "++" is non-deterministic so ...
-  (many letter) "No!" -> [("No", "!"), ("N", "o!"), ("", "No!")]
+  `many` defined with the `++` combinator is non-deterministic so ...
+  `(many letter) "No!"` -> `[("No", "!"), ("N", "o!"), ("", "No!")]`
   Non-determinism means both alternatives can be evaluated,
   even if the first alternative is successful.
+  
+  `many` and other repeating parsers can be redefined with `+++`, 
+  the deterministic combinator, to improve parser efficiency.
 -}
 
 many1 :: Parser a -> Parser [a]
