@@ -214,7 +214,7 @@ int = [f n | f <- op, n <- nat]
 bracket :: Parser a -> Parser b -> Parser c -> Parser b
 bracket open p close = [x | _ <- open, x <- p, _ <- close]
 
--- whitespace, comments, and keywords
+-- lexers: whitespace, comments, and keywords
 spaces :: Parser ()
 spaces = [() | _ <- many1 (sat isSpace)]
          where
