@@ -256,8 +256,8 @@ of two simpler monads: the list monad (non-deterministic computations) and the s
 (stateful computations)
 
 ```haskell
--- non-determinisministic |-----------|
---     stateful |---------------------|
+-- non-deterministic ---> |-----------|
+-- stateful --> |---------------------|
 type Parser a = String -> [(a, String)]
 
 -- - generalizes ->
