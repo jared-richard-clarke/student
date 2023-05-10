@@ -261,7 +261,7 @@ and `s` is the state. `State` automates the threading of state between functions
 
 ```haskell
 -- non-deterministic ---> |-----------|
--- stateful --> |---------------------|
+-- stateful --> |---------------------| <- a.k.a: state processor
 -- state --------------------> |----|
 type Parser a = String -> [(a, String)]
 
