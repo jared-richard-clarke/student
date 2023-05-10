@@ -255,8 +255,8 @@ The parser monad — as implemented by Graham Hutton and Erik Meijer — can be 
 of two simpler monads: the list monad (non-deterministic computations) and the state monad 
 (stateful computations).
 
-Side Note: `State` describes functions that consume a state and produce both a result and 
-an updated state that are given back in a tuple — usually `(a, s)`, where `a` is the result
+**Side Note**: `State` describes functions that consume a state and produce both a result and 
+an updated state, which are given back in a tuple — usually `(a, s)`, where `a` is the result
 and `s` is the state. 
 
 ```haskell
