@@ -257,7 +257,7 @@ of two simpler monads: the list monad (non-deterministic computations) and the s
 
 **Side Note**: `State` describes functions that consume a state and produce both a result and 
 an updated state, which are given back in a tuple — usually `(a, s)`, where `a` is the result
-and `s` is the state. 
+and `s` is the state. `State` automates the threading of state between functions.
 
 ```haskell
 -- non-deterministic ---> |-----------|
