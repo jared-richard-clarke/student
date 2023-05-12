@@ -48,14 +48,18 @@ data Expr
   | Type     Type
   | Coercion Coercion
   | Tick  ...  -- unimportant
+
 type Alt = (AltCon, [Var], Expr)
+
 data AltCon
   = DataAlt DataCon
   | LitAlt  Literal
   | DEFAULT
+
 data Bind
   = NonRec Var Expr
   | Rec    [(Var, Expr)]
+
 data Type
   = TyVarTy    Var
   | AppTy      Type          Type
@@ -72,8 +76,10 @@ data Type
 ```haskell
 -- Haskell
 a && b
--- Core
+
+-- Haskell Core
 (&&) a b
+
 -- Core with Types
 ((&&) :: Bool -> Bool -> Bool)
    (a :: Bool)
@@ -86,7 +92,8 @@ a && b
 -- Haskell
 f :: Integer -> Integer
 f x = x
--- Core
+
+-- Haskell Core
 f = \(x :: Integer) -> (x :: Integer)
 ```
 
@@ -97,7 +104,8 @@ f = \(x :: Integer) -> (x :: Integer)
 f x y = not x && y
 -- or ->
 f = \x y -> not x && y
--- Core
+
+-- Haskell Core
 f = \(x :: Bool) -> \(y :: Bool) -> (&&) (not x) y
 ```
 
@@ -108,7 +116,8 @@ f = \(x :: Bool) -> \(y :: Bool) -> (&&) (not x) y
 a :: Integer
 b :: Bool
 (a, b) = (1, True)
--- Core
+
+-- Haskell Core
 ab = (1, True)
 a = case ab of
     (,) x y -> x
@@ -123,7 +132,8 @@ b = case ab of
 (a &&)
 -- and ->
 (&& b)
--- Core
+
+-- Haskell Core
 \b -> (&&) a b
 -- and ->
 \a -> (&&) a b
@@ -134,7 +144,8 @@ b = case ab of
 ```haskell
 -- Haskell
 (,True,)
--- Core
+
+-- Haskell Core
 \a -> \b -> (,,) a True b
 ```
 
@@ -146,7 +157,8 @@ and True  True  = True
 and True  False = False
 and False True  = False
 and False False = False
--- Core
+
+-- Haskell Core
 and =
   \(a :: Bool) ->
   \(b :: Bool) ->
@@ -168,7 +180,8 @@ and =
 f (Left (Just "")) = True
 f (Right ()) = True
 f _ = False
--- Core
+
+-- Haskell Core
 f =
   \e ->
     case e of
@@ -184,15 +197,52 @@ f =
 	  () -> True
 ```
 
+## Lambda Case
+
+```haskell
+-- Haskell
+\case
+  True -> False
+  False -> True
+  
+-- Haskell Core
+\x ->
+case x of
+  True -> False
+  False -> True
+```
+
 ## If-Then-Else
 
 ```haskell
 -- Haskell
 if c then a else b
--- Core
+
+-- Haskell Core
 case c of
   True  -> a
   False -> b
+```
+
+## Multi-Way If
+
+```haskell
+-- Haskell
+if | c1 -> a1
+   | c2 -> a2
+   | c3 -> a3
+   | otherwise -> a4
+
+-- Haskell Core
+case c1 of
+  False ->
+    case c2 of
+      False ->
+        case c3 of
+          False -> a4
+          True -> a3
+      True -> a2
+  True -> a1
 ```
 
 ## `seq`
@@ -202,10 +252,12 @@ case c of
 >  relying on the fact that in Core, case-expressions are strict"
 >
 > — Vladislav Zavialov
+
 ```haskell
 -- Haskell
 seq a b
--- Core
+
+-- Haskell Core
 case a of
   _ -> b
 ```
@@ -213,10 +265,12 @@ case a of
 ### Bang (`!`) Patterns
 
 ```haskell
+-- Haskell
 f, g :: Bool -> Bool
 f x  = x
 g !x = x
--- Core
+
+-- Haskell Core
 f \x -> x
 g = \x -> case x of
             _ -> x
@@ -231,15 +285,18 @@ id x = x
 -- and ->
 t :: Bool
 t = id True
--- Core
+
+-- Haskell Core
 id = \ @(a :: Type) ->
      \  (x :: a) ->
          x
 -- and ->
 t = id @Bool True
+
 -- Haskell
 p = (True, 'x', "Hello")
--- Core
+
+-- Haskell Core
 p = (,,) @Bool @Char @String True 'x' "Hello"
 ```
 
@@ -250,24 +307,29 @@ p = (,,) @Bool @Char @String True 'x' "Hello"
 >  called 'dictionaries'..."
 >
 > — Vladislav Zavialov
+
 ```haskell
 -- Haskell
 f :: Num a => a -> a
 f x = x + x
--- Core
+
+-- Haskell Core
 f = \ @(a :: Type) ->
     \ ($dNum :: Num a) ->
     \ (x :: a) ->
       (+) @a $dNum x x
+
 {-
   1. `a :: Type` -> The type of input/output.
   2. `$dNum :: Num a` -> The class dictionary with methods.
   3. `x :: a` -> The input value.
 -}
+
 -- Haskell
 f :: Int -> Int
 f x = x + x
--- Core
+
+-- Haskell Core
 f = \(x :: Int) -> (+) @Int $dNumInt x x
 ```
 
@@ -279,12 +341,14 @@ f act = do
   x <- act
   y <- act
   return (x && y)
+
 -- Not Quite Core
 f = \act ->
   act >>= \x ->
   act >>= \y ->
   return (x && y)
--- Core
+
+-- Haskell Core
 f = \ @(m :: Type -> Type) ->
     \  ($dMonad :: Monad m) ->
     \  (act :: m Bool) ->
