@@ -11,7 +11,7 @@ referential transparency.
 
 Traditional Lisp macro systems user ordinary list-structured data to represent
 syntax. Although these list structures are easy to manipulate, syntactic
-information is lost -- like the distinction between different identifiers
+information is lost — like the distinction between different identifiers
 that share the same name. Syntax objects allow transformers to compare identifiers
 according to their intended use as free identifiers, bound identifiers, or symbolic
 data.
