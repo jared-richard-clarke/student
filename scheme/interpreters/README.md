@@ -5,8 +5,9 @@ as written by others and myself. I include examples from other languages if the 
 understand the problem domain.
 
 ## Table of Contents
+- `atsushi-satoshi`: A Lisp implemented in Smalltalk by Aoki Atsushi and Nishihara Satoshi.
+- `tang`: A Scheme interpreter implemented in Haskell by Jonathan Tang.
 - `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
-- `compute.ml`: an OCaml arithmetic interpreter and symbolic processor as defined by **The OCaml Manual**
 - `compute.scm`: an arithmetic interpreter and symbolic processor as defined by me.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
 - `holden`: a custom LISP implemented in C by Daniel Holden.
