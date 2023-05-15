@@ -141,7 +141,7 @@ p <|> q =
             consumed -> consumed
 
 mergeOk x inp msg1 msg2 =
-    Empty (Ok x inp (merge inp1 inp2))
+    Empty (Ok x inp (merge msg1 msg2))
 
 mergeError msg1 msg2 =
     Empty (Error (merge msg1 msg2))
