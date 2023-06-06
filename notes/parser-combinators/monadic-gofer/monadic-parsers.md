@@ -101,15 +101,10 @@ force :: Parser a -> Parser a
 force p = \inp -> let x = p inp in
                   (fst (head x), snd (head x)) : tail x
 
-many :: Parser a -> Parser [a]
-many p = force ([x:xs | x <- p, xs <- many p] +++ [[]])
-
 {-
   many :: Parser a -> Parser [a]
   many p = [x:xs | x <- p, xs <- many p] ++ [[]]
--}
-
-{-
+  
   `many` defined with the `++` combinator is non-deterministic so ...
   `(many letter) "No!"` -> `[("No", "!"), ("N", "o!"), ("", "No!")]`
   Non-determinism means both alternatives can be evaluated,
@@ -118,6 +113,9 @@ many p = force ([x:xs | x <- p, xs <- many p] +++ [[]])
   `many` and other repeating parsers can be redefined with `+++`, 
   the deterministic combinator, to improve parser efficiency.
 -}
+
+many :: Parser a -> Parser [a]
+many p = force ([x:xs | x <- p, xs <- many p] +++ [[]])
 
 many1 :: Parser a -> Parser [a]
 many1 p = [x:xs | x <- p, xs <- many p]
@@ -176,15 +174,6 @@ alphanum = letter ++ digit
 string :: String -> Parser String
 string ""     = [""]
 string (x:xs) = [x:xs | _ <- char x, _ <- string xs]
-
-{-
-  === equivalent ===
-  string :: String -> Parser String
-  string "" = result ""
-  string (x:xs) = char x    `bind` \_ ->
-                  string xs `bind` \_ ->
-                  result (x:xs)
--}
 
 ident :: Parser String
 ident = [x:xs | x <- lower, xs <- many alphanum]
