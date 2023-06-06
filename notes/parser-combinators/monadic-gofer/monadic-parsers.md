@@ -259,6 +259,14 @@ type StateM m s a = s -> m (a, s)
 ### Parser Redefined
 
 ```haskell
+class Monad m => StateMonad m s where
+  update :: (s -> s) -> m s
+  set :: s -> m s
+  fetch :: m s
+  -- default definitions
+  set s = update (\_ -> s)
+  fetch = update id
+
 type StateM m s a = s -> m (a, s)
 
 instance Monad m => Monad (StateM m s) where
