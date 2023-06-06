@@ -291,6 +291,5 @@ type Parser a = StateM [] String a
 
 -- The advantage of the monadic definition of `item` is that it does not depend upon
 -- the internal details of the `Parser` type.
-
 item = [x | (x : _) <- update tail]
 ```
