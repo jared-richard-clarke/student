@@ -102,7 +102,7 @@ force p = \inp -> let x = p inp in
                   (fst (head x), snd (head x)) : tail x
 
 many :: Parser a -> Parser [a]
-many p = force ([x:xs | x <- p, xs <- many p] ++ [[]])
+many p = force ([x:xs | x <- p, xs <- many p] +++ [[]])
 
 {-
   many :: Parser a -> Parser [a]
@@ -123,7 +123,7 @@ many1 :: Parser a -> Parser [a]
 many1 p = [x:xs | x <- p, xs <- many p]
 
 sepby :: Parser a -> Parser b -> Parser [a]
-p `sepby` sep = (p `sepby1` sep) ++ [[]]
+p `sepby` sep = (p `sepby1` sep) +++ [[]]
 
 sepby1 :: Parser a -> Parser b -> Parser [a]
 p `sepby1` sep = [x:xs | x <- p,
@@ -133,22 +133,22 @@ p `sepby1` sep = [x:xs | x <- p,
 -- usually being some kind of operation.
 
 chainl :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
-chainl p op v = (p `chainl1` op) ++ [v]
+chainl p op v = (p `chainl1` op) +++ [v]
 
 chainl1 :: Parser a -> Parser (a -> a -> a) -> Parser a
 p `chainl1` op = p `bind` rest
                  where
                     rest x = (op `bind` \f ->
                               p  `bind` \y ->
-                              rest (f x y)) ++ [x]
+                              rest (f x y)) +++ [x]
 
 chainr :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
-chainr p op v = (p `chainr1` op) ++ [v]
+chainr p op v = (p `chainr1` op) +++ [v]
 
 chainr1 :: Parser a -> Parser (a -> a -> a) -> Parser a
 p `chainr1` op =
     p `bind` \x ->
-        [f x y | f <- op, y <- p `chainr1` op] ++ [x]
+        [f x y | f <- op, y <- p `chainr1` op] +++ [x]
 
 ops :: [(Parser a, b)] -> Parser b
 ops xs = foldr1 (++) [[op | _ <- p] | (p, op) <- xs]
