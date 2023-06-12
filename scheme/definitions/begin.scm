@@ -1,5 +1,5 @@
 ;; (begin x y ...) -> y
-;; Evaluates each expression, left to right, returning only the value of the
+;; Evaluates each expression left to right, returning only the value of the
 ;; last expression evaluated.
 ;;
 ;; (begin (display 7)
@@ -8,8 +8,8 @@
 ;;
 ;; === expands ===>
 ;;
-;; ((lambda (a)
-;;   ((lambda (a)
+;; ((lambda (ignore)
+;;   ((lambda (ignore)
 ;;      (+ 7 11))
 ;;    (display 11)))
 ;;  (display 7))
@@ -18,4 +18,4 @@
   (syntax-rules ()
     [(_ x) x]
     [(_ x y ...)
-     ((lambda (a) (begin y ...)) x)]))
+     ((lambda (ignore) (begin y ...)) x)]))
