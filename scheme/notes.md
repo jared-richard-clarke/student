@@ -72,6 +72,12 @@ at all, the binding is pointless.
 - When the Scheme interpreter evaluates a `lambda` expression, it stores the current environment as part of the procedure definition.
 - Whenever that procedure is called, the interpreter reinstates the environment that is stored in 
   the procedure definition and evaluates the procedure body within the context of that environment.
+  
+> "A closure is an object that combines the function with the lexical bindings of its free variables at the time it is created.
+>  Closures are first class data objects because they may be passed as arguments to or returned as values from other functions,
+>  or stored in the system indefinitely."
+>
+> — **Three Implementation Models for Scheme** by R. Kent Dybvig
 
 ---
 
