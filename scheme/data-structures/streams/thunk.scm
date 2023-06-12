@@ -11,6 +11,19 @@
         (car s)
         (stream-ref ((cdr s)) (- n 1)))))
 
+;; === values in the stream are computed only once ===
+;; Converts each closure into a value then saves it using "set-cdr!".
+;;
+;; (define stream-ref
+;;   (lambda (s n)
+;;     (if (<= n 1)
+;;         (car s)
+;;         (if (pair? (cdr s))
+;;             (stream-ref (cdr s) (- n 1))
+;;             (let ([v ((cdr s))])
+;;               (set-cdr! s v)
+;;               (stream-ref (cdr s) (- n 1)))))))
+
 (define alternate
   (lambda (n)
     (stream n (alternate (let ([x (+ (abs n) 1)])
@@ -24,7 +37,9 @@
 ;;   (lambda (n)
 ;;     (cons n (lambda ()
 ;;               (alternate (let ([x (+ (abs n) 1)])
-;;                            (if (negative? n) x (- x))))))))
+;;                            (if (negative? n)
+;;                                x
+;;                                (- x))))))))
 
 
 (stream-ref (alternate 1) 10) ;; -> -10
