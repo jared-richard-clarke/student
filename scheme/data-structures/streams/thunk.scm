@@ -12,7 +12,7 @@
         (stream-ref ((cdr s)) (- n 1)))))
 
 ;; === values in the stream are computed only once ===
-;; Converts each closure into a value then saves it using "set-cdr!".
+;; Converts each closure into a value then saves that value using "set-cdr!".
 ;;
 ;; (define stream-ref
 ;;   (lambda (s n)
