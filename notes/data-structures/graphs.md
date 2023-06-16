@@ -41,7 +41,7 @@ children, while in a non-binary tree, each node can have any number of children.
 | -------------- | --------------------------------------------- | -------------------------------------------------------- |
 | structure      | collection of vertices/nodes and edges        | collection of nodes and edges                            |
 | cycle          | cycles, loops, connected, disconnected        | connected, acyclic, root node                            |
-| edges          | unlimited edges per node                      | if `n` nodes, then `n-1` edges                           |
+| edges          | unlimited edges per node                      | if `n` nodes, then `n - 1` edges                           |
 | edge types     | directed or undirected                        | directed                                                 |
 | root           | no                                            | yes                                                      |
 | traversal      | breadth-first or depth-first                  | in-order, pre-order, or post-order                       |
