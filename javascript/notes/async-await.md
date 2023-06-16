@@ -1,10 +1,5 @@
 # Asynchronous JavaScript
 
-### Sources 
-
-- [The Odin Project](https://www.theodinproject.com/lessons/node-path-javascript-async-and-await)
-- [MDN](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous)
-
 ## Promises
 
 ```javascript
