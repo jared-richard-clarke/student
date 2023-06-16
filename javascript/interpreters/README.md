@@ -29,4 +29,4 @@ I included **Egg** because of its simplicity and similarity to **LISP**.
 >
 > 2. To apply a compound procedure to a set of arguments, evaluate the body of the procedure in a new environment. To construct this environment, extend the environment part of the procedure object by a frame in which the formal parameters of the procedure are bound to the arguments to which the procedure is applied.
 
-— [The Structure and Interpretation of Computer Programs](https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book-Z-H-26.html), Chapter 4.1
+— **The Structure and Interpretation of Computer Programs**, Chapter 4.1
