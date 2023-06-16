@@ -1,7 +1,7 @@
 # JavaScript Interpreters
 
 ## Table of Contents
-- `egg.js`: **Egg** is a language implemented by Marijn Haverbeke for his book *Eloquent JavaScript*. 
+- `egg.js`: **Egg** is a language implemented by Marijn Haverbeke for his book **Eloquent JavaScript**. 
 I included **Egg** because of its simplicity and similarity to **LISP**.
 
 ## Lexemes vs. Syntax
