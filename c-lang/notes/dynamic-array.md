@@ -24,8 +24,7 @@ If the `count` is at or exceeds `capacity`, seven steps are taken:
 6. Store the element in the new array.
 7. Update `count`.
 
-**Side Note**: Slices in the Go programming language are a high-level versions of
-dynamic arrays.
+**Side Note**: Slices in the Go programming language are a high-level versions of dynamic arrays.
 
 ## Code Example
 
@@ -43,6 +42,16 @@ Below is a consolidated, simplified, and early version of Nystrom's `Chunk` impl
 
 #define FREE_ARRAY(type, pointer, oldCount) \
     reallocate(pointer, sizeof(type) * (oldCount), 0)
+
+void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
+  if (newSize == 0) {
+    free(pointer);
+    return NULL;
+  }
+
+  void* result = realloc(pointer, newSize);
+  return result;
+}
 
 // Chunk: a dynamic array
 typedef struct {
@@ -67,16 +76,6 @@ void writeChunk(Chunk* chunk, uint8_t byte) {
 
   chunk->code[chunk->count] = byte;
   chunk->count++;
-}
-
-void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
-  if (newSize == 0) {
-    free(pointer);
-    return NULL;
-  }
-
-  void* result = realloc(pointer, newSize);
-  return result;
 }
 
 void freeChunk(Chunk* chunk) {
