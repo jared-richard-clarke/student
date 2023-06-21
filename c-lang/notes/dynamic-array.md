@@ -1,4 +1,4 @@
-# Chunk: A Dynamic Array
+# `Chunk`: A Dynamic Array
 
 In his book **Crafting Interpreters**, Bob Nystrom builds a dynamic array
 for his implementation of a byte-code interpreter.
