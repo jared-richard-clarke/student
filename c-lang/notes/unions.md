@@ -3,10 +3,10 @@
 A `union` is like a `struct` except all fields overlap in memory.
 
 ```c
-union Data {
+union data {
   bool boolean;
   double number;
-} data;
+};
 
 // union
 // | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
