@@ -1,6 +1,6 @@
 # Stack: Example Implementation
 
-Original code by Marshall Brain and Chris Pollette
+Original code by Marshall Brain and Chris Pollette, **The Basics of C Programming**
 
 ```c
 #include "stack.h"
@@ -15,13 +15,13 @@ struct stack_rec
     struct stack_rec *next;
 };
 
-struct stack_rec *top=NULL;
+struct stack_rec *top = NULL;
 
 void stack_init()
 /* Initializes this library.
    Call before calling anything else. */
 {
-    top=NULL;
+    top = NULL;
 }
 
 void stack_clear()
@@ -30,16 +30,16 @@ void stack_clear()
     stack_data x;
 
     while (!stack_empty())
-    x=stack_pop();
+        x = stack_pop();
 }
 
 int stack_empty()
 /* Returns 1 if the stack is empty, 0 otherwise. */
 {
-    if (top==NULL)
-        return(1);
+    if (top == NULL)
+        return (1);
     else
-        return(0);
+        return (0);
 }
 
 void stack_push(stack_data d)
@@ -47,9 +47,9 @@ void stack_push(stack_data d)
 {
     struct stack_rec *temp;
     temp = (struct stack_rec *)malloc(sizeof(struct stack_rec));
-    temp->data=d;
-    temp->next=top;
-    top=temp;
+    temp->data = d;
+    temp->next = top;
+    top = temp;
 }
 
 stack_data stack_pop()
@@ -58,14 +58,14 @@ stack_data stack_pop()
    Returns garbage if the stack is empty. */
 {
     struct stack_rec *temp;
-    stack_data d=0;
-    if (top!=NULL)
+    stack_data d = 0;
+    if (top != NULL)
     {
-        d=top->data;
-        temp=top;
-        top=top->next;
+        d = top->data;
+        temp = top;
+        top = top->next;
         free(temp);
     }
-    return(d);
+    return (d);
 }
 ```
