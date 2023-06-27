@@ -28,59 +28,67 @@ If the `count` is at or exceeds `capacity`, seven steps are taken:
 
 ## Code Example
 
-Below is a consolidated, simplified, and early version of Nystrom's `Chunk` implementation.
+Below is a consolidated, simplified, and earlier version of Nystrom's `Chunk` implementation.
 
 ```c
 #include <stdlib.h>
 
 #define GROW_CAPACITY(capacity) \
-    ((capacity) < 8 ? 8 : (capacity) * 2)
+    ((capacity) < 8 ? 8 : (capacity)*2)
 
-#define GROW_ARRAY(type, pointer, oldCount, newCount) \
-    (type*)reallocate(pointer, sizeof(type) * (oldCount), \
-        sizeof(type) * (newCount))
+#define GROW_ARRAY(type, pointer, oldCount, newCount)      \
+    (type *)reallocate(pointer, sizeof(type) * (oldCount), \
+                       sizeof(type) * (newCount))
 
 #define FREE_ARRAY(type, pointer, oldCount) \
     reallocate(pointer, sizeof(type) * (oldCount), 0)
 
-void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
-  if (newSize == 0) {
-    free(pointer);
-    return NULL;
-  }
+void *reallocate(void *pointer, size_t oldSize, size_t newSize)
+{
+    if (newSize == 0)
+    {
+        free(pointer);
+        return NULL;
+    }
 
-  void* result = realloc(pointer, newSize);
-  if (result == NULL) exit(1);
-  return result;
+    void *result = realloc(pointer, newSize);
+    if (result == NULL)
+        exit(1);
+    return result;
 }
 
 // Chunk: a dynamic array
-typedef struct {
-  int count;
-  int capacity;
-  uint8_t* code;
+typedef struct
+{
+    int count;
+    int capacity;
+    uint8_t *code;
 } Chunk;
 
-void initChunk(Chunk* chunk) {
+void initChunk(Chunk *chunk)
+{
     chunk->count = 0;
     chunk->capacity = 0;
     chunk->code = NULL;
 }
 
-void writeChunk(Chunk* chunk, uint8_t byte) {
-  if (chunk->capacity < chunk->count + 1) {
-    int oldCapacity = chunk->capacity;
-    chunk->capacity = GROW_CAPACITY(oldCapacity);
-    chunk->code = GROW_ARRAY(uint8_t, chunk->code,
-        oldCapacity, chunk->capacity);
-  }
+void writeChunk(Chunk *chunk, uint8_t byte)
+{
+    if (chunk->capacity < chunk->count + 1)
+    {
+        int oldCapacity = chunk->capacity;
+        chunk->capacity = GROW_CAPACITY(oldCapacity);
+        chunk->code = GROW_ARRAY(uint8_t, chunk->code,
+                                 oldCapacity, chunk->capacity);
+    }
 
-  chunk->code[chunk->count] = byte;
-  chunk->count++;
+    chunk->code[chunk->count] = byte;
+    chunk->count++;
 }
 
-void freeChunk(Chunk* chunk) {
-  FREE_ARRAY(uint8_t, chunk->code, chunk->capacity);
-  initChunk(chunk);
+void freeChunk(Chunk *chunk)
+{
+    FREE_ARRAY(uint8_t, chunk->code, chunk->capacity);
+    initChunk(chunk);
 }
 ```
