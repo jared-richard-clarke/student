@@ -84,8 +84,10 @@ end
 
 Quicksort as originally implemented by Dennis Ritchie and Brian Kernighan, **The C Programming Language**.
 
+Side Note: I added some minor changes in formatting and naming for clarity.
+
 ```c
-void qsort(int v[], int left, int right)
+void quicksort(int v[], int left, int right)
 {
     int i, last;
     void swap(int v[], int i, int j);
@@ -104,8 +106,8 @@ void qsort(int v[], int left, int right)
             swap(v, last, i);
         }
     }
-    qsort(v, left, last - 1);
-    qsort(v, last + 1, right);
+    quicksort(v, left, last - 1);
+    quicksort(v, last + 1, right);
 }
 
 void swap(int v[], int i, int j)
