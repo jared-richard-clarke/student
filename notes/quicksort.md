@@ -84,7 +84,7 @@ end
 
 Quicksort as originally implemented by Dennis Ritchie and Brian Kernighan, **The C Programming Language**.
 
-Side Note: I added some minor changes in formatting and naming for clarity.
+**Side Note**: Minor changes added for clarity.
 
 ```c
 void quicksort(int v[], int left, int right)
