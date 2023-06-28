@@ -39,3 +39,26 @@ void main()
 //         |    |    |    |  | |    |  | |    |  |  |    |  |
 //         |    ?    |    ?  ? |    7  ? |    7  11 |   11  11
 ```
+
+## Example 3
+
+```c
+void swap(int *px, int *py)
+{
+    int temp;
+
+    temp = *px;
+    *px = *py;
+    *py = temp;
+}
+
+swap(&a, &b);
+
+// caller:
+// b <-----+
+// a <---+ |
+//       | |
+// swap: | |
+// px *----+
+// py *--+
+```
