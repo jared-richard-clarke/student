@@ -42,6 +42,8 @@ void main()
 
 ## Example 3
 
+C is a call-by-value language. Pointers allow functions to change variables within the code that called them.
+
 ```c
 void swap(int *px, int *py)
 {
