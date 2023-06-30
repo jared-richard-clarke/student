@@ -102,7 +102,7 @@ map =
     }
 ```
 
-## Data -> Core
+## `data` -> Core
 
 ```haskell
 -- Haskell
