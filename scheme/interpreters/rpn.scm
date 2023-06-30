@@ -1,5 +1,5 @@
-;; Reverse Polish Notation calculator.
-;; (rpn '(2 3 × 1 + -)) -> '(-7)
+;; Reverse Polish Notation Calculator.
+;; (rpn '(2 3 × 1 + -)) -> -7
 
 (define rpn
   ;; === calculator environment ===
