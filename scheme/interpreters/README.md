@@ -8,10 +8,11 @@ understand the problem domain.
 - `atsushi-satoshi`: A Lisp implemented in Smalltalk by Aoki Atsushi and Nishihara Satoshi.
 - `tang`: A Scheme interpreter implemented in Haskell by Jonathan Tang.
 - `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
-- `compute.scm`: an arithmetic interpreter and symbolic processor as defined by me.
+- `compute.scm`: an arithmetic interpreter and symbolic processor.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
 - `holden`: a custom LISP implemented in C by Daniel Holden.
 - `norvig.py`: a Scheme interpreter written in Python as defined by Peter Norvig.
+- `rpn.scm`: a Reverse Polish Notation calculator.
 
 ## Grammar
 **LISP** is defined in terms of the evaluation of data structures, **not** in terms of the syntax of character streams or files.
