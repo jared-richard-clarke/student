@@ -62,7 +62,7 @@ data AltCon
 
 ## Graph Reduction
 
-### Graph Reduction Modell
+### Graph Reduction Model
 
 - **redex(es)**: reducible expression. A expression that can be evaluated further.
   - **normal form**: an expression without any redexes.
