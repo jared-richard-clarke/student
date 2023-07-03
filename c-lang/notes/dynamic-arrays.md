@@ -9,20 +9,20 @@ According to Nystrom, dynamic arrays provide three advantages:
 2. Constant-time indexed element lookup.
 3. Constant-time appending to the end of an array.
 
-A dynamic array consists of an underlying array as well as the `capacity`, which counts the
-number of entries allocated to the array, and the `count`, which tracks the number
+A dynamic array consists of an underlying array as well as the capacity, which counts the
+number of entries allocated to the array, and the count, which tracks the number
 of allocated entries in use.
 
-If the `count` is less than the `capacity`, elements can be appended to the end of the array.
-If the `count` is at or exceeds `capacity`, seven steps are taken:
+If the count is less than the capacity, elements can be appended to the end of the array.
+If the count is at or exceeds capacity, seven steps are taken:
 
 1. Allocate new array with more capacity.
 2. Copy the existing elements from the old array to the new one.
-3. Store the new `capacity`.
+3. Store the new capacity.
 4. Delete the old array.
-5. Update `code` to point to the new array.
+5. Update fields to point to the new array.
 6. Store the element in the new array.
-7. Update `count`.
+7. Update the count.
 
 **Side Note**: Slices in the Go programming language are a high-level versions of dynamic arrays.
 
