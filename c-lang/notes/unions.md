@@ -2,6 +2,11 @@
 
 A `union` is like a `struct` except all fields overlap in memory.
 
+> "If you’re familiar with a language in the ML family, structs and unions in C roughly mirror
+>  the difference between product and sum types, between tuples and algebraic data types."
+>
+> Robert Nystrom, **Crafting Interpreters**
+
 ```c
 union {
   bool boolean;
