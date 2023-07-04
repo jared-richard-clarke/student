@@ -8,6 +8,16 @@ A `union` is like a `struct` except all fields overlap in memory.
 > Robert Nystrom, **Crafting Interpreters**
 
 ```c
+struct {
+  bool boolean;
+  double number;
+};
+
+// struct
+// | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+// ^---^ <--------------------------------- 1-byte bool
+//     ^-------------------------------^ <- 8-byte double
+
 union {
   bool boolean;
   double number;
@@ -15,8 +25,8 @@ union {
 
 // union
 // | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-// ^-------------------------------^ <- 8-byte double
 // ^---^ <----------------------------- 1-byte bool
+// ^-------------------------------^ <- 8-byte double
 ```
 
 > "Using a union to interpret bits as different types is the quintessence of C.
