@@ -1,6 +1,6 @@
 # Symbolic Evaluator
 
-**Source**: **Monad Transformers Step by Step** by Martin GrabmÜller
+Original code by Martin GrabmÜller, **Monad Transformers Step by Step**
 
 ```haskell
 module Transformers where
