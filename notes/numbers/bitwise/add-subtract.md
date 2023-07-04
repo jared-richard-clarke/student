@@ -1,7 +1,6 @@
 # Bitwise Addition and Subtraction
 
-[**add** and **subtract**](https://www.crockford.com/add.html) 
-by Douglas Crockford
+Original code by Douglas Crockford, **Add and Subtract**
 
 ---
 
