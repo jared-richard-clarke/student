@@ -43,6 +43,17 @@ let rec quicksort list =
       left @ [x] @ right
 ```
 
+## Joy
+
+```joy
+DEFINE quicksort ==
+    [small]
+    []
+    [uncons [>] split]
+    [enconcat]
+    binrec.
+```
+
 ## Ruby
 
 ```ruby
