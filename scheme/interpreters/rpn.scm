@@ -1,5 +1,8 @@
 ;; Reverse Polish Notation Calculator.
 ;; (rpn '(2 3 × 1 + -)) -> -7
+;;
+;; Side Note: Unlike true RPN, operators have variable arity, meaning
+;; (rpn '(1 2 3 4 5 6 7 8 9 10 +)) will evaluate to 55.
 
 (define rpn
   ;; === calculator environment ===
