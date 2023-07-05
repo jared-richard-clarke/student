@@ -149,6 +149,12 @@ Number ! := method(self * (self - 1)!)
 4! // -> 24
 ```
 
+## Joy
+
+```joy
+DEFINE factorial  ==  [0 =] [pop 1] [dup 1 - factorial *] ifte
+```
+
 ## Julia 
 
 - As implemented in Julia's Base library.
