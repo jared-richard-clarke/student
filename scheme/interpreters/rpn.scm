@@ -9,7 +9,8 @@
                      (cons '* *)
                      (cons '× *)
                      (cons '/ /)
-                     (cons '÷ /))]
+                     (cons '÷ /)
+                     (cons '= =))]
         [lookup (lambda (var env)
                   (let ([result (assq var env)])
                     (if result
