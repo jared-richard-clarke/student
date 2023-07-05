@@ -30,4 +30,4 @@
       [(eq? message 'peek)   (peek)]
       [(eq? message 'pop!)   (pop!)]
       [(eq? message 'clear!) (clear!)]
-      [else (error "invalid input")])))
+      [else (error "invalid input:" message)])))
