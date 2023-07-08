@@ -2,7 +2,7 @@
 
 Original code by Manfred von Thun, **A Joy Interpreter Written in Joy**
 
-A Joy interpreter in Joy is a program which expects a quoted program on top of the stack and executes it.
+A Joy interpreter is a program which expects a quoted program on top of the stack and executes it.
 
 ## Interpreter 1
 
