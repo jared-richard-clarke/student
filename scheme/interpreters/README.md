@@ -1,8 +1,8 @@
-# LISP Interpreters
+# Interpreters
 
-This repository contains a collection of meta-circular LISP interpreters and symbolic processors
-as written by others and myself. I include examples from other languages if the code helps me better
-understand the problem domain.
+This repository contains a collection of meta-circular interpreters and symbolic processors
+as written by others and myself. Most of these programs interpret Scheme programs, although
+one, currently, interprets Joy programs.
 
 ## Table of Contents
 - `atsushi-satoshi`: A Lisp implemented in Smalltalk by Aoki Atsushi and Nishihara Satoshi.
@@ -11,6 +11,7 @@ understand the problem domain.
 - `compute.scm`: an arithmetic interpreter and symbolic processor.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
 - `holden`: a custom LISP implemented in C by Daniel Holden.
+- `joy.md`: a Joy interpreter written in Joy by Manfred von Thun.
 - `norvig.py`: a Scheme interpreter written in Python as defined by Peter Norvig.
 - `rpn.scm`: a Reverse Polish Notation calculator.
 
