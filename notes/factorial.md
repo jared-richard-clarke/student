@@ -54,10 +54,10 @@ int factorial(int x) {
 
 ```factor
 ! tail recursive
-: tail-factorial ( accumulator n -- n! )
+: factorial ( accumulator n -- n! )
     dup 0 =
     [ drop ]
-    [ [ * ] [ 1 - ] bi tail-factorial ]
+    [ [ * ] [ 1 - ] bi factorial ]
     if ;
 
 ! word composition
