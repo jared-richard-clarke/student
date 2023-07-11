@@ -8,20 +8,20 @@ A `union` is like a `struct` except all fields overlap in memory.
 > Robert Nystrom, **Crafting Interpreters**
 
 ```c
-struct {
+typedef struct {
   bool boolean;
   double number;
-};
+} Product;
 
 // struct
 // | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 // ^---^ <--------------------------------- 1-byte bool
 //     ^-------------------------------^ <- 8-byte double
 
-union {
+typedef union {
   bool boolean;
   double number;
-};
+} Sum;
 
 // union
 // | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
