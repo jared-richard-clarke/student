@@ -70,14 +70,15 @@ end
 ## Scheme
 
 ```scheme
-(define (quicksort compare lst)
-  (if (null? lst)
-      '()
-      (let ([x  (car lst)]
-            [xs (cdr lst)])
-        (let ([left  (quicksort compare (filter (lambda (a) (compare a x)) xs))]
-              [right (quicksort compare (filter (lambda (a) (not (compare a x))) xs))])
-          (append left (list x) right)))))
+(define quick-sort
+  (lambda (compare lst)
+    (if (null? lst)
+        '()
+        (let ([x  (car lst)]
+              [xs (cdr lst)])
+          (let ([left  (quick-sort compare (filter (lambda (a) (compare a x)) xs))]
+                [right (quick-sort compare (filter (lambda (a) (not (compare a x))) xs))])
+            (append left (list x) right))))))
 ```
 
 ## Clojure
