@@ -54,7 +54,10 @@ void swap(int *px, int *py)
     *py = temp;
 }
 
-swap(&a, &b);
+void main()
+{
+    swap(&a, &b);
+}
 
 // caller:
 // b <-----+
