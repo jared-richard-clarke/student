@@ -75,8 +75,8 @@ end
       '()
       (let ([x  (car lst)]
             [xs (cdr lst)])
-        (let ([left  (quicksort compare (filter (lambda (y) (compare y x)) xs))]
-              [right (quicksort compare (filter (lambda (y) (not (compare y x))) xs))])
+        (let ([left  (quicksort compare (filter (lambda (a) (compare a x)) xs))]
+              [right (quicksort compare (filter (lambda (a) (not (compare a x))) xs))])
           (append left (list x) right)))))
 ```
 
