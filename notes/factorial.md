@@ -260,7 +260,7 @@ fn factorial(x: i64) -> i64 {
         _ => x * factorial(x - 1),
     }
 }
-// iterative
+// composition
 fn factorial(x: i64) -> i64 {
     (1..=x).product()
 }
