@@ -13,6 +13,21 @@ Original programs by Manfred von Thun, **Introduction to Joy**
 6. Lists are a special case of quotations, and both can be manipulated in the
    same way. As in LISP, **program = data**.
 
+## A Few Combinators
+
+```text
+[B] [A] swap == [A] [B]
+    [A] dup  == [A] [A]
+    [A] drop ==
+
+[B] [A] cat  == [B A]
+[B] [A] cons == [[B] A]
+    [A] unit == [[A]]
+
+    [A] i    == A
+[B] [A] dip  == A [B]
+```
+
 ## Questions about Joy
 
 ### What is a functional language?
