@@ -152,7 +152,7 @@ Number ! := method(self * (self - 1)!)
 ## Joy
 
 ```joy
-DEFINE factorial  ==  [0 =] [pop 1] [dup 1 - factorial *] ifte
+factorial  ==  [0 =] [pop 1] [dup 1 - factorial *] ifte
 ```
 
 ## Julia 
