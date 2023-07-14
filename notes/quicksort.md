@@ -46,7 +46,7 @@ let rec quicksort list =
 ## Joy
 
 ```joy
-DEFINE quicksort ==
+quicksort ==
     [small]
     []
     [uncons [>] split]
