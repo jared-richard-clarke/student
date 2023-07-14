@@ -18,7 +18,6 @@ Original programs by Manfred von Thun, **Introduction to Joy**
 - Unlike **lambda calculus** in that it has no variables.
 - Unlike **combinatory calculus** in that it does not use application.
 - Unlike **categorical languages** in its uniform use of an untyped stack as argument and value of composed functions.
-- One datatype is that of programs, which the language makes extensive use.
 
 ## A Few Combinators
 
