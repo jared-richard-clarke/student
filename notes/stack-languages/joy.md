@@ -5,7 +5,7 @@ Original programs by Manfred von Thun, **Introduction to Joy**
 1. Joy is a purely functional language.
 2. Joy programs denote unary functions from stacks to stacks.
 3. Joy uses concatenative notation, so the concatenation of programs denotes
-   the composition of the functions that programs denote.
+   the composition of the functions.
 4. Definitions do not use formal parameters, so there is no environment of
    associations.
 5. Combinators do the work of higher-order functions. They take quoted programs
