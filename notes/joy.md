@@ -18,7 +18,7 @@ Original programs by Manfred von Thun, **Introduction to Joy**
 ```text
 [B] [A] swap == [A] [B]
     [A] dup  == [A] [A]
-    [A] drop ==
+    [A] pop  ==
 
 [B] [A] cat  == [B A]
 [B] [A] cons == [[B] A]
