@@ -47,27 +47,27 @@ Apply, `@`, is a higher-order function.
 
 ### Do functional languages need application?
 
-The higher-order application function makes it possible to define other
-higher-order functions. One example is the composition function.
+The higher-order application operator makes it possible to define other
+higher-order operations. One example is the composition operation, `∘`.
 
 ```text
 === applicative order notation ===
-(f . g) @ x == f @ (g @ x)
+(f ∘ g) @ x == f @ (g @ x)
 ```
 
 ### What might a compositional functional language be?
 
 If literal expressions could denote unary functions, the expression
-`(square . size . rest) @ [ 11 22 33 ]` could be written as
-`square . size . rest . [ 11 22 33 ]` where the entire expression
+`(square ∘ size ∘ rest) @ [ 11 22 33 ]` could be written as
+`square ∘ size ∘ rest ∘ [ 11 22 33 ]` where the entire expression
 is applied to an implied argument. This argument can be a stack.
 The expression `[ 11 22 33 ]` is not a list but a function that pushes
 a list onto a stack.
 
 Function composition notation can be reversed to reflect the order of execution:
-`square . size . rest . [ 11 22 33 ]` becomes `[ 11 22 33 ] |> rest |> size |> square`.
+`square ∘ size ∘ rest ∘ [ 11 22 33 ]` becomes `[ 11 22 33 ] |> rest |> size |> square`.
 
-A functional language that completely replaces application with implicit `.`
+A functional language that completely replaces application with implicit `∘`
 or `|>` might be called a compositional language.
 
 ### What is an environment?
