@@ -13,6 +13,14 @@ Original programs by Manfred von Thun, **Introduction to Joy**
 6. Lists are a special case of quotations, and both can be manipulated in the
    same way. As in LISP, **program = data**.
 
+> "Joy is a high-level purely functional programming language which is not based on the application of functions
+>  but on the composition of functions...Joy differs from lambda calculus languages in that it has no variables and
+>  hence no abstraction. It differs from the combinatory calculus in that it does not use application. It differs
+>  from the categorical languages in uniformly using an untyped stack as the argument and value of the composed functions.
+>  One of the datatypes is that of programs, and the language makes extensive use of this, more than other reflective languages."
+>
+> — Manfred von Thun, **Rational for Joy**
+
 ## A Few Combinators
 
 ```text
