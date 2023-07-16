@@ -13,7 +13,7 @@ second ≡ λp.p(λx.λy.y)
 ```scheme
 (define pair
   (lambda (x y)
-    (lambda (f) (f x y))))
+    (lambda (fn) (fn x y))))
 
 (define first
   (lambda (call)
