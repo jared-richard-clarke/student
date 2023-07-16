@@ -2,10 +2,6 @@
 
 ## The Lambda Calculus
 
-Pairs are represented as a higher-order functions that take a function argument. Application of
-the function argument returns one of the elements of the pair contained within the closure
-of the higher-order function.
-
 ```
 pair   ≡ λx.λy.λz.z x y
 first  ≡ λp.p(λx.λy.x)
