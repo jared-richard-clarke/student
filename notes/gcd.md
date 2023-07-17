@@ -33,6 +33,12 @@ gcd x y = gcd' (abs x) (abs y)
                 gcd' x y = gcd' y (rem x y)
 ```
 
+## Joy
+
+```joy
+gcd  ==  [0 >] [dup [rem] dip swap] while pop
+```
+
 ## OCaml
 
 ```ocaml
