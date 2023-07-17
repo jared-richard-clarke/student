@@ -153,6 +153,8 @@ Number ! := method(self * (self - 1)!)
 
 ```joy
 factorial  ==  [0 =] [pop 1] [dup 1 - factorial *] ifte
+# === or ===
+factorial  ==  [null] [succ] [dup pred factorial *] ifte
 ```
 
 ## Julia 
