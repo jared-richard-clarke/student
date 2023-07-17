@@ -3,7 +3,7 @@
 ## The Lambda Calculus
 
 ```
-pair   ≡ λx.λy.λz.z x y
+pair   ≡ λx.λy.λf.f x y
 first  ≡ λp.p(λx.λy.x)
 second ≡ λp.p(λx.λy.y)
 ```
