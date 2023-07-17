@@ -253,3 +253,18 @@ IN
     q-rem   == prepare [ null ] [ "q-rem "  error ] [ unswons   ] ifte
 END.
 ```
+
+# The Y Combinator
+
+The second definition expects a program on top of the stack from which it will construct another
+program that will duplicate itself if ever called by a combinator such as `i`.
+
+```joy
+# === recursive ===
+
+Y == dup [[Y] cons] dip i
+
+# === non-recursive ===
+
+Y == [dup cons] swap concat dup cons i
+```
