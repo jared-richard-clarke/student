@@ -46,12 +46,23 @@ let rec quicksort list =
 ## Joy
 
 ```joy
+# === binary recursive combinator ===
+
 quicksort ==
     [small]
     []
     [uncons [>] split]
     [enconcat]
     binrec.
+
+# === general recursive combinator ===
+
+quicksort ==
+    [small]
+    []
+    [uncons [>] split]
+    [app2 swapd cons concat]
+    genrec.
 ```
 
 ## Ruby
