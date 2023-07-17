@@ -154,11 +154,20 @@ Number ! := method(self * (self - 1)!)
 ```joy
 # === recursive definition ===
 
-factorial == [0 =] [pop 1] [dup 1 - factorial *] ifte
+factorial ==
+    [0 =]
+    [pop 1]
+    [dup 1 - factorial *]
+    ifte.
 
 # === recursive combinator ===
 
-factorial == [null] [succ] [dup pred] [i *] genrec
+factorial ==
+    [null]
+    [succ]
+    [dup pred]
+    [i *]
+    genrec.
 ```
 
 ## Julia 
