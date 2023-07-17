@@ -2,6 +2,8 @@
 
 Original programs by Manfred von Thun, **Introduction to Joy**
 
+`program = data = memory`
+
 1. Joy is a purely functional language.
 2. Joy programs denote unary functions from stacks to stacks.
 3. Joy uses concatenative notation, so the concatenation of programs denotes
