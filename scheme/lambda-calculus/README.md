@@ -41,6 +41,12 @@ bound  free
 free bound
 ```
 
+## β (Beta) Reduction
+
+```
+(λx.+ x x) 5 -> + 5 5 -> 10
+```
+
 ## Scheme Lambda Expression
 Lambda expression grammar as defined in [The Essentials of Programming Languages](https://en.wikipedia.org/wiki/Essentials_of_Programming_Languages) by Daniel P. Friedman and Mitchell Wand. This grammar defines lambda expressions as Scheme values.
 
