@@ -17,7 +17,8 @@ Y(f) = f(Y(f))
 
 ## Closed Factorial Function
 
-Recursively calls itself until it reaches its fixed point of `n <= 2`.
+Recursively calls itself until it reaches its fixed point of `n <= 2`. Similar to the `Y` combinator
+but not as general.
 
 ```javascript
 function recur(f) {
