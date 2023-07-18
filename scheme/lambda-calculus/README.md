@@ -22,6 +22,15 @@ The lambda calculus, in its simplest form, builds terms using the following rule
 That function of x that adds x to 7.
 ```
 
+## Bound and Free Variables
+
+```
+(λx.+ x y) 1
+```
+
+- `x`: bound
+- `y`: free
+
 ## Lambda Expression
 Lambda expression grammar as defined in [The Essentials of Programming Languages](https://en.wikipedia.org/wiki/Essentials_of_Programming_Languages) by Daniel P. Friedman and Mitchell Wand. This grammar defines lambda expressions as Scheme values.
 
