@@ -24,12 +24,22 @@ That function of x that adds x to 7.
 
 ## Bound and Free Variables
 
+### Example 1
 ```
 (λx.+ x y) 1
+  ^     ^
+  |     |
+bound  free
 ```
 
-- `x`: bound
-- `y`: free
+### Example 2
+
+```
++ x ((λx.+ x 6) 1)
+  ^    ^
+  |    |
+free bound
+```
 
 ## Lambda Expression
 Lambda expression grammar as defined in [The Essentials of Programming Languages](https://en.wikipedia.org/wiki/Essentials_of_Programming_Languages) by Daniel P. Friedman and Mitchell Wand. This grammar defines lambda expressions as Scheme values.
