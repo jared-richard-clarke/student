@@ -41,7 +41,7 @@ bound  free
 free bound
 ```
 
-## Lambda Expression
+## Scheme Lambda Expression
 Lambda expression grammar as defined in [The Essentials of Programming Languages](https://en.wikipedia.org/wiki/Essentials_of_Programming_Languages) by Daniel P. Friedman and Mitchell Wand. This grammar defines lambda expressions as Scheme values.
 
 The lambda calculus is a language that consists only of variable references, single-argument procedures, and procedure calls.
