@@ -37,7 +37,7 @@ Y = λf.(λx.f (x x)) (λx.f (x x))
 
 ## Scheme
 
-Implementated in Scheme as defined in The Little Schemer.
+Y Combinator implemented in **The Little Schemer**.
 
 ```scheme
 (define Y
