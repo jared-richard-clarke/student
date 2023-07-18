@@ -2,6 +2,33 @@
 
 Achieves recursion without named functions.
 
+## General Outline
+
+```
+fixpoint = f(fixpoint)
+fixpoint = f(f(fixpoint))
+...
+
+Y(f) = fixpoint
+Y(f) = f(fixpoint)
+
+Y(f) = f(Y(f))
+```
+
+## Closed Factorial Function
+
+Recursively calls itself until it reaches its fixed point of `n <= 2`.
+
+```javascript
+function recur(f) {
+    return function(n) {
+        return n <= 2 ? n : n * f(f)(n - 1);
+    }
+}
+
+const factorial = recur(recur);
+```
+
 ## Lambda Calculus
 
 ```
@@ -18,11 +45,28 @@ Implementated in Scheme as defined in The Little Schemer.
     ((lambda (f) (f f))
      (lambda (f)
        (le (lambda (x) ((f f) x)))))))
+
+;; This definition of Y causes an infinite loop in a strictly-evaluated
+;; language like Scheme.
+
+(define Y
+  (lambda (f)
+    (f (Y f))))
+
+;; Scheme is a strict language so the evaluation of `(f (Y f))`
+;; must be delayed by wrapping it in a function — also called a thunk.
+;; This, however, is not a true combinator. `Y` is a free variable
+;; within its own definition.
+
+(define Y
+  (lambda (f)
+    (lambda (x)
+      ((f (Y f)) x))))
 ```
 
 ## JavaScript
 
-Implemented in JavaScript as defined by Douglas Crockford.
+Y Combinator implemented by Douglas Crockford.
 
 ```javascript
 function Y(le) {
