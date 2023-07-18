@@ -4,11 +4,11 @@
 
 ```
 pair  ≡ λx.λy.λf.f x y
-head  ≡ λp.p(λx.λy.x)
-tail  ≡ λp.p(λx.λy.y)
+head  ≡ λp.p (λx.λy.x)
+tail  ≡ λp.p (λx.λy.y)
 
    head (pair p q)
- = (λf.f (λx.λy.x)) (pair x y)
+ = (λf.f (λx.λy.x)) ((λx.λy.λf. f x y) p q)
 -> (λx.λy.λf. f x y) p q (λx.λy.x)
 -> (λy.λf.f p y) q (λx.λy.x)
 -> (λf.f p q) (λx.λy.x)
