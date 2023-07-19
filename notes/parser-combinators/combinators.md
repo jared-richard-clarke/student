@@ -20,7 +20,7 @@ let (<<) g f x = g (f x)       // reverse composition
 ## Standard Combinators
 
 In *To Mock a Mockingbird* by Raymond Smullyan, combinators are named after birds. 
-Any computable function can be implemented using only the *Kestral* and the *Starling*.
+Any computable function can be implemented using only the *Kestrel* and the *Starling*.
 
 ```fsharp
 let I x = x                // identity function, or the Idiot bird
