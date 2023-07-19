@@ -63,7 +63,10 @@ int factorial(int x) {
 ! word composition
 USE: math.ranges
 : factorial ( n -- n! )
-    1 [a..b] product ;
+    dup 1 >
+    [ [1..b] product ]
+    [ drop 1 ]
+    if ;
 ```
 
 ## Go
