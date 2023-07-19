@@ -22,29 +22,13 @@ The lambda calculus, in its simplest form, builds terms using the following rule
 That function of x that adds x to 7.
 ```
 
-## Bound and Free Variables
-
-### Example 1
-```
-(λx.+ x y) 1
-  ^     ^
-  |     |
-bound  free
-```
-
-### Example 2
-
-```
-+ x ((λx.+ x 6) 1)
-  ^    ^
-  |    |
-free bound
-```
-
 ## β (Beta) Reduction
 
 ```
 (λx.+ x x) 5 -> + 5 5 -> 10
+ ^              ^        ^
+ |              |        |
+ redex          redex    normal form
 ```
 
 ## Scheme Lambda Expression
