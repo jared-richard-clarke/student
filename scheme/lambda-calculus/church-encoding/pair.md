@@ -4,8 +4,8 @@
 
 ```
 pair  ≡ λx.λy.λf.f x y
-head  ≡ λp.p (λx.λy.x)
-tail  ≡ λp.p (λx.λy.y)
+head  ≡ λf.f (λx.λy.x)
+tail  ≡ λf.f (λx.λy.y)
 
    head (pair p q)
  = (λf.f (λx.λy.x)) ((λx.λy.λf. f x y) p q)
