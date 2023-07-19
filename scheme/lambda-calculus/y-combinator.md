@@ -1,18 +1,22 @@
 # The Y or Fixed Point Combinator
 
-Achieves recursion without named functions.
+Achieves recursion with anonymous functions.
 
 ## General Outline
 
 ```
-fixpoint = f(fixpoint)
-fixpoint = f(f(fixpoint))
-...
+Y F = fixed-point
+Y F = F fixed-point
 
-Y(f) = fixpoint
-Y(f) = f(fixpoint)
+Y F = F (Y F)
 
-Y(f) = f(Y(f))
+Y = (λf.(λx.f (x x)) (λx.f (x x)))
+
+    Y F
+ =  (λf.(λx.f (x x)) (λx.f (x x))) F
+<-> (λx.F (x x)) (λx.F (x x))
+<-> F ((λx.F (x x)) (λx.F (x x)))
+<-> F (Y F)
 ```
 
 ## Closed Factorial Function
