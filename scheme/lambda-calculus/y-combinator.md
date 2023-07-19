@@ -1,4 +1,4 @@
-# The Y Combinator
+# The Y or Fixed Point Combinator
 
 Achieves recursion without named functions.
 
