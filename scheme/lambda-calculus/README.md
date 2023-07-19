@@ -24,6 +24,8 @@ That function of x that adds x to 7.
 
 ## β (Beta) Reduction
 
+**normal order** reduction specifies that the leftmost outermost redex must be reduced first.
+
 ```
 (λx.+ x x) 5 -> + 5 5 -> 10
  ^              ^        ^
