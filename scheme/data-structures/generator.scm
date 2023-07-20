@@ -21,13 +21,13 @@
 ;; consumer factory
 (define consumer
   (lambda (op id)
-    (lambda (yield)
+    (lambda (next)
       (let loop ([accum id]
-                 [value (yield)])
+                 [value (next)])
         (if (eq? value END)
             accum
             (loop (op accum value)
-                  (yield)))))))
+                  (next)))))))
 
 ;; consumers of range
 (define product (consumer * 1))
