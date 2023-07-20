@@ -105,6 +105,8 @@ factorial x
     | otherwise = x * factorial (x - 1)
 
 -- composition
+-- Non-strict semantics allow Haskell to consume the range operation
+-- without producing an intermediate list.
 factorial :: Integer -> Integer
 factorial x = product [1..x]
 ```
@@ -191,16 +193,6 @@ end
 ## OCaml
 
 ```ocaml
-(* pipe combinator: infix definition *)
-let (|>) x f = f x
-
-(* partial function application through currying *)    
-let product = List.fold_left (fun x y -> x * y) 1             
-let range x = List.init x (fun x -> x + 1)
-
-(* function composition *)    
-let factorial x = range x |> product
-
 (* recursive *)
 let rec factorial x =
   match x with
@@ -260,6 +252,7 @@ class Integer
         f
     end
     def factorial_reduce
+        # Creates a range object, which implements lazy evaluation.
         self <= 1 ? 1 : (1..self).reduce(:*)
     end
     alias :factorial :factorial_iter
@@ -280,6 +273,7 @@ fn factorial(x: i64) -> i64 {
 }
 // composition
 fn factorial(x: i64) -> i64 {
+    // Creates an iterator, which implements lazy evaluation.
     (1..=x).product()
 }
 ```
@@ -307,23 +301,6 @@ fn factorial(x: i64) -> i64 {
   (do ([number x  (- number 1)]
        [product 1 (* product number)])
     [(<= number 1) product]))
-    
-;; function composition
-(define (product xs)
-  (fold-left * 1 xs))
-    
-(define (range x)
-  (let ([x (+ x 1)])
-    (cdr (iota x))))
-      
-(define (compose . functions)
-  (lambda (arg)
-    (fold-right (lambda (function value)
-                  (function value))
-                arg
-                functions)))
-
-(define factorial (compose product range))
 ```
 
 ## Smalltalk
