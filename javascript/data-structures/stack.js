@@ -5,33 +5,24 @@ function create_stack() {
     // object instance
     const stack = [];
     // methods
-    function is_empty() {
+    const m = Object.create(null);
+    m.is_empty = function() {
         return stack.length === 0;
-    }
-    function push(...values) {
-        values.forEach(function (value) {
-            stack.push(value);
-        });
-    }
-    function peek() {
+    };
+    m.push = function(...values) {
+        values.forEach((value) => stack.push(value));
+    };
+    m.peek = function() {
         return stack[stack.length - 1];
-    }
-    function pop() {
+    };
+    m.pop = function() {
         return stack.pop();
-    }
+    };
+    m.clear = function() {
+        while (stack.length > 0) {
+            stack.pop();
+        }
+    };
     // interface
-    return Object.freeze({
-        is_empty,
-        push,
-        peek,
-        pop,
-    });
+    return Object.freeze(m);
 }
-
-// === example ===
-// const stack = create_stack();
-// stack.is_empty(); -> true
-// stack.push(1, 2, 3);
-// stack.peek(); -> 3
-// stack.pop();
-// stack.peek(); -> 2
