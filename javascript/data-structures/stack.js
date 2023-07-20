@@ -2,7 +2,7 @@
 
 // factory
 function create_stack() {
-    // object instance
+    // stack instance, protected within closure
     const stack = [];
     // methods
     const m = Object.create(null);
