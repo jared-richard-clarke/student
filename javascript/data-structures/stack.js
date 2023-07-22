@@ -22,6 +22,9 @@ function make_stack() {
         }
         return m;
     };
+    m.to_string = function () {
+        return "[ " + stack.join(", ") + " ]";
+    };
     // === stack object interface ===
     return Object.freeze(m);
 }
