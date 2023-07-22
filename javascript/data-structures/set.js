@@ -1,5 +1,5 @@
 function make_set() {
-    // === set object ===
+    // === set object, protected within closure ===
     const set = {};
     // === set methods ===
     const m = Object.create(null);
@@ -27,6 +27,6 @@ function make_set() {
     m.to_string = function () {
         return "{ " + Object.keys(set).join(", ") + " }";
     };
-    // === interface ===
+    // === set method interface ===
     return Object.freeze(m);
 }
