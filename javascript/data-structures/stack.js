@@ -1,5 +1,5 @@
 function make_stack() {
-    // stack object, protected within closure
+    // stack object protected within closure
     const stack = [];
     // === stack methods ===
     const m = Object.create(null);
