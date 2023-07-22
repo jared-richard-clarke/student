@@ -1,28 +1,27 @@
-// === stack object ===
-
-// factory
-function create_stack() {
-    // stack instance, protected within closure
+function make_stack() {
+    // stack object, protected within closure
     const stack = [];
-    // methods
+    // === stack methods ===
     const m = Object.create(null);
-    m.is_empty = function() {
+    m.is_empty = function () {
         return stack.length === 0;
     };
-    m.push = function(...values) {
+    m.push = function (...values) {
         values.forEach((value) => stack.push(value));
+        return m;
     };
-    m.peek = function() {
+    m.peek = function () {
         return stack[stack.length - 1];
     };
-    m.pop = function() {
+    m.pop = function () {
         return stack.pop();
     };
-    m.clear = function() {
+    m.clear = function () {
         while (stack.length > 0) {
             stack.pop();
         }
+        return m;
     };
-    // interface
+    // === stack object interface ===
     return Object.freeze(m);
 }
