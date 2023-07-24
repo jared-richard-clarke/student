@@ -43,7 +43,7 @@ gcd  ==  [0 >] [dup [rem] dip swap] while pop
 
 ```ocaml
 let rec gcd x y =
-  if b = 0 then x else gcd y (x mod y);;
+  if y = 0 then x else gcd y (x mod y);;
   
 (* or *)
 
