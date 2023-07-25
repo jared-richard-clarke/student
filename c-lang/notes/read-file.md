@@ -1,5 +1,7 @@
 # Reading from a File
 
+An example function that reads bytes into a manually-allocated array.
+
 ```c
 static char* read_file(const char* path) {
     FILE* file = fopen(path, "rb");
