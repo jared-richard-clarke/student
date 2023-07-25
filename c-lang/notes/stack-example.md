@@ -6,8 +6,7 @@ Original code by Marshall Brain and Chris Pollette, **The Basics of C Programmin
 #include "stack.h"
 #include <stdio.h>
 
-/* Stack Library - This library offers the
-   minimal stack operations for a stack of integers */
+/* Stack library implemented using a linked list */
 
 struct stack_rec
 {
