@@ -10,10 +10,12 @@
 
 ## Example Declarations
 
-### `argv`: pointer to `char` pointer
+### `argv`: pointer to a `char` pointer
 
 ```c
 char **argv
+// - equivalent ->
+char *argv[]
 ```
 
 ### `daytab`: pointer to 13-part array of `int`
