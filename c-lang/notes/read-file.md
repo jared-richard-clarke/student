@@ -19,7 +19,7 @@ static char* read_file(const char* path) {
     }
     size_t bytes_read = fread(buffer, sizeof(char), file_size, file);
     if (bytes_read < file_size) {
-        fprintf(stderr, “Incomplete read of \"%s\".\n", path);
+        fprintf(stderr, "Incomplete read of \"%s\".\n", path);
         exit(1);
     }
 
