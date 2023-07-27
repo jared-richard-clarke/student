@@ -22,5 +22,5 @@ Their purpose is to reduce stack shuffling or *stack noise*.
 "X" "y" { [ >lower ] [ >upper ] } spread ! -> "x" "Y"
 
 ! napply ( quote n -- )
-"X" "Y" [ >lower ] 2 napply ! -> "X" "Y"
+"X" "Y" [ >lower ] 2 napply ! -> "x" "y"
 ```
