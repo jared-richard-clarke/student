@@ -1,6 +1,7 @@
 # Concatenative Programming
 
-Concatenative Calculus ≈ Combinatory Logic + Continuation-Passing Style
+- Concatenative Calculus ≈ Combinatory Logic + Continuation-Passing Style
+- Variables are the `GOTO`s of concatenative programming.
 
 ## Lambda Calculus
 
