@@ -1,7 +1,6 @@
 # Combinators
 
-[Thinking Functionally](https://swlaschin.gitbooks.io/fsharpforfunandprofit/content/posts/defining-functions.html)
-by Scott Wlaschin
+**Thinking Functionally** by Scott Wlaschin
 
 Combinators are functions whose result depends only on their parameters.
 They are the basis for combinatory logic
