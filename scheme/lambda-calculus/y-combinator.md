@@ -40,7 +40,7 @@ This factorial function, as defined by `recur`, is similar to the `Y` combinator
 
 ## Scheme
 
-The Y combinator as implemented in the **Little Schemer**.
+The Y combinator as implemented in **The Little Schemer**.
 
 ```scheme
 (define Y
