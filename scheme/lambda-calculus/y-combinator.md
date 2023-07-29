@@ -1,5 +1,7 @@
 # The Y or Fixed Point Combinator
 
+In computer science, a *fixed point* of a function is a value that is mapped to itself by the function.
+
 ```
 fix f = f (fix f) -> f(f(...f (fix f)...))
 
@@ -23,8 +25,7 @@ Applying a fixed-point combinator to an identity function typically results in a
 
 ## Closed Factorial Function
 
-Recursively calls itself until it reaches its fixed point of `n <= 2`. Similar to the `Y` combinator
-but not as general.
+This factorial function, as defined by `recur`, is similar to the `Y` combinator but not as general.
 
 ```scheme
 (define recur
