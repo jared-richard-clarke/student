@@ -3,16 +3,16 @@
 ## Stack Shuffling
 
 ```factor
-dup ( x -- x x )
-drop ( x -- )
-swap ( x y -- y x )
-over ( x y -- x y x )
-dupd ( x y -- x x y )
+dup   ( x -- x x )
+drop  ( x -- )
+swap  ( x y -- y x )
+over  ( x y -- x y x )
+dupd  ( x y -- x x y )
 swapd ( x y z -- y x z )
-nip ( x y -- y )
-rot ( x y z -- y z x )
--rot ( x y z -- z x y )
-2dup ( x y -- x y x y )
+nip   ( x y -- y )
+rot   ( x y z -- y z x )
+-rot  ( x y z -- z x y )
+2dup  ( x y -- x y x y )
 ```
 
 ## Data Flow Combinators
