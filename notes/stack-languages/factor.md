@@ -3,16 +3,22 @@
 ## Stack Shuffling
 
 ```factor
-drop ( x -- )
 dup ( x -- x x )
-over ( x y -- x y x )
+drop ( x -- )
 swap ( x y -- y x )
+over ( x y -- x y x )
+dupd ( x y -- x x y )
+swapd ( x y z -- y x z )
+nip ( x y -- y )
+rot ( x y z -- y z x )
+-rot ( x y z -- z x y )
+2dup ( x y -- x y x y )
 ```
 
 ## Data Flow Combinators
 
 Factor provides a set of combinators that encapsulate common data-flow patterns.
-Their purpose is to reduce stack shuffling or *stack noise*.
+Their purpose is to reduce stack shuffling, a.k.a. *stack noise*.
 
 ```factor
 ! cleave ( x sequence -- )
