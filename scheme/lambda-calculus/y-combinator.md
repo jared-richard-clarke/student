@@ -15,6 +15,12 @@ Y F = F (Y F) -> F (F (...F (Y F)...))
 Y = λf.(λx.f (x x)) (λx.f (x x))
 ```
 
+Applying a fixed-point combinator to an identity function typically results in a non-terminating computation.
+
+```
+(Y λx.x) = (λx.(x x) λx.(x x))
+```
+
 ## Closed Factorial Function
 
 Recursively calls itself until it reaches its fixed point of `n <= 2`. Similar to the `Y` combinator
@@ -37,10 +43,10 @@ Y Combinator implemented in **The Little Schemer**.
 
 ```scheme
 (define Y
-  (lambda (le)
-    ((lambda (f) (f f))
-     (lambda (f)
-       (le (lambda (x) ((f f) x)))))))
+  (lambda (f)
+    ((lambda (i) (i i))
+     (lambda (i)
+       (f (lambda (x) ((i i) x)))))))
 
 ;; This definition of Y causes an infinite loop in a strictly-evaluated
 ;; language like Scheme.
