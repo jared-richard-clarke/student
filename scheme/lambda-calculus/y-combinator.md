@@ -1,27 +1,18 @@
 # The Y or Fixed Point Combinator
 
-If function `f` has one or more fixed points, then `fix f = f (fix f)`
-and by repeated application `fix f = f(f(...f (fix f)...))`
-
-## General Outline
-
-Applied to a function with one variable, the `Y` combinator usually does not terminate.
-Additional variables may be used as a counter or index, causing the resulting function
-to behave like a `while` or `for` loop.
-
 ```
+fix f = f (fix f) -> f(f(...f (fix f)...))
+
 Y F = fixed-point
 Y F = F fixed-point
 
-Y F = F (Y F)
+Y F = F (Y F) -> F (F (...F (Y F)...))
+```
 
-Y = (λf.(λx.f (x x)) (λx.f (x x)))
+## Lambda Calculus
 
-    Y F
- =  (λf.(λx.f (x x)) (λx.f (x x))) F
-<-> (λx.F (x x)) (λx.F (x x))
-<-> F ((λx.F (x x)) (λx.F (x x)))
-<-> F (Y F)
+```
+Y = λf.(λx.f (x x)) (λx.f (x x))
 ```
 
 ## Closed Factorial Function
@@ -29,20 +20,15 @@ Y = (λf.(λx.f (x x)) (λx.f (x x)))
 Recursively calls itself until it reaches its fixed point of `n <= 2`. Similar to the `Y` combinator
 but not as general.
 
-```javascript
-function recur(f) {
-    return function(n) {
-        return n <= 2 ? n : n * f(f)(n - 1);
-    }
-}
+```scheme
+(define recur
+  (lambda (f)
+    (lambda (n)
+      (if (<= n 2)
+          n
+          (* n ((f f) (- n 1)))))))
 
-const factorial = recur(recur);
-```
-
-## Lambda Calculus
-
-```
-Y = λf.(λx.f (x x)) (λx.f (x x))
+(define factorial (recur recur))
 ```
 
 ## Scheme
@@ -72,32 +58,4 @@ Y Combinator implemented in **The Little Schemer**.
   (lambda (f)
     (lambda (x)
       ((f (Y f)) x))))
-```
-
-## JavaScript
-
-Y Combinator implemented by Douglas Crockford.
-
-```javascript
-function Y(le) {
-    return (function (f) {
-        return f(f);
-    })(function (f) {
-        return le(function (x) {
-            return f(f)(x);
-        });
-    });
-}
-
-const factorial = Y(function (fac) {
-    return function (n) {
-        return n <= 2 ? n : n * fac(n - 1);
-    };
-});
-```
-
-## OCaml
-
-```ocaml
-let rec Y f x = f (Y f) x
 ```
