@@ -1,8 +1,13 @@
 # The Y or Fixed Point Combinator
 
-Achieves recursion with anonymous functions.
+If function `f` has one or more fixed points, then `fix f = f (fix f)`
+and by repeated application `fix f = f(f(...f (fix f)...))`
 
 ## General Outline
+
+Applied to a function with one variable, the `Y` combinator usually does not terminate.
+Additional variables may be used as a counter or index, causing the resulting function
+to behave like a `while` or `for` loop.
 
 ```
 Y F = fixed-point
