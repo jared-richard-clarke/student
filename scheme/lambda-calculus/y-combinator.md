@@ -39,7 +39,7 @@ but not as general.
 
 ## Scheme
 
-Y Combinator implemented in **The Little Schemer**.
+The Y combinator as implemented in the **Little Schemer**.
 
 ```scheme
 (define Y
