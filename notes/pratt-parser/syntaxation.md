@@ -89,7 +89,7 @@ statements()
             ..led(a)
                 expression(90)
                     b.nud()
-                    while 90 < = .lbp
+                    while 90 < =.lbp
             while 0 < =.lbp
             =.led(a.b)
                 expression(60)
