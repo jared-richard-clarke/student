@@ -5,7 +5,7 @@
 1. Start at the variable name or innermost construct if no identifier is present.
 2. Look right without jumping over a right parenthesis. Read type.
 3. Look left without jumping over a parenthesis. Read type.
-4. Jump out a level of parenthesis.
+4. Jump out a level of parentheses.
 5. Repeat steps 1 through 4 until entire declaration is read.
 
 ## Example Declarations
