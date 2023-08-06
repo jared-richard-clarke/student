@@ -1,10 +1,10 @@
-;; Reverse Polish Notation Calculator.
-;; (rpn '(2 3 × 1 + -)) -> -7
+;; Stack Based Calculator.
+;; (compute-stack '(2 3 × 1 + -)) -> -7
 ;;
-;; Side Note: Unlike true RPN, operators have variable arity, meaning
-;; (rpn '(1 2 3 4 5 6 7 8 9 10 +)) will evaluate to 55.
+;; Side Note: Unlike reverse polish notation, upon which this calculator is based, operators have variable arity,
+;; meaning (compute-stack '(1 2 3 4 5 6 7 8 9 10 +)) will evaluate to 55.
 
-(define rpn
+(define compute-stack
   ;; === calculator environment ===
   (let ([stack '()]
         [table (list (cons '+ +)
@@ -13,6 +13,7 @@
                      (cons '× *)
                      (cons '/ /)
                      (cons '÷ /)
+                     (cons '^ expt)
                      (cons '= =))]
         [lookup (lambda (var env)
                   (let ([result (assq var env)])
