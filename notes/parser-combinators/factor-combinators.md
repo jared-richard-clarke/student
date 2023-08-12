@@ -5,9 +5,6 @@ Original code by Chris Double
 ## Simple Parsers
 
 ```factor
-USING: kernel math.parser parser-combinators strings unicode ;
-IN: parser-combinators.simple
-
 : digit-parser ( -- parser )
   [ digit? ] satisfy [ digit> ] <@ ;
 
@@ -36,9 +33,6 @@ IN: parser-combinators.simple
 ## Arithmetic Evaluator
 
 ```factor
-USING: kernel math.parser parser-combinators strings unicode ;
-IN: parser-combinators
-
 : operator ( -- parser )
   "/" token 
   "*" token <|>
