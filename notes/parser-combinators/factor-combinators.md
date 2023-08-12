@@ -40,6 +40,19 @@ Original code by Chris Double
   "-" token <|>
   [ "\\ " swap cat2 eval unit ] <@ ;
 
+: digit-parser ( -- parser )
+  [ digit? ] satisfy [ digit> ] <@ ;
+
+: digit-list>number ( list -- number )
+  [ >digit ] map >string dup empty? [ 
+    drop 0 
+  ] [
+    str>number 
+  ]  ifte ;
+
+: natural-parser ( -- parser )
+  digit-parser <*> [ car digit-list>number unit  ] <@  ;
+
 : expression ( -- parser )
   natural-parser 
   operator sp       <&>  
