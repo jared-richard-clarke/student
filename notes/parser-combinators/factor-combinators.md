@@ -36,6 +36,9 @@ IN: parser-combinators.simple
 ## Arithmetic Evaluator
 
 ```factor
+USING: kernel math.parser parser-combinators strings unicode ;
+IN: parser-combinators
+
 : operator ( -- parser )
   "/" token 
   "*" token <|>
