@@ -30,7 +30,7 @@ Original code by Chris Double
   "," token list-of ;
 ```
 
-## Arithmetic Evaluator
+## Arithmetic Parser and Evaluator
 
 ```factor
 : operator ( -- parser )
