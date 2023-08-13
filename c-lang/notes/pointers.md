@@ -68,18 +68,10 @@ void main()
 // py *--+
 ```
 
-## Example #4
-
-```c
-// var1: pointer to long
-// var2: long
-long  *  var1, var2;
-
-// p3: pointer to pointer to int
-int   ** p3;
-```
-
 ## Arrays and Pointers
+
+The value of a pointer is not adjusted by the integer amount, but is adjusted by the amount multiplied by the size of
+the type to which the pointer refers in bytes. `pointer + x` is equivalent to `pointer + (x * sizeof(*type))`
 
 ```c
 // array indexing
