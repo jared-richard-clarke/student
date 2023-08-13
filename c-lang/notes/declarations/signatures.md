@@ -53,7 +53,7 @@ void *comp()
 void (*comp)()
 ```
 
-### `x`: function returning pointer to array of pointer to function returning `char`
+### `x`: function returning pointer to array of pointers to functions returning `char`
 
 ```c
 char (*(*x())[])()
