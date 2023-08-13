@@ -97,3 +97,86 @@ static char *text = "Over the wintry"
                     "forest, winds howl in rage"
                     "with no leaves to blow."
 ```
+
+## Function Pointers
+
+Function pointers can be used to implement a form of polymorphic code.
+
+### Non-Polymorphic
+
+```c
+#include <stdio.h>
+
+int add(int x, int y)
+{
+    return (x + y);
+}
+int sub(int x, int y)
+{
+    return (x - y);
+}
+ int mul(int x, int y)
+{
+    return (x * y);
+}
+int div(int x, int y)
+{
+    return (x / y);
+}
+
+int main()
+{
+    int i, result;
+    int x = 10;
+    int y = 5;
+
+    printf("Enter the value between 0 and 3 : ");
+    scanf("%d",&i);
+ 
+    switch(i)
+    {
+        case 0:  result = add(x, y); break;
+        case 1:  result = sub(x, y); break;
+        case 2:  result = mul(x, y); break;
+        case 3:  result = div(x, y); break;
+    }
+}
+```
+
+### Polymorphic
+
+```c
+#include <stdio.h>
+
+int add(int x, int y)
+{
+    return (x + y);
+}
+int sub(int x, int y)
+{
+    return (x - y);
+}
+int mul(int x, int y)
+{
+    return (x * y);
+}
+int div(int x, int y)
+{
+    return (x / y);
+}
+
+// compute is an array of function pointers
+int (*compute[4])(int x, int y) = {add, sub, mul, div};
+
+int main()
+{
+    int i,result;
+    int x = 10;
+    int y = 5;
+
+    printf("Enter the value between 0 and 3 : ");
+    scanf("%d",&i);
+
+    result = compute[i](x, y);
+}
+```
