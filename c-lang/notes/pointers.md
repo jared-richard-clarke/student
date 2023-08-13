@@ -79,3 +79,21 @@ array[i]
 // pointer arithmetic
 *(array+i)
 ```
+
+## Strings and Pointers
+
+```c
+// statically declared string with implicit null
+static const char *text = "Hello, World!";
+
+// static array of 14 characters, including an explicit null
+static const char text[] = {'H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!', '\0'};
+
+// static array of strings
+static const char *colors[] = {"red", "yellow", "green", "cyan", "blue", "magenta"};
+
+//
+static char *text = "Over the wintry"
+                    "forest, winds howl in rage"
+                    "with no leaves to blow."
+```
