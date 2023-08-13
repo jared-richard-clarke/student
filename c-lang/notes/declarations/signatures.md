@@ -23,6 +23,9 @@ int   ** p3;
 
 ### `argv`: pointer to a `char` pointer
 
+Declaring an array variable without a size is equivalent to declaring a pointer. This emphasizes
+that the pointer variable will be used in a manner equivalent to an array. 
+
 ```c
 char **argv
 // - equivalent ->
