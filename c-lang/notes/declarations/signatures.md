@@ -10,6 +10,17 @@
 
 ## Example Declarations
 
+### `var1` and `var2`
+
+- `var1`: pointer to `long`
+- `var2`: `long`
+- `p3`: pointer to a pointer to an `int`
+
+```c
+long  *  var1, var2;
+int   ** p3;
+```
+
 ### `argv`: pointer to a `char` pointer
 
 ```c
