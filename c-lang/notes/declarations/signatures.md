@@ -14,7 +14,7 @@
 
 - `var1`: pointer to `long`
 - `var2`: `long`
-- `p3`: pointer to a pointer to an `int`
+- `p3`: pointer to pointer to `int`
 
 ```c
 long  *  var1, var2;
