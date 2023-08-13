@@ -10,17 +10,6 @@
 
 ## Example Declarations
 
-### `var1` and `var2`
-
-- `var1`: pointer to `long`
-- `var2`: `long`
-- `p3`: pointer to pointer to `int`
-
-```c
-long  *  var1, var2;
-int   ** p3;
-```
-
 ### `argv`: pointer to a `char` pointer
 
 Declaring an array variable without a size is equivalent to declaring a pointer. This emphasizes
