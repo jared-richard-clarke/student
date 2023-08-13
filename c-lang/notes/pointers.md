@@ -1,4 +1,4 @@
-# C: Pointers
+# C Pointers
 
 ## Example #1
 
@@ -40,7 +40,7 @@ void main()
 //         |    ?    |    ?  ? |    7  ? |    7  11 |   11  11
 ```
 
-## Example 3
+## Example #3
 
 C is a call-by-value language. Pointers allow functions to change variables within the code that called them.
 
@@ -66,4 +66,24 @@ void main()
 // swap: | |
 // px *----+
 // py *--+
+```
+
+## Example #4
+
+```c
+// var1: pointer to long
+// var2: long
+long  *  var1, var2;
+
+// p3: pointer to pointer to int
+int   ** p3;
+```
+
+## Arrays and Pointers
+
+```c
+// array indexing
+array[i]
+// pointer arithmetic
+*(array+i)
 ```
