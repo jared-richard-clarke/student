@@ -53,3 +53,21 @@ enum Option_f64 {
 let integer = Option_i32::Some(7);
 let float = Option_f64::Some(11.0);
 ```
+
+## Type Bounds
+
+Safe Rust does not assume any behaviors for generic types. Type parameters must use traits
+as bounds to stipulate what behavior a type implements.
+
+```rust
+// Generic type `T` must implement the `Display` trait in order to be used by `printer`.
+fn printer<T: Display>(t: T) {
+    println!("{}", t);
+}
+
+// The only safe operation that has the signature `T -> T` is the identity function.
+// `mystery` cannot assume anything else about generic type `T`.
+fn mystery<T>(x: T) -> T {
+    x
+}
+```
