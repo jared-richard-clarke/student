@@ -56,8 +56,8 @@ let float = Option_f64::Some(11.0);
 
 ## Type Bounds
 
-Safe Rust does not assume any behaviors for generic types. Type parameters must use traits
-as bounds to stipulate what behavior a type implements.
+Safe Rust does not assume any behaviors for generic types. Type parameters must use
+trait bounds to stipulate what behavior a type implements.
 
 ```rust
 // Generic type `T` must implement the `Display` trait in order to be used by `printer`.
