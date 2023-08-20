@@ -24,3 +24,32 @@ impl Point<f32> {
     }
 }
 ```
+
+## Monomorphization
+
+```rust
+// No runtime cost is payed for generics, because the compiler creates
+// unique, static definitions for each type.
+
+enum Option<T> {
+    Some(T),
+    None,
+}
+
+let integer = Some(7);
+let float = Some(11.0);
+
+// - Compiles ->
+
+enum Option_i32 {
+    Some(i32),
+    None,
+}
+enum Option_f64 {
+    Some(f64),
+    None,
+}
+
+let integer = Option_i32::Some(7);
+let float = Option_f64::Some(11.0);
+```
