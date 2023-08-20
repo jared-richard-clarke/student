@@ -12,7 +12,7 @@ impl<T> Point<T> {
 //   ^ By declaring `T` as a generic type after `impl`, Rust can identify
 //     that the type in the angle brackets after `Point` is a generic type
 //     rather than a concrete type.
-    fn get_x(&self) -> &T {
+    fn x(&self) -> &T {
         &self.x
     }
 }
