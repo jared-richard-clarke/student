@@ -16,4 +16,11 @@ impl<T> Point<T> {
         &self.x
     }
 }
+
+impl Point<f32> {
+//          ^ Concrete type. Only `Point<f32>` implements this method.
+    fn distance_from_origin(&self) -> f32 {
+        (self.x.powi(2) + self.y.powi(2)).sqrt()
+    }
+}
 ```
