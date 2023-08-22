@@ -1,7 +1,5 @@
 # Rust Iterators
 
-**Source**: [Rust Standard Library](https://doc.rust-lang.org/std/iter/index.html)
-
 ## Iterator Core
 
 ```rust
