@@ -1,7 +1,5 @@
 # Rust Ownership and Borrowing
 
-**Source**: [Rust Book](https://rust-book.cs.brown.edu/ch04-02-references-and-borrowing.html)
-
 ## Ownership Rules
 - Each value in Rust has a variable that's called its *owner*.
 - There can only be one owner at a time.
