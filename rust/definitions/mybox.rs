@@ -8,6 +8,7 @@ impl<T> Deref for MyBox<T> {
     // associated type: an alternative syntax for generic types
     type Target = T;
 
+    // Returns "MyBox" wrapped in a reference, a type the compiler can dereference.
     fn deref(&self) -> &Self::Target {
         &self.0
     }
@@ -37,6 +38,9 @@ fn main() {
     hello(&m);
 
     // === without deref coercion ===
+    // Without deref coercion, the programmer would have to manually unwrap and rewrap
+    // reference types to satisfy the compiler.
+    //
     // let m = MyBox::new(String::from("Rust"));
     // hello(&(*m)[..]);
 }
