@@ -1,7 +1,5 @@
 # Error Propagation in Rust
 
-[Recoverable Errors](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html)
-
 ## Using Match Expressions
 
 ```rust
