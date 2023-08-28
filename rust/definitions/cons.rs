@@ -18,6 +18,8 @@ impl List {
 
     fn length(&self) -> u32 {
         match *self {
+            // "ref" annotates pattern bindings to make them borrow rather than move.
+            // By default, `match` statements consume all they can.
             Cons(_, ref tail) => 1 + tail.length(),
             Nil => 0
         }
