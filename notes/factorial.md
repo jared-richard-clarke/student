@@ -111,40 +111,6 @@ factorial :: Integer -> Integer
 factorial x = product [1..x]
 ```
 
-## Haskell Core
-
-```haskell
--- Haskell
-factorial :: Int -> Int -> Int
-factorial a 0 = a
-factorial a n = factorial (n*a) (n-1)
-
--- Haskell Core (naive compilation)
-factorial = \ a n -> case n of 
-                   I# n# -> case n# of
-                                0# -> a
-                                _  -> let one = I# 1;
-                                          x = n - one
-                                          y = n * a;
-                                      in  factorial y x
-
--- Haskell Core (optimized)				      
-one = I# 0#
-
--- worker :: Int# -> Int# -> Int#
-$wfactorial = \ a# n# -> case n# of
-                     0#  -> a#
-                     n'# -> case (n'# -# 1#) of
-                                m# -> case (n'# *# a#) of
-                                           x# -> $wfactorial x# m#
-
--- wrapper :: Int -> Int -> Int
-factorial = \ a n -> case a of
-                    I# a# -> case n of
-                                 I# n# -> case ($wfactorial a# n#) of
-                                              r# -> I# r#
-```
-
 ## io
 
 ```io
