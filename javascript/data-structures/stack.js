@@ -8,7 +8,7 @@ function make_stack() {
     };
     methods.push = function (...values) {
         stack.push(...values);
-        return m;
+        return methods;
     };
     methods.peek = function () {
         return stack[stack.length - 1];
@@ -20,7 +20,7 @@ function make_stack() {
         while (stack.length > 0) {
             stack.pop();
         }
-        return m;
+        return methods;
     };
     methods.to_string = function () {
         return "[ " + stack.join(", ") + " ]";
