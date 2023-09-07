@@ -2,27 +2,27 @@ function make_stack() {
     // stack object protected within closure
     const stack = [];
     // === stack methods ===
-    const m = Object.create(null);
-    m.is_empty = function () {
+    const methods = Object.create(null);
+    methods.is_empty = function () {
         return stack.length === 0;
     };
-    m.push = function (...values) {
-        values.forEach((value) => stack.push(value));
+    methods.push = function (...values) {
+        stack.push(...values);
         return m;
     };
-    m.peek = function () {
+    methods.peek = function () {
         return stack[stack.length - 1];
     };
-    m.pop = function () {
+    methods.pop = function () {
         return stack.pop();
     };
-    m.clear = function () {
+    methods.clear = function () {
         while (stack.length > 0) {
             stack.pop();
         }
         return m;
     };
-    m.to_string = function () {
+    methods.to_string = function () {
         return "[ " + stack.join(", ") + " ]";
     };
     // === stack object interface ===
