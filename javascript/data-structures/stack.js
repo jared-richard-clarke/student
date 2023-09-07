@@ -26,5 +26,5 @@ function make_stack() {
         return "[ " + stack.join(", ") + " ]";
     };
     // === stack object interface ===
-    return Object.freeze(m);
+    return Object.freeze(methods);
 }
