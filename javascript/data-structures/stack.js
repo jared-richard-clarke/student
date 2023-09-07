@@ -1,4 +1,4 @@
-function make_stack() {
+function create_stack() {
     // stack object protected within closure
     const stack = [];
     // === stack methods ===
