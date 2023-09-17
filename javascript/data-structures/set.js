@@ -1,32 +1,24 @@
-function make_set() {
-    // === set object, protected within closure ===
-    const set = {};
-    // === set methods ===
-    const m = Object.create(null);
-    m.has = function (value) {
-        return set[value];
-    };
-    m.add = function (...values) {
-        values.forEach((value) => {
-            if (!set[value]) {
-                set[value] = true;
-            }
-        });
-        return m;
-    };
-    m.remove = function (value) {
-        if (set[value]) {
-            delete set[value];
-        }
-        return m;
-    };
-    m.clear = function () {
-        Object.keys(set).forEach((key) => delete set[key]);
-        return m;
-    };
-    m.to_string = function () {
-        return "{ " + Object.keys(set).join(", ") + " }";
-    };
-    // === set method interface ===
-    return Object.freeze(m);
-}
+const set = Object.freeze({
+    create: function (xs) {
+        const data = Object.create(null);
+        xs.forEach((x) => (data[x] = true));
+        return Object.freeze(data);
+    },
+    has: function (set, x) {
+        return set[x] === true;
+    },
+    unite: function (x, y) {
+        const data = Object.create(null);
+        Object.keys(x).forEach((key) => (data[key] = true));
+        Object.keys(y).forEach((key) => (data[key] = true));
+        return Object.freeze(data);
+    },
+    intersect: function (x, y) {
+        const data = Object.create(null);
+        Object.keys(x).forEach((key) => (data[key] = y[key]));
+        return Object.freeze(data);
+    },
+    print: function (x) {
+        return "[ " + Object.keys(x).join(", ") + " ]";
+    },
+});
