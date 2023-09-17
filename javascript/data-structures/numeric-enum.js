@@ -12,12 +12,12 @@
 // }
 
 function enumerate(...values) {
-    let number = 1;
+    let counter = 1;
     return Object.freeze(
-        values.reduce(function (accum, value) {
-            accum[value] = number;
-            accum[number] = value;
-            number += 1;
+        values.reduce((accum, value) => {
+            accum[value] = counter;
+            accum[counter] = value;
+            counter += 1;
             return accum;
         }, Object.create(null))
     );
