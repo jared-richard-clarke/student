@@ -22,7 +22,7 @@ function create_stack() {
         }
         return methods;
     };
-    methods.to_string = function () {
+    methods.print = function () {
         return "[ " + stack.join(", ") + " ]";
     };
     // === stack object interface ===
