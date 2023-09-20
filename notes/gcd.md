@@ -39,6 +39,26 @@ gcd x y = gcd' (abs x) (abs y)
 gcd  ==  [0 >] [dup [rem] dip swap] while pop
 ```
 
+## Lua
+
+```lua
+-- tail recursive
+function gcd(x, y)
+    if y == 0 then
+        return x
+    end
+    return gcd(y, x % y)
+end
+
+-- iterative
+function gcd(x, y)
+    while y != 0 do
+        x, y = y, x % y
+    end
+    return x
+end
+```
+
 ## OCaml
 
 ```ocaml
