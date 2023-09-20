@@ -179,6 +179,15 @@ function factorial (x)
     end
     return iter(x, 1)
 end
+
+-- iterative
+function factorial(x)
+    local x = 1
+    for i = 2, x do
+        x = x * i
+    end
+    return x
+end
 ```
 
 ## OCaml
