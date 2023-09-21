@@ -7,7 +7,7 @@ Original text from **The Implementation of Lua 5.0**
 ```c
 // tagged union (t, v)
 // where t = integer tag identifying type
-         v = union of C types implementing Lua types
+//       v = union of C types implementing Lua types
 typedef struct {
     int t;
     Value v;
