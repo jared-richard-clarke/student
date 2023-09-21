@@ -35,13 +35,13 @@ A simplified version of the Lua command line program.
 
 int main (void) {
     char line[256];
-    lua_State *L = luaL_newstate(); // create a new state
-    luaL_openlibs(L); // open the standard libraries
+    lua_State *L = luaL_newstate();                    // create a new state
+    luaL_openlibs(L);                                  // open the standard libraries
 
     // reads lines and executes them
     while (fgets(line, sizeof(line), stdin) != NULL) {
-        luaL_loadstring(L, line); // compile line to a function
-        lua_pcall(L, 0, 0, 0); // call the function
+        luaL_loadstring(L, line);                      // compile line to a function
+        lua_pcall(L, 0, 0, 0);                         // call the function
     }
 
     lua_close(L);
