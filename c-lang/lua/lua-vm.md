@@ -17,8 +17,8 @@ typedef union {
     GCObject *gc; // strings, tables, functions (referenced and garbage-collected data)
     void *p;      // light user data
     lua_Number n; // numbers (Double by default)
-    int b;        // boolean
-}
+    int b;        // booleans
+} Value;
 ```
 
 There are 35 instructions in Lua's virtual machine. Most instructions correspond
