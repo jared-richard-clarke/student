@@ -2,25 +2,6 @@
 
 Original text from **The Implementation of Lua 5.0**
 
-## Lua Values
-
-```c
-// tagged union (t, v)
-// where t = integer tag identifying type
-//       v = union of C types implementing Lua types
-typedef struct {
-    int t;
-    Value v;
-} TObject;
-
-typedef union {
-    GCObject *gc; // strings, tables, functions (referenced and garbage-collected data)
-    void *p;      // light user data
-    lua_Number n; // numbers (Double by default)
-    int b;        // booleans
-} Value;
-```
-
 There are 35 instructions in Lua's virtual machine. Most instructions correspond
 directly to language constructs, such as arithmetic, table creation and indexing,
 function and method calls, setting variables and getting values. There are also jump
@@ -118,4 +99,23 @@ end
 4 MOVE      2 1 0    ; R(2) = R(1)
 5 RETURN    2 2 0    ; return R(2)
 6 RETURN    0 1 0    ; return
+```
+
+## Lua Values
+
+```c
+// tagged union (t, v)
+// where t = integer tag identifying type
+//       v = union of C types implementing Lua types
+typedef struct {
+    int t;
+    Value v;
+} TObject;
+
+typedef union {
+    GCObject *gc; // strings, tables, functions (referenced and garbage-collected data)
+    void *p;      // light user data
+    lua_Number n; // numbers (Double by default)
+    int b;        // booleans
+} Value;
 ```
