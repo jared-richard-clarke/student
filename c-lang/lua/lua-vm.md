@@ -101,7 +101,7 @@ end
 6 RETURN    0 1 0    ; return
 ```
 
-## Lua Values
+## Lua Data Types
 
 ```c
 // tagged union (t, v)
