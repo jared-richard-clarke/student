@@ -1,6 +1,6 @@
 # Compiler Overview
 
-Source: **Introduction to Compilers and Language Design** by Douglas Thain
+**Introduction to Compilers and Language Design** by Douglas Thain
 
 ## Source Text
 
