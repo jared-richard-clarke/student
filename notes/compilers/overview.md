@@ -33,14 +33,13 @@ the programming language. An important component of this process
 is type checking.
 
 ```text
-      ASSIGN
-   +-----|-----+
-   ID         MUL
-height   +-----|-----+
-        ADD         CALL
-      +--|--+     +--|--+
-      ID   INT    ID    ID
-    width  56   factor  foo
+            ASSIGN
+      +-------|-------+
+    ID:height        MUL
+              +-------|-------+
+             ADD             CALL
+      +-------|---+       +---|-------+
+    ID:width   INT:56   ID:factor   ID:foo
 ```
 
 ## Intermediate Representation (IR)
