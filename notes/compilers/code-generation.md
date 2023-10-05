@@ -78,19 +78,19 @@ a   call
 
 === assembly ===
 
-MOV  $10, %rbx
-MOVQ b, %r10
-MOVQ c, %r11
-ADDQ %r10, %r11
-MOVQ %r11, %rsi
-MOVQ %rbx, %rdi
+MOV    $10, %rbx
+MOVQ     b, %r10
+MOVQ     c, %r11
+ADDQ  %r10, %r11
+MOVQ  %r11, %rsi
+MOVQ  %rbx, %rdi
 PUSHQ %r10
 PUSHQ %r11
-CALL f
-POPQ %r11
-POPQ %r10
-MOVQ %rax, %rbx
-MOVQ %rbx, a
+CALL     f
+POPQ  %r11
+POPQ  %r10
+MOVQ  %rax, %rbx
+MOVQ  %rbx, a
 ```
 
 ## Generating Control Flow
