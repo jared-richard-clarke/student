@@ -232,14 +232,14 @@ end
 
 -- tail-recursive
 function factorial (x)
-    function iter (product, x)
+    function loop (product, x)
         if x <= 1 then
             return product
         else
-            return iter(x * product, x - 1)
+            return loop(x * product, x - 1)
         end
     end
-    return iter(x, 1)
+    return loop(x, 1)
 end
 
 -- iterative
