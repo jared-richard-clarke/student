@@ -19,7 +19,7 @@ arguments. The `Monad` instance declaration for `result` is therefore invalid.
 
 The basic idea behind monads is to distinguish the values that a computation can 
 produce from the computation itself. We can think of `m a` as the type of computations 
-the yield results of type `a`, with the nature of the computation captured by the type 
+that yield results of type `a`, with the nature of the computation captured by the type 
 constructor `m`. The combinators `result` and `bind` (with potentially `zero` and `(++)`)
 provide a means to structure the building of such computations.
 
