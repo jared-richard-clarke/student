@@ -280,7 +280,7 @@ instance MonadOPlus m => MonadOPlus (StateM m s) where
 instance Monad m => StateMonad (StateM m s) s where
   update f = \s -> result (s, f s)
 
--- Non-deterministic computations that can return many results.
+-- Stateful, non-deterministic parser.
 type Parser a = StateM [] String a
 
 {-
