@@ -72,6 +72,7 @@ first p = \inp -> case p inp of
                     [] -> []
                     (x:xs) -> [x]
 
+-- Non-strict, normal-order reduction, evaluates only as far as `p` if `p` is successful.
 (+++) :: Parser a -> Parser a -> Parser a
 p +++ q = first (p ++ q)
 
