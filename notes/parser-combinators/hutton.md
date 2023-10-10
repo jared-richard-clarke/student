@@ -1,7 +1,6 @@
 # Parser Combinator in Haskell
 
-[Functional Parsing](https://www.youtube.com/watch?v=dDtZLm7HIJs)
-by Professor Graham Hutton
+**Functional Parsing** by Professor Graham Hutton
 
 ## Parser Application
 
