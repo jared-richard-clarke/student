@@ -14,6 +14,11 @@
 ```
 True  ≡ λx.(λy.x)
 False ≡ λx.(λy.y)
+
+and = λp.λq.pqp
+or  = λp.λq. ppq
+not = λp.λa.λb.pba
+if  = λp.λa.λb.pab
 ```
 
 ## Recursion
