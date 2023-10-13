@@ -7,7 +7,7 @@ instance Monad [] where
   -- result :: a -> [a]
   result x = [x]
   -- bind :: [a] -> (a -> [b]) -> [b]
-  [] `bind` f     = []
+      [] `bind` f = []
   (x:xs) `bind` f = f x ++ (xs `bind` f)
 
 instance Monad0Plus [] where
