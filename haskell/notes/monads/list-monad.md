@@ -14,6 +14,6 @@ instance Monad0Plus [] where
   -- zero :: [a]
   zero = []
   -- (++) :: [a] -> [a] -> [a]
-  [] ++ ys     = ys
+      [] ++ ys = ys
   (x:xs) ++ ys = x : (xs ++ ys)
 ```
