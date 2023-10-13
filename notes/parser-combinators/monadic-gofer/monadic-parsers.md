@@ -250,6 +250,7 @@ and `s` is the state. `State` automates the threading of state between functions
 -- non-deterministic ---> |-----------|
 -- stateful --> |---------------------| <- a.k.a: state processor
 -- state --------------------> |----|
+-- result -----------------|-|
 type Parser a = String -> [(a, String)]
 
 -- - generalizes ->
