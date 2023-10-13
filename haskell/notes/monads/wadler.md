@@ -1,6 +1,6 @@
 # Monads
 
-Source: **Monads for Functional Programming** by Philip Wadler
+**Monads for Functional Programming** by Philip Wadler
 
 ## Monad: Lambda Notation
 
