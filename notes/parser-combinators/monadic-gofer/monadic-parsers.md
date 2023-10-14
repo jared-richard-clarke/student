@@ -308,7 +308,7 @@ instance Monad [] where
       [] `bind` f = []
   (x:xs) `bind` f = f x ++ (xs `bind` f)
 
-instance Monad0Plus [] where
+instance MonadOPlus [] where
   -- zero :: [a]
   zero = []
   -- (++) :: [a] -> [a] -> [a]
