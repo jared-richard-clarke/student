@@ -247,18 +247,27 @@ an updated state, which are given back in a tuple — usually `(a, s)`, where `a
 and `s` is the state. `State` automates the threading of state between functions.
 
 ```haskell
--- non-deterministic ---> |-----------|
+-- non-determinism -----> |-----------|
 -- stateful --> |---------------------| <- a.k.a: state processor
 -- state --------------------> |----|
 -- result ---------------> |-|
 type Parser a = String -> [(a, String)]
-
--- - generalizes ->
-
-type StateM m s a = s -> m (a, s)
+--     parser = state  -> monad (result, state)
 ```
 
-### Parser Redefined
+### State Monad
+
+```haskell
+type State s a = s -> (a, s)
+
+instance Monad (State s) where
+  -- result :: a -> State s a
+  result v = \s -> (v, s)
+  -- bind :: State s a -> (a -> State s b) -> State s b
+  st `bind` f = \s -> let (v, s') = st s in f v s'
+```
+
+### Parameterized State-Transformer Monad
 
 ```haskell
 class Monad m => StateMonad m s where
@@ -269,14 +278,22 @@ class Monad m => StateMonad m s where
   set s = update (\_ -> s)
   fetch = update id
 
+instance StateMonad (State s) s where
+  -- update :: (s -> s) -> State s s
+  update f = \s -> (s, f s)
+
 type StateM m s a = s -> m (a, s)
 
 instance Monad m => Monad (StateM m s) where
+  -- result :: a -> StateM m s a
   result v = \s -> result (v, s)
+  -- bind :: StateM m s a -> (a -> StateM m s b) -> StateM m s b
   stm `bind` f = \s -> stm s `bind` \(v, s') -> f v s'
 
 instance MonadOPlus m => MonadOPlus (StateM m s) where
+  -- zero :: StateM m s a
   zero = \s -> zero
+  -- (++) :: StateM m s a -> StateM m s a -> StateM m s a
   stm ++ stm' = \s -> stm s ++ stm' s
 
 instance Monad m => StateMonad (StateM m s) s where
@@ -285,14 +302,9 @@ instance Monad m => StateMonad (StateM m s) s where
 -- Stateful, non-deterministic parser.
 type Parser a = StateM [] String a
 
-{-
-  Alternatively:
-  data Maybe a = Just a | Nothing
-  type Parser a = StateM Maybe String a
--}
+-- Stateful, deterministic parser.
+type Parser a = StateM Maybe String a
 
--- The advantage of the monadic definition of `item` is that it does not depend upon
--- the internal details of the `Parser` type.
 item = [x | (x : _) <- update tail]
 ```
 
@@ -315,4 +327,3 @@ instance MonadOPlus [] where
       [] ++ ys = ys
   (x:xs) ++ ys = x : (xs ++ ys)
 ```
-
