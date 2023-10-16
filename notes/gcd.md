@@ -62,9 +62,9 @@ end
 ## Miranda
 
 ```miranda
-gcd a b = gcd (a-b) b, if a>b
-        = gcd a (b-a), if a<b
-        = a,           if a=b
+gcd a b = gcd (a - b) b, if a>b
+        = gcd a (b - a), if a<b
+        = a,             if a=b
 ```
 
 ## OCaml
