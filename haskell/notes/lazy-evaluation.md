@@ -15,23 +15,38 @@
 
 Pattern matching drives evaluation.
 
+### Example 1: Build and Take
+
 ```haskell
-repeat :: a -> [a]
-repeat x = x : repeat x
+take :: int -> [a] -> [a]
+take _ []     = []
+take n (x:xs) = if n <= 0 then [] else (x : take (n - 1) xs)
 
-take :: Int -> [a] -> [a]
-take n _ | n <= 0 = []
-take _ []         = []
-take n (x:xs)     = x : take (n-1) xs
+build :: Int -> Int -> Int
+build x y = if x > y then [] else (x : build (x + 1) y)
 
--- `repeat` will evaluate only as far as `take` pattern matches
--- on `(x:xs)`.
+take 3 (build 1 99)
+take 3 (1 : (build 2 99))
+1:(take 2 (build­ 2 99))
+1:(take 2 (2 : (build 3 99)))
+1:2:(take 1 (build 3 99))
+1:2:(take 1 (3 : (build 4 99)))
+1:2:3:(take 0 (build 4 99))
+1:2:3:[]
+```
 
-take 3 (repeat 7)
+### Example 2: Take and Drop (Miranda)
 
--- 7 : take (3-1) (repeat 7)
--- ...
--- 7 : 7 : 7 : []
+```miranda
+take 0 x = []
+take (n+1) [] = []
+take (n+1) (a:x) = a : take n x
+
+drop 0 x = x
+drop (n+1) [] = []
+drop (n+1) (a:x) = drop n x
+
+take n x ++ drop n x = x
 ```
 
 ## Space Usage
@@ -91,24 +106,4 @@ WHNF        | (4, thunk)
 	     >
 Normal Form | (4, 1:2:[])
              >
-```
-
-## Build and Take
-
-```haskell
-take :: int -> [a] -> [a]
-take _ []     = []
-take n (x:xs) = if n <= 0 then [] else (x : take (n - 1) xs)
-
-build :: Int -> Int -> Int
-build x y = if x > y then [] else x:(build (x + 1) y)
-
-take 3 (build­List 1 99)
-take 3 (1 :(build­List 2 99))
-1:(take 2 (build­List 2 99))
-1:(take 2 (2 : (build­List 3 99)))
-1:2:(take 1 (build­List 3 99))
-1:2:(take 1 (3 : (build­List 4 99)))
-1:2:3:(take 0 (build­List 4 99))
-1:2:3:[]
 ```
