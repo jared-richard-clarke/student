@@ -343,13 +343,15 @@ fn factorial(x: i64) -> i64 {
 ## Scheme
 
 ```scheme
-;; recursive
+;; === recursive ===
+
 (define (factorial x)
   (if (<= x 1)
       1
       (* x (factorial (- x 1)))))
 
-;; tail-recursive
+;; === tail-recursive ===
+
 (define (factorial x)
   (let loop ([product 1]
              [number x])
@@ -358,11 +360,34 @@ fn factorial(x: i64) -> i64 {
         (loop (* product number) 
               (- number 1)))))
               
-;; do loop
+;; === do loop ===
+
 (define (factorial x)
   (do ([number x  (- number 1)]
        [product 1 (* product number)])
     [(<= number 1) product]))
+
+;; === Y Combinator ===
+
+;; Simplified definition. Y should not occur free in its own definition.
+(define Y
+  (lambda (f)
+    (lambda (x)
+      ((f (Y f)) x))))
+
+;; Complete definition.
+(define Y
+  (lambda (f)
+    ((lambda (i) (i i))
+     (lambda (i)
+       (f (lambda (x) ((i i) x)))))))
+
+(define factorial
+  (Y (lambda (fac)
+       (lambda (n)
+         (if (<= n 2)
+             n
+             (* n (fac (- n 1))))))))
 ```
 
 ## Smalltalk
