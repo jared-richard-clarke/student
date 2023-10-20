@@ -40,9 +40,8 @@ This factorial function, as defined by `recur`, is similar to the `Y` combinator
 
 ## Scheme
 
-The Y combinator as implemented in **The Little Schemer**.
-
 ```scheme
+;; The Y combinator as implemented in The Little Schemer.
 (define Y
   (lambda (f)
     ((lambda (i) (i i))
@@ -65,4 +64,14 @@ The Y combinator as implemented in **The Little Schemer**.
   (lambda (f)
     (lambda (x)
       ((f (Y f)) x))))
+```
+
+## Joy
+
+```joy
+(* recursive *)
+y   ==  dup  [[y] cons]  dip  i
+
+(* non-recursive *)
+y   ==  [dup cons]  swap  concat  dup  cons  i
 ```
