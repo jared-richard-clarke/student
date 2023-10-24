@@ -136,7 +136,7 @@ Have two operands: a source and a destructive target.
 `ADDQ %rbx, %rax` adds `%rbx` to `%rax` and places the result in `%rax`,
 overwriting the previous value.
 
-```asm
+```
 ; === expression ===
 
 ; c = a + b + b
@@ -157,7 +157,7 @@ takes a single argument, multiplies it by the contents of `%rax` and then places
 the low 64 bits of the result in `%rax` and then, implicitly, places the high 64
 bits in `%rdx`.
 
-```asm
+```
 ; === expression ===
 
 ; c = b * (b + a)
@@ -177,7 +177,7 @@ Computes the same as `IMUL` but in reverse. The quotient is placed in `%rax` and
 the remainder in `%rdx`. To set up division, `%rax` must be sign-extended into
 `%rdx`.
 
-```asm
+```
 MOVQ a, %rax    ; set the low 64 bits of the dividend
 CQO             ; sign-extend %rax into %rdx
 IDIVQ $5        ; divide %rdx:%rax by 5, leaving the result in %rax
@@ -185,7 +185,7 @@ IDIVQ $5        ; divide %rdx:%rax by 5, leaving the result in %rax
 
 ## Comparisons and Jumps
 
-```asm
+```
 ; === infinite loop ===
 
       MOVQ $0, %rax
@@ -202,7 +202,7 @@ loop: INCQ %rax
 | `JG`          | jump if greater          |
 | `JGE`         | jump if greater or equal |
 
-```asm
+```
 ; === count 0 through 5 ===
 
       MOVQ  x, %rax
@@ -221,7 +221,7 @@ the bottom-most item on the stack.
 
 ### Push, Pop, and Drop
 
-```asm
+```
 ; === push ===
 SUBQ   $8, %rsp
 MOVQ %rax, (%rsp)
@@ -249,9 +249,9 @@ then removed the arguments from the stack.
 
 - The first six integer arguments (including pointers and other types that can
   be stored as integers) are placed in registers
-  `%rdi, %rsi, %rdx, %rcx, %r8, and %r9` in that order.
+  `%rdi`, `%rsi`, `%rdx`, `%rcx`, `%r8`, and `%r9` in that order.
 - The first eight floating point arguments are placed in the registers
-  `%xmm0-%xmm7` in that order.
+  `%xmm0`-`%xmm7` in that order.
 - Arguments in excess of those registers are pushed onto the stack.
 - If the function takes a variable number of arguments (like `printf`) then the
   `%rax` register must be set to the number of floating point arguments.
@@ -286,7 +286,7 @@ original state intact.
 
 The space between `%rbp` and `%rsp` is called the **stack frame**.
 
-```asm
+```
 ; Three-argument function that uses two local variables.
 .global func
 func:
