@@ -7,6 +7,7 @@
 ```
 -- applicative order -> infinity
 -- normal order      -> 7
+
 λx.7 infinity
 ```
 
