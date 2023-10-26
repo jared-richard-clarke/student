@@ -16,7 +16,7 @@
   (lambda (xs)
     (cdr (force xs))))
 
-;; "range", lazily-evaluated, avoids generating a large intermediate list of integers.
+;; "range", lazily-evaluated, avoids generating an intermediate list of integers.
 ;; Conceptually, "range" could denote an infinite list.
 
 (define range
