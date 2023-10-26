@@ -1,13 +1,13 @@
 # Haskell Core
 
-[Haskell to Core](https://serokell.io/blog/haskell-to-core)
-by Vladislav Zavialov
+**Haskell to Core** by Vladislav Zavialov
 
 > "...GHC’s Core: a small, elegant language, used as an intermediate
 >  representation in GHC’s compilation pipeline. The many features of
 >  Haskell are reducible to the few constructs of Core."
 >
 > — Vladislav Zavialov
+
 Haskell Core is a variant of **System FC**, which is itself a variant of **System F**
 
 ## GHC Pipeline
