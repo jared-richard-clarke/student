@@ -16,11 +16,11 @@
   (lambda (xs)
     (cdr (force xs))))
 
-;; If eagerly-evaluated, `counters` would never finish.
+;; If eagerly-evaluated, `counter` would never finish.
 
-(define counters
+(define counter
   (let next ([n 1])
     (delay (cons n (next (+ n 1))))))
 
-(stream-car counters) ;; --------------> 1
-(stream-car (stream-cdr counters)) ;; -> 2
+(stream-car counter) ;; --------------> 1
+(stream-car (stream-cdr counter)) ;; -> 2
