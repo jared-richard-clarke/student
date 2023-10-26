@@ -31,6 +31,8 @@ If the count is at or exceeds capacity, seven steps are taken:
 Below is a consolidated, simplified, and earlier version of Nystrom's `Chunk` implementation.
 
 ```c
+#include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 #define GROW_CAPACITY(capacity) \
