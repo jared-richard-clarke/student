@@ -17,8 +17,8 @@ of the compiler toolchain to produce the final executable.
 ## Stages of a Unix Compiler
 
 1.  Scanner: character stream -> tokens
-2.  Parser: tokens -> Abstract Syntax Tree
-3.  Semantic Routines: AST -> Intermediate Representation
+2.  Parser: tokens -> Abstract Syntax Tree (AST)
+3.  Semantic Routines: AST -> Intermediate Representation (IR)
 4.  Optimizers: IR -> IR
 5.  Code generator: IR -> Assembly
 
