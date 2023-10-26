@@ -1,6 +1,6 @@
 # Stack: Example Implementation
 
-Original code by Marshall Brain and Chris Pollette, **The Basics of C Programming**
+**The Basics of C Programming** by Marshall Brain and Chris Pollette
 
 ```c
 #include "stack.h"
