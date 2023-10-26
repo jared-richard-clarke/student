@@ -1,17 +1,21 @@
 # Haskell: Lazy Evaluation
 
-## Lambda Calculus: Applicative and Normal Order Evaluation
+## Applicative and Normal Order Evaluation
 
 ```
+=== Lambda Calculus ===
+
 -- applicative order -> infinity
 -- normal order      -> 7
 
 λx.7 infinity
 ```
 
-## Scheme: Eager and Lazy Evaluation
+## Eager and Lazy Evaluation
 
 ```scheme
+;; === Scheme ===
+
 (define loop-forever (lambda () (loop-forever)))
 
 ;; eager evaluation -> infinity (stack overflow)
