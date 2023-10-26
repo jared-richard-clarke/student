@@ -16,8 +16,8 @@
   (lambda (xs)
     (cdr (force xs))))
 
-;; range, lazily-evaluated, avoids generating a large intermediate list of integers.
-;; Conceptually, range could denote an infinite list.
+;; `range`, lazily-evaluated, avoids generating a large intermediate list of integers.
+;; Conceptually, `range` could denote an infinite list.
 
 (define range
   (lambda (x)
