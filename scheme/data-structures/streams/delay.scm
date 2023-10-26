@@ -8,19 +8,28 @@
 ;;
 ;; — The Scheme Programming Language, 4th edition
 
-(define stream-car
+(define head
   (lambda (x)
     (car (force x))))
 
-(define stream-cdr
+(define tail
   (lambda (xs)
     (cdr (force xs))))
 
-;; If eagerly-evaluated, `counter` would never finish.
+;; range, lazily-evaluated, avoids generating a large intermediate list of integers.
+;; Conceptually, range could denote an infinite list.
 
-(define counter
-  (let next ([n 1])
-    (delay (cons n (next (+ n 1))))))
+(define range
+  (lambda (x)
+    (let next ([n 1])
+      (if (> n x)
+          '()
+          (delay (cons n (next (+ n 1))))))))
 
-(stream-car counter) ;; --------------> 1
-(stream-car (stream-cdr counter)) ;; -> 2
+(define fold-left
+  (lambda (fn accum xs)
+    (if (null? xs)
+        accum
+        (fold-left fn
+                   (fn accum (head xs))
+                   (tail xs)))))
