@@ -20,11 +20,18 @@
 ;; Conceptually, "range" could denote an infinite list.
 
 (define range
-  (lambda (x)
-    (let next ([n 1])
-      (if (> n x)
-          '()
-          (delay (cons n (next (+ n 1))))))))
+  (case-lambda
+    [(stop)
+     (range 1 stop 1)]
+    [(start stop)
+     (range start stop 1)]
+    [(start stop step)
+     (if (or (> start stop) (<= step 0))
+         '()
+         (let next ([x start])
+           (if (> x stop)
+               '()
+               (delay (cons x (next (+ x step)))))))]))
 
 (define fold-left
   (lambda (fn accum xs)
@@ -33,3 +40,7 @@
         (fold-left fn
                    (fn accum (head xs))
                    (tail xs)))))
+
+(define factorial
+  (lambda (n)
+    (fold-left * 1 (range 2 n))))
