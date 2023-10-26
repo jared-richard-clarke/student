@@ -1,6 +1,6 @@
 # ASCII to Floating Point
 
-Original code implemented by Brian Kernighan and Dennis Ritchie, **The C Programming Language**
+**The C Programming Language** by Brian Kernighan and Dennis Ritchie
 
 ```c
 #include <ctype.h>
