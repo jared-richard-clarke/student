@@ -388,6 +388,42 @@ fn factorial(x: i64) -> i64 {
          (if (<= n 2)
              n
              (* n (fac (- n 1))))))))
+
+;; === lazy implementation ===
+
+(define head
+  (lambda (x)
+    (car (force x))))
+
+(define tail
+  (lambda (xs)
+    (cdr (force xs))))
+
+(define fold-left
+  (lambda (fn accum xs)
+    (if (null? xs)
+        accum
+        (fold-left fn
+                   (fn accum (head xs))
+                   (tail xs)))))
+
+(define range
+  (case-lambda
+    [(stop)
+     (range 1 stop 1)]
+    [(start stop)
+     (range start stop 1)]
+    [(start stop step)
+     (if (or (> start stop) (<= step 0))
+         '()
+         (let next ([x start])
+           (if (> x stop)
+               '()
+               (delay (cons x (next (+ x step)))))))]))
+
+(define factorial
+  (lambda (n)
+    (fold-left * 1 (range 2 n))))
 ```
 
 ## Smalltalk
