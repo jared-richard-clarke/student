@@ -30,7 +30,7 @@ data Expr a
   = EVar Name               -- Variables
   | ENum Int                -- Numbers
   | EConstr Int Int         -- Construtor tag arity
-  | EAp (Expr a) (Expr a)   -- Appliations
+  | EAp (Expr a) (Expr a)   -- Applications
   | ELet                    -- Let(rec) expressions
       Bool                  --   boolean with True = recursive,
       [(a, Expr a)]         --   Definitions
