@@ -1,0 +1,452 @@
+#+title: The Implementation of Functional Programming Languages
+#+author: Simon L. Peyton Jones
+#+date: 2023
+
+* The Lambda Calculus
+
+** Lambda Expression Syntax
+
+- Lower case names denote variables.
+- Single, upper-case letters denote whole lambda expressions.
+- Upper-case identifiers denote built-in functions.
+
+#+begin_example
+<exp> ::= <constant>        Built-in constants
+      |   <variable>        Variable names
+      |   <exp><exp>        Applications
+      |   λ<variable>.<exp> Lambda abstractions
+#+end_example
+
+** Bound and Free Variables
+
+#+begin_example
+      +-- bound
+(λx.+ x y)
+	+-- free
+#+end_example
+
+** β-Conversion: Reduction and Abstraction (Beta)
+
+Use: Function Application
+
+1. Beta reduction is only valid provided the free variables of the
+   argument do not clash with any formal parameters in the body of
+   the lambda abstraction.
+2. Alpha conversion is sometimes necessary to avoid such name clashes.
+
+#+begin_example
+=== conversion ==
+(λx.E) M <-> E[M/x]
+    where expression E with M substituted for free occurrences of x.
+   
+=== reduction ===
+(λx.+ x 1) 4 -> (+ 4 1)
+
+=== abstraction ===
+(+ 4 1) <- (λx.+ x 1) 4
+#+end_example
+
+*** Lambda Abstractions as Data Constructors
+
+#+begin_example
+CONS = (λa.λb.λf.f a b)
+HEAD = (λc.c (λa.λb.a))
+TAIL = (λc.c (λa.λb.b))
+#+end_example
+
+** α-Conversion (Alpha)
+
+Use: Name Changing
+
+Alpha conversion is used to prevent name clashes of formal parameters.
+
+#+begin_example
+(λx.+ x 1) <-> (λy.+ y 1)
+#+end_example
+
+** η-conversion (Eta)
+
+Use: Eliminate Redundant Lambda Abstractions
+   
+#+begin_example
+(λx.+ 1 x) <-> (+ 1)
+
+=== more generally ===
+
+(λx.F x) <-> F
+    where x does not occur free in F and F is a function.
+#+end_example
+
+** Formal Conversion Rules
+
+When used left to right, the β and η rules are called reductions.
+
+| α-Conversion | (λx.E) <-> λy.E[y/x] if y is not free in E                    |
+| β-Conversion | (λx.E) M <-> E[M/x]                                           |
+| η-conversion | (λx.E x) <-> E if x is not free in E and E denotes a function |
+
+** Denotational Semantics of The Lambda Calculus (Simplified)
+
+#+begin_example
+Eval[k] p      = difference between syntactic abstraction
+		 and equational operations. Allow precision that
+		 is hard to achieve using only reduction rules.
+Eval[x] p      = p x
+Eval[E1, E2] p = (Eval[E1] p) (Eval[E2] p)
+Eval[λx.E] p a = Eval[E] p[x=a]
+
+    where k          is a constant or built-in function
+	  x          is a variable
+	  E, E1, E2  are expressions
+	  p          is the environment
+#+end_example
+
+* The Enriched Lambda Calculus
+
+This enriched lambda calculus is specific to
+*The Implementation of Functional Programming Languages*
+  
+#+begin_example
+<exp> ::= <constant>
+      |   <variable>
+      |   <exp><exp>
+      |   λ<pattern>.<exp>
+      |   let <pattern> = <exp> in <exp>
+      |   letrec <pattern> = <exp>
+		 ...
+		 <pattern> = <exp>
+	  in <exp>
+      |   <exp> ▯ <exp>
+      |   case <variable> of
+	  <pattern> -> <exp>
+	  ...
+	  <pattern> -> <exp>
+
+<pattern> ::= <constant>
+	  |   <variable>
+	  |   <constructor><pattern>
+			   ...
+			   <pattern>
+
+ [] is an infix operator for handling pattern match errors:
+
+ a    ▯ b = a
+ FAIL ▯ b = b
+ ⊥    ▯ b = ⊥
+
+ hd (x:xs) = x
+ hd = λxs'.(((λ(CONS x xs).x) xs') ▯ ERROR)
+
+ if hd is applied to NIL, then an ERROR will result.
+ #+end_example
+
+** *let* Semantics
+
+   #+begin_example
+   (let v = B in E) ≡ ((λv.E) B)
+   #+end_example
+
+** *letrec* Semantics
+
+#+begin_example
+(letrec v = B in E) ≡ (let v = Y (λv.B) in E)
+    where Y = (λh.(λx.h (x x)) (λx.h (x x)))
+#+end_example
+
+** Example Translation
+
+#+begin_example
+-- definition
+average a b = (a + b) / 2
+
+-- expression
+average 2 (3 + 5)
+
+-- enriched lambda calculus
+let
+  average = λa.λb.(/ (+ a b) 2)
+in
+  average 2 (+ 3 5)
+
+-- plain lambda calculus
+(λaverage.(average 2 (+ 3 5))) (λa.λb.(/ (+ a b) 2))
+#+end_example
+
+
+** Strict Versus Lazy Product Matching
+
+Strict evaluation uses fewer reductions, since the application of the
+~addPair~ lambda abstraction also takes the argument apart. Furthermore,
+it uses less storage since no temporary applications of ~SEL-PAIR~ are
+constructed.
+
+#+begin_example
+-- lazy
+addPair (PAIR 3 4)
+=  (λ(PAIR x y)).+ x y) (PAIR 3 4)
+-> (λx.λy.+ x y) (SEL-PAIR-1 (PAIR 3 4)) (SEL-PAIR-2 (PAIR 3 4))
+-> (λy.+ (SEL-PAIR-1 (PAIR 3 4)) y) (SEL-PAIR-2 (PAIR 3 4))
+-> +  (SEL-PAIR-1 (PAIR 3 4)) (SEL-PAIR-2 (PAIR 3 4))
+-> + 3 (SEL-PAIR-2 (PAIR 3 4))
+-> + 3 4
+-> 7
+
+-- strict
+addPair (PAIR 3 4)
+=  (λ(PAIR x y).+ x y) (PAIR 3 4)
+-> (λx.λy.+ x y) 3 4
+-> (λy.+ 3 y) 4
+-> + 3 4
+-> 7
+#+end_example
+
+
+* Efficient Pattern Matching
+
+Function definitions with pattern matching can be compiled into
+case-expressions for more efficient evaluation.
+
+#+begin_example
+-- function definitions
+mappairs f [] ys         = []
+mappairs f (x:xs) []     = []
+mappairs f (x:xs) (y:ys) = f x y : mappairs f xs ys
+
+-- case expressions
+mappairs
+= λf.λxs'.λys'.
+    case xs' of
+    NIL       -> NIL
+    CONS x xs -> case ys' of
+                 NIL       -> NIL
+		 CONS y ys -> CONS (f x y) (mappairs f xs ys)
+
+-- function definitions
+nodups [] = []
+nodups [x] = [x]
+nodups (y:x:xs) = nodups (x:xs),     y = x
+                = y : nodups (x:xs), otherwise
+
+nodups
+= λxs'. case xs' of
+        NIL         -> NIL
+	CONS x' xs' ->
+	        case xs' of
+		NIL       -> CONS x' NIL
+		CONS x xs -> IF (= x' x)
+		                (nodups (CONS x xs))
+				(CONS x' (nodups (CONS x xs)))
+				
+(x' was called x in the second equation and y in the third)
+#+end_example
+
+* Graph Reduction: Program Representation
+
+** Abstract Syntax Trees
+
+In all implementations of graph reduction, the expression to be evaluated is held
+in memory in the machine form of its syntax tree.
+
+The leaves of the tree are constant values (such as ~0~, ~'a'~, ~TRUE~), built-in
+functions (such as ~+~, ~-~, ~*~), or variable names. The ~@~ sign is called the
+tag of the node, which indicates function application.
+
+#+begin_example
+=== expression ===
+(+ 7 (* 7 11))
+
+=== syntax tree ===
+      @
+   /     \
+  @       @
+ / \     / \
++   7   @   11 
+       / \
+      *   7
+
+=== expression ===
+(CONS E1 E2)
+
+=== syntax tree ===
+      @
+     / \
+    @   E2
+   / \
+CONS  E1
+
+=== CONS Cell ===
+  :
+ / \
+E1 E2
+#+end_example
+
+** The Graph
+
+The process of reduction performs successive transformations on the syntax tree. During
+this process the /tree/ becomes a /graph/. The term "graph" here meaning a network
+of nodes connected together by /directed edges/. A graph differs from a tree in that
+two edges can point to the same node.
+
+*** Concrete Representations
+
+In a typical implementation each node of the tree would be represented by a small
+contiguous area of store, called a cell. A cell holds a /tag/, which tells the type
+of the cell and two or more fields. Many implement fixed-size cell with two fields, but
+some have variable-sized cells.
+
+If the implementation supports only fixed-size cells, then the structure must be
+implemented as a linked collection of cells.
+
+#+begin_example
+=== cell ===
+| tag | field 1 | field 2 |
+
+    where field = | Pointer | -> Another cell
+       or field = | data    |	    	      
+#+end_example
+
+** Compile-Time and Run-Time Checking
+
+Some functional languages are polymorphically typed and type-checked at compile time.
+Only distinct tags are required to identify system objects uniquely and to distinguish
+data objects of a given type from each other. A tag is typically represented in eight
+bits or fewer.
+
+Other languages rely on run-time checking, where each built-in operator checks the
+types of its arguments before proceeding. Such languages have only a fixed set of types
+so that a fixed-size tag is sufficient.
+
+Even in statically type-checked systems it is often desirable to carry around type
+information to aid in debugging. This can cause problems in languages that allow
+user-defined types, because the number of distinct types is unbounded. An escape
+mechanism, such as tagged fields in user-defined types, is used to solve this problem.
+
+** Boxed and Unboxed Objects
+
+Data objects that can be completely described by a single field are called /unboxed/,
+while those that are represented by one or more cells are called /boxed/. Typical
+canidates for unboxed representation are integers, booleans, characters, and built-in
+operators.
+
+#+begin_example
+=== expression ===
+(+ 7 11)
+
+=== boxed ===
+ ------------       -----------
+| @ | ptr |  | --> | N | 11 |  |
+ ------------       -----------
+       |
+  +----+
+  V
+ ------------       ----------
+| @ | ptr |  | --> | N | 7 |  |
+ ------------       ----------
+       |
+  +----+        Tags: @ application
+  V                   P built-in
+ ----------           N number
+| P | + |  |
+ ----------
+
+=== unboxed ===
+ --------------
+| @ | ptr | 11 |
+ --------------
+       |
+  +----+
+  V
+ ----------- 
+| @ | + | 7 |
+ -----------
+#+end_example
+
+** Storage Management and Garbage Collection
+
+Cells are abstracted from an area of storage called the /heap/, which is simply an
+unordered collection of cells. The term heap emphasizes that the physical adjacency
+of two cells is purely coincidental. What matters is which cell points to which.
+
+Graph reduction allocates and discards cells, or rather discards pointers to cells.
+A cell can be reused once there are no more pointers pointing to it. Cells with no
+pointers are said to be /garbage/. A garbage collector automatically identifies and
+recycles garbage cells.
+
+
+** Selecting the Next Redex
+
+When the graph of a functional program has been loaded into a computer, an
+evaluator is called to reduce the graph to normal form. These reductions are performed
+in two distinct tasks:
+
+1. Selecting the next redex.
+2. Reducing it.
+
+** Lazy Evaluation
+
+In most imperative languages, arguments to a function are evaluated before the function
+is called — /call by value/. The inverse of this is /call by need/. In the context of
+functional languages, /call by need/ is often called /lazy evaluation/, since it
+postpones work until it becomes unavoidable. Conversely, /call by value/ is often
+called /eager evaluation/.
+
+/Call by need/ is rarely implemented in imperative languages for two main reasons:
+
+1. The evaluation of an argument my cause side-effects in other parts of the program.
+   The exact time in which an argument is evaluated is crucial to the correct
+   behavior of a program.
+2. /Call by need/ is hard to implement in a stack-based implementation.
+
+** Normal Order Reduction
+
+Any implementation of /lazy evaluation/ has two ingredients:
+
+1. Arguments to functions should be evaluated only when their value is needed, not
+   when the function is applied.
+2. Arguments should only be evaluated once, and, if possible, not at all.
+
+The first ingredient is directly implemented using normal order reduction, where the
+outermost, leftmost redex is reduced first.
+
+#+begin_src
+  -- lazy evaluation   -> 7
+  -- strict evaluation -> non-terminating
+  
+  (λx.7) <infinity>
+#+end_src
+
+** Weak Head Normal Form
+
+#+begin_example
+A lambda expression is in weak head normal form if and only if it is of the form
+
+    F E1 E2 ... En
+
+where n >= 0
+and   either F is a variable or data object
+      or F is a lambda abstraction or built-in function
+         and (F E1 E2 ... Em) is not a redex or any m >= n.
+
+An expression has no top-level redex if and only if it is in weak head normal form.	 
+#+end_example
+
+** Lazy Graph Reduction = Lazy Evaluation
+
+- Normal order evaluation to weak head normal form
+- Pointer substitution
+- Updating redex root with result
+
+** Reduction Algorithm So Far
+
+1. Unwind the spine until something other than an application node is encountered.
+2. Examine the objects found at the tip of the spine.
+   A. /A Data Object/: Check that it is not applied to anything. If not, the expression
+      is in /weak head normal form/ so STOP. Otherwise there is an ERROR.
+   B. /A Built-In Function/: Check the number of arguments available. If there are too
+      few arguments, the expression is in WHNF so STOP. Otherwise evaluate any arguments
+      required, execute the built-in function and overwrite the root of the redex with
+      the result.
+   C. /A Lambda Abstraction/: Check that there is an argument. If not, the expression is
+      in WHNF so STOP. Otherwise instantiate the body of the lambda abstraction, substituting
+      pointers to the arguments for the formal parameters, and overwrite the root of the
+      redex with the result.
