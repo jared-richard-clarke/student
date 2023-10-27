@@ -2,7 +2,7 @@
 #+author: Simon L. Peyton Jones and David R. Lester
 #+date: 2023-10-26
 
-Orginal source code authored by Simon L. Peyton Jones, David R. Lester, and Matt Chan.
+Original source code authored by Simon L. Peyton Jones, David R. Lester, and Matt Chan.
 
 * Core Language
 
