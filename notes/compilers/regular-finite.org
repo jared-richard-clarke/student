@@ -1,0 +1,154 @@
+#+title: Scanning
+#+author: Douglas Thain
+#+date: 2023-10-01
+
+* Regular Expressions
+
+*s* = string
+*L(s)* = language of *s*, a set of strings drawn from alphabet *Σ*.
+
+** Definition
+
+- If *a ∈ Σ* then *a* is a regular expression and *L(a) = {a}*.
+
+- *ε* is a regular expression and *L(ε)* contains only the empty string.
+
+Then for regular expressions *s* and *t*:
+
+1. *s|t* is a *RE* such that *L(s|t) = L(s) ∪ L(t)*.
+
+2. *st* is *RE* such that *L(st)* contains all strings formed by the concatenation
+   of a string in *L(s)* followed by a string in *L(t)*.
+
+3. *s\** is a *RE* such that *L(s\*) = L(s)* concatenated zero or more times.
+
+Rule #3 is known as the *Kleene closure* and has the highest precedence. Rule #2
+is known as *concatenation*. Rule #1 has the lowest precedence and is known as
+*alternation*. Parentheses can be added to adjust the order of operations in
+the usual way.
+
+** Examples
+
+| Regular Expression  | Language L(s)               |
+|---------------------+-----------------------------|
+| hello               | { hello }                   |
+| d(o\vert{}i)g       | { dog, dig }                |
+| moo*                | { mo, moo, mooo, ... }      |
+| (moo)*              | { ε, moo, moomoo, ... }     |
+| a(b\vert{}a)*a      | { aa, aaa, aba, aaaa, ... } |
+
+** Optional Syntax
+
+| syntax | definition  | alternate                     |
+|--------+-------------+-------------------------------|
+| s?     | optional    | (s\vert{}ε)                   |
+| s+     | one or more | ss*                           |
+| [a-z]  | one of      | (a\vert{}b\vert{}...\vert{}z) |
+| [^x]   | any except  | Σ - x                         |
+
+** Algebraic Properties
+
+| property      | value                                     |
+|---------------+-------------------------------------------|
+| Associativity | a\vert{}(b\vert{}c) = (a\vert{}b)\vert{}c |
+| Commutativity | a\vert{}b = b\vert{}a                     |
+| Distribution  | a(b\vert{}c) = ab\vert{}ac                |
+| Idempotency   | a** = a*                                  |
+
+* Finite Automata
+
+A *Finite Automaton* is an abstract machine consisting of a number of states
+and a number of edges between those states. Each edge is labeled with one or
+more symbols drawn from alphabet *Σ*. For each input symbol, *FA* moves to the state
+connected by the matching edge.
+
+*Deterministic Finite Automaton* are a special case of *FA* where every state
+has no more than one outgoing edge for a given symbol. A *DFA* has no ambiguity.
+For every combination of state and input symbol, there is exactly one choice of what
+to do next.
+
+The transitions between states are represented by a matrix *M[s, i]*, which
+encodes the next state, given the current state and input symbol. If the transition
+is not allowed, we mark it with *E* to indicate an error. For each symbol, we
+compute *c = M[s, i]* where *c* represents the current state until all the input is
+consumed or an error state is reached.
+
+Every *RE* can be written as an *FA* and vice versa.
+
+** Deterministic Finite Automata
+
+*** *FA*: "for"
+
+#+begin_example
+->⓪-f->①-o->②-r->(③)
+#+end_example
+
+*** *RE* to *FA*: identifier
+
+#+begin_example
+RE: [a-z][a-z0-9]+
+                              -[a-z][0-9]->
+                              <------------
+FA: ->⓪-[a-z]->①-[a-z][0-9]->(②)
+#+end_example
+
+*** *FA*: number
+
+#+begin_example
+RE: ([1-9][0-9]*)|0
+
+                    -[0-9]->
+                    <-------
+         (①)-[0-9]->(②)
+   [1-9]-/
+FA:   --⓪
+       0-\
+         (③)
+#+end_example
+
+** Nondeterministic Finite Automata
+
+An *NFA* presents a variety of ambiguous choices. There are two common ways to interpret ambiguity.
+
+1. *Crystal Ball Interpretation*: the *NFA* somehow knows what the best choice is by some
+   means external to itself. Impossible in a real implementation.
+2. *Many Worlds Interpretation*: the *NFA* exists in all allowable states simultaneously.
+
+*** Ambiguity
+
+State 0 allows for two different transitions on symbol *i*. There is no simple rule
+by which we can pick one path over another. One is to stay in state 0 matching *[a-z]*
+and the other is to move to state 1 matching *i*.
+
+#+begin_example
+RE: [a-z]*ing
+
+     -[a-z]->
+     <-------
+     |
+FA: -⓪-i-①-n-②-g-(③)
+#+end_example
+
+*** Many Worlds Interpretation
+
+Consume string *aaac*.
+
+| states        | action      |
+|---------------+-------------|
+| 0, 1, 4       | consume *a* |
+| 0, 1, 2, 4, 5 | consume *a* |
+| 0, 1, 2, 4, 5 | consume *a* |
+| 0, 1, 2, 4, 5 | consume *c* |
+| 6             | accept      |
+
+#+begin_example
+RE: a*(ab|ac)
+
+     -a->
+     <---
+     |  ①-a->②-b->-(③)
+     |/-ε
+FA: -⓪
+      \-ε
+       ④-a->⑤-c->(⑥)
+#+end_example
