@@ -1,0 +1,469 @@
+#+title: Implementing Functional Programming Languages: Tutorial
+#+author: Simon L. Peyton Jones and David R. Lester
+#+date: 2023-10-26
+
+Original source code authored by Simon L. Peyton Jones, David R. Lester, and Matt Chan.
+
+* Core Language
+
+#+begin_src haskell
+module Core.Language where
+
+type Name = String
+
+-- A core lang program is a list of definitions.
+type Program a = [ScDefn a]
+type CoreProgram = Program Name
+
+-- A supercombinator (top-level) definition is the name, arguments, and body
+type ScDefn a = (Name, [a], Expr a)
+type CoreScDefn = ScDefn Name
+
+-- Case expressions
+type Alter a = (Int, [a], Expr a)
+type CoreAlt = Alter Name
+
+type CoreExpr = Expr Name
+
+-- The main expr data type
+data Expr a
+  = EVar Name               -- Variables
+  | ENum Int                -- Numbers
+  | EConstr Int Int         -- Construtor tag arity
+  | EAp (Expr a) (Expr a)   -- Appliations
+  | ELet                    -- Let(rec) expressions
+      Bool                  --   boolean with True = recursive,
+      [(a, Expr a)]         --   Definitions
+      (Expr a)              --   Body of let(rec)
+  | ECase                   -- Case expression
+      (Expr a)              --   Expression to scrutinise
+      [Alter a]             --   Alternatives
+  | ELam [a] (Expr a)       -- Lambda abstractions
+  deriving (Show, Eq)
+
+-- Each definition is a pair of the variable name and its associated expression.
+bindersOf :: [(a,b)] -> [a]
+bindersOf = map fst
+
+rhssOf :: [(a,b)] -> [b]
+rhssOf = map snd
+
+isAtomicExpr :: Expr a -> Bool
+isAtomicExpr (EVar _) = True
+isAtomicExpr (ENum _) = True
+isAtomicExpr _        = False
+
+isApp :: Expr t -> Bool
+isApp (EAp _ _) = True
+isApp _         = False
+
+isCompound :: Expr t -> Bool
+isCompound (ENum _)      = False
+isCompound (EVar _)      = False
+isCompound (EConstr _ _) = False
+isCompound _             = True
+
+reservedOps = [ "=", ",", ";","->","<-", "\\", "."]
+keywords    = [ "let", "letrec", "case", "in", "of", "Pack" ]
+relOps      = ["<", ">", "==", "~=", ">=","<="]
+arithOps    = [ "+","-","*","/"]
+bitOps      = ["&","|"]
+
+{- === Core Standard Prelude ===
+   I x           = x
+   K x y         = x
+   K1 x y        = y
+   S f g x       = f x (g x)
+   compose f g x = f (g x)
+   twice f       = compose f f
+ -}
+preludeDefs :: CoreProgram
+preludeDefs
+  = [ ("I", ["x"], EVar "x")
+    , ("K", ["x","y"], EVar "x")
+    , ("K1",["x","y"], EVar "y")
+    , ("S", ["f","g","x"], EAp (EAp (EVar "f") (EVar "x"))
+                               (EAp (EVar "g") (EVar "x")))
+    , ("compose", ["f","g","x"], EAp (EVar "f")
+                                     (EAp (EVar "g") (EVar "x")))
+    , ("twice", ["f"], EAp (EAp (EVar "compose") (EVar "f")) (EVar "f"))
+    ]
+#+end_src
+
+* Pretty Printer
+
+#+begin_src haskell
+module Core.Pretty where
+-- Provides a set of pretty printer combinators where "Doc" represents
+--  a set of layouts.
+import Text.PrettyPrint    
+import Core.Language
+import Core.Utils
+
+--Pretty printer
+pprint :: CoreProgram -> String
+pprint = render . fsep . ppProgram
+
+-- List of super combinator definitions
+ppProgram :: CoreProgram -> [Doc]
+ppProgram = map ppScDefn
+
+-- Super combinator definitions
+ppScDefn :: CoreScDefn -> Doc
+ppScDefn (name, args, expr)
+  = text name <+> ppVarList args <+> char '=' <+> ppExpr 1 expr
+
+-- Binary operation lookup
+binops :: [(String, Int)]
+binops = [("*", 1), ("/", 1)
+         ,("+", 2), ("-", 2)] ++
+         map (\o -> (o, 3)) relOps ++
+         [("&", 4)
+         ,("|", 5)]
+
+parenIf :: Bool -> (Doc -> Doc)
+parenIf b | b          = parens
+    | otherwise  = id
+
+-- Expressions
+ppExpr :: Int -> CoreExpr -> Doc
+-- Number expression
+ppExpr _ (ENum n) = int n
+-- Variable expression
+ppExpr _ (EVar v) = text v
+-- Constructor expression
+ppExpr _ (EConstr tag arity)
+  = text "Pack" <> braces (int tag <> comma <> int arity)
+
+-- Binary infix operation expression
+ppExpr prec (EAp left@(EAp (EVar b) e1) e2)
+  | Just p <-  b `lookup` binops
+  = parenIf (prec > p)
+  $ ppExpr p e1 <+> text b <+> ppExpr p e2
+
+-- Application expression
+ppExpr prec (EAp e1 e2)
+    =  parenIf (isCompound e1 && not (isApp e1)) (ppExpr prec e1)
+       <+> parenIf (isCompound e2) (ppExpr (prec+1) e2)
+
+-- Let expression
+ppExpr prec (ELet isRec defns expr)
+  = hang (text (if isRec then "letrec" else "let"))
+    3 (ppDefns defns) $$
+    text "in " <> ppExpr prec expr
+
+-- Case expression
+ppExpr prec (ECase e alts)
+  = hang caseof 2 (ppAlts alts)
+  where
+    caseof = text "case"
+    <+> parenIf (isCompound e) (ppExpr prec e)
+    <+> text "of"
+    ppAlts = vcat . map ppAlter
+    ppAlter (tag, vars, expr)
+      =  char '<' <> int tag <> char '>'
+      <+> ppVarList vars
+      <+> text "->" <+> ppExpr prec expr <> semi
+
+-- Lambda expression
+ppExpr prec (ELam args body) =
+  char '\\' <> ppVarList args <> char '.' <+> ppExpr prec body
+
+ppDefns :: [(Name, CoreExpr)] -> Doc
+ppDefns = vcat . punctuate semi . map ppDefn
+
+ppDefn :: (Name, CoreExpr) -> Doc
+ppDefn (name, expr) = ppScDefn (name, [], expr)
+
+ppVarList :: [String] -> Doc
+ppVarList = hsep . map text
+#+end_src
+
+* Parser
+
+#+begin_src haskell
+module Core.Parser
+  ( ParseError
+  , parseFile
+  , parseProgram
+  ) where
+
+import Control.Exception (Exception(), throw)
+import Data.Functor
+import Data.Maybe
+
+import Text.Parsec hiding (spaces)
+import Text.Parsec.Language
+import qualified Text.Parsec.Token as P
+import qualified Text.Parsec.Expr as P
+import Text.Parsec.Char (digit)
+import Text.Parsec.String (Parser())
+
+import Core.Language
+
+instance Exception ParseError
+
+doParseProgram :: SourceName -> String -> Either ParseError CoreProgram
+doParseProgram = parse pProgram
+
+parseFile :: FilePath -> IO CoreProgram
+parseFile f = either throw id . doParseProgram f <$> readFile f
+
+parseProgram :: String -> Either ParseError CoreProgram
+parseProgram = doParseProgram ""
+
+-- Lexing and utilities
+
+coreDef = haskellStyle
+  { P.reservedNames   = keywords
+  , P.reservedOpNames = reservedOps
+  }
+
+coreLexer   = P.makeTokenParser coreDef
+parens      = P.parens coreLexer
+braces      = P.braces coreLexer
+identifier  = P.identifier coreLexer
+reserved    = P.reserved coreLexer
+reservedOp  = P.reservedOp coreLexer
+integer     = P.integer coreLexer
+symbol      = P.symbol coreLexer
+operator    = P.operator coreLexer
+spaces      = P.whiteSpace coreLexer
+semi        = P.semi coreLexer
+
+int = read <$> many1 digit
+
+binary op = P.Infix e P.AssocLeft where
+  e = do { o <- symbol op; return (\x y -> EAp (EAp (EVar o) x) y) }
+
+sequence1 :: Parser a -> Parser [a]
+sequence1 = P.semiSep1 coreLexer
+
+-- Parser
+
+pProgram :: Parser CoreProgram
+pProgram = spaces *> sequence1 pSc
+
+-- Supercombinators
+pSc :: Parser CoreScDefn
+pSc = do
+  name <- identifier
+  args <- many identifier
+  reservedOp "="
+  body <- pCoreExpr
+  return (name, args, body)
+
+pCoreExpr :: Parser CoreExpr
+pCoreExpr = choice [pLet, pCase, pLam, expr1] where
+  expr1 = P.buildExpressionParser table term
+  table = [ map binary ["*", "/"]
+    , map binary ["+", "-"]
+    , map binary relOps
+    , [ binary "&" ]
+    , [ binary "|" ]
+    ]
+
+  -- App or single Aexpr
+  term = foldl1 EAp <$> many1 pAexpr
+
+  pLam = do
+    reservedOp "\\"
+    params <- many1 identifier
+    reservedOp "."
+    expr <- pCoreExpr
+    return (ELam params expr)
+
+  pCase = do
+    reserved "case"
+    e <- pCoreExpr
+    reserved "of"
+    alts <- sequence1 pAlt1
+    return (ECase e alts)
+    where
+      pAlt1 = do
+        i <- reservedOp "<" *> int <* reservedOp ">"
+        vars <- many identifier
+        reservedOp "->"
+        expr <- pCoreExpr
+        return (i, vars, expr)
+
+  pLet = do
+    isrec <- try (reserved "let" $> False) <|> (reserved "letrec" $> True)
+    binds <- sequence1 (try bind1)
+    reserved "in"
+    expr <- pCoreExpr
+    return (ELet isrec binds expr)
+    where
+      bind1 = do
+        name <- identifier
+        reservedOp "="
+        expr <- pCoreExpr
+        return (name, expr)
+
+  pCtor = do
+    reserved "Pack"
+    braces $ EConstr <$> int <* reservedOp "," <*> int
+
+pAexpr = spaces *> choice [pVar, pNum, pCtor, parens pCoreExpr] <* spaces
+
+pNum  = ENum <$> int
+pVar  = EVar <$> identifier
+#+end_src
+
+* Template Instantiation
+
+The simplest form of graph reduction.
+
+** Evaluation
+
+#+begin_example
+until there are no more redexes
+    select the outermost redex
+    reduce it
+    update the redex with the result
+end
+
+=== example ===
+
+square x = x * x
+main = square (square 3)
+
+=== reduction ===
+
+       @! <- root
+      / \
+square   @
+        / \
+  square   3
+
+-- reduces ->
+
+       @
+      / \
+      @  \
+    / \__ @!  
+  *      / \
+   square   3
+
+-- reduces ->
+
+       @
+      / \
+     @   \
+    / \__ @
+   *     / \
+        @   \
+       / \__ 3
+      *
+
+-- reduces ->
+
+       @
+      / \
+     @   \
+    / \__ 9
+   *
+
+-- reduces ->
+
+81
+#+end_example
+
+** Unwinding the Spine to Find the Next Redex
+
+1. Starting at the root, follow the left branch of application nodes until you
+   get to a supercombinator or built-in primitive. This left-branching chain of
+   application nodes is called the /spine/ of the expression. This process is
+   called /unwinding/ the spine. Usually a /stack/ is used to remember address
+   nodes.
+2. Now check how many arguments the supercombinator or primitive takes and go
+   back up that number of application nodes. You have found the root of the
+   outermost function application.
+
+#+begin_example
+=== expression ===
+
+(f E1 E2 E3) where (f E1 E2)
+
+=== stack ===
+
+ ---------
+  | --- | ------> @
+  -------        / \
+  | --- | ----> @!  E3
+  -------      / \
+  | --- | --> @   E2
+  -------    / \
+  | --- | > f   E1
+  -------
+#+end_example
+
+A *dump*, or stack of stacks, is created to track an expression with multiple
+roots.
+
+** Supercombinator Redexes
+
+A supercombinator redex is reduced by replacing the redex with an instance of
+the supercombinator body. substituting pointers to the actual arguments for
+corresponding occurrences of the formal parameters.
+
+#+begin_example
+=== expression ===
+
+f x = let y = x * x
+      in y + y
+
+=== graph ===
+
+      @
+     / \
+    f   3
+
+-- reduces ->
+
+      @
+    /  \
+   @    \
+  / \__ @y
+ +      / \
+       @   \
+      / \__ 3
+     *
+#+end_example
+
+** Updates
+
+With /lazy evaluation/ a redex may not be evaluated at all, but if it is
+evaluated, an update ensures that redex is evaluated only once.
+
+#+begin_example
+=== expression ===
+
+id x = x
+f p = (id p) * p
+main = f (sqrt 4)
+
+=== reduction ==
+
+       @
+      / \
+     @   \
+    / \   \
+    *  @   \
+      / \__ @
+    id     / \
+        sqrt  4
+
+-- reduces ->
+
+       @
+      / \
+     @   \
+    / \   \
+   *   #   \
+        \__ @
+           / \
+        sqrt  4
+
+where # = indirection node
+#+end_example
