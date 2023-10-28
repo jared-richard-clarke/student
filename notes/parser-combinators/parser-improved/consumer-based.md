@@ -93,12 +93,16 @@ try p input =
 An error message contains a position, the unexpected input, and a list of
 expected productions – the first set.
 
+### Output on Error
+
 ```
 > run identifier ""
   parse error at (line 1, column 1):
   unexpected end of input
   expecting letter, digit, or _
 ```
+
+### Code
 
 ```haskell
 type Parser a = State -> Consumed a
