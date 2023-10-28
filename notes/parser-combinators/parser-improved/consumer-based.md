@@ -1,6 +1,6 @@
 # Consumer-Based Parsing
 
-Source: **Parsec: Direct Style Parser Combinators For The Real World** by Daan Leijen and Erik Meijer
+**Parsec: Direct Style Parser Combinators For The Real World** by Daan Leijen and Erik Meijer
 
 ## Basic Combinators
 
