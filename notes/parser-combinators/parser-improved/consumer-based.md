@@ -90,6 +90,16 @@ try p input =
 
 ## Parsing with Error Handling
 
+An error message contains a position, the unexpected input, and a list of
+expected productions – the first set.
+
+```
+> run identifier ""
+  parse error at (line 1, column 1):
+  unexpected end of input
+  expecting letter, digit, or _
+```
+
 ```haskell
 type Parser a = State -> Consumed a
 
@@ -99,9 +109,15 @@ data Message = Message Pos String [String]
 
 data Reply a = Ok a State Message | Error Message
 
+-- The "return" parser attaches an empty message to the parser reply.
+
 return :: a -> Parser a
 return x state = Empty (Ok x state (Message pos [] []))
 
+{-
+  "satisfy" updates the parser position if successful and returns an error
+  message with the current position and input if it fails.
+-}
 satisfy :: (Char -> Bool) -> Parser Char
 satisfy test =
     \(State input pos) ->
@@ -118,6 +134,13 @@ satisfy test =
             []     -> Empty (Error
                           (Msg pos "end of input" []))
 
+{-
+  "<|>" computes the dynamic first set by merging the error messages of two "Empty"
+  alternatives, regardless of their reply value. Whenever both alternatives do not
+  consume input, both of them contribute to the possible causes of failure. Even
+  when the second succeeds, the first alternative should propagate its error messages
+  into the "Ok" reply.
+-}
 (<|>) :: Parser a -> Parser a -> Parser a
 p <|> q =
     \state -> 
@@ -149,6 +172,12 @@ mergeError msg1 msg2 =
 merge (Msg pos inp exp1) (Msg _ _ exp2) =
     Msg pos inp (exp1 ++ exp2)
 
+{-
+  The parser "p <?> msg" behaves like parser "p" but when it fails *without* consuming
+  input, it sets the expected productions to "msg". The label combinator is used to
+  return error messages in terms of high-level grammar productions rather than at
+  a character level.
+-}
 (<?>) :: Parser a -> String -> Parser a
 p <?> exp =
     \state ->
