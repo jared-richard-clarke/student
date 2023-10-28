@@ -5,19 +5,19 @@ grammar constructions such as choice, sequencing, and repetition.
 
 ## Combinators
 
-`.>>.` (`andThen`): applies two parsers in sequence and returns a tuple.
+`andThen` (`.>>.`): applies two parsers in sequence and returns a tuple.
 
-`<|>` (`orElse`): applies the first parser, and if that fails, applies the second parser.
+`orElse` (`<|>`): applies the first parser, and if that fails, applies the second parser.
 
 `choice`: extends `<|>` to choose from a list of parsers.
 
-`bind`: chains the result of a parser to another parser-producing function.
+`bind` (`>>=`): chains the result of a parser to another parser-producing function.
 
 `map`: transforms the value inside a parser.
 
 `return`: transforms a value into a parser.
 
-`apply`: applies a parser containing a function to a parser containing a value.
+`apply` (`<*>`): applies a parser containing a function to a parser containing a value.
 
 `lift2`: transforms two-parameter functions into functions that work on parsers.
 
