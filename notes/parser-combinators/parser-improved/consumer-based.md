@@ -193,6 +193,6 @@ p <?> exp =
                   -> Empty (Ok x st (expect msg exp))
             other -> other
 
-expect (Msg pos inp _) exp =
-    Msg pos inp [exp]
+expect (Msg pos expected _) exp =
+    Msg pos expected [exp]
 ```
