@@ -174,8 +174,8 @@ mergeOk x inp msg1 msg2 =
 mergeError msg1 msg2 =
     Empty (Error (merge msg1 msg2))
 
-merge (Msg pos inp exp1) (Msg _ _ exp2) =
-    Msg pos inp (exp1 ++ exp2)
+merge (Msg pos expected exp1) (Msg _ _ exp2) =
+    Msg pos expected (exp1 ++ exp2)
 
 {-
   The parser "p <?> msg" behaves like parser "p" but when it fails *without* consuming
