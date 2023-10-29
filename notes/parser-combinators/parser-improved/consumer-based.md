@@ -109,6 +109,7 @@ type Parser a = State -> Consumed a
 
 data State = State String Pos
 
+-- Position, unexpected input, and expected productions.
 data Message = Message Pos String [String]
 
 data Reply a = Ok a State Message | Error Message
