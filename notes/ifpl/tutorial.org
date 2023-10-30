@@ -1,0 +1,467 @@
+* Implementing Functional Programming Languages: Tutorial
+
+Original source code authored by Simon L. Peyton Jones and David R. Lester.
+
+** Core Language
+
+#+begin_src haskell
+type Name = String
+
+-- A core lang program is a list of supercombinator definitions.
+type Program a = [ScDefn a]
+type CoreProgram = Program Name
+
+-- Supercombinator (top-level) definition = (name, arguments, body)
+type ScDefn a = (Name, [a], Expr a)
+type CoreScDefn = ScDefn Name
+
+-- Case expressions
+type Alter a = (Int, [a], Expr a)
+type CoreAlt = Alter Name
+
+type CoreExpr = Expr Name
+
+-- The main expr data type
+data Expr a
+  = EVar Name               -- Variables
+  | ENum Int                -- Numbers
+  | EConstr Int Int         -- Constructor tag arity
+  | EAp (Expr a) (Expr a)   -- Applications
+  | ELet                    -- Let(rec) expressions
+      Bool                  --   boolean with True = recursive,
+      [(a, Expr a)]         --   Definitions
+      (Expr a)              --   Body of let(rec)
+  | ECase                   -- Case expression
+      (Expr a)              --   Expression to scrutinise
+      [Alter a]             --   Alternatives
+  | ELam [a] (Expr a)       -- Lambda abstractions
+  deriving (Show, Eq)
+
+-- Definition = (variable name, expression).
+bindersOf :: [(a,b)] -> [a]
+bindersOf = map fst
+
+rhssOf :: [(a,b)] -> [b]
+rhssOf = map snd
+
+isAtomicExpr :: Expr a -> Bool
+isAtomicExpr (EVar _) = True
+isAtomicExpr (ENum _) = True
+isAtomicExpr _        = False
+
+isApp :: Expr t -> Bool
+isApp (EAp _ _) = True
+isApp _         = False
+
+isCompound :: Expr t -> Bool
+isCompound (ENum _)      = False
+isCompound (EVar _)      = False
+isCompound (EConstr _ _) = False
+isCompound _             = True
+
+reservedOps = [ "=", ",", ";","->","<-", "\\", "."]
+keywords    = [ "let", "letrec", "case", "in", "of", "Pack" ]
+relOps      = ["<", ">", "==", "~=", ">=","<="]
+arithOps    = [ "+","-","*","/"]
+bitOps      = ["&","|"]
+
+{- === Core Standard Prelude ===
+   I x           = x
+   K x y         = x
+   K1 x y        = y
+   S f g x       = f x (g x)
+   compose f g x = f (g x)
+   twice f       = compose f f
+ -}
+preludeDefs :: CoreProgram
+preludeDefs
+  = [ ("I", ["x"], EVar "x")
+    , ("K", ["x","y"], EVar "x")
+    , ("K1",["x","y"], EVar "y")
+    , ("S", ["f","g","x"], EAp (EAp (EVar "f") (EVar "x"))
+                               (EAp (EVar "g") (EVar "x")))
+    , ("compose", ["f","g","x"], EAp (EVar "f")
+                                     (EAp (EVar "g") (EVar "x")))
+    , ("twice", ["f"], EAp (EAp (EVar "compose") (EVar "f")) (EVar "f"))
+    ]
+#+end_src
+
+** Pretty Printer
+
+#+begin_src haskell
+  -- The general idea of "Iseq" is to postpone all work until the eventual
+  -- call of "iDisplay", which converts "Iseq" into a string.
+  
+  data Iseq = INil
+            | IStr String
+            | IAppend Iseq Iseq
+            | IIndent Iseq
+            | INewline
+
+  iNil :: Iseq
+  iNil = INil
+  
+  iStr :: String -> Iseq
+  iStr str = IStr str
+  
+  iAppend :: Iseq -> Iseq -> Iseq
+  iAppend seq1 seq2 = IAppend seq1 seq2
+  
+  iIndent :: Iseq -> Iseq
+  iIndent seq = IIdent seq
+  
+  iNewline :: Iseq
+  iNewline = INewline
+  
+  iDisplay :: Iseq -> String
+  iDisplay seq = flatten 0 [(seq, 0)]
+  
+  isSpace = iStr " "
+  
+  iConcat = foldr iAppend iNil
+  
+  iInterleave sep []         = iNil
+  iInterleave sep [seq]      = seq
+  iInterleave sep (seq:seqs) = seq `iAppend` (sep `iAppend` iInterleave sep seqs)
+
+  -- Constructing "Iseq"
+  
+  pprProgram prog = iInterleave (iAppend (iStr " ;") iNewline) (map pprSc prog)
+
+  pprSc (name, args, body)
+    = iConcat [ iStr name, iSpace, pprArgs args,
+                iStr " = ", iIndent (pprExpr body) ]
+  
+  pprExpr :: CoreExpr -> Iseq
+  pprExpr (ENum n) = iNum n
+  pprExpr (EVar v) = iStr v
+  pprExpr (EAp (EAp (EVar "+")  e1) e2) = iConcat [pprAExpr e1, iStr " + ",  pprAExpr e2]
+  pprExpr (EAp (EAp (EVar "-")  e1) e2) = iConcat [pprAExpr e1, iStr " - ",  pprAExpr e2]
+  pprExpr (EAp (EAp (EVar "*")  e1) e2) = iConcat [pprAExpr e1, iStr " * ",  pprAExpr e2]
+  pprExpr (EAp (EAp (EVar "/")  e1) e2) = iConcat [pprAExpr e1, iStr " / ",  pprAExpr e2]
+  pprExpr (EAp (EAp (EVar "<")  e1) e2) = iConcat [pprAExpr e1, iStr " < ",  pprAExpr e2]
+  pprExpr (EAp (EAp (EVar "<=") e1) e2) = iConcat [pprAExpr e1, iStr " <= ", pprAExpr e2]
+  pprExpr (EAp (EAp (EVar "==") e1) e2) = iConcat [pprAExpr e1, iStr " == ", pprAExpr e2]
+  pprExpr (EAp (EAp (EVar "~=") e1) e2) = iConcat [pprAExpr e1, iStr " ~= ", pprAExpr e2]
+  pprExpr (EAp (EAp (EVar ">=") e1) e2) = iConcat [pprAExpr e1, iStr " >= ", pprAExpr e2]
+  pprExpr (EAp (EAp (EVar ">")  e1) e2) = iConcat [pprAExpr e1, iStr " > ",  pprAExpr e2]
+  pprExpr (EAp (EAp (EVar "&")  e1) e2) = iConcat [pprAExpr e1, iStr " & ",  pprAExpr e2]
+  pprExpr (EAp (EAp (EVar "|")  e1) e2) = iConcat [pprAExpr e1, iStr " | ",  pprAExpr e2]
+  pprExpr (EAp e1 e2)                   = iConcat [ pprExpr e1, iSpace,      pprAExpr e2]
+  
+  pprExpr (ELet isrec defns expr)
+    = iConcat [ iStr keyword, iNewline,
+                iStr " ", iIndent (pprDefns defns), iNewline,
+                iStr "in ", pprExpr expr ]
+       where
+       keyword | not isrec = "let"
+               | isrec = "letrec"
+  
+  pprExpr (ECase e alts)
+    = iConcat [ iStr "case ", pprExpr e, iStr " of", iNewline,
+                iStr " ", iIndent (iInterleave iNl (map pprAlt alts)) ]
+      where
+      iNl = iConcat [ iStr ";", iNewline ]
+      pprAlt (tag, args, rhs)
+        = iConcat [ iStr "<", iNum tag, iStr "> ",
+                    pprArgs args, iStr " -> ",
+                    iIndent (pprExpr rhs) ]
+  
+  pprExpr (ELam args body)
+    = iConcat [ iStr "(\\", pprArgs args, iStr ". ", iIndent (pprExpr body),
+                iStr ")"]
+  
+  pprArgs args = iInterleave iSpace (map iStr args)
+  
+  pprAExpr e | isAtomic Expr e = pprExpr e
+  pprAExpr e | otherwise = iConcat [iStr "(", pprExpr e, iStr ")"]
+
+  -- Layout and Indentation
+  
+  flatten :: Int -> [(Iseq, Int)] -> String
+  flatten col [] = ""
+  
+  flatten col ((IAppend seq 1 seq 2, indent) : seqs)
+    = flatten col ((seq1, indent) : (seq2, indent) : seqs)
+  
+  flatten col ((INil, indent) :  seqs) = flatten col seqs
+  
+  flatten col ((IStr s, indent): seqs)
+    = s ++ flatten (col + length s) seqs
+  
+  flatten col ((IIndent seq, indent) : seqs)
+    = flatten col ((seq, col) : seqs)
+  
+  flatten col ((INewLine, indent) : seqs)
+    = '\n' : (space indent) ++ (flatten indent seqs)
+#+end_src
+
+** Parser
+
+#+begin_src haskell
+  parse :: String -> CoreProgram
+  parse = syntax . clex
+  
+  -- lexical analysis
+
+  type Token = String
+  
+  clex :: String -> [Token]
+  -- discard leading whitespace
+  clex (c:cs) | isWhiteSpace c = clex cs
+
+  -- decimal digits
+  clex (c:cs) | isDigit c = num_token : clex rest_cs
+                where
+                num_token = c : takeWhile isDigit cs
+                rest_cs = dropWhile isDigit cs
+
+  -- identifiers
+  clex (c:cs) | isAlpha c = var_token : clex rest_cs
+                where
+                var_token = c : takeWhile isIdChar cs
+                rest cs = dropWhile isIdChar cs
+
+  -- comments
+  clex ('|':'|':cs) = clex (dropWhile (/= '\n') cs)
+
+  -- two-character operators
+  clex (c1:c2:c3) | ([c1, c2] `elem` twoCharOps) = [c1, c2] : clex cs
+
+  -- other
+  clex (c:cs) = [c] : clex cs
+
+  -- empty
+  clex [] = []
+
+  isIdChar, isWhiteSpace :: Char -> Bool
+  isIdChar c = isAlpha c || isDigit c || (c == '_')
+  isWhiteSpace c = c `elem` " \t\n"
+
+  twoCharOps :: [String]
+  twoCharOps = ["==", "~=", ">=", "<=", "->"]
+
+  -- Parser
+  
+  type Parser a = [Token] -> [(a, [Token])]
+
+  pSat :: (String, Bool) -> Parser String
+  pSat pred [] = []
+  pSat pred (token:tokens) | pred tok = [(token, tokens)]
+                           | otherwise = []
+  pLit s = pSat (== s)
+
+  pVar = pSat isVar
+         where
+         isVar s = isAlpha (head s) && s `notElem` keywords
+
+  keywords :: [String]
+  keywords = ["let", "letrec", "case", "in", "of", "Pack"]
+  
+  pNum = pSat (isDigit . head) `pApply` numvalue
+
+  numvalue :: String -> Int
+  numvalue = foldl1 (\a c -> 10 * a + ord c - ord '0') 0
+  -- choices
+  pAlt :: Parser a -> Parser a -> Parser a
+  pAlt p1 p2 tokens = (p1 tokens) ++ (p2 tokens)
+
+  -- sequences
+  pThen :: (a -> b -> c) Parser a -> Parser b -> Parser c
+  pThen combine p1 p2 tokens
+    = [(combine v1 v2, tokens2) | (v1, tokens1) <- p1 tokens,
+                                  (v2, tokens2) <- p2 tokens1]
+
+  pThen3 :: (a -> b -> c -> d) -> Parser a -> Parser b -> Parser c -> Parser d
+  pThen3 combine p1 p2 p3 tokens
+    = [(combine v1, v2, v3, tokens3) | (v1, tokens1) <- p1 tokens,
+                                       (v2, tokens2) <- p2 tokens1,
+                                       (v3, tokens3) <- p3 tokens2]
+
+  pThen4 :: (a -> b -> c -> d) -> Parser a -> Parser b -> Parser c -> Parser d -> Parser e
+  pThen4 combine p1 p2 p3 p4 tokens
+    = [(combine v1, v2, v3, v4, tokens4) | (v1, tokens1) <- p1 tokens,
+                                           (v2, tokens2) <- p2 tokens1,
+                                           (v3, tokens3) <- p3 tokens2,
+                                           (v4, tokens4) <- p4 tokens3]
+
+  pOneOrMoreWithSep :: Parser a -> Parser b -> Parser [a]
+  pOneOrMoreWithSep p sep = pThen (:) p (pOneOrMoreWithSep_c p sep)
+  pOneOrMoreWithSep_c p psep
+    = (pThen discard_sep psep (pOneOrMoreWithSep p psep)) `pAlt` (pEmpty [])
+      where
+      discard_sep sep vs = vs
+  
+  pEmpty :: a -> Parser a
+  pEmpty v tokens = [(v, tokens)]
+
+  pOneOrMore :: Parser a -> Parser [a]
+  pOneOrMore p = pThen (:) p (pZeroOrMore p)
+
+  pZeroOrMore :: Parser a -> Parser [a]
+  pZeroOrMore p = (pOneOrMore p) `pAlt` (pEmpty [])
+
+  -- mapping
+  pApply :: Parser a -> (a -> b) -> Parser b
+  pApply p f tokens [(f v, tokens') | (v, tokens') <- p tokens]
+  
+  syntax :: [Token] -> CoreProgram
+#+end_src
+
+** Template Instantiation
+
+The simplest form of graph reduction.
+
+*** Evaluation
+
+#+begin_example
+until there are no more redexes
+    select the outermost redex
+    reduce it
+    update the redex with the result
+end
+
+=== example ===
+
+square x = x * x
+main = square (square 3)
+
+=== reduction ===
+
+       @! <- root
+      / \
+square   @
+        / \
+  square   3
+
+-- reduces ->
+
+       @
+      / \
+     @   \
+    / \__ @!  
+  *      / \
+   square   3
+
+-- reduces ->
+
+       @
+      / \
+     @   \
+    / \__ @
+   *     / \
+        @   \
+       / \__ 3
+      *
+
+-- reduces ->
+
+       @
+      / \
+     @   \
+    / \__ 9
+   *
+
+-- reduces ->
+
+81
+#+end_example
+
+*** Unwinding the Spine to Find the Next Redex
+
+1. Starting at the root, follow the left branch of application nodes until you
+   get to a supercombinator or built-in primitive. This left-branching chain of
+   application nodes is called the /spine/ of the expression. This process is
+   called /unwinding/ the spine. Usually a /stack/ is used to remember address
+   nodes.
+2. Now check how many arguments the supercombinator or primitive takes and go
+   back up that number of application nodes. You have found the root of the
+   outermost function application.
+
+#+begin_example
+=== expression ===
+
+(f E1 E2 E3) where (f E1 E2)
+
+=== stack ===
+
+ ---------
+  | --- | ------> @
+  -------        / \
+  | --- | ----> @!  E3
+  -------      / \
+  | --- | --> @   E2
+  -------    / \
+  | --- | > f   E1
+  -------
+#+end_example
+
+A *dump*, or stack of stacks, is created to track an expression with multiple
+roots.
+
+*** Supercombinator Redexes
+
+A supercombinator redex is reduced by replacing the redex with an instance of
+the supercombinator body. substituting pointers to the actual arguments for
+corresponding occurrences of the formal parameters.
+
+#+begin_example
+=== expression ===
+
+f x = let y = x * x
+      in y + y
+
+=== graph ===
+
+      @
+     / \
+    f   3
+
+-- reduces ->
+
+      @
+    /  \
+   @    \
+  / \__ @y
+ +      / \
+       @   \
+      / \__ 3
+     *
+#+end_example
+
+*** Updates
+
+With /lazy evaluation/ a redex may not be evaluated at all, but if it is
+evaluated, an update ensures that redex is evaluated only once.
+
+#+begin_example
+=== expression ===
+
+id x = x
+f p = (id p) * p
+main = f (sqrt 4)
+
+=== reduction ==
+
+       @
+      / \
+     @   \
+    / \   \
+    *  @   \
+      / \__ @
+    id     / \
+        sqrt  4
+
+-- reduces ->
+
+       @
+      / \
+     @   \
+    / \   \
+   *   #   \
+        \__ @
+           / \
+        sqrt  4
+
+where # = indirection node
+#+end_example
