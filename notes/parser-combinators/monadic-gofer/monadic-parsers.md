@@ -135,7 +135,8 @@ p `sepby1` sep = [x:xs | x <- p,
 		       , xs <- many [y | _ <- sep, y <- p]]
 
 -- chain: repetition with meaningful separators — the separator 
--- usually being some kind of operation.
+-- usually being some kind of operation. Useful for eliminating
+-- left-recursion by expressing iteration.
 
 chainl :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
 chainl p op v = (p `chainl1` op) +++ [v]
