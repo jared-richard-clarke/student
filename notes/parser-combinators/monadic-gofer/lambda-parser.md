@@ -4,10 +4,12 @@
 chapter 6.2, page 24
 
 ```haskell
-data Expression = Apply Expression Expression      -- application
-                | Lambda String Expression         -- lambda abstraction
-                | Let String Expression Expression -- local definition
-                | Variable String                  -- variable
+type Name = String
+
+data Expression = Apply Expression Expression    -- application
+                | Lambda Name Expression         -- lambda abstraction
+                | Let Name Expression Expression -- local definition
+                | Variable Name                  -- variable
 
 expression = atom `chainl1` [Apply]      -- (f x y z) - parsed as -> (((f x) y) z)
 
