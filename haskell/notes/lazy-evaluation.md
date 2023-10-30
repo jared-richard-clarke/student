@@ -71,7 +71,7 @@ foldl f z (x:xs) = foldl f (f z x) xs
 
 -- Since the value of the accumulator is not demanded until after
 -- recursing through the entire list, the accumulator builds up
--- the unevaluated expression `(((0+1)+2)+3)`
+-- the unevaluated expression "(((0+1)+2)+3)"
   foldl (+) 0 [1,2,3]
 = foldl (+) (0+1) [2,3]
 = foldl (+) ((0+1)+2) [3]
