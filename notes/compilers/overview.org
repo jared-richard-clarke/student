@@ -1,10 +1,8 @@
-#+title: Compiler Overview
-#+author: Douglas Thain
-#+date: 2023-10-26
+* Compiler Overview
 
 *Introduction to Compilers and Language Design* by Douglas Thain
 
-* Typical Compiler Toolchain
+** Typical Compiler Toolchain
 
 | tool                     | input                                               | output                    |
 |--------------------------+-----------------------------------------------------+---------------------------|
@@ -17,7 +15,7 @@
 In Unix-like operating systems, the user-visible program ~cc~ invokes each element
 of the compiler toolchain to produce the final executable.
 
-* Stages of a Unix Compiler
+** Stages of a Unix Compiler
 
 1.  Scanner: character stream -> tokens
 2.  Parser: tokens -> Abstract Syntax Tree (AST)
@@ -25,9 +23,9 @@ of the compiler toolchain to produce the final executable.
 4.  Optimizers: IR -> IR
 5.  Code generator: IR -> Assembly
 
-* Compilation
+** Compilation
 
-** Source Text
+*** Source Text
 
 Most high-level programs begin as encoded bytes, usually text.
 
@@ -35,7 +33,7 @@ Most high-level programs begin as encoded bytes, usually text.
 height = (width + 56) * factor(foo);
 #+end_example
 
-** Scanner
+*** Scanner
 
 Reads source code character by character, identifies boundaries between
 symbols, and emits a series of tokens. Each token is a data structure
@@ -45,7 +43,7 @@ that describes the nature and contents of each symbol.
 [id:height] [=] [(] [id:width] [+] [int:56] [)] [*] [id:factor] [(] [id:foo] [)] [;]
 #+end_example
 
-** Parser
+*** Parser
 
 Every language has a grammar. Each line of a grammar is called a rule.
 Each time a rule is applied, the parser creates a node and weaves that
@@ -67,7 +65,7 @@ ID:height        MUL
 ID:width   INT:56   ID:factor   ID:foo
 #+end_example
 
-** Intermediate Representation (IR)
+*** Intermediate Representation (IR)
 
 Post-order traversal of the AST generates intermediate instructions
 for each node in the tree. Typical IR looks like abstract assembly language
@@ -88,7 +86,7 @@ IMUL r3, r4 -> r5
 STOR r5     -> height
 #+end_example
 
-** Assembly
+*** Assembly
 
 Intermediate code is then converted into the desired assembly.
 
