@@ -1,10 +1,8 @@
-#+title: Type Classes
-#+author: Mark P. Jones
-#+date: 2023-10-29
+* Type Classes
 
 *Functional Programming with Overloading and Higher-Order Polymorphism* by Mark P. Jones
 
-* Types of Types
+** Types of Types
 
 #+begin_src haskell
   -- monomorphic types
@@ -22,7 +20,7 @@
   (+)  :: Num a => a -> a -> a    -- Addition
 #+end_src
 
-* Derived Instances
+** Derived Instances
 
 #+begin_src haskell
   data Either a b = Left a | Right b deriving (Eq, Ord)
@@ -33,7 +31,7 @@
   instance (Ord a, Ord b) => Ord (Either a b)
 #+end_src
 
-* Implementing Semantics for Overloaded Operators
+** Implementing Semantics for Overloaded Operators
 
 #+begin_src haskell
   class Eq a where
@@ -44,7 +42,7 @@
       Set xs == ys = subset xs ys && subset ys xs
 #+end_src
 
-** Implementing Lambda Abstractions with Type Classes
+*** Implementing Lambda Abstractions with Type Classes
 
 #+begin_src haskell
   type Name = String
@@ -70,9 +68,9 @@
   size  = (1+) . sum . map size. subtrees
 #+end_src
 
-* Constructor Classes
+** Constructor Classes
 
-** Functors
+*** Functors
 
 #+begin_src haskell
   map :: (a -> b) -> (List a -> List b)
@@ -87,7 +85,8 @@
   data Maybe a = Just a | Nothing
   data Error a = Ok a | Fail String
   data Writer a = Result String a
-  type Read r = (r ->) -- Partially-applied type constructor
+  -- Partially-applied type constructor
+  type Read r = (r ->)
 
   instance Functor Id where
       fmap f (Id x) = Id (f x)
@@ -112,7 +111,7 @@
       fmap f g = f . g
 #+end_src
 
-** Monads
+*** Monads
 
 #+begin_src haskell
   class Functor m => Monad m where
@@ -164,7 +163,7 @@
      x >>= f  = \r -> f (x r) r
 #+end_src
 
-** Monad Families
+*** Monad Families
 
 #+begin_src haskell
   -- State Monads
@@ -208,7 +207,7 @@
                     else fail "count must be positive"
 #+end_src
 
-* Monad Transformers
+** Monad Transformers
 
 #+begin_src haskell
   class MonadT t where
