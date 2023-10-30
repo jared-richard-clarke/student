@@ -94,7 +94,7 @@
     (zip-with cons xs ys)))
 
 ;; (zip-with function <promise> <promise>) -> (list any)
-;; Combines two promises to build lists pairwise, applying an arbritrary function
+;; Combines two promises to build lists pairwise, applying an arbitrary function
 ;; to each element pair. Returns when shortest list is exhausted.
 ;; (zip-with + (repeat 3 3) (repeat 4 100)) -> '(7 7 7)
 (define zip-with
