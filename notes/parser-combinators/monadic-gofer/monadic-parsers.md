@@ -28,6 +28,14 @@ result :: m a
 bind   :: m a -> (a -> m a) -> m a
 zero   :: m a
 (++)   :: m a -> m a -> m a
+
+{-
+  A type constructor "m" is a member of the class "Monad" if it is equipped with
+  "result" and "bind" operations of the specified types.
+-}
+class Monad m where
+  result :: a -> m a
+  bind :: m a -> (a -> m b) -> m b
 ```
 
 ## Parsers
