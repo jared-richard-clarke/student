@@ -6,12 +6,13 @@
 
 * Typical Compiler Toolchain
 
-1.  Preprocessor (~cpp~): sources (~program.c~), headers (~<stdio.h>~) -> preprocessed source
-2.  Compiler (~cc1~): preprocessed source -> assembly (~program.s~)
-3.  Assembler (~as~): assembly (~program.s~) -> object code (~program.o~)
-4.  Static Linker (~ld~): object code (~program.o~), libraries (~libc.a~) -> executable (program)
-5.  Dynamic Linker (~ld.so~): executable (program), dynamic libraries (~libc.so~) ->
-    running process
+| tool                     | input                                               | output                    |
+|--------------------------+-----------------------------------------------------+---------------------------|
+| Preprocessor (~cpp~)     | sources (~program.c~), headers (~<stdio.h>~)        | preprocessed source       |
+| Compiler (~cc1~)         | preprocessed source                                 | assembly (~program.s~)    |
+| Assembler (~as~)         | assembly (~program.s~)                              | object code (~program.o~) |
+| Static Linker (~ld~)     | object code (~program.o~), libraries (~libc.a~)     | executable (program)      |
+| Dynamic Linker (~ld.so~) | executable (program), dynamic libraries (~libc.so~) | running process           |
 
 In Unix-like operating systems, the user-visible program ~cc~ invokes each element
 of the compiler toolchain to produce the final executable.
@@ -101,4 +102,3 @@ MOVQ  -8(%rbp), %rbx  # load sum into rbx
 IMULQ %rbx            # multiply rbx by rax
 MOVQ  %rax, height    # store result into height
 #+end_example
-
