@@ -13,7 +13,7 @@ arguments. The `Monad` instance declaration for `result` is therefore invalid.
 > "In the first versions of Haskell, the comprehension syntax was available 
 >  for all monads. Later the comprehension syntax was restricted to lists."
 >  
->  — [Haskell Wiki](https://wiki.haskell.org/List_comprehension)
+>  — Haskell Wiki
 
 ## About
 
