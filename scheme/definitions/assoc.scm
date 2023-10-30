@@ -1,10 +1,10 @@
 (define (find compare)
   (lambda (x xs)
-    (let loop ([x x] [xs xs])
+    (let loop ([xs xs])
       (cond
         [(null? xs) #f]
         [(compare (caar xs) x) (car xs)]
-        [else (loop x (cdr xs))]))))
+        [else (loop (cdr xs))]))))
 
 ;; (assoc any list) -> pair or boolean
 ;; Either finds first element of an associative list whose car equals obj or returns false.
