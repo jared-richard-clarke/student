@@ -4,30 +4,30 @@
 chapter 6.2, page 24
 
 ```haskell
-data Expr = App Expr Expr        -- application
-          | Lam String Expr      -- lambda abstraction
-          | Let String Expr Expr -- local definition
-          | Var String           -- variable
+data Expression = Apply Expression Expression      -- application
+                | Lambda String Expression         -- lambda abstraction
+                | Let String Expression Expression -- local definition
+                | Variable String                  -- variable
 
-expr = atom `chainl1` [App]      -- (f x y z) - parsed as -> (((f x) y) z)
+expression = atom `chainl1` [Apply]      -- (f x y z) - parsed as -> (((f x) y) z)
 
-atom = lam +++ local +++ var +++ paren
+atom = lambda +++ local +++ name +++ parentheses
 
-lam = [Lam x e | _ <- symbol "\\"
-               , x <- variable
-               , _ <- symbol "->"
-               , e <- expr]
-               
+lambda = [Lambda x e | _ <- symbol "\\"
+                     , x <- name
+                     , _ <- symbol "->"
+                     , e <- expression]
+                
 local = [Let x e e' | _  <- symbol "let"
-                    , x  <- variable
+                    , x  <- name
                     , _  <- symbol "="
-                    , e  <- expr
+                    , e  <- expression
                     , _  <- symbol "in"
-                    , e' <- expr]
+                    , e' <- expression]
                     
-var = [Var x | x <- variable]
+variable = [Variable x | x <- name]
 
-paren = bracket (symbol "(") expr (symbol ")")
+parentheses = bracket (symbol "(") expression (symbol ")")
 
-variable = identifier ["let","in"]
+name = identifier ["let","in"]
 ```
