@@ -1,13 +1,13 @@
-#+title: Scanning
-#+author: Douglas Thain
-#+date: 2023-10-01
+* Scanning
 
-* Regular Expressions
+*Introduction to Compilers and Language Design* by Douglas Thain
+
+** Regular Expressions
 
 *s* = string
 *L(s)* = language of *s*, a set of strings drawn from alphabet *Σ*.
 
-** Definition
+*** Definition
 
 - If *a ∈ Σ* then *a* is a regular expression and *L(a) = {a}*.
 
@@ -27,7 +27,7 @@ is known as *concatenation*. Rule #1 has the lowest precedence and is known as
 *alternation*. Parentheses can be added to adjust the order of operations in
 the usual way.
 
-** Examples
+*** Examples
 
 | Regular Expression  | Language L(s)               |
 |---------------------+-----------------------------|
@@ -37,7 +37,7 @@ the usual way.
 | (moo)*              | { ε, moo, moomoo, ... }     |
 | a(b\vert{}a)*a      | { aa, aaa, aba, aaaa, ... } |
 
-** Optional Syntax
+*** Optional Syntax
 
 | syntax | definition  | alternate                     |
 |--------+-------------+-------------------------------|
@@ -46,7 +46,7 @@ the usual way.
 | [a-z]  | one of      | (a\vert{}b\vert{}...\vert{}z) |
 | [^x]   | any except  | Σ - x                         |
 
-** Algebraic Properties
+*** Algebraic Properties
 
 | property      | value                                     |
 |---------------+-------------------------------------------|
@@ -55,7 +55,7 @@ the usual way.
 | Distribution  | a(b\vert{}c) = ab\vert{}ac                |
 | Idempotency   | a** = a*                                  |
 
-* Finite Automata
+** Finite Automata
 
 A *Finite Automaton* is an abstract machine consisting of a number of states
 and a number of edges between those states. Each edge is labeled with one or
@@ -75,15 +75,15 @@ consumed or an error state is reached.
 
 Every *RE* can be written as an *FA* and vice versa.
 
-** Deterministic Finite Automata
+*** Deterministic Finite Automata
 
-*** *FA*: "for"
+**** *FA*: "for"
 
 #+begin_example
 ->⓪-f->①-o->②-r->(③)
 #+end_example
 
-*** *RE* to *FA*: identifier
+**** *RE* to *FA*: identifier
 
 #+begin_example
 RE: [a-z][a-z0-9]+
@@ -92,7 +92,7 @@ RE: [a-z][a-z0-9]+
 FA: ->⓪-[a-z]->①-[a-z][0-9]->(②)
 #+end_example
 
-*** *FA*: number
+**** *FA*: number
 
 #+begin_example
 RE: ([1-9][0-9]*)|0
@@ -106,7 +106,7 @@ FA:   --⓪
          (③)
 #+end_example
 
-** Nondeterministic Finite Automata
+*** Nondeterministic Finite Automata
 
 An *NFA* presents a variety of ambiguous choices. There are two common ways to interpret ambiguity.
 
@@ -114,7 +114,7 @@ An *NFA* presents a variety of ambiguous choices. There are two common ways to i
    means external to itself. Impossible in a real implementation.
 2. *Many Worlds Interpretation*: the *NFA* exists in all allowable states simultaneously.
 
-*** Ambiguity
+**** Ambiguity
 
 State 0 allows for two different transitions on symbol *i*. There is no simple rule
 by which we can pick one path over another. One is to stay in state 0 matching *[a-z]*
@@ -129,7 +129,7 @@ RE: [a-z]*ing
 FA: -⓪-i-①-n-②-g-(③)
 #+end_example
 
-*** Many Worlds Interpretation
+**** Many Worlds Interpretation
 
 Consume string *aaac*.
 
