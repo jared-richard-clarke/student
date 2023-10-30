@@ -31,7 +31,7 @@
 
 ;; (take-while function (list any)) -> (list any)
 ;; Returns the longest possible prefix list of list "xs"
-;; that satisfy predicate "test".
+;; that satisfies predicate "test".
 ;; (take-while odd? '(1 3 5 2 4)) -> '(1 3 5)
 
 (define take-while
