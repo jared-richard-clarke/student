@@ -12,6 +12,8 @@
 
 ;; (range start) | (range start stop) | (range start stop step) -> <promise>
 ;;     where start, stop, step = number
+;;     and start < stop
+;;     and step > 0
 ;; Returns a promise to build a list enumerating a selected range of numbers.
 ;; "range", lazily-evaluated, avoids generating an intermediate list.
 ;; Conceptually, "range" could denote an infinite list.
@@ -22,7 +24,7 @@
     [(start stop)
      (range start stop 1)]
     [(start stop step)
-     (if (or (> start stop) (<= step 0))
+     (if (or (>= start stop) (<= step 0))
          '()
          (let next ([x start])
            (if (> x stop)
