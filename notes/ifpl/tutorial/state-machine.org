@@ -1,0 +1,131 @@
+* State Transition System (Finite Automata)
+
+Original source code authored by Simon L. Peyton Jones and David R. Lester.
+
+A /state transition system/ is a notation for describing the behavior of a sequential
+machine. At any time, the machine is in some /state/, beginning with a specified
+/initial state/. If the machine's state matches one of the state transition rules, the
+rule fires and specifies a new state for the machine. When no state transition rule
+matches, execution halts.
+
+If more than one rule matches, the machine is /non-deterministic/.
+
+** Transition Rules for Graph Reduction
+
+The state of the template instantiation graph reduction machine is a quadruple:
+~(stack, dump, heap, globals)~ or ~(s, d, h, f)~.
+
+*** Stack
+
+The stack is a stack of addresses. Each identifies a node in the heap. These nodes form
+the spine of the expression being evaluated. The notation ~a1 : s~ denotes a stack.
+
+*** Dump
+
+The dump records the state of the spine stack prior to the evaluation of an argument of
+a strict primitive.
+
+*** Heap
+
+The heap is a collection of tagged nodes. ~h[a : node]~ denotes the address ~a~ in heap
+~h~ refers to node ~node~.
+
+*** Globals
+
+Heap node addresses for supercombinators and primitives.
+
+** Graph Reducer
+
+#+begin_src haskell
+  Module Template where
+  import Language
+  import Utils
+  
+  runProgram = showResults . eval . compile . parse
+
+  type TiState = (TiStack, TiDump, TiHeap, TiGlobals, TiStats)
+
+  -- Spine Stack of Heap Addresses
+  type TiStack = [Addr]
+
+  data TiDump = DummyTiDump
+  initialTiDump = DummyTiDump
+
+  type TiHeap = Heap Node
+
+  data Node = NAp Addr Addr                   -- Application
+            | NSupercomb Name [Name] CoreExpr -- Supercombinator
+            | NNum Int                        -- Number
+
+  type TiGlobals = ASSOC Name Addr
+
+  -- === Statistics ===
+  
+  tiStatInitial :: TiStats
+  tiStatInitial = 0
+
+  tiStatIncSteps :: TiStats -> TiStats
+  tiStatIncSteps s = s + 1
+
+  tiStatGetSteps :: TiStats -> Int
+  tiStatGetSteps s = s
+
+  applyToStats :: (TiStats -> TiStats) -> TiState -> TiState
+  applyToStats stats_fun (stack, dump, heap, sc_defs, stats)
+    = (stack, dump, heap, sc_defs, stats_fun stats)
+
+  -- === Compiler ===
+
+  compile program
+    = (initial_stack, initialTiDump, initial_heap, globals, tiStatInitial)
+      where
+      sc_defs = program ++ preludeDefs ++ extraPreludeDefs
+  
+      (initial_heap, globals) = buildInitialHeap sc_defs
+
+      initial_stack = [address_of_main]
+      address_of_main = aLookup globals "main" (error "main is not defined")
+
+  extraPreludeDefs = []
+
+  buildInitialHeap :: [CoreScDefn] -> (TiHeap, TiGlobals)
+  buildInitialHeap sc_defs = mapAccuml allocateSc hInitial sc_defs
+
+  allocateSc :: TiHeap -> CoreScDefn -> (TiHeap, (Name, Addr))
+  allocateSc heap (name, args, body)
+    = (heap', addr) = hAlloc heap (NSupercomb name args body)
+
+  -- === Evaluator ===
+
+  eval state = state : rest_states
+               where
+               rest_states | tiFinal state = []
+                           | otherwise = eval next_state
+               next_state = doAdmin (step state)
+
+  doAdmin :: TiState -> TiState
+  doAdmin state = ApplyToStats tiStatIncSteps state
+
+  tiFinal ([sole_addr], dump, heap, globals, stats)
+    = isDataNode (hLookup heap sole_addr)
+
+  tiFinal ([], dump, heap, globals, stats) = error "Empty stack!"
+  tiFinal state = False
+
+  isDataNode :: Node -> Bool
+  isDataNode (NNum n) = True
+  isDataNode node     = False
+
+  -- Function "step" maps one state into its successor. Performs case analysis on the node
+  -- on top of the spine stack, using "dispatch" to call the appropriate function for each
+  -- node form.
+  step :: TiState -> TiState
+  step state
+    = dispatch (hLookup heap (hd stack))
+      where
+      (stack, dump, heap, globals, stats) = state
+  
+      dispatch (NNum n)                  = numStep state n
+      dispatch (NAp a1 a2)               = apStep state a1 a2
+      dispatch (NSupercomb sc args body) = scStep state sc args body
+#+end_src
