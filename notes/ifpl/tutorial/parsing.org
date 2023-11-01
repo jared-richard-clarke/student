@@ -1,4 +1,4 @@
-* Implementing Functional Programming Languages: Tutorial
+* Core Language, Pretty Printing, Parsing
 
 Original source code authored by Simon L. Peyton Jones and David R. Lester.
 
@@ -196,7 +196,7 @@ preludeDefs
     = '\n' : (space indent) ++ (flatten indent seqs)
 #+end_src
 
-** Parser
+** Lexer and Parser
 
 #+begin_src haskell
   parse :: String -> CoreProgram
@@ -306,162 +306,96 @@ preludeDefs
   pApply p f tokens [(f v, tokens') | (v, tokens') <- p tokens]
   
   syntax :: [Token] -> CoreProgram
+  syntax = take_first_parse . pProgram
+         where
+         take_first_parse ((prog, []) : others) = prog
+         take_first_parse (parse      : others) = take_first_parse others
+         take_first_parse other                 = error "Syntax error"
+
+  pProgram :: Parser CoreProgram
+  pProgram = pOneOrMoreWithSep pSc (pLit ";")
+
+  pSc :: Parser CoreScDefn
+  pSc = pThen4 mk_sc pVar (pZeroOrMore pVar) (pLit "=") pExpr
+
+  mk_sc sc args eq rhs = (sc, args, rhs)
+
+  pExpr = pLet `pAlt` (pCase `pAlt` (pLambda `pAlt` pExpr1))
+
+  pLet = pThen4 mk_let
+                ((pLit "let") `pAlt` (pLit "letrec")) pDefns
+                (pLit "in") pExpr
+         where
+         mk_let keyword defns in' expr = Elet (keyword == "letrec") defns expr
+
+  pDefns = pOneOrMoreWithSep pDefn (pLit ";")
+  pDefn = pThen3 mk_defn pVar (pLit "=") pExpr
+          where
+          mkdefn var equals rhs = (var, rhs)
+
+  pCase = pThen4 mk_case (pLit "case") pExpr (pLit "of") pAlters
+          where
+          mk_case case' e of' alts = ECase e alts
+
+  pAlters = pOneOrMoreWithSep pAlter (pLit ";")
+  pAlter = pThen4 mk_alt pTag (pZeroOrMore pVar) (pLit "->") pExpr
+           where
+           mk_alt tag args arrow rhs = (tag, args, rhs)
+
+  pTag = pThen3 get_tag (pLit "<") pNum (pLit ">")
+         where
+         get_tag lb tag rb = tag
+
+  pLambda = pThen4 mk_lam
+                (pLit "\\") (pOneOrMore pVar) (pLit ".") pExpr
+            where
+            mk_lam lam vars dot expr = ELam vars expr
+
+  data PartialExpr = NoOp | FoundOp Name CoreExpr
+
+  pExpr1 :: Parser CoreExpr
+  pExpr1 = pThen assembleOp pExpr2 pExpr1c
+  
+  pExpr1c :: Parser PartialExpr
+  pExpr1c = (pThen FoundOp (pLit "|") pExpr1) `pAlt` (pEmpty NoOp)
+
+  assembleOp :: CoreExpr -> PartialExpr -> CoreExpr
+  assembleOp e1 NoOp = e1
+  assembleOp e1 (FoundOp op e2) = EAp (EAp (EVar op) e1) e2
+  
+  pExpr2 = pThen assembleOp pExpr4 pExpr3c
+  pExpr2c = (pThen FoundOp pRelop pExpr4) `pAlt` (pEmpty NoOp)
+
+  pRelop = pSat (`elem` relops)
+           where
+           relops = ["<=", "<", ">=", ">", "==", "~="]
+
+  pExpr4 = pThen assembleOp pExpr5 pExpr4c
+  pExpr4c = (pThen FoundOp (pLit "+") pExpr4) `pAlt`
+            ((pThen FoundOp (pLit "-") pExpr5  `pAlt`
+              pEmpty NoOp))
+
+  pExpr5 = pThen assembleOp pExpr6 pExpr5c
+  pExpr5c = (pThen FoundOp (pLit "*") pExpr5) `pAlt`
+            ((pThen FoundOp (pLit "/") pExpr6) `pAlt`
+             (pEmpty NoOp))
+
+  pExpr6 = (pOneOrMore pAtomic) `pApply` mk_ap_chain
+           where
+           mk_ap_chain (fn:args) = foldl1 EAp fn args
+
+  pAtomic = pConstr `pAlt`
+            (pBracExpr `pAlt`
+            ((pVar `pApply` EVar) `pAlt`
+            ((pNum `pApply` ENum))))
+
+  pBracExpr = pThen3 mk_brack (pLit "(") pExpr (pLit ")")
+              where
+              mk_brack open expr close = expr
+
+  pConstr = pThen4 pick_constr (pLit "Cons") (pLit "{") pTagArity (pLit "}")
+            where
+            pick_constr cons lbrack constr rbrack = constr
+            pTagArity = pThen3 mk_constr pNum (pLit ",") pNum
+            mk_constr tag comma arity = Econstr tag arity
 #+end_src
-
-** Template Instantiation
-
-The simplest form of graph reduction.
-
-*** Evaluation
-
-#+begin_example
-until there are no more redexes
-    select the outermost redex
-    reduce it
-    update the redex with the result
-end
-
-=== example ===
-
-square x = x * x
-main = square (square 3)
-
-=== reduction ===
-
-       @! <- root
-      / \
-square   @
-        / \
-  square   3
-
--- reduces ->
-
-       @
-      / \
-     @   \
-    / \__ @!  
-  *      / \
-   square   3
-
--- reduces ->
-
-       @
-      / \
-     @   \
-    / \__ @
-   *     / \
-        @   \
-       / \__ 3
-      *
-
--- reduces ->
-
-       @
-      / \
-     @   \
-    / \__ 9
-   *
-
--- reduces ->
-
-81
-#+end_example
-
-*** Unwinding the Spine to Find the Next Redex
-
-1. Starting at the root, follow the left branch of application nodes until you
-   get to a supercombinator or built-in primitive. This left-branching chain of
-   application nodes is called the /spine/ of the expression. This process is
-   called /unwinding/ the spine. Usually a /stack/ is used to remember address
-   nodes.
-2. Now check how many arguments the supercombinator or primitive takes and go
-   back up that number of application nodes. You have found the root of the
-   outermost function application.
-
-#+begin_example
-=== expression ===
-
-(f E1 E2 E3) where (f E1 E2)
-
-=== stack ===
-
- ---------
-  | --- | ------> @
-  -------        / \
-  | --- | ----> @!  E3
-  -------      / \
-  | --- | --> @   E2
-  -------    / \
-  | --- | > f   E1
-  -------
-#+end_example
-
-A *dump*, or stack of stacks, is created to track an expression with multiple
-roots.
-
-*** Supercombinator Redexes
-
-A supercombinator redex is reduced by replacing the redex with an instance of
-the supercombinator body. substituting pointers to the actual arguments for
-corresponding occurrences of the formal parameters.
-
-#+begin_example
-=== expression ===
-
-f x = let y = x * x
-      in y + y
-
-=== graph ===
-
-      @
-     / \
-    f   3
-
--- reduces ->
-
-      @
-    /  \
-   @    \
-  / \__ @y
- +      / \
-       @   \
-      / \__ 3
-     *
-#+end_example
-
-*** Updates
-
-With /lazy evaluation/ a redex may not be evaluated at all, but if it is
-evaluated, an update ensures that redex is evaluated only once.
-
-#+begin_example
-=== expression ===
-
-id x = x
-f p = (id p) * p
-main = f (sqrt 4)
-
-=== reduction ==
-
-       @
-      / \
-     @   \
-    / \   \
-    *  @   \
-      / \__ @
-    id     / \
-        sqrt  4
-
--- reduces ->
-
-       @
-      / \
-     @   \
-    / \   \
-   *   #   \
-        \__ @
-           / \
-        sqrt  4
-
-where # = indirection node
-#+end_example
