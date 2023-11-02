@@ -84,6 +84,37 @@ preludeDefs
                                      (EAp (EVar "g") (EVar "x")))
     , ("twice", ["f"], EAp (EAp (EVar "compose") (EVar "f")) (EVar "f"))
     ]
+
+extraPreludeDefs :: CoreProgram
+extraPreludeDefs
+  = [ ("False", [], EConstr 1 0)
+    , ("True",  [], EConstr 2 0)
+    , ("not",   ["x"], EAp (EAp (EAp (EVar "if") (EVar "x"))
+                                 (EVar "False"))
+                            (EVar "True"))
+    , ("and",   ["x", "y"], EAp (EAp (EAp (EVar "if") (EVar "x"))
+                                      (EVar "y"))
+                               (EVar "False"))
+    , ("or",    ["x", "y"], EAp (EAp (EAp (EVar "if") (EVar "x"))
+                                      (EVar "True"))
+                                  (EVar "y"))
+    , ("xor",   ["x", "y"], EAp (EAp (EAp (EVar "if") (EVar "x"))
+                                      (EAp (EVar "not") (EVar "y")))
+                                 (EVar "y"))
+    , ("MkPair", [], EConstr 1 2)
+    , ("fst",    ["p"], EAp (EAp (EVar "casePair") (EVar "p"))
+                              (EVar "K"))
+    , ("snd",    ["p"], EAp (EAp (EVar "casePair") (EVar "p"))
+                            (EVar "K1"))
+    , ("LCons",  [], EConstr 2 2)
+    , ("Nil",    [], EConstr 1 0)
+    , ("head",   ["xs"], EAp (EAp (EAp (EVar "caseList") (EVar "xs"))
+                                    (EVar "abort"))
+                               (EVar "K"))
+    , ("tail",   ["xs"], EAp (EAp (EAp (EVar "caseList") (EVar "xs"))
+                                    (EVar "abort"))
+                               (EVar "K1"))
+    ]
 #+end_src
 
 ** Pretty Printer
@@ -194,6 +225,21 @@ preludeDefs
   
   flatten col ((INewLine, indent) : seqs)
     = '\n' : (space indent) ++ (flatten indent seqs)
+
+  iNum :: Int -> Iseq
+  iNum n = iStr (show n)
+
+  iFWNum :: Int -> Int -> Iseq
+  iFWNum width n
+    = iStr (space (width - length digits) ++ digits)
+      where
+      digits = show n
+
+  iLayn :: [Iseq] -> Iseq
+  iLayn seqs = iConcat (map lay_item (zip [1..] seqs))
+               where
+               lay_item (n, seq)
+                 = iConcat [iFWNum 4 n, iStr ") ", iIndent seq, iNewline]
 #+end_src
 
 ** Lexer and Parser
@@ -262,6 +308,7 @@ preludeDefs
 
   numvalue :: String -> Int
   numvalue = foldl1 (\a c -> 10 * a + ord c - ord '0') 0
+  
   -- choices
   pAlt :: Parser a -> Parser a -> Parser a
   pAlt p1 p2 tokens = (p1 tokens) ++ (p2 tokens)
