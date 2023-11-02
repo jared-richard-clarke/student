@@ -85,6 +85,11 @@ preludeDefs
     , ("twice", ["f"], EAp (EAp (EVar "compose") (EVar "f")) (EVar "f"))
     ]
 
+{-
+  not x   = if x False True
+  or x y  = if x True y
+  xor x y = if x (not y) y
+-}
 extraPreludeDefs :: CoreProgram
 extraPreludeDefs
   = [ ("False", [], EConstr 1 0)
