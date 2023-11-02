@@ -33,7 +33,7 @@ zero   :: m a
 -- "result" and "bind" operations of the specified types.
 class Monad m where
   result :: a -> m a
-  bind :: m a -> (a -> m b) -> m b
+  bind   :: m a -> (a -> m b) -> m b
 ```
 
 ## Parsers
