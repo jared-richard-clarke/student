@@ -20,7 +20,7 @@ The state of the template instantiation graph reduction machine is a quadruple:
 *** Stack
 
 The stack is a stack of addresses. Each identifies a node in the heap. These nodes form
-the spine of the expression being evaluated. The notation ~a1 : s~ denotes a stack.
+the spine of the expression being evaluated. The notation ~a1:s~ denotes a stack.
 
 *** Dump
 
@@ -29,7 +29,7 @@ a strict primitive.
 
 *** Heap
 
-The heap is a collection of tagged nodes. ~h[a : node]~ denotes the address ~a~ in heap
+The heap is a collection of tagged nodes. ~h[a:node]~ denotes the address ~a~ in heap
 ~h~ refers to node ~node~.
 
 *** Globals
