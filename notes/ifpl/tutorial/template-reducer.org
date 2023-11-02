@@ -364,7 +364,8 @@ Heap node addresses for supercombinators and primitives.
           where
           (heap1, addr) = instantiate rhs heap rhs_env
 
-  instantiate (ECase e alts) heap env = error "Can't instantiate case exprs"
+  instantiateAndUpdate (ECase e alts) upd_addr heap env
+    = error "Can't instantiate case exprs"
   
   instantiateAndUpdate (EConstr tag arity) upd_addr h b
     = instantiateAndUpdateConstr tag arity upd_addr h b
