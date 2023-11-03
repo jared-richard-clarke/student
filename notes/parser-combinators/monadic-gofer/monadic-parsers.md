@@ -74,9 +74,7 @@ instance MonadOPlus Parser where
 -- deterministic parser
 
 {-
-  Under lazy evaluation, the implementation below would retain
-  list `xs` in memory.
-
+  Under lazy evaluation, the implementation below might retain list `xs` in memory.
   first p = \inp -> case p inp of
                       []     -> []
                       (x:xs) -> x : take 0 xs
