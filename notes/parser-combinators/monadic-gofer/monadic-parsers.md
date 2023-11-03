@@ -299,6 +299,7 @@ instance StateMonad (State s) s where
 
 type StateM m s a = s -> m (a, s)
 
+-- Overload monad operations from base monad `m`.
 instance Monad m => Monad (StateM m s) where
   -- result :: a -> StateM m s a
   result v = \s -> result (v, s)
