@@ -73,12 +73,22 @@ instance MonadOPlus Parser where
 
 -- deterministic parser
 
+{-
+  Under lazy evaluation, the implementation below would retain
+  list `xs` in memory.
+
+  first p = \inp -> case p inp of
+                      []     -> []
+                      (x:xs) -> x : take 0 xs
+-}
+
 first :: Parser a -> Parser a
 first p = \inp -> case p inp of
                     [] -> []
                     (x:xs) -> [x]
 
--- Non-strict, normal-order reduction evaluates only as far as `first` pattern matches on `p ++ q`.
+-- Non-strict, normal-order reduction evaluates only as far as `first`
+-- pattern matches on `p ++ q`.
 (+++) :: Parser a -> Parser a -> Parser a
 p +++ q = first (p ++ q)
 
