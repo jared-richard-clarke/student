@@ -182,10 +182,10 @@ upper :: Parser Char
 upper = sat (\x -> 'A' <= x && x <= 'Z')
 
 letter :: Parser Char
-letter = lower ++ upper
+letter = lower +++ upper
 
 alphanum :: Parser Char
-alphanum = letter ++ digit
+alphanum = letter +++ digit
 
 string :: String -> Parser String
 string ""     = [""]
@@ -211,7 +211,7 @@ nat = [eval xs | xs <- many1 digit]
 int :: Parser Int
 int = [f n | f <- op, n <- nat]
       where
-        op = [negate | _ <- char '-'] ++ [id]
+        op = [negate | _ <- char '-'] +++ [id]
 
 bracket :: Parser a -> Parser b -> Parser c -> Parser b
 bracket open p close = [x | _ <- open, x <- p, _ <- close]
