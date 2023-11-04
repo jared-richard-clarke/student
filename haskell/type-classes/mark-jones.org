@@ -1,0 +1,230 @@
+* Type Classes
+
+*Functional Programming with Overloading and Higher-Order Polymorphism* by Mark P. Jones
+
+** Types of Types
+
+#+begin_src haskell
+  -- monomorphic types
+  not :: Bool -> Bool             -- Boolean negation
+  ord :: Char -> Int              -- Character to ASCII code
+
+  -- polymorphic types
+  (++)   :: [a] -> [a] -> [a]     -- List append
+  length :: [a] -> Int            -- List length
+
+  -- restricted polymorphic types
+  (==) :: Eq a => a -> a -> Bool  -- Test for equality
+  min  :: Ord a => a -> a -> a    -- Find minimum
+  show :: Text a => a -> String   -- Convert to string
+  (+)  :: Num a => a -> a -> a    -- Addition
+#+end_src
+
+** Derived Instances
+
+#+begin_src haskell
+  data Either a b = Left a | Right b deriving (Eq, Ord)
+
+  -- derives ->
+
+  instance (Eq a, Eq b)   => Eq (Either a b)
+  instance (Ord a, Ord b) => Ord (Either a b)
+#+end_src
+
+** Implementing Semantics for Overloaded Operators
+
+#+begin_src haskell
+  class Eq a where
+      (==), (/=) :: a -> a -> Bool
+      x /= y      = not (x == y)
+
+  instance Eq a => Eq (Set a) where
+      Set xs == ys = subset xs ys && subset ys xs
+#+end_src
+
+*** Implementing Lambda Abstractions with Type Classes
+
+#+begin_src haskell
+  type Name = String
+  data Term = Variable Name
+            | Apply Term Term
+            | Lambda Name Term
+
+  -- Implementing Tree as a class allows other types
+  -- of trees to be implemented with the same operations.
+  
+  class Tree t where
+      subtrees :: t -> [t]
+
+  instance Tree Term where
+      subtrees (Variable _) = []
+      subtrees (Apply f x)  = [f, x]
+      subtrees (Lambda v b) = [b]
+
+  depth :: Tree t => t -> Int
+  depth  = (1+) . foldl max 0 . map depth . subtrees
+
+  size :: Tree t => t -> Int
+  size  = (1+) . sum . map size. subtrees
+#+end_src
+
+** Constructor Classes
+
+*** Functors
+
+#+begin_src haskell
+  map :: (a -> b) -> (List a -> List b)
+  map f [] = []
+  map f (x:xs) = f x : map f xs
+
+  class Functor f where
+      fmap :: (a -> b) -> (f a -> f b)
+
+  data Id a = Id a
+  type List = []
+  data Maybe a = Just a | Nothing
+  data Error a = Ok a | Fail String
+  data Writer a = Result String a
+  -- Partially-applied type constructor
+  type Read r = (r ->)
+
+  instance Functor Id where
+      fmap f (Id x) = Id (f x)
+
+  instance Functor List where
+      fmap f [] = []
+      fmap f (x:xs) = f x : fmap f xs
+
+  instance Functor Maybe where
+      fmap f (Just x) = Just (f x)
+      fmap f Nothing  = Nothing
+
+  instance Functor Error where
+      fmap f (Ok x)   = Ok (f x)
+      fmap f (Fail s) = Fail s
+
+  instance Functor Writer where
+      fmap f (Result s x) = Result s (f x)
+
+  -- Reader Functor
+  instance Functor (r->) where
+      fmap f g = f . g
+#+end_src
+
+*** Monads
+
+#+begin_src haskell
+  class Functor m => Monad m where
+      return :: a -> m a
+      (>>=)  :: m a -> (a -> m b) -> m b
+
+  data State s a = State (s -> (a, s))
+
+  instance Functor (State s) where
+      fmap f (State st) = State (\s -> let (x, s') = st s in (f x, s'))
+
+  instance Monad (State s) where
+      return x = State (\s -> (x, s'))
+      m >>= f  = State (\s -> let State m' = m
+                                  (x, s1)  = m' s
+                                  State f' = f x
+                                  (y, s2)  = f' s1
+                               in (y, s2))
+
+  instance Monad Id where
+      return     = Id
+      Id x >>= f = f x
+
+  instance Monad List where
+      return x     = [x]
+      [] >>= f     = []
+      (x:xs) >>= f = f x ++ (xs >>= f)
+
+  instance Monad Maybe where
+      return x      = Just x
+      Just x >>= f  = f x
+      Nothing >>= f = Nothing
+
+  instance Monad Error where
+      return         = Ok
+      Ok x >>= f     = f x
+      Fail msg >>= f = Fail msg
+
+  instance Monad Writer where
+      return x         = Result "" x
+      Result s x >>= f = Result (s ++ s') y
+                         where Result s' y = f x
+
+  -- Reader Monad: Allows computation to access values held in some
+  -- enclosing environment (r).
+  -- These two functions are the standard K and S combinators.
+  instance Monad (r->) where
+     return x = \r -> x
+     x >>= f  = \r -> f (x r) r
+#+end_src
+
+*** Monad Families
+
+#+begin_src haskell
+  -- State Monads
+  class Monad m => StateMonad m s where
+      update :: (s -> s) -> m s
+
+  instance StateMonad (State s) s where
+      update f = State (\s -> (s, f s))
+
+  increment :: StateMonad m Int => m Int
+  increment = update (1+)
+
+  -- Error Monads
+  class Monad m => ErrorMonad m where
+      fail :: String -> m a
+
+  instance ErrorMonad Error where
+      fail = Fail
+
+  -- Writer Monads
+  class Monad m => WriterMonad m where
+      write :: String -> m ()
+
+  instance WriterMonad Writer where
+      write msg = Result msg ()
+
+  -- Reader Monads
+  class Monad m => ReaderMonad m r where
+      env    :: r -> m a -> m a
+      getenv :: m r
+
+  instance ReaderMonad (r->) r where
+      env e c = \_ -> c e
+      getenv  = id
+
+  -- === Composing Monads ===
+  
+  -- (WriterMonad m, ErrorMonad m, StateMonad m Int) => Int -> m ()
+  next m = update (m+) >>= \n ->
+           if n > 0 then write ("count = " ++ show n)
+                    else fail "count must be positive"
+#+end_src
+
+** Monad Transformers
+
+#+begin_src haskell
+  class MonadT t where
+      lift :: Monad m => m a -> t m a
+
+  -- State Transformer
+  data StateT s m a = StateT (s -> m (a, s))
+
+  instance Monad m => Functor (StateT s m) where
+      fmap f (StateT xs) = StateT (\s -> xs s >>= \(x, s') -> return (f x, s'))
+
+  instance Monad m => Monad (StateT s m) where
+      return x = StateT (\s -> return (x, s))
+      StateT xs >>= f = StateT (\s -> xs s >>= (\(x, s') ->
+                                                 let StateT f' = f x
+                                                 in f' s'))
+
+  instance MonadT (StateT s) where
+      lift c = StateT (\s -> c >>= \x -> return (x, s))
+#+end_src
