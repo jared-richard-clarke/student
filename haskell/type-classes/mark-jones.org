@@ -65,7 +65,7 @@
   depth  = (1+) . foldl max 0 . map depth . subtrees
 
   size :: Tree t => t -> Int
-  size  = (1+) . sum . map size. subtrees
+  size  = (1+) . sum . map size . subtrees
 #+end_src
 
 ** Constructor Classes
