@@ -304,7 +304,7 @@ instance StateMonad (State s) s where
 type StateM m s a = s -> m (a, s)
 
 -- Make `StateM` a monadic instance.
--- Inherit/overload monad operations for base monad `m`.
+-- Inherit/overload monad operations from base monad `m`.
 instance Monad m => Monad (StateM m s) where
   -- result :: a -> StateM m s a
   result v = \s -> result (v, s)
