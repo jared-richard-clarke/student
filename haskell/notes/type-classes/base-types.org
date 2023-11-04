@@ -1,6 +1,6 @@
-# Summary of Base Type Classes
+* Summary of Base Type Classes
 
-```
+#+begin_example
  ----      ------      ------
 | Eq |    | Show |    | Read |
  ----      ------      ------
@@ -28,4 +28,4 @@
   -------        -------------
  | Monad |      | Traversable |
   -------        -------------
-```
+#+end_example
