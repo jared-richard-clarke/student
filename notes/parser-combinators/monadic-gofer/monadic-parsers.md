@@ -280,11 +280,7 @@ instance Monad (State s) where
   result v = \s -> (v, s)
   -- bind :: State s a -> (a -> State s b) -> State s b
   st `bind` f = \s -> let (v, s') = st s in f v s'
-```
 
-### Parameterized State-Transformer Monad
-
-```haskell
 class Monad m => StateMonad m s where
   update :: (s -> s) -> m s
   set :: s -> m s
@@ -297,7 +293,11 @@ class Monad m => StateMonad m s where
 instance StateMonad (State s) s where
   -- update :: (s -> s) -> State s s
   update f = \s -> (s, f s)
+```
 
+### Parameterized State-Transformer Monad
+
+```haskell
 -- Parameterized state-transformer monad
 -- type Parser a = String -> [(a, String)]
 type StateM m s a = s -> m (a, s)
