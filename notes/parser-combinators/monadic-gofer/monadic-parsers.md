@@ -298,7 +298,8 @@ instance StateMonad (State s) s where
   -- update :: (s -> s) -> State s s
   update f = \s -> (s, f s)
 
--- State Transformer Monad
+-- Parameterized state-transformer monad
+-- type Parser a = String -> [(a, String)]
 type StateM m s a = s -> m (a, s)
 
 -- Make `StateM` a monadic instance.
