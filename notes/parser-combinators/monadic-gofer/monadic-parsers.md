@@ -293,6 +293,7 @@ class Monad m => StateMonad m s where
   set s = update (\_ -> s)
   fetch = update id
 
+-- Make `(State s)` a `StateMonad`.
 instance StateMonad (State s) s where
   -- update :: (s -> s) -> State s s
   update f = \s -> (s, f s)
@@ -300,6 +301,7 @@ instance StateMonad (State s) s where
 -- State Transformer Monad
 type StateM m s a = s -> m (a, s)
 
+-- Make `StateM` a monadic instance.
 -- Inherit/overload monad operations for base monad `m`.
 instance Monad m => Monad (StateM m s) where
   -- result :: a -> StateM m s a
