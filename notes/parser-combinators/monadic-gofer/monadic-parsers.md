@@ -293,7 +293,7 @@ class Monad m => StateMonad m s where
   set s = update (\_ -> s)
   fetch = update id
 
--- Make `(State s)` a `StateMonad`.
+-- Make `(State s)` a `StateMonad` instance.
 instance StateMonad (State s) s where
   -- update :: (s -> s) -> State s s
   update f = \s -> (s, f s)
