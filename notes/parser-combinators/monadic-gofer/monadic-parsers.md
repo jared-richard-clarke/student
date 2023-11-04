@@ -275,6 +275,7 @@ type Parser a = String -> [(a, String)]
 ```haskell
 type State s a = s -> (a, s)
 
+-- Make `(State s)` a monadic instance.
 instance Monad (State s) where
   -- result :: a -> State s a
   result v = \s -> (v, s)
