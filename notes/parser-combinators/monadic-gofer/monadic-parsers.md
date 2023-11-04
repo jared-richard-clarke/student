@@ -297,6 +297,7 @@ instance StateMonad (State s) s where
   -- update :: (s -> s) -> State s s
   update f = \s -> (s, f s)
 
+-- State Transformer Monad
 type StateM m s a = s -> m (a, s)
 
 -- Inherit/overload monad operations for base monad `m`.
