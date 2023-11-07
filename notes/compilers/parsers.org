@@ -18,7 +18,7 @@ two completely separate sets.
 
 - A finite set *N* of non-terminal symbols.
   
-- A finite set *Σ* of terminal synbols that is disjoint from *N*.
+- A finite set *Σ* of terminal symbols that is disjoint from *N*.
   
 - A finite set of *P* of production rules, each rule of the form *(Σ ∪ N)\star{}N(Σ ∪ N)\star{} → (Σ ∪ N)\star{}*
   where *\star{}* is the Kleene star operator and *∪* denotes set union.
