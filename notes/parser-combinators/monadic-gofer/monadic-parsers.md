@@ -54,8 +54,8 @@ item = \inp -> case inp of
   For "bind", the parser "p" is applied to the input string, yielding 
   a list of (value, string) pairs. Since "f" is a function that takes
   a value and evaluates to a parser, it can be applied to each value
-  (and unconsumed input string) in turn. This results in a list of lists 
-  of (value, string) pairs, that can then be flattened to a single list 
+  and unconsumed input string in turn. This results in a list of lists 
+  of (value, string) pairs that can then be flattened to a single list 
   using "concat".
 -}
 
