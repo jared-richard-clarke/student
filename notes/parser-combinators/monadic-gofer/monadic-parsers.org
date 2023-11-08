@@ -1,29 +1,31 @@
-# Combinator Parsers in Gofer
+* Combinator Parsers in Gofer
 
-**Monadic Parser Combinators** by Graham Hutton and Erik Meijer
+*Monadic Parser Combinators* by Graham Hutton and Erik Meijer
 
-The code below is Gofer (Good For Equational Reasoning), a now deprecated
-implementation of the Haskell programming language. Its syntax is closer
-to Miranda. Gofer was eventually replaced by Hugs, which would eventually 
+The code below is *Gofer* (Good For Equational Reasoning), a now deprecated
+implementation of the *Haskell* programming language. Its syntax is closer
+to *Miranda*. Gofer was eventually replaced by *Hugs*, which would eventually 
 be deprecated as well.
   
-**Side Note:** In true Gofer code, type synonyms must be supplied all their
-arguments. The `Monad` instance declaration for `Parser` is therefore invalid.
+*Side Note:* In true Gofer code, type synonyms must be supplied all their
+arguments. The ~Monad~ instance declaration for ~Parser~ is therefore invalid.
 
-> "In the first versions of Haskell, the comprehension syntax was available 
->  for all monads. Later the comprehension syntax was restricted to lists."
->  
->  — Haskell Wiki
+#+begin_quote
+"In the first versions of Haskell, the comprehension syntax was available 
+for all monads. Later the comprehension syntax was restricted to lists."
 
-## About
+— Haskell Wiki
+#+end_quote
+
+** About
 
 The basic idea behind monads is to distinguish the values that a computation can 
-produce from the computation itself. We can think of `m a` as the type of computations 
-that yield results of type `a`, with the nature of the computation captured by the type 
-constructor `m`. The combinators `result` and `bind` (with potentially `zero` and `(++)`)
+produce from the computation itself. We can think of ~m a~ as the type of computations 
+that yield results of type ~a~, with the nature of the computation captured by the type 
+constructor ~m~. The combinators ~result~ and ~bind~ (with potentially ~zero~ and ~(++)~)
 provide a means to structure the building of such computations.
 
-```haskell
+#+begin_src haskell
 result :: m a
 bind   :: m a -> (a -> m a) -> m a
 zero   :: m a
@@ -40,11 +42,11 @@ class Monad m where
 class Monad m => MonadOPlus m where
   zero :: m a
   (++) :: m a -> m a -> m a
-```
+#+end_src
 
-## Parsers
+** Parsers
 
-```haskell
+#+begin_src haskell
 -- Parser is a function that inputs a string and outputs a list 
 -- of zero or more (value, string) pairs.
 type Parser a = String -> [(a, String)]
@@ -80,7 +82,7 @@ instance MonadOPlus Parser where
 -- deterministic parser
 
 {-
-  Under lazy evaluation, the implementation below might retain list `xs` in memory.
+  Under lazy evaluation, the implementation below might retain list "xs" in memory.
   first p = \inp -> case p inp of
                       []     -> []
                       (x:xs) -> x : take 0 xs
@@ -91,8 +93,8 @@ first p = \inp -> case p inp of
                     [] -> []
                     (x:xs) -> [x]
 
--- Non-strict, normal-order reduction evaluates only as far as `first`
--- pattern matches on `p ++ q`.
+-- Non-strict, normal-order reduction evaluates only as far as "first"
+-- pattern matches on "p ++ q".
 (+++) :: Parser a -> Parser a -> Parser a
 p +++ q = first (p ++ q)
 
@@ -109,11 +111,11 @@ sat p = [x | x <- item, p x]
 -}
 
 {-
-  force: ensures `many` has the expected behavior under lazy evaluation.
+  force: ensures "many" has the expected behavior under lazy evaluation.
 
-  Given a parser `p` that always succeeds, the parser `force p` has the same behaviour
-  as `p`, except that before any parsing of the input string is attempted the result of
-  the parser is immediately forced to take on the form `(⊥,⊥):⊥`, where `⊥` represents
+  Given a parser "p" that always succeeds, the parser "force p" has the same behaviour
+  as "p", except that before any parsing of the input string is attempted the result of
+  the parser is immediately forced to take on the form "(⊥,⊥):⊥", where "⊥" represents
   a presently undefined value. This technique prevents the formation of large intermediate
   data structures.
 -}
@@ -126,12 +128,12 @@ force p = \inp -> let x = p inp in
   many :: Parser a -> Parser [a]
   many p = [x:xs | x <- p, xs <- many p] ++ [[]]
   
-  `many` defined with the `++` combinator is non-deterministic so ...
-  `(many letter) "No!"` -> `[("No", "!"), ("N", "o!"), ("", "No!")]`
+  "many" defined with the "++" combinator is non-deterministic so ...
+  "(many letter) "No!"" -> "[("No", "!"), ("N", "o!"), ("", "No!")]"
   Non-determinism means both alternatives can be evaluated,
   even if the first alternative is successful.
   
-  `many` and other repeating parsers can be redefined with `+++`, 
+  "many" and other repeating parsers can be redefined with "+++", 
   the deterministic combinator, to improve parser efficiency.
 -}
 
@@ -206,12 +208,12 @@ nat = [ord x - ord '0' | x <- digit] `chainl1` [op]
         m `op` n = 10*m + n
 
 {-
-=== equivalent ===
-nat :: Parser Int
-nat = [eval xs | xs <- many1 digit]
-      where
-        eval xs = foldl1 op [ord x - ord '0' | x <- xs]
-        m `op` n = 10*m + n
+  === equivalent ===
+  nat :: Parser Int
+  nat = [eval xs | xs <- many1 digit]
+        where
+          eval xs = foldl1 op [ord x - ord '0' | x <- xs]
+          m `op` n = 10*m + n
 -}
 
 int :: Parser Int
@@ -255,33 +257,33 @@ symbol xs = token (string xs)
 
 identifier :: [String] -> Parser String
 identifier ks = token [x | x <- ident, not (elem x ks)]
-```
+#+end_src
 
-## The Parser Type Revisited
+** The Parser Type Revisited
 
 The parser monad — as implemented by Graham Hutton and Erik Meijer — can be defined in terms
 of two simpler monads: the list monad (non-deterministic computations) and the state monad 
 (stateful computations).
 
-**Side Note**: `State` describes functions that consume a state and produce both a result and 
-an updated state, which are given back in a tuple — usually `(a, s)`, where `a` is the result
-and `s` is the state. `State` automates the threading of state between functions.
+~State~ describes functions that consume a state and produce both a result and 
+an updated state, which are given back in a tuple — usually ~(a, s)~, where ~a~ is the result
+and ~s~ is the state. ~State~ automates the threading of state between functions.
 
-```haskell
+#+begin_src haskell
 -- non-determinism -----> |-----------|
 -- stateful --> |---------------------| <- a.k.a: state processor
 -- state --------------------> |----|
 -- result ---------------> |-|
 type Parser a = String -> [(a, String)]
 --     parser = state  -> monad (result, state)
-```
+#+end_src
 
-### State Monad
+*** State Monad
 
-```haskell
+#+begin_src haskell
 type State s a = s -> (a, s)
 
--- Make `(State s)` a monadic instance.
+-- Make "(State s)" a monadic instance.
 instance Monad (State s) where
   -- result :: a -> State s a
   result v = \s -> (v, s)
@@ -296,21 +298,21 @@ class Monad m => StateMonad m s where
   set s = update (\_ -> s)
   fetch = update id
 
--- Make `(State s)` a `StateMonad` instance.
+-- Make "(State s)" a "StateMonad" instance.  
 instance StateMonad (State s) s where
   -- update :: (s -> s) -> State s s
   update f = \s -> (s, f s)
-```
+#+end_src
 
-### Parameterized State-Transformer Monad
+*** Parameterized State-Transformer Monad
 
-```haskell
--- Parameterized state-transformer monad
+#+begin_src haskell
+-- Parameterized state-transformer monad.
 -- type Parser a = String -> [(a, String)]
 type StateM m s a = s -> m (a, s)
 
--- Make `(StateM m s)` a monadic instance.
--- Inherit/overload monad operations from base monad `m`.
+-- Make "(StateM m s)" a monadic instance.
+-- Inherit/overload monad operations from base monad "m".
 instance Monad m => Monad (StateM m s) where
   -- result :: a -> StateM m s a
   result v = \s -> result (v, s)
@@ -324,6 +326,7 @@ instance MonadOPlus m => MonadOPlus (StateM m s) where
   stm ++ stm' = \s -> stm s ++ stm' s
 
 instance Monad m => StateMonad (StateM m s) s where
+  -- update :: Monad m => (s -> s) -> StateM m s s
   update f = \s -> result (s, f s)
 
 -- Stateful, non-deterministic parser.
@@ -333,13 +336,13 @@ type Parser a = StateM [] String a
 type Parser a = StateM Maybe String a
 
 item = [x | (x : _) <- update tail]
-```
+#+end_src
 
-## Aside: List Monad
+** Aside: List Monad
 
 Old-school Haskell implementation of a list monad. Pattern matching drives list evaluation.
 
-```haskell
+#+begin_src haskell
 instance Monad [] where
   -- result :: a -> [a]
   result x = [x]
@@ -353,4 +356,4 @@ instance MonadOPlus [] where
   -- (++) :: [a] -> [a] -> [a]
       [] ++ ys = ys
   (x:xs) ++ ys = x : (xs ++ ys)
-```
+#+end_src
