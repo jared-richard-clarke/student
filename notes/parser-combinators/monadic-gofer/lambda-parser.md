@@ -9,7 +9,7 @@ data Expression = Apply Expression Expression      -- application
                 | Let String Expression Expression -- local definition
                 | Variable String                  -- variable
 
-expression = atom `chainl1` [Apply]      -- (f x y z) - parsed as -> (((f x) y) z)
+expression = atom `chainl1` [Apply]                -- (f x y z) - parsed as -> (((f x) y) z)
 
 atom = lambda +++ local +++ name +++ parentheses
 
