@@ -121,8 +121,8 @@ sat p = [x | x <- item, p x]
 -}
 
 force :: Parser a -> Parser a
-force p = \inp -> let x = p inp in
-                  (fst (head x), snd (head x)) : tail x
+force p = \inp -> let x = p inp
+                  in (fst (head x), snd (head x)) : tail x
 
 {-
   many :: Parser a -> Parser [a]
