@@ -29,11 +29,17 @@ bind   :: m a -> (a -> m a) -> m a
 zero   :: m a
 (++)   :: m a -> m a -> m a
 
--- A type constructor "m" is a member of the class "Monad" if it is equipped with
--- "result" and "bind" operations of the specified types.
+-- A type constructor "m" is a member of the class "Monad" if it is equipped
+-- with "result" and "bind" operations of the specified types.
 class Monad m where
   result :: a -> m a
   bind   :: m a -> (a -> m b) -> m b
+
+-- Type constructor "m" is a member of "MonadOPlus" if it is a monad
+-- with a zero and a (++) operation.
+class Monad m => MonadOPlus m where
+  zero :: m a
+  (++) :: m a -> m a -> m a
 ```
 
 ## Parsers
