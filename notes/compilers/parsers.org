@@ -1,8 +1,8 @@
 * Parsing for Compilers
 
-*Introduction to Compilers and Language Design* by Douglas Thain
+*Introduction to Compilers and Language Design*, Douglas Thain
 
-*Formal Languages* by Wikipedia
+*Formal Languages*, Wikipedia
 
 ** Formal Languages
 
@@ -20,11 +20,12 @@ two completely separate sets.
   
 - A finite set *Σ* of terminal symbols that is disjoint from *N*.
   
-- A finite set of *P* of production rules, each rule of the form *(Σ ∪ N)\star{}N(Σ ∪ N)\star{} → (Σ ∪ N)\star{}*
-  where *\star{}* is the Kleene star operator and *∪* denotes set union.
+- A finite set of *P* of production rules, each rule of the form
+  *(Σ ∪ N)\star{}N(Σ ∪ N)\star{} → (Σ ∪ N)\star{}*
+  where *\star{}* is the Kleene star operator and *∪* denotes *set union*.
 
 - In the case that the body consists solely of an empty string, the body may be denoted with
-  a special notation, usually *Λ*, *e*, or *ε*.
+  a special notation, usually *Λ*, *e* or *ε*.
 
 - A distinguished symbol *S ∈ N* that is the start symbol.
 
@@ -54,37 +55,56 @@ corresponding non-terminal.
 - bottom-up derivation :: begin at the desired sentence, applying rules backward until reaching
   the start symbol.
 
-- weak equivalence :: two separate grammars that generate the same language. 
+- weak equivalence :: two separate grammars that generate the same language.
+
+** Example Grammar
+
+This grammar is ambiguous because there are two possible derivations for any sentence involving
+two plus signs.
+
+| rule | production |
+|------+------------|
+| P    | E          |
+| E    | E + E      |
+| E    | identifier |
+| E    | integer    |
+
+For brevity, we occasionally condense a set of rules with a common left-hand side by combining all
+the right-hand sides with a logical-or symbol:
+
+#+begin_example
+E -> E + E | identifier | integer
+#+end_example
 
 *** Top-Down Derivation
 
-| sentential form   | apply rule |
-|-------------------+------------|
-| P                 | P -> E     |
-| E                 | E -> E + E |
-| E + E             | E -> ident |
-| ident + E         | E -> E + E |
-| ident + E + E     | E -> int   |
-| ident + int + E   | E -> int   |
-| ident + int + int |            |
+| sentential form                | apply rule        |
+|--------------------------------+-------------------|
+| P                              | P -> E            |
+| E                              | E -> E + E        |
+| E + E                          | E -> identitifier |
+| identifier + E                 | E -> E + E        |
+| identifier + E + E             | E -> integer      |
+| identifier + integer + E       | E -> integer      |
+| identifier + integer + integer |                   |
 
 *** Bottom-Up Derivation
 
-| sential form      | apply rule |
-|-------------------+------------|
-| ident + int + int | E -> int   |
-| ident + int + E   | E -> int   |
-| ident + E + E     | E -> E + E |
-| ident + E         | E -> ident |
-| E + E             | E -> E + E |
-| E                 | P -> E     |
-| p                 |            |
+| sential form                   | apply rule      |
+|--------------------------------+-----------------|
+| identifier + integer + integer | E -> integer    |
+| identifier + integer + E       | E -> integer    |
+| identifier + E + E             | E -> E + E      |
+| identifier + E                 | E -> identifier |
+| E + E                          | E -> E + E      |
+| E                              | P -> E          |
+| p                              |                 |
 
-*** Ambiguous Grammars
+** Ambiguous Grammars
 
-Allow for more than one possible derivation of the same sentence.
+~identifier + integer + integer~ is ambiguous because it has two possible derivations.
 
-**** Left-Most Derivation
+** Left-Most Derivation
 
 #+begin_example
         P
@@ -98,7 +118,7 @@ Allow for more than one possible derivation of the same sentence.
 ident  int
 #+end_example
 
-**** Right-Most Derivation
+*** Right-Most Derivation
 
 #+begin_example
       P
@@ -112,13 +132,247 @@ ident  E + E
      int   int       
 #+end_example
 
-*** LL Grammars
+It is possible to re-write a grammar so that it is not ambiguous. With binary operators, we can require
+one side of an expression to be an atomic term (T). The grammar below is no longer ambiguous, because it
+only allows a left-most derivation.
 
-LL(1) grammars are a subset of CFGs that can be parsed by considering only one non-terminal and
+| rule | production |
+|------+------------|
+| P    | E          |
+| E    | E + T      |
+| E    | T          |
+| T    | identifier |
+| T    | integer    |
+
+Further modification to the grammar is required to account for multiple levels of precedence. The usual
+approach is to construct a grammar with multiple levels, each reflecting the intended precedence of
+operators. Addition combined with multiplication can be expressed as the sum of terms (T) that consist
+of multiplied factors (F).
+
+| rule | production |
+|------+------------|
+| P    | E          |
+| E    | E + T      |
+| E    | T          |
+| T    | T * F      |
+| T    | F          |
+| F    | identifier |
+| F    | integer    |
+
+** *LL(1)* Grammars
+
+*LL(1)* grammars are a subset of CFGs that can be parsed by considering only one non-terminal and
 the next token in the input stream. To make a grammar LL(1) we must do the following:
 
 1. Remove ambiguous derivations.
 2. Eliminate left recursion.
 3. Eliminate any common left prefixes through left factoring.
-4. Formally prove the grammar is LL(1) by generating FIRST and FOLLOW sets for the grammar.
+4. Formally prove the grammar is *LL(1)* by generating FIRST and FOLLOW sets for the grammar.
+
+*** Eliminating Left Recursion
+
+*LL(1)* grammars cannot contain left recursion. The expression *E -> E + T* is left-recursive because *E*
+appears as the first symbol on the right-hand side. Thus *E -> E + T* would expand to *(E + T) + T*,
+which would expand into *((E + T) + T) + T* and so on into infinity.
+
+Rewriting the rule as *E -> T + E* would remove left recursion, but it creates a right-associative
+operation and a common left prefix. Instead the rules must be rewritten so that the formally recursive
+rule begins with the leading symbols of its alternatives.
+
+| rule | production |
+|------+------------|
+| P    | E          |
+| E    | T E'       |
+| E'   | + T E'     |
+| E'   | ε          |
+| T    | identifier |
+| T    | integer    |
    
+*** Eliminating Common Left Prefixes
+
+Look for all common prefixes of a given non-terminal and replace them with one rule that contains the
+prefix and another that contains the variants. This prevents redundant parsings of the same prefix.
+
+**** Before Left Factoring
+
+| rule | production |
+|------+------------|
+| P    | E          |
+| E    | id         |
+| E    | id[E]      |
+| E    | id(E)      |
+
+**** After Left Factoring
+
+| rule | production |
+|------+------------|
+| P    | E          |
+| E    | id E'      |
+| E'   | [E]        |
+| E'   | (E)        |
+| E'   | ε          |
+
+** First and Follow Sets
+
+In order to construct a complete parser for an *LL(1)* grammar, we must compute two sets, known as
+*FIRST* and *FOLLOW*.
+
+*** Computing First Sets for a Grammar *G*
+
+#+begin_example
+FIRST(α) is the set of terminals that begin all strings given by α,
+including  ε if α ⇒  ε.
+
+For Terminals:
+For each terminal a ∈ Σ: FIRST(a) = {a}
+
+For Non-Terminals:
+Repeat:
+    For each rule X -> Y1Y2...Yk in a grammar G:
+        Add a to FIRST(X)
+	    if a is in FIRST(Y1)
+	    or a is in FIRST(Yn) and Y1...Yn-1 ⇒ ε
+	If Y1...Yk ⇒ ε then add ε to FIRST(X)
+until no more changes occur.
+
+For a Sentential Form α:
+For each symbol Y1Y2...Yk in α:
+    Add a to FIRST(α)
+        if a is in FIRST(Y1)
+	or a is in FIRST(Yn) and Y1...Yn-1 ⇒ ε
+    If Y1...Yk ⇒ ε then add ε to FIRST(α).
+#+end_example
+
+*** Computing Follow Sets for Grammar *G*
+
+#+begin_example
+FOLLOW(A) is the set of terminals that can come after
+non-terminal A, including $ if A occurs at the end of the input.
+
+FOLLOW(S) = {$} where S is the start symbol.
+
+Repeat:
+    If A -> αBβ then:
+        add FIRST(β) (excepting ε) to FOLLOW(B).
+    If A -> αB or FIRST(β) contains ε then:
+        add FOLLOW(A) to FOLLOW(B).
+until no more changes occur.
+#+end_example
+
+*** Grammar Translated By First and Follow
+
+**** Grammmar
+
+| rule | production |
+|------+------------|
+| P    | E          |
+| E    | T E'       |
+| E'   | + T E'     |
+| E'   | ε          |
+| T    | F T'       |
+| T'   | * F T'     |
+| T'   | ε          |
+| F    | (E)        |
+| F    | integer    |
+
+**** First and Follow
+
+|        | P        | E        | E' | T        | T'  | F        |
+| FIRST  | (integer | (integer | +ε | (integer | *ε  | (integer |
+| FOLLOW | $        | )$       | )$ | +)$      | +)$ | +*)$     |
+
+** Recursive Descent Parsing
+
+LL(1) grammars are amenable to /recursive descent parsing/ in which there is one function for each
+non-terminal in a grammar. The body of each function follows the right-hand sides of the corresponding
+rules: non-terminals result in a call to another parse function, while terminals result in considering
+the next token.
+
+Three helper functions are needed:
+
+- ~next()~ :: returns the next token in the input stream.
+- ~peek()~ :: looks ahead to the next token without the parser consuming it.
+- ~match(t)~ :: consumes the next token if it matches ~t~.
+
+*** Grammar Translated into a Recursive Descent Parser
+
+#+begin_src c
+  int parse_P() {
+    return parse_E() && match(TOKEN_EOF);
+  }
+
+  int parse_E() {
+    return parse_T() && parse_E_prime();
+  }
+
+  int parse_E_prime() {
+    token_t t = peek();
+    if (t == TOKEN_PLUS) {
+      next();
+      return parse_T() && parse_E_prime();
+    }
+    return 1;
+  }
+
+  int parse_T() {
+    return parse_F() && parse_T_prime();
+  }
+
+  int int parse_T_prime() {
+    token_t t = peek();
+    if (t == TOKEN_MULTIPLY) {
+      next();
+      return parse_F() && parse_T_prime();
+    }
+    return 1;
+  }
+
+  int parse_F() {
+    token_t t = peek();
+    if (t == TOKEN_LPAREN) {
+      next();
+      return parse_E() && match(TOKEN_RPAREN);
+    } else if (t == TOKEN_INT) {
+      next();
+      return 1;
+    } else {
+      printf("parse error: unexpected token %s\n", token_string(t));
+      return 0;
+    }
+  }
+#+end_src
+
+** The Chomsky Hierarchy
+
+| language class         | machine required        |
+|------------------------+-------------------------|
+| regular                | finite automata         |
+| context free           | pushdown automata       |
+| context sensitive      | linear bounded automata |
+| recursively enumerable | Turing machine          |
+
+*** Context Free
+
+The meaning of a non-terminal is the same in all places where it appears.
+CFGs require pushdown automaton, which requires a finite automaton coupled
+with a stack. If the grammar is ambiguous, the automaton will be non-deterministic
+and therefore impractical.
+
+*** Context Sensitive Languages
+
+The meaning of a non-terminal is controlled by the context in which it appears.
+CSLs require a non-deterministic linear bounded automaton, which is bounded in
+memory consumption, but not in execution time.
+
+*** Recursively Enumerable Languages
+
+The least restrictive set of languages, they can only be recognized by a full
+Turing machine.
+
+*** General Principle of Language Design
+
+#+begin_quote
+The least powerful language gives the strongest guarantees.
+
+— Douglas Thain
+#+end_quote
