@@ -124,7 +124,7 @@ This enriched lambda calculus is specific to
 			   ...
 			   <pattern>
 
- [] is an infix operator for handling pattern match errors:
+ ▯ is an infix operator for handling pattern match errors:
 
  a    ▯ b = a
  FAIL ▯ b = b
