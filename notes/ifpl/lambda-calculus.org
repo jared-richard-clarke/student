@@ -1,0 +1,169 @@
+* The Lambda Calculus
+
+** Lambda Expression Syntax
+
+- Lower case names denote variables.
+- Single, upper-case letters denote whole lambda expressions.
+- Upper-case identifiers denote built-in functions.
+
+#+begin_example
+<exp> ::= <constant>        Built-in constants
+      |   <variable>        Variable names
+      |   <exp><exp>        Applications
+      |   λ<variable>.<exp> Lambda abstractions
+#+end_example
+
+** Bound and Free Variables
+
+#+begin_example
+      +-- bound
+(λx.+ x y)
+	+-- free
+#+end_example
+
+** β-Conversion: Reduction and Abstraction (Beta)
+
+Use: Function Application
+
+1. Beta reduction is only valid provided the free variables of the
+   argument do not clash with any formal parameters in the body of
+   the lambda abstraction.
+2. Alpha conversion is sometimes necessary to avoid such name clashes.
+
+#+begin_example
+=== conversion ==
+(λx.E) M <-> E[M/x]
+    where expression E with M substituted for free occurrences of x.
+   
+=== reduction ===
+(λx.+ x 1) 4 -> (+ 4 1)
+
+=== abstraction ===
+(+ 4 1) <- (λx.+ x 1) 4
+#+end_example
+
+*** Lambda Abstractions as Data Constructors
+
+#+begin_example
+CONS = (λa.λb.λf.f a b)
+HEAD = (λc.c (λa.λb.a))
+TAIL = (λc.c (λa.λb.b))
+#+end_example
+
+** α-Conversion (Alpha)
+
+Use: Prevent name capture.
+
+Alpha conversion is used to prevent name clashes of formal parameters.
+
+#+begin_example
+(λx.+ x 1) <-> (λy.+ y 1)
+#+end_example
+
+** η-conversion (Eta)
+
+Use: Eliminate Redundant Lambda Abstractions
+   
+#+begin_example
+(λx.+ 1 x) <-> (+ 1)
+
+=== more generally ===
+
+(λx.F x) <-> F
+    where x does not occur free in F and F is a function.
+#+end_example
+
+** Formal Conversion Rules
+
+When used left to right, the β and η rules are called reductions.
+
+| α-Conversion | (λx.E) <-> λy.E[y/x] if y is not free in E                    |
+| β-Conversion | (λx.E) M <-> E[M/x]                                           |
+| η-conversion | (λx.E x) <-> E if x is not free in E and E denotes a function |
+
+** Denotational Semantics of The Lambda Calculus (Simplified)
+
+#+begin_example
+Eval[k] p      = difference between syntactic abstraction
+		 and equational operations. Allow precision that
+		 is hard to achieve using only reduction rules.
+Eval[x] p      = p x
+Eval[E1, E2] p = (Eval[E1] p) (Eval[E2] p)
+Eval[λx.E] p a = Eval[E] p[x=a]
+
+    where k          is a constant or built-in function
+	  x          is a variable
+	  E, E1, E2  are expressions
+	  p          is the environment
+#+end_example
+
+* The Enriched Lambda Calculus
+
+This enriched lambda calculus is specific to
+*The Implementation of Functional Programming Languages*
+  
+#+begin_example
+<exp> ::= <constant>
+      |   <variable>
+      |   <exp><exp>
+      |   λ<pattern>.<exp>
+      |   let <pattern> = <exp> in <exp>
+      |   letrec <pattern> = <exp>
+		 ...
+		 <pattern> = <exp>
+	  in <exp>
+      |   <exp> ▯ <exp>
+      |   case <variable> of
+	  <pattern> -> <exp>
+	  ...
+	  <pattern> -> <exp>
+
+<pattern> ::= <constant>
+	  |   <variable>
+	  |   <constructor><pattern>
+			   ...
+			   <pattern>
+
+ [] is an infix operator for handling pattern match errors:
+
+ a    ▯ b = a
+ FAIL ▯ b = b
+ ⊥    ▯ b = ⊥
+
+ hd (x:xs) = x
+ hd = λxs'.(((λ(CONS x xs).x) xs') ▯ ERROR)
+
+ if hd is applied to NIL, then an ERROR will result.
+ #+end_example
+
+** *let* Semantics
+
+   #+begin_example
+   (let v = B in E) ≡ ((λv.E) B)
+   #+end_example
+
+** *letrec* Semantics
+
+#+begin_example
+(letrec v = B in E) ≡ (let v = Y (λv.B) in E)
+    where Y = (λh.(λx.h (x x)) (λx.h (x x)))
+#+end_example
+
+** Example Translation
+
+#+begin_example
+-- definition
+average a b = (a + b) / 2
+
+-- expression
+average 2 (3 + 5)
+
+-- enriched lambda calculus
+let
+  average = λa.λb.(/ (+ a b) 2)
+in
+  average 2 (+ 3 5)
+
+-- plain lambda calculus
+(λaverage.(average 2 (+ 3 5))) (λa.λb.(/ (+ a b) 2))
+#+end_example
