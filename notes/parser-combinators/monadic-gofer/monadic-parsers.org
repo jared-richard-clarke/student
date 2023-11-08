@@ -118,6 +118,14 @@ sat p = [x | x <- item, p x]
   the parser is immediately forced to take on the form "(⊥,⊥):⊥", where "⊥" represents
   a presently undefined value. This technique prevents the formation of large intermediate
   data structures.
+
+  === ancillary definitions ===
+  
+  fst :: (a, b) -> a
+  snd :: (a, b) -> b
+
+  head :: [a] -> a
+  tail :: [a] -> [a]
 -}
 
 force :: Parser a -> Parser a
