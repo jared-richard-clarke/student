@@ -18,12 +18,12 @@ lambda = [Lambda x e | _ <- symbol "\\"
                      , _ <- symbol "->"
                      , e <- expression]
                 
-local = [Let x e e' | _  <- symbol "let"
-                    , x  <- name
-                    , _  <- symbol "="
-                    , e  <- expression
-                    , _  <- symbol "in"
-                    , e' <- expression]
+local = [Let x e e'  | _  <- symbol "let"
+                     , x  <- name
+                     , _  <- symbol "="
+                     , e  <- expression
+                     , _  <- symbol "in"
+                     , e' <- expression]
                     
 variable = [Variable x | x <- name]
 
