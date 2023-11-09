@@ -284,6 +284,7 @@ and ~s~ is the state. ~State~ automates the threading of state between functions
 -- result ---------------> |-|
 type Parser a = String -> [(a, String)]
 --     parser = state  -> monad (result, state)
+--              |-----------------------------| <- monad
 #+end_src
 
 *** State Monad
