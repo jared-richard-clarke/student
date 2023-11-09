@@ -318,31 +318,31 @@ instance StateMonad (State s) s where
 #+begin_src haskell
 -- Parameterized state-transformer monad.
 -- type Parser a = String -> [(a, String)]
-type StateM m s a = s -> m (a, s)
+type StateT m s a = s -> m (a, s)
 
--- Make "(StateM m s)" a monadic instance.
+-- Make "(StateT m s)" a monadic instance.
 -- Inherit/overload monad operations from base monad "m".
-instance Monad m => Monad (StateM m s) where
-  -- result :: a -> StateM m s a
+instance Monad m => Monad (StateT m s) where
+  -- result :: a -> StateT m s a
   result v = \s -> result (v, s)
-  -- bind :: StateM m s a -> (a -> StateM m s b) -> StateM m s b
+  -- bind :: StateT m s a -> (a -> StateT m s b) -> StateT m s b
   stm `bind` f = \s -> stm s `bind` \(v, s') -> f v s'
 
-instance MonadOPlus m => MonadOPlus (StateM m s) where
-  -- zero :: StateM m s a
+instance MonadOPlus m => MonadOPlus (StateT m s) where
+  -- zero :: StateT m s a
   zero = \s -> zero
-  -- (++) :: StateM m s a -> StateM m s a -> StateM m s a
+  -- (++) :: StateT m s a -> StateT m s a -> StateT m s a
   stm ++ stm' = \s -> stm s ++ stm' s
 
-instance Monad m => StateMonad (StateM m s) s where
-  -- update :: Monad m => (s -> s) -> StateM m s s
+instance Monad m => StateMonad (StateT m s) s where
+  -- update :: Monad m => (s -> s) -> StateT m s s
   update f = \s -> result (s, f s)
 
 -- Stateful, non-deterministic parser.
-type Parser a = StateM [] String a
+type Parser a = StateT [] String a
 
 -- Stateful, deterministic parser.
-type Parser a = StateM Maybe String a
+type Parser a = StateT Maybe String a
 
 item = [x | (x : _) <- update tail]
 #+end_src
