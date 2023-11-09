@@ -349,6 +349,79 @@ type Parser a = StateT Maybe String a
 item = [x | (x : _) <- update tail]
 #+end_src
 
+*** Parameterized State-Reader Monad
+
+#+begin_src haskell
+type Parser a = StateT [] Pstring a
+type Pstring  = (Position, String)
+type Position = (Int, Int)
+
+-- type Parser a = Position -> StateT [] Pstring a
+type ReaderT m s a = s -> m a
+
+instance Monad m => Monad (ReaderT m s) where
+  -- result :: a -> Reader m s a
+  result v = \s -> result v
+  -- bind   :: ReaderT m s a -> (a -> ReaderT m s b) -> ReaderT m s b
+  srm `bind` f = \s -> srm s `bind` \v -> f v s
+
+instance MonadOPlus m => MonadOPlus (ReaderT m s) where
+  -- zero :: ReaderT m s a
+  zero = \s -> zero
+  -- (++) :: ReaderT m s a -> ReaderT m s a -> ReaderT m s a
+  srm ++ srm' = \s -> srm s ++ srm' s
+
+class Monad m => ReaderMonad m s where
+  env    :: m s
+  setenv :: s -> m a -> m a
+
+instance Monad m => ReaderMonad (ReaderT m s) s where
+  --env :: ReaderT m s s
+  env = \s -> result s
+  -- setenv :: s -> ReaderT m s a -> ReaderT m s a
+  setenv s srm = \_ -> srm s
+
+instance StateMonad m a => StateMonad (ReaderT m s) a where
+  -- update :: (a -> a) -> ReaderT m s a
+  update f = \_ -> update f
+
+-- A non-deterministic, stateful parser with an environment for handling the offside rule.
+type Parser a = ReaderT (State T [] Pstring) Position a
+
+item :: Parser Char
+item = [x | (pos, x:_) <- update newstate
+          , defpos     <- env
+	  , onside pos defpos]
+
+onside :: Position -> Position -> Bool
+onside (l, c) (dl, dc) = (c > dc) || (l == dl)
+
+newstate :: Pstring -> Pstring
+newstate ((l, c), x:xs)
+  = (newpos, xs)
+    where
+      newpos = case x of
+                 '\n' -> (l + 1, 0)
+		 '\t' -> (l, ((c `div` 8) + 1) * 8)
+		 _    -> (l, c + 1)
+
+junk :: Parser :: ()
+junk = [() | _ <- setenv (0, -1) (many (spaces +++ comment))]
+
+many_offside :: Parser a -> Parser [a]
+many_offside p = many1_offside p +++ [[]]
+
+many1_offside :: Parser a -> Parser [a]
+many1_offside p = [vs | (pos, _) <- fetch
+                      , vs       <- setenv pos (many1 (off p))]
+
+off :: Parser a -> Parser a
+off p = [v | (dl, dc)    <- env
+           , ((l, c), _) <- fetch
+	   , c == dc
+	   , v           <- setenv (l, dc) p]
+#+end_src
+
 ** Aside: List Monad
 
 Old-school Haskell implementation of a list monad. Pattern matching drives list evaluation.
