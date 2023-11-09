@@ -317,8 +317,10 @@ instance StateMonad (State s) s where
 
 #+begin_src haskell
 -- Parameterized state-transformer monad.
--- type Parser a = String -> [(a, String)]
+-- A "State" type constructor that applies a given type constructor "m"
+-- to the result of the computation.
 type StateT m s a = s -> m (a, s)
+-- type Parser a = String -> [(a, String)]
 
 -- Make "(StateT m s)" a monadic instance.
 -- Inherit/overload monad operations from base monad "m".
