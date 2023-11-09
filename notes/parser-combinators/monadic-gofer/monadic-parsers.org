@@ -381,6 +381,7 @@ instance Monad m => ReaderMonad (ReaderT m s) s where
   -- setenv :: s -> ReaderT m s a -> ReaderT m s a
   setenv s srm = \_ -> srm s
 
+-- Update the state while ignoring the environment.
 instance StateMonad m a => StateMonad (ReaderT m s) a where
   -- update :: (a -> a) -> ReaderT m s a
   update f = \_ -> update f
