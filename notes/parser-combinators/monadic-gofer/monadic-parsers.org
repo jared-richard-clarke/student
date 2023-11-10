@@ -28,7 +28,7 @@ provide a means to structure the building of such computations.
 #+begin_src haskell
 type Parser a = \a -> m a
 
-result :: m a
+result :: a -> m a
 bind   :: m a -> (a -> m a) -> m a
 zero   :: m a
 (++)   :: m a -> m a -> m a
