@@ -6,7 +6,7 @@ type Parser a
 return :: a -> Parser a
 (>>=) :: Parser a (a -> Parser b) -> Parser b
 
-satisfy :: (Char -> Bool) -> Parser Char
+satisfy :: (a -> Bool) -> Parser a
 
 (<|>) :: Parser a -> Parser a -> Parser a
 ```
