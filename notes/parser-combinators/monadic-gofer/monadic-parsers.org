@@ -340,8 +340,12 @@ instance Monad m => StateMonad (StateT m s) s where
   -- update :: Monad m => (s -> s) -> StateT m s s
   update f = \s -> result (s, f s)
 
--- Stateful, non-deterministic parser.
+-- A stateful, non-deterministic parser.
 type Parser a = StateT [] String a
+--              |     |__|      |^- result
+--		|     monad     |
+--               ---------------
+--                    monad
 
 -- Stateful, deterministic parser.
 type Parser a = StateT Maybe String a
@@ -387,7 +391,13 @@ instance StateMonad m a => StateMonad (ReaderT m s) a where
   update f = \_ -> update f
 
 -- A non-deterministic, stateful parser with an environment for handling the offside rule.
-type Parser a = ReaderT (State T [] Pstring) Position a
+type Parser a = ReaderT (StateT [] Pstring) Position a
+--             |        |      |__|       |         |^- result
+--             |        |      monad      |         |
+--             |         -----------------          |
+--             |               monad                |
+--              ------------------------------------
+--                             monad
 
 item :: Parser Char
 item = [x | (pos, x:_) <- update newstate
