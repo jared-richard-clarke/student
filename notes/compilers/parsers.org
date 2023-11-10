@@ -1,8 +1,7 @@
 * Parsing for Compilers
 
-*Introduction to Compilers and Language Design*, Douglas Thain
-
-*Formal Languages*, Wikipedia
+*Introduction to Compilers and Language Design* by Douglas Thain
+*Formal Languages* by Wikipedia
 
 ** Formal Languages
 
@@ -22,12 +21,31 @@ two completely separate sets.
   
 - A finite set of *P* of production rules, each rule of the form
   *(Σ ∪ N)\star{}N(Σ ∪ N)\star{} → (Σ ∪ N)\star{}*
-  where *\star{}* is the Kleene star operator and *∪* denotes *set union*.
+  where *\star{}* is the Kleene star operator, denoting *concatenation*,
+  and *∪* denotes *set union*.
 
 - In the case that the body consists solely of an empty string, the body may be denoted with
   a special notation, usually *Λ*, *e* or *ε*.
 
 - A distinguished symbol *S ∈ N* that is the start symbol.
+
+** Backus-Naur Form
+
+In computer science, a *Back-Naur form* or *Backus normal form* is a metasyntax notation
+for context-free grammars. It is often used to describe the syntax of languages used in
+computing, such as programming languages, document formats, instruction sets, and
+communication protocols.
+
+*** A BNF Specification
+
+#+begin_example
+<symbol> ::= expression
+#+end_example
+
+- <symbol> :: a non-terminal.
+- ::= :: separates a rule from its productions.
+- expression :: expression is one or more sequences of either terminal or non-terminal symbols
+  where each sequence is separated by a vertical bar *|* indicating choice.
 
 ** Context Free Grammars
 
@@ -57,6 +75,8 @@ corresponding non-terminal.
 
 - weak equivalence :: two separate grammars that generate the same language.
 
+- production :: a rewrite rule specifying symbol substitution to generate new symbol sequences.
+
 ** Example Grammar
 
 This grammar is ambiguous because there are two possible derivations for any sentence involving
@@ -76,7 +96,7 @@ the right-hand sides with a logical-or symbol:
 E -> E + E | identifier | integer
 #+end_example
 
-*** Top-Down Derivation
+** Top-Down Derivation
 
 | sentential form                | apply rule        |
 |--------------------------------+-------------------|
@@ -88,7 +108,7 @@ E -> E + E | identifier | integer
 | identifier + integer + E       | E -> integer      |
 | identifier + integer + integer |                   |
 
-*** Bottom-Up Derivation
+** Bottom-Up Derivation
 
 | sential form                   | apply rule      |
 |--------------------------------+-----------------|
@@ -104,7 +124,7 @@ E -> E + E | identifier | integer
 
 ~identifier + integer + integer~ is ambiguous because it has two possible derivations.
 
-** Left-Most Derivation
+*** Left-Most Derivation
 
 #+begin_example
         P
@@ -131,6 +151,8 @@ ident  E + E
        /   \
      int   int       
 #+end_example
+
+*** Removing Ambiguity
 
 It is possible to re-write a grammar so that it is not ambiguous. With binary operators, we can require
 one side of an expression to be an atomic term (T). The grammar below is no longer ambiguous, because it
@@ -159,10 +181,26 @@ of multiplied factors (F).
 | F    | identifier |
 | F    | integer    |
 
+#+begin_example
+=== ambiguous ===
+
+E -> E + E | E * E | (E) | number
+
+=== unambiguous ===
+
+E -> F | E + F
+F -> T | F * T
+T -> number | (E)
+#+end_example
+
 ** *LL(1)* Grammars
 
+*LL* parsers (left-to-right, left-most derivation) is a top-down parser for a restricted
+context-free language. An *LL* parser is called an *LL(k)* parser if it uses *k* tokens
+of lookahead when parsing a sentence.
+
 *LL(1)* grammars are a subset of CFGs that can be parsed by considering only one non-terminal and
-the next token in the input stream. To make a grammar LL(1) we must do the following:
+the next token in the input stream. To make a grammar *LL(1)* we must do the following:
 
 1. Remove ambiguous derivations.
 2. Eliminate left recursion.
@@ -187,11 +225,30 @@ rule begins with the leading symbols of its alternatives.
 | E'   | ε          |
 | T    | identifier |
 | T    | integer    |
+
+Left recursion is primarily a theoretical problem. Looping constructs, or iteration, are excellent
+real-world solutions.
+
+Parsing expressions with precedence requires unintuitive rewritings of context-free grammars.
+It is simpler to either loop through a list of atoms separated by operators and reconstruct the
+tree separately or fuse the two stages into a recursive loop — a Pratt parser.
+
+#+begin_src c
+  Program parse_statements() {
+    for(;;) {
+      parse_statement();
+      if (next() != SEMI_COLON) {
+	break;
+      }
+    }
+  }
+#+end_src
    
 *** Eliminating Common Left Prefixes
 
-Look for all common prefixes of a given non-terminal and replace them with one rule that contains the
-prefix and another that contains the variants. This prevents redundant parsings of the same prefix.
+Look for all common prefixes of a given non-terminal and replace them with one rule that contains
+the prefix and another that contains the variants. This process is called /left factorization/,
+which eliminates backtracking and redundant parsings.
 
 **** Before Left Factoring
 
@@ -283,7 +340,7 @@ until no more changes occur.
 
 ** Recursive Descent Parsing
 
-LL(1) grammars are amenable to /recursive descent parsing/ in which there is one function for each
+*LL(1)* grammars are amenable to /recursive descent parsing/ in which there is one function for each
 non-terminal in a grammar. The body of each function follows the right-hand sides of the corresponding
 rules: non-terminals result in a call to another parse function, while terminals result in considering
 the next token.
@@ -341,6 +398,98 @@ Three helper functions are needed:
     }
   }
 #+end_src
+
+** *LR* Grammars
+
+*LR* parsers (left-to-right, rightmost derivation in reverse) are a type of
+bottom-up parser that analyze deterministic context-free languages in linear time,
+meaning they read input text from left to right without backing up, producing
+a right-most derivation from the bottom up.
+
+An LR parser scans and parses the input text in one forward pass over the text.
+The parser builds up the parse tree incrementally, bottom up, and left to right,
+without guessing or backtracking. At every point in this pass, the parser has
+accumulated a list of subtrees or phrases of the input text that have been already
+parsed. Those subtrees are not yet joined together because the parser has not yet
+reached the right end of the syntax pattern that will combine them. 
+
+#+begin_example
+=== expression ===
+A * 2 + 1
+
+=== derivation ===
+                              13 Sums
+             -----------------
+            /           /     |
+           8 Sums      |      |
+           |           |      |
+   7 Products          |      |
+ /         | \         |      |
+3 Products |  \        |      12 Products
+|          |   |       |      |
+2 Value    |   6 Value |      11 Value
+|          |   |       |      |
+1 id       4   5 int   9      10 int
+|          |   |       |      |
+A          *   2       +      1
+
+=== parser at step 6 ===
+                                  --------
+                                 | tables |
+                                 |--------|
+               /---------------- | loop   |
+	      /                   --------
+ stack       /                      |
+|----------------------------|      |
+ ----------------------------       |
+| Products | * | Value | ... |      |   
+ ----------------------------     lookahead
+  |          |     |                |
+ ---        ---   ---              -------
+| A |      | * | | 2 |            | + | 1 | - unscanned
+ ---        ---   ---              -------
+|-----------------------------------------|
+ input stream
+#+end_example
+
+*** *LR(1)* and Shift-Reduce Parsing
+
+An *LR(1)* grammar can be parsed via shift-reduce with a single toekn of lookahead.
+
+- Shift :: consumes one token from the input stream and pushes it onto the stack.
+  This becomes a new single-node parse tree.
+- Reduce :: applies a completed grammar rule to some of the recent parse trees, joining them
+  together as one tree with a new root symbol.
+
+
+**** LR(1) Grammar
+
+| rule | production |
+|------+------------|
+| P    | E          |
+| E    | E + T      |
+| T    | id (E)     |
+| T    | id         |
+
+**** Shift-Reduce Parsing
+
+| stack     | input        | action            |
+|-----------+--------------+-------------------|
+|           | id(id + id)$ | shift             |
+| id        | (id + id)$   | shift             |
+| id(       | id + id)$    | shift             |
+| id(id     | + id)$       | reduce T -> id    |
+| id(T      | + id)$       | reduce E -> T     |
+| id(E      | + id)$       | shift             |
+| id(E +    | id)$         | shift             |
+| id(E + id | )$           | reduce T -> id    |
+| id(E + T  | )$           | reduce E -> E + T |
+| id(E      | )$           | shift             |
+| id(E)     | $            | reduce T -> id(E) |
+| T         | $            | reduce E -> T     |
+| E         | $            | reduce P -> E     |
+| P         | $            | accept            |
+
 
 ** The Chomsky Hierarchy
 
