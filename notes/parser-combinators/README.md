@@ -3,12 +3,12 @@
 ```haskell
 type Parser a
 
-return :: a -> Parser a
-(>>=) :: Parser a (a -> Parser b) -> Parser b
+return  :: a -> Parser a
+(>>=)   :: Parser a (a -> Parser b) -> Parser b
 
 satisfy :: (a -> Bool) -> Parser a
 
-(<|>) :: Parser a -> Parser a -> Parser a
+(<|>)   :: Parser a -> Parser a -> Parser a
 ```
 
 > "In computer programming, a parser combinator is a higher-order function that accepts 
