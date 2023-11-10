@@ -1,7 +1,7 @@
 # Parser Combinators
 
 ```haskell
-type Parser a
+type Parser a = \a -> m a
 
 return  :: a -> Parser a
 (>>=)   :: Parser a (a -> Parser b) -> Parser b
