@@ -26,6 +26,8 @@ constructor ~m~. The combinators ~result~ and ~bind~ (with potentially ~zero~ an
 provide a means to structure the building of such computations.
 
 #+begin_src haskell
+type Parser a = \a -> m a
+
 result :: m a
 bind   :: m a -> (a -> m a) -> m a
 zero   :: m a
