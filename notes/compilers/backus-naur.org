@@ -1,6 +1,8 @@
-* BNF Syntax in BNF
+* Backus-Naur Syntax in BNF
 
 *Backus-Naur Form*, Wikipedia
+
+** Backus-Naur Form
 
 #+begin_example
  <syntax>         ::= <rule> | <rule> <syntax>
