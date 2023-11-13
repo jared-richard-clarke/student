@@ -20,7 +20,7 @@ Then for regular expressions *s* and *t*:
 2. *st* is *RE* such that *L(st)* contains all strings formed by the concatenation
    of a string in *L(s)* followed by a string in *L(t)*.
 
-3. *s\** is a *RE* such that *L(s\*) = L(s)* concatenated zero or more times.
+3. *s\star{}* is a *RE* such that *L(s\star{}) = L(s)* concatenated zero or more times.
 
 Rule #3 is known as the *Kleene closure* and has the highest precedence. Rule #2
 is known as *concatenation*. Rule #1 has the lowest precedence and is known as
