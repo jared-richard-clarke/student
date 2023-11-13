@@ -179,7 +179,7 @@ E -> E + E | identifier | integer
 
 ** Bottom-Up Derivation
 
-| sential form                   | apply rule      |
+| sentential form                   | apply rule      |
 |--------------------------------+-----------------|
 | identifier + integer + integer | E -> integer    |
 | identifier + integer + E       | E -> integer    |
