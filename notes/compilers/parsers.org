@@ -1,6 +1,6 @@
 * Parsing for Compilers
 
-*Introduction to Compilers and Language Design* by Douglas Thain
+*Introduction to Compilers and Language Design*, Douglas Thain
 
 *Formal Languages* and *Set Theory*, Wikipedia
 
@@ -39,7 +39,7 @@
 ** Formal Languages
 
 In logic, mathematics, computer science, and linguistics, a formal language consists of words
-whose letters are taken from an alphabet and are /well-formed/ according to a specific set of rules
+whose letters are taken from an /alphabet/ and are /well-formed/ according to a specific set of rules
 called a /formal grammar/.
 
 Terminals and non-terminals are the lexical elements used in specifying the production rules
@@ -64,7 +64,7 @@ two completely separate sets.
 
 For finite languages, all well-formed words can be explicitly enumerated. The *degenerate* case
 of this construction is the *empty language*, *L=Ø*, which contains no words at all.
-
+  
 *** A Classic Formalization of Generative Grammars
 
 - A finite set *N* of non-terminal symbols.
@@ -114,7 +114,7 @@ communication protocols.
 - <symbol> :: a non-terminal.
 - ::= :: separates a rule from its productions.
 - expression :: expression is one or more sequences of either terminal or non-terminal symbols
-  where each sequence is separated by a vertical bar *|* indicating choice.
+  where each sequence is separated by a vertical bar *|*, indicating choice.
 
 ** Context Free Grammars
 
@@ -130,6 +130,8 @@ corresponding non-terminal.
 - sentence :: a valid sequence of terminals.
   
 - sentential form :: a valid sequence of terminals and non-terminals.
+
+- grammar :: a finite set of rules describing a valid set of strings.
   
 - language :: the potentially infinite set of sentences described by a particular grammar.
   
@@ -153,10 +155,10 @@ two plus signs.
 
 | rule | production |
 |------+------------|
-| P    | E          |
-| E    | E + E      |
-| E    | identifier |
-| E    | integer    |
+| 1. P | E          |
+| 2. E | E + E      |
+| 3. E | identifier |
+| 4. E | integer    |
 
 For brevity, we occasionally condense a set of rules with a common left-hand side by combining all
 the right-hand sides with a logical-or symbol:
@@ -165,7 +167,7 @@ the right-hand sides with a logical-or symbol:
 E -> E + E | identifier | integer
 #+end_example
 
-** Top-Down Derivation
+*** Top-Down Derivation
 
 | sentential form                | apply rule        |
 |--------------------------------+-------------------|
@@ -177,9 +179,9 @@ E -> E + E | identifier | integer
 | identifier + integer + E       | E -> integer      |
 | identifier + integer + integer |                   |
 
-** Bottom-Up Derivation
+*** Bottom-Up Derivation
 
-| sentential form                   | apply rule      |
+| sentential form                | apply rule      |
 |--------------------------------+-----------------|
 | identifier + integer + integer | E -> integer    |
 | identifier + integer + E       | E -> integer    |
@@ -224,31 +226,31 @@ ident  E + E
 *** Removing Ambiguity
 
 It is possible to re-write a grammar so that it is not ambiguous. With binary operators, we can require
-one side of an expression to be an atomic term (T). The grammar below is no longer ambiguous, because it
-only allows a left-most derivation.
+one side of an expression to be an atomic term (*T*). The grammar below is no longer ambiguous, because
+it only allows a left-most derivation.
 
 | rule | production |
 |------+------------|
-| P    | E          |
-| E    | E + T      |
-| E    | T          |
-| T    | identifier |
-| T    | integer    |
+| 1. P | E          |
+| 2. E | E + T      |
+| 3. E | T          |
+| 4. T | identifier |
+| 5. T | integer    |
 
 Further modification to the grammar is required to account for multiple levels of precedence. The usual
 approach is to construct a grammar with multiple levels, each reflecting the intended precedence of
-operators. Addition combined with multiplication can be expressed as the sum of terms (T) that consist
-of multiplied factors (F).
+operators. Addition combined with multiplication can be expressed as the sum of terms (*T*) that consist
+of multiplied factors (*F*).
 
 | rule | production |
 |------+------------|
-| P    | E          |
-| E    | E + T      |
-| E    | T          |
-| T    | T * F      |
-| T    | F          |
-| F    | identifier |
-| F    | integer    |
+| 1. P | E          |
+| 2. E | E + T      |
+| 3. E | T          |
+| 4. T | T * F      |
+| 5. T | F          |
+| 6. F | identifier |
+| 7. F | integer    |
 
 #+begin_example
 === ambiguous ===
@@ -257,12 +259,12 @@ E -> E + E | E * E | (E) | number
 
 === unambiguous ===
 
-E -> F | E + F
-F -> T | F * T
-T -> number | (E)
+E -> T | E + T
+T -> F | T * F
+F -> number | (E)
 #+end_example
 
-** *LL(1)* Grammars
+** LL(1) Grammars
 
 *LL* parsers (left-to-right, left-most derivation) is a top-down parser for a restricted
 context-free language. An *LL* parser is called an *LL(k)* parser if it uses *k* tokens
@@ -286,14 +288,14 @@ Rewriting the rule as *E -> T + E* would remove left recursion, but it creates a
 operation and a common left prefix. Instead the rules must be rewritten so that the formally recursive
 rule begins with the leading symbols of its alternatives.
 
-| rule | production |
-|------+------------|
-| P    | E          |
-| E    | T E'       |
-| E'   | + T E'     |
-| E'   | ε          |
-| T    | identifier |
-| T    | integer    |
+| rule  | production |
+|-------+------------|
+| 1. P  | E          |
+| 2. E  | T E'       |
+| 3. E' | + T E'     |
+| 4. E' | ε          |
+| 5. T  | identifier |
+| 6. T  | integer    |
 
 Left recursion is primarily a theoretical problem. Looping constructs, or iteration, are excellent
 real-world solutions.
@@ -323,20 +325,20 @@ which eliminates backtracking and redundant parsings.
 
 | rule | production |
 |------+------------|
-| P    | E          |
-| E    | id         |
-| E    | id[E]      |
-| E    | id(E)      |
+| 1. P | E          |
+| 2. E | id         |
+| 3. E | id[E]      |
+| 4. E | id(E)      |
 
 **** After Left Factoring
 
-| rule | production |
-|------+------------|
-| P    | E          |
-| E    | id E'      |
-| E'   | [E]        |
-| E'   | (E)        |
-| E'   | ε          |
+| rule  | production |
+|-------+------------|
+| 1. P  | E          |
+| 2. E  | id E'      |
+| 3. E' | [E]        |
+| 4. E' | (E)        |
+| 5. E' | ε          |
 
 ** First and Follow Sets
 
@@ -389,23 +391,23 @@ until no more changes occur.
 
 **** Grammmar
 
-| rule | production |
-|------+------------|
-| P    | E          |
-| E    | T E'       |
-| E'   | + T E'     |
-| E'   | ε          |
-| T    | F T'       |
-| T'   | * F T'     |
-| T'   | ε          |
-| F    | (E)        |
-| F    | integer    |
+| rule  | production |
+|-------+------------|
+| 1. P  | E          |
+| 2. E  | T E'       |
+| 3. E' | + T E'     |
+| 4. E' | ε          |
+| 5. T  | F T'       |
+| 6. T' | * F T'     |
+| 7. T' | ε          |
+| 8. F  | (E)        |
+| 9. F  | integer    |
 
 **** First and Follow
 
-|        | P        | E        | E' | T        | T'  | F        |
-| FIRST  | (integer | (integer | +ε | (integer | *ε  | (integer |
-| FOLLOW | $        | )$       | )$ | +)$      | +)$ | +*)$     |
+|        | P            | E            | E'     | T            | T'        | F            |
+| FIRST  | {(, integer} | {(, integer} | {+, ε} | {(, integer} | {*, ε}    | {(, integer} |
+| FOLLOW | {$}          | {), $}       | {), $} | {+, ), $}    | {+, ), $} | {+, *, ), $} |
 
 ** Recursive Descent Parsing
 
@@ -413,6 +415,12 @@ until no more changes occur.
 non-terminal in a grammar. The body of each function follows the right-hand sides of the corresponding
 rules: non-terminals result in a call to another parse function, while terminals result in considering
 the next token.
+
+Two special cases must be considered:
+
+1. If rule *X* cannot produce *ε* and the token is not in *FIRST(X)*, then return error.
+2. If rule *X* could produce *ε* and the token is not in *FIRST(X)*, return success.
+   Another rule will consume that token.
 
 Three helper functions are needed:
 
@@ -444,7 +452,7 @@ Three helper functions are needed:
     return parse_F() && parse_T_prime();
   }
 
-  int int parse_T_prime() {
+  int parse_T_prime() {
     token_t t = peek();
     if (t == TOKEN_MULTIPLY) {
       next();
@@ -468,7 +476,7 @@ Three helper functions are needed:
   }
 #+end_src
 
-** *LR* Grammars
+** LR Grammars
 
 *LR* parsers (left-to-right, rightmost derivation in reverse) are a type of
 bottom-up parser that analyze deterministic context-free languages in linear time,
@@ -521,44 +529,82 @@ A          *   2       +      1
  input stream
 #+end_example
 
-*** *LR(1)* and Shift-Reduce Parsing
+*** LR(1) and Shift-Reduce Parsing
 
-An *LR(1)* grammar can be parsed via shift-reduce with a single toekn of lookahead.
+An *LR(1)* grammar can be parsed via shift-reduce with a single token of lookahead.
 
 - Shift :: consumes one token from the input stream and pushes it onto the stack.
   This becomes a new single-node parse tree.
 - Reduce :: applies a completed grammar rule to some of the recent parse trees, joining them
   together as one tree with a new root symbol.
 
+Each action is chosen by traversing a graph where each node is a state within a finite state machine.
+The state machine tells us the available actions at each step. Each state in the machine consists
+of multiple items, which are rules augmented by a *dot(.)* that indicates the parsers current position
+in that rule.
 
-**** LR(1) Grammar
+The machine tells us the choices available at any step of bottom-up parsing. When a state containing an
+item with a dot at the end of a rule is reached, that indicates a possible reduction. A transition on a
+terminal that moves the dot one position to the right indicates a possible shift.
+
+*SLR* parsing is a basic form of *LR* parsing where *FOLLOW* sets are used to resolve shift-reduce
+conflicts. For example, reduction *A -> α* is only applied when the next token on the input is in
+*FOLLOW(A)*. These decisions are encoded in *parse tables*, historically known as *GOTO* and *ACTION*.
+To be *SLR*, each state in the table can be occupied by only one action.
+
+**** An LR(1) Grammar
 
 | rule | production |
 |------+------------|
-| P    | E          |
-| E    | E + T      |
-| T    | id (E)     |
-| T    | id         |
+| 1. P | E          |
+| 2. E | E + T      |
+| 3. E | T          |
+| 4. T | id (E)     |
+| 5. T | id         |
 
 **** Shift-Reduce Parsing
 
-| stack     | input        | action            |
-|-----------+--------------+-------------------|
-|           | id(id + id)$ | shift             |
-| id        | (id + id)$   | shift             |
-| id(       | id + id)$    | shift             |
-| id(id     | + id)$       | reduce T -> id    |
-| id(T      | + id)$       | reduce E -> T     |
-| id(E      | + id)$       | shift             |
-| id(E +    | id)$         | shift             |
-| id(E + id | )$           | reduce T -> id    |
-| id(E + T  | )$           | reduce E -> E + T |
-| id(E      | )$           | shift             |
-| id(E)     | $            | reduce T -> id(E) |
-| T         | $            | reduce E -> T     |
-| E         | $            | reduce P -> E     |
-| P         | $            | accept            |
+Columns *stack* and *symbols* are representations of the same information.
 
+| stack       | symbols   | input        | action            |
+|-------------+-----------+--------------+-------------------|
+| 0           |           | id(id + id)$ | shift 4           |
+| 0 4         | id        | (id + id)$   | shift 5           |
+| 0 4 5       | id(       | id + id)$    | shift 4           |
+| 0 4 5 4     | id(id     | + id)$       | reduce T -> id    |
+| 0 4 5 8     | id(T      | + id)$       | reduce E -> T     |
+| 0 4 5 6     | id(E      | + id)$       | shift 2           |
+| 0 4 5 6 2   | id(E +    | id)$         | shift 4           |
+| 0 4 5 6 2 4 | id(E + id | )$           | reduce T -> id    |
+| 0 4 5 6 2 3 | id(E + T  | )$           | reduce E -> E + T |
+| 0 4 5 6     | id(E      | )$           | shift 7           |
+| 0 4 5 6 7   | id(E)     | $            | reduce T -> id(E) |
+| 0 8         | T         | $            | reduce E -> T     |
+| 0 1         | E         | $            | accept            |
+
+** Grammar Classes
+
+#+begin_example
+LL(1) ⊂ SLR ⊂ LALR ⊂ LR(1) ⊂ CFG
+#+end_example
+
+- Context-Free Grammar :: Any grammar whose rules have the form *A -> α*. Requires a parse
+  table and a stack to track parser state. An ambiguous CFG creates a non-deterministic finite
+  automaton.
+
+- LR(k) :: Performs bottom-up, left-right scan and right-most parse of the input, deciding what rule
+  to apply next by examining the next *k* tokens. Requires a very large automaton, because the possible
+  lookaheads are encoded into states.
+
+- LALR :: A /Lookahead-LR/ parser created by constructing an *LR(1)* parser then merging all item sets
+  that have the same core.
+
+- SLR :: A /Simple-LR/ parser approximates an *LR(1)* parser by constructing an *LR(0)* state machine
+  and then relying on the *FIRST* and *FOLLOW* sets to select which rule to apply.
+
+- LL(k) :: Performs a top-down, left-right scan and left-most parse of the input, deciding what items
+  to rule to apply next by examining the next *k* tokens. *LL(1)* parsers require a only table that
+  is *O(nt)* where *t* is the number of tokens and *n* is the number of non-terminals.
 
 ** The Chomsky Hierarchy
 
@@ -569,25 +615,23 @@ An *LR(1)* grammar can be parsed via shift-reduce with a single toekn of lookahe
 | context sensitive      | linear bounded automata |
 | recursively enumerable | Turing machine          |
 
-*** Context Free
+- Regular Languages :: Languages described by regular expressions. Every regular expression corresponds
+  to a finite automaton that can be implemented with a table and a single integer to represent the
+  current state.
 
-The meaning of a non-terminal is the same in all places where it appears.
-CFGs require pushdown automaton, which requires a finite automaton coupled
-with a stack. If the grammar is ambiguous, the automaton will be non-deterministic
-and therefore impractical.
+- Context Free Languages :: The meaning of a non-terminal is the same in all places where it appears.
+  CFGs require pushdown automaton, which requires a finite automaton coupled with a stack. If the
+  grammar is ambiguous, the automaton will be non-deterministic and therefore impractical.
 
-*** Context Sensitive Languages
+- Context Sensitive Languages :: The meaning of a non-terminal is controlled by the context in which it
+  appears. CSLs require a non-deterministic linear bounded automaton, which is bounded in memory
+  consumption but not in execution time.
 
-The meaning of a non-terminal is controlled by the context in which it appears.
-CSLs require a non-deterministic linear bounded automaton, which is bounded in
-memory consumption, but not in execution time.
+- Recursively Enumerable Languages :: The least restrictive set of languages, described by the rules
+  *α -> β* where *α* and *β* can be any combination of terminals and non-terminals. These languages
+  can only be recognized by a full Turing machine.
 
-*** Recursively Enumerable Languages
-
-The least restrictive set of languages, they can only be recognized by a full
-Turing machine.
-
-*** General Principle of Language Design
+** General Principle of Language Design
 
 #+begin_quote
 The least powerful language gives the strongest guarantees.
