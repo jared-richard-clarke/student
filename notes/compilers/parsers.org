@@ -169,27 +169,27 @@ E -> E + E | identifier | integer
 
 *** Top-Down Derivation
 
-| sentential form                | apply rule        |
-|--------------------------------+-------------------|
-| P                              | P -> E            |
-| E                              | E -> E + E        |
-| E + E                          | E -> identitifier |
-| identifier + E                 | E -> E + E        |
-| identifier + E + E             | E -> integer      |
-| identifier + integer + E       | E -> integer      |
-| identifier + integer + integer |                   |
+| sentential form                | apply rule       |
+|--------------------------------+------------------|
+| P                              | P → E            |
+| E                              | E → E + E        |
+| E + E                          | E → identitifier |
+| identifier + E                 | E → E + E        |
+| identifier + E + E             | E → integer      |
+| identifier + integer + E       | E → integer      |
+| identifier + integer + integer |                  |
 
 *** Bottom-Up Derivation
 
-| sentential form                | apply rule      |
-|--------------------------------+-----------------|
-| identifier + integer + integer | E -> integer    |
-| identifier + integer + E       | E -> integer    |
-| identifier + E + E             | E -> E + E      |
-| identifier + E                 | E -> identifier |
-| E + E                          | E -> E + E      |
-| E                              | P -> E          |
-| p                              |                 |
+| sentential form                | apply rule     |
+|--------------------------------+----------------|
+| identifier + integer + integer | E → integer    |
+| identifier + integer + E       | E → integer    |
+| identifier + E + E             | E → E + E      |
+| identifier + E                 | E → identifier |
+| E + E                          | E → E + E      |
+| E                              | P → E          |
+| p                              |                |
 
 ** Ambiguous Grammars
 
@@ -478,17 +478,122 @@ Three helper functions are needed:
 
 ** LR Grammars
 
-*LR* parsers (left-to-right, rightmost derivation in reverse) are a type of bottom-up parser that
-analyze deterministic context-free languages in linear time, meaning they read input text from
-left to right without backing up, producing a right-most derivation from the bottom up.
+*** Actions
 
-An *LR* parser scans and parses the input text in one forward pass over the text. The parser builds
-up the parse tree incrementally, bottom up, and left to right, without guessing or backtracking.
-At every point in this pass, the parser has accumulated a list of subtrees or phrases of the input
-text that have been already parsed. Those subtrees are not yet joined together because the parser
-has not yet reached the right end of the syntax pattern that will combine them. 
+- L :: left-to-right parse
+- R :: Right-most derivation. Expands the right-most nonterminal. Reductions in reverse order.
+- k :: k-symbol lookahead.
 
-*** Shift-Reduce Parsing
+An *LR(k)* parser has a stack and input. Given the contents of a stack and *k* tokens
+of lookahead, the parser does one of the following operations:
+
+- shift :: consumes one token from the input stream and pushes it onto the stack.
+  This becomes a new single-node parse tree.
+- reduce :: applies a completed grammar rule to some of the recent parse trees, joining them
+  together as one tree with a new root symbol.
+  - top of the stack matches rule, *X → A B C*, so pop *C*, *B*, and *A*, and push *X*.
+
+*** Choices
+
+*LR(k)* parsers use *deterministic finite automata (DFAs)* to choose when to shift or reduce.
+
+- At each step, the parser runs a *DFA* using symbols on the stack as input. The input
+  is a sequence of terminals and nonterminals from the bottom up.
+
+- Current state of the *DFA* plus next *k* tokens indicate whether to shift or reduce.
+
+- The states of a *DFA* are sets of *items*.
+  - An item is a production with a *marker(.)* indicating the current position of the parser.
+  - In general, item *X → γ . δ* means *γ* is at the top of the stack, and at the head of the input
+    there is a string derivable from *δ*
+
+*** LR(0) Automaton
+
+**** Grammar
+
+| rule | production |
+|------+------------|
+| S'   | S eof      |
+| S    | ( L )      |
+| S    | x          |
+| L    | S          |
+| L    | L, S       |
+
+**** Automaton
+
+#+begin_example
+1.
+ --------------       2.              8.                   9.
+| S' -> .S eof |  x    ---------   x   -------------   S    -----------
+| S  -> .(L)   |----->| S -> x. |<----| L -> L,.S   |----->| L -> L,S. |
+| S  -> .x     |-+     ---------      | S -> .( L ) |       -----------
+ --------------  |    3.              | S -> .x     |
+     S |       ( |     -------------   -------------
+4.     V         +--->| S -> (.L )  | ( |     ^
+ -------------        | L -> .S     |<--+     | ,
+| S' -> S.eof |       | L -> .L, S  |         |        5.
+ -------------        | S -> .( L ) |  L     ------------
+                      | S -> .x     |-----> | S -> ( L.) |
+                       -------------        | L -> L.,S  |
+                          |                  ------------
+                        S |                   |
+                          V   7.              | )
+                       ---------              V         6.
+                      | L -> S. |           -------------
+                       ---------           | S -> ( L ). |
+                                            -------------
+#+end_example
+
+**** Action Table
+
+1. Build action table.
+2. If state contains item *X → γ.eof* then *accept*.
+3. If state contains item *X → γ.* then *reduce* *X → γ*.
+4. If state *i* has edge to *j* with terminal, then *shift*.
+
+| state | action           |
+|-------+------------------|
+|     1 | shift            |
+|     2 | reduce S → x     |
+|     3 | shift            |
+|     4 | accept           |
+|     5 | shift            |
+|     6 | reduce S → ( L ) |
+|     7 | reduce L → S     |
+|     8 | shift            |
+|     9 | reduce L → L, S  |
+
+*** LR(1) Parsing
+
+In practice, *LR(1)* is used for *LR* parsing.
+
+- Item is now pair *(X → γ.δ, x)*
+  - *γ* is at the top of the stack, and at the head of the input there is a string derivable
+    from *δx* (where *x* is the terminal).
+  - Algorithm for constructing state transition table and action table adapted.
+    - Closure operation when constructing states uses *FIRST()*, incorporating lookahead token.
+    - Action table columns now terminals.
+    - State transition relation and action table typically combined into a single table,
+      *GOTO and ACTION*.
+
+*** Shift-Reduce Parsing: ~A * 2 + 1~
+
+| step | stack            | lookahead | unscanned | action | grammar rule                |
+|------+------------------+-----------+-----------+--------+-----------------------------|
+|    0 | empty            | id        | * 2 + 1   | shift  |                             |
+|    1 | id               | *         | 2 + 1     | reduce | Value → id                  |
+|    2 | Value            | *         | 2 + 1     | reduce | Products → Value            |
+|    3 | Products         | *         | 2 + 1     | shift  |                             |
+|    4 | Products *       | int       | + 1       | shift  |                             |
+|    5 | Products * int   | +         | 1         | reduce | Value → int                 |
+|    6 | Products * Value | +         | 1         | reduce | Products → Products * Value |
+|    7 | Products         | +         | 1         | shift  | Sum → Products              |
+|    8 | Sums             | +         | 1         | shift  |                             |
+|    9 | Sums +           | int       | eof       | shift  |                             |
+|   10 | Sums + int       | eof       |           | reduce | Value → int                 |
+|   11 | Sums + Value     | eof       |           | reduce | Products → Value            |
+|   12 | Sums + Products  | eof       |           | reduce | Sums → Sums + Products      |
+|   13 | Sums             | eof       |           | accept |                             |
 
 #+begin_example
 === expression ===
@@ -514,12 +619,12 @@ A          *   2       +      1
                                   --------
                                  | table  |
                                  |--------|
-               /---------------- | loop   |
-	      /                   --------
- stack       /                      |
+               /---------------> | loop   |
+              /                   --------
+ stack       V                      ^
 |----------------------------|      |
  ----------------------------       |
-| Products | * | Value | ... |      |   
+| Products | * | Value | ... |      |
  ----------------------------     lookahead
   |          |     |                |
  ---        ---   ---              -------
@@ -528,46 +633,6 @@ A          *   2       +      1
 |-----------------------------------------|
  input stream
 #+end_example
-
-| step | stack            | lookahead | unscanned | action | grammar rule                |
-|------+------------------+-----------+-----------+--------+-----------------------------|
-|    0 | empty            | id        | * 2 + 1   | shift  |                             |
-|    1 | id               | *         | 2 + 1     | reduce | Value → id                  |
-|    2 | Value            | *         | 2 + 1     | reduce | Products → Value            |
-|    3 | Products         | *         | 2 + 1     | shift  |                             |
-|    4 | Products *       | int       | + 1       | shift  |                             |
-|    5 | Products * int   | +         | 1         | reduce | Value → int                 |
-|    6 | Products * Value | +         | 1         | reduce | Products → Products * Value |
-|    7 | Products         | +         | 1         | shift  | Sum → Products              |
-|    8 | Sums             | +         | 1         | shift  |                             |
-|    9 | Sums +           | int       | eof       | shift  |                             |
-|   10 | Sums + int       | eof       |           | reduce | Value → int                 |
-|   11 | Sums + Value     | eof       |           | reduce | Products → Value            |
-|   12 | Sums + Products  | eof       |           | reduce | Sums → Sums + Products      |
-|   13 | Sums             | eof       |           | accept |                             |
-
-*** LR(1) Parsing
-
-An *LR(1)* grammar can be parsed via shift-reduce with a single token of lookahead.
-
-- Shift :: consumes one token from the input stream and pushes it onto the stack.
-  This becomes a new single-node parse tree.
-- Reduce :: applies a completed grammar rule to some of the recent parse trees, joining them
-  together as one tree with a new root symbol.
-
-Each action is chosen by traversing a graph where each node is a state within a finite state machine.
-The state machine tells us the available actions at each step. Each state in the machine consists
-of multiple items, which are rules augmented by a *dot(.)* that indicates the parsers current position
-in that rule.
-
-The machine tells us the choices available at any step of bottom-up parsing. When a state containing an
-item with a dot at the end of a rule is reached, that indicates a possible reduction. A transition on a
-terminal that moves the dot one position to the right indicates a possible shift.
-
-*SLR* parsing is a basic form of *LR* parsing where *FOLLOW* sets are used to resolve shift-reduce
-conflicts. For example, reduction *A -> α* is only applied when the next token on the input is in
-*FOLLOW(A)*. These decisions are encoded in *parse tables*, historically known as *GOTO* and *ACTION*.
-To be *SLR*, each state in the table can be occupied by only one action.
 
 ** Grammar Classes
 
