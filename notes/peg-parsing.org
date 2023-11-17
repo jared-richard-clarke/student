@@ -20,17 +20,15 @@
 
 *{s ∈ a\star{} | s = (aa)ⁿ}*
 
-A generative definition over an unary character set, whose strings are constructed by
-concatenating pairs of a's.
-
 ** Recognition-Based System
 
 *{s ∈ a\star{} | (|s| mod 2 = 0)}*
 
-A recognition-based definition of the same language as the generative system but a string
-of a's is accepted if the predicate determines the string's length is even.
-
 ** Prioritized Choice Operator: */*
+
+- Ordered
+- Non-Commutative
+- Unambiguous
 
 #+begin_example
 === equivalent ===
@@ -57,16 +55,30 @@ A ← a b / a and A ← a / a b
 | e1 e2    | binary       |          2 | sequence           |
 | e1 / e2  | binary       |          1 | prioritized choice |
 
-The *?*, *\star{}*, and *+* operators behave as in common regular expressions syntax, except
-that they are greedy rather than nondeterministic. The option expression *e?* unconditionally
-consumes the text matched by *e* if *e* succeeds, and the repetition expressions *e\star{}*
-and *e+* always consume as many successive matches of *e* as possible.
+- empty :: A parsing expression that always succeeds without consuming any input.
 
-The *&* and *!* operators denote syntactic predicates. The expression *&e* attempts to match
-pattern *e*, then unconditionally backtracks to the starting point, preserving only the
-knowledge of whether *e* succeeded or failed. *foo &(bar)* matches and consumes *foo* only if
-it is followed by *bar*. Conversely, the expression *!e* fails if *e* succeeds, but succeeds
-if *e* fails. *Identifier !LEFTARROW* matches any identifier not followed by a *LEFTARROW*.
+- sequence :: Operator *e_{1} e_{2}* first invokes *e_{1}*, and if *e_{1}* succeeds, subsequently
+  invokes *e_{2}* on the remainder of the input string not consumed by *e_{1}*. If either fails, then
+  the entire sequence fails, consuming no input.
+
+- choice :: Operator *e_{1} / e_{2}* first invokes *e_{1}*, and if *e_{1}* succeeds, returns it result
+  immediately. Otherwise, if *e_{1}* fails, then the choice operator backtracks to the original input
+  position at which it invoked *e_{1}* and then calls *e_{2}* instead, returning *e_{2}'s* result.
+
+- zero-or-more :: Operator *e\star{}* consumes zero or more consecutive repetitions of its
+  sub-expression *e*. Consumes as much input as possible, never backtracking.
+
+- one-or-more :: Operator *e+* consumes one or more consecutive repetitions of its
+  sub-expression *e*. Consumes as much input as possible, never backtracking.
+
+- optional :: Operator *e?* consumes zero or one repetitions of its sub-expression *e*. Consumes as much
+  input as possible, never backtracking.
+
+- and-predicate :: Expression *&e* invokes the sub-expression *e*, then succeeds if *e* succeeds and fails
+  if *e* fails, but in either case /never consumes any input/.
+
+- not-predicate :: Expression *!e* succeeds if *e* fails and fails if *e* succeeds. In either case it
+  /never consumes any input/.
 
 ** PEG ASCII Syntax
 
