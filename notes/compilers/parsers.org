@@ -395,7 +395,7 @@ For each terminal a ∈ Σ: FIRST(a) = {a}
 
 For Non-Terminals:
 Repeat:
-    For each rule X -> Y1Y2...Yk in a grammar G:
+    For each rule X → Y1Y2...Yk in a grammar G:
         Add a to FIRST(X)
             if a is in FIRST(Y1)
             or a is in FIRST(Yn) and Y1...Yn-1 ⇒ ε
@@ -419,9 +419,9 @@ non-terminal A, including $ if A occurs at the end of the input.
 FOLLOW(S) = {$} where S is the start symbol.
 
 Repeat:
-    If A -> αBβ then:
+    If A → αBβ then:
         add FIRST(β) (excepting ε) to FOLLOW(B).
-    If A -> αB or FIRST(β) contains ε then:
+    If A → αB or FIRST(β) contains ε then:
         add FOLLOW(A) to FOLLOW(B).
 until no more changes occur.
 #+end_example
