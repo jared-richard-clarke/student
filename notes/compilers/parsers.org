@@ -264,7 +264,7 @@ T -> F | T * F
 F -> number | (E)
 #+end_example
 
-** LL(1) Grammars
+** LL Grammars and Parsing
 
 *LL* parsers (left-to-right, left-most derivation) is a top-down parser for a restricted
 context-free language. An *LL* parser is called an *LL(k)* parser if it uses *k* tokens
@@ -476,37 +476,94 @@ Three helper functions are needed:
   }
 #+end_src
 
-** LR Grammars
+** LR Grammars and Parsing
 
 *** Actions
 
 - L :: left-to-right parse
-- R :: Right-most derivation. Expands the right-most nonterminal. Reductions in reverse order.
+  
+- R :: Right-most derivation. Expands the right-most nonterminal. Reductions in reverse order,
+  from the leaves to the root.
+  
 - k :: k-symbol lookahead.
 
 An *LR(k)* parser has a stack and input. Given the contents of a stack and *k* tokens
 of lookahead, the parser does one of the following operations:
 
-- shift :: consumes one token from the input stream and pushes it onto the stack.
-  This becomes a new single-node parse tree.
-- reduce :: applies a completed grammar rule to some of the recent parse trees, joining them
-  together as one tree with a new root symbol.
-  - top of the stack matches rule, *X → A B C*, so pop *C*, *B*, and *A*, and push *X*.
+1. *shift*: Push the current input symbol onto the stack. Scan the next symbol.
+  
+2. *reduce*: A grammar rule's right-hand side is on top of the stack. Pop the symbols
+   and replace them with the grammar rule's left-hand-side nonterminal.
+
+3. *accept*: The parser has reached the end of the input without error.
+
+4. *reject*: The input is syntactically incorrect.
+
+The difference between *SLR*, *LALR*, and *LR* parsers is in the tables that they use. Different tables
+use different techniques to determine when to *reduce*, and, if there is more than one grammar rule with
+the same right-hand side, which left-hand-side nonterminal to push.
 
 *** Choices
 
-*LR(k)* parsers use *deterministic finite automata (DFAs)* to choose when to shift or reduce.
+*LR(k)* parsers use *deterministic finite automata (DFAs)* to choose when to shift or reduce. The symbols
+pushed onto the parser's stack are not actually terminals and nonterminals. They are *states* within
+a finite state machine.
 
 - At each step, the parser runs a *DFA* using symbols on the stack as input. The input
   is a sequence of terminals and nonterminals from the bottom up.
 
-- Current state of the *DFA* plus next *k* tokens indicate whether to shift or reduce.
+- The current state of the *DFA* plus the next *k* tokens of the input indicate whether to shift or reduce.
 
 - The states of a *DFA* are sets of *items*.
   - An item is a production with a *marker(.)* indicating the current position of the parser.
-  - In general, item *X → γ . δ* means *γ* is at the top of the stack, and at the head of the input
+  - In general, item *X → γ . δ* means *γ* is at the top of the stack. At the head of the input
     there is a string derivable from *δ*
 
+*LR* parsers use two tables: the *action* table and the *goto* table.
+
+- action table :: Indexed by the top-of-the-stack symbol and the current token. Tells which of the four
+  actions — shift, reduce, accept, reject — to perform.
+
+- goto table :: If a rule contains *n* symbols, we pop *n* states off the stack. The *goto table* is indexed
+  by state symbol *t* and nonterminal *A*, where *t* is the state symbol on the top of the stack after
+  popping *n* times
+
+*** Algorithm
+
+All *LR* parsers use this same basic algorithm. The states that are pushed onto the stack represent the states
+in the underlying finite state machine. Each place we might be in the input is represented within the state as
+an *item*.
+
+The differences between *LR* parsers:
+
+- The definition of an item.
+- The number of states within the underlying finite state machine.
+- The amount of information within the state.
+
+#+begin_example
+# === main loop: pseudo code ===
+
+push initial state s0
+a = scan()
+loop
+    t = top-of-stack (state) symbol
+    switch action[t, a] {
+       case shift s:
+           push(s)
+           a = scan()
+       case reduce by A → alpha:
+           for i = 1 to length(alpha) do pop() end
+	   t = top-of-stack symbol
+           push(goto[t, A])
+       case accept:
+           return( SUCCESS )
+       case error:
+           call the error handler
+           return( FAILURE )
+    }
+end
+#+end_example
+  
 *** LR(0) Automaton
 
 **** Grammar
@@ -531,13 +588,13 @@ of lookahead, the parser does one of the following operations:
      S |       ( |     -------------   -------------
 4.     V         +--->| S -> (.L )  | ( |     ^
  -------------        | L -> .S     |<--+     | ,
-| S' -> S.eof |       | L -> .L, S  |         |        5.
+| S' -> S.eof |       | L -> .L, S  |         |         5.
  -------------        | S -> .( L ) |  L     ------------
                       | S -> .x     |-----> | S -> ( L.) |
                        -------------        | L -> L.,S  |
                           |                  ------------
                         S |                   |
-                          V   7.              | )
+                          V    7.             | )
                        ---------              V         6.
                       | L -> S. |           -------------
                        ---------           | S -> ( L ). |
