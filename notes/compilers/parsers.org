@@ -124,16 +124,16 @@ corresponding non-terminal.
 
 - terminal :: The elementary symbols of a language.
 
-- non-terminal :: a language structure that can be replaced by sequences of terminal symbols.
+- non-terminal :: A language structure that can be replaced by sequences of terminal symbols.
   Also called syntactic variables.
 
-- sentence :: a valid sequence of terminals.
+- sentence :: A valid sequence of terminals.
 
-- sentential form :: a valid sequence of terminals and non-terminals.
+- sentential form :: A valid sequence of terminals and non-terminals.
 
-- grammar :: a finite set of rules describing a valid set of sentences.
+- grammar :: A finite set of rules describing a valid set of sentences.
 
-- language :: the potentially infinite set of sentences described by a particular grammar.
+- language :: The potentially infinite set of sentences described by a particular grammar.
 
 - start symbol :: The special, non-terminal symbol representing the top-level definition
   of a program.
