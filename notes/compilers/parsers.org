@@ -122,33 +122,36 @@ Grammars in which the left-hand side of each production rule is always a single 
 The right-hand side of a rule is a sentential form that describes the allowable forms of the
 corresponding non-terminal.
 
-- terminal :: the elementary symbols of the language.
-  
+- terminal :: The elementary symbols of a language.
+
 - non-terminal :: a language structure that can be replaced by sequences of terminal symbols.
-  Also called syntactic variables. Includes declarations, statements, and expressions.
+  Also called syntactic variables.
 
 - sentence :: a valid sequence of terminals.
-  
+
 - sentential form :: a valid sequence of terminals and non-terminals.
 
-- grammar :: a finite set of rules describing a valid set of strings.
-  
+- grammar :: a finite set of rules describing a valid set of sentences.
+
 - language :: the potentially infinite set of sentences described by a particular grammar.
-  
-- derivation :: a sequence of rule applications that prove a sentence is a member of a
+
+- start symbol :: The special, non-terminal symbol representing the top-level definition
+  of a program.
+
+- derivation :: A sequence of rule applications that prove a sentence is a member of a
   particular language.
-  
-- top-down derivation :: begin with the start symbol, applying rules to expand non-terminals
-  until the desired sentenc is reached.
-  
-- bottom-up derivation :: begin at the desired sentence, applying rules backward until reaching
+
+- top-down derivation :: Begins with the start symbol, applying rules to expand non-terminals
+  until the desired sentence is reached.
+
+- bottom-up derivation :: Begina at the desired sentence, applying rules backward until reaching
   the start symbol.
 
 - weak equivalence :: two separate grammars that generate the same language.
 
 - production :: a rewrite rule specifying symbol substitution to generate new symbol sequences.
 
-** Example Grammar
+*** Example Grammar
 
 This grammar is ambiguous because there are two possible derivations for any sentence involving
 two plus signs.
