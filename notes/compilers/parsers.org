@@ -493,15 +493,18 @@ Three helper functions are needed:
 
 *** Grammar Translated into a Recursive Descent Parser
 
+This C program serves only to verify that the input program matches the grammar outlined above.
+
 #+begin_src c
+  // P ::= E $
   int parse_P() {
     return parse_E() && match(TOKEN_EOF);
   }
-
+  // E ::= T E'
   int parse_E() {
     return parse_T() && parse_E_prime();
   }
-
+  // E' ::= + T E' | ε 
   int parse_E_prime() {
     token_t t = peek();
     if (t == TOKEN_PLUS) {
@@ -510,11 +513,11 @@ Three helper functions are needed:
     }
     return 1;
   }
-
+  // T ::= F T'
   int parse_T() {
     return parse_F() && parse_T_prime();
   }
-
+  // T' ::= * F T' | ε
   int parse_T_prime() {
     token_t t = peek();
     if (t == TOKEN_MULTIPLY) {
@@ -523,7 +526,7 @@ Three helper functions are needed:
     }
     return 1;
   }
-
+  // F ::= (E) | integer
   int parse_F() {
     token_t t = peek();
     if (t == TOKEN_LPAREN) {
