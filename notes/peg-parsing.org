@@ -28,7 +28,7 @@ concatenating pairs of a's.
 *{s ∈ a\star{} | (|s| mod 2 = 0)}*
 
 A recognition-based definition of the same language as the generative system but a string
-of a's is accepted if the predicate determines the strings length is even.
+of a's is accepted if the predicate determines the string's length is even.
 
 ** Prioritized Choice Operator: */*
 
