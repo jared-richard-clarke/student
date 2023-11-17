@@ -164,7 +164,7 @@ For brevity, we occasionally condense a set of rules with a common left-hand sid
 the right-hand sides with a logical-or symbol:
 
 #+begin_example
-E -> E + E | identifier | integer
+E → E + E | identifier | integer
 #+end_example
 
 *** Top-Down Derivation
@@ -255,13 +255,13 @@ of multiplied factors (*F*).
 #+begin_example
 === ambiguous ===
 
-E -> E + E | E * E | (E) | number
+E → E + E | E * E | (E) | number
 
 === unambiguous ===
 
-E -> T | E + T
-T -> F | T * F
-F -> number | (E)
+E → T | E + T
+T → F | T * F
+F → number | (E)
 #+end_example
 
 ** LL Grammars and Parsing
