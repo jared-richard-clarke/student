@@ -269,6 +269,18 @@ F → number | (E)
 
 ** LL Grammars and Parsing
 
+*** Notation
+
+The notation used in these notes is the notation used by Douglas Thain in his book *ICLD*.
+
+- Lowercase letters represent terminals: keywords, operators, identifiers, etc.
+- Uppercase letters represent non-terminals: *P*, *S*, *E*, etc.
+- Greek letters represent sentential forms — potentially mixed sequences of terminals and non-terminals:
+  *α*, *β*, *γ*, etc.
+
+- Sequences represent individual symbols in a sentential form: *Y_{1}Y_{2}...Y_{n}* where *Y_{i}* may
+  be either a terminal or non-terminal.
+
 *** Actions
 
 - L :: left-to-right parsing
