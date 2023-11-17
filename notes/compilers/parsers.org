@@ -192,7 +192,7 @@ E → E + E | identifier | integer
 | identifier + E                 | E → identifier |
 | E + E                          | E → E + E      |
 | E                              | P → E          |
-| p                              |                |
+| P                              |                |
 
 *** Ambiguity
 
@@ -269,9 +269,18 @@ F → number | (E)
 
 ** LL Grammars and Parsing
 
-*LL* parsers (left-to-right, left-most derivation) is a top-down parser for a restricted
-context-free language. An *LL* parser is called an *LL(k)* parser if it uses *k* tokens
-of lookahead when parsing a sentence.
+*** Actions
+
+- L :: left-to-right parsing
+
+- L :: left-most derivation
+
+- (k) :: k-symbol lookahead
+
+*** LL(1)
+
+*LL* parsers are top-down parsers for restricted context-free languages. An *LL* parser is called an
+*LL(k)* parser if it uses *k* tokens of lookahead when parsing a sentence.
 
 *LL(1)* grammars are a subset of CFGs that can be parsed by considering only one non-terminal and
 the next token in the input stream. To make a grammar *LL(1)* we must do the following:
@@ -279,15 +288,17 @@ the next token in the input stream. To make a grammar *LL(1)* we must do the fol
 1. Remove ambiguous derivations.
 2. Eliminate left recursion.
 3. Eliminate any common left prefixes through left factoring.
-4. Formally prove the grammar is *LL(1)* by generating FIRST and FOLLOW sets for the grammar.
+4. Formally prove the grammar is *LL(1)* by generating *FIRST* and *FOLLOW* sets for the grammar.
 
 *** Eliminating Left Recursion
 
-*LL(1)* grammars cannot contain left recursion. The expression *E -> E + T* is left-recursive because *E*
-appears as the first symbol on the right-hand side. Thus *E -> E + T* would expand to *(E + T) + T*,
+*Left Recursion*: *A → Bβ* such that *B ⇒ Aγ*.
+
+*LL(1)* grammars cannot contain left recursion. The expression *E → E + T* is left-recursive because *E*
+appears as the first symbol on the right-hand side. Thus *E → E + T* would expand to *(E + T) + T*,
 which would expand into *((E + T) + T) + T* and so on into infinity.
 
-Rewriting the rule as *E -> T + E* would remove left recursion, but it creates a right-associative
+Rewriting the rule as *E → T + E* would remove left recursion, but it creates a right-associative
 operation and a common left prefix. Instead the rules must be rewritten so that the formally recursive
 rule begins with the leading symbols of its alternatives.
 
@@ -299,6 +310,15 @@ rule begins with the leading symbols of its alternatives.
 | 4. E' | ε          |
 | 5. T  | identifier |
 | 6. T  | integer    |
+
+#+begin_example
+P  ::= E
+E  ::= T E'
+E' ::= + T E'
+     | ε
+T  ::= identifier
+     | integer
+#+end_example
 
 Left recursion is primarily a theoretical problem. Looping constructs, or iteration, are excellent
 real-world solutions.
@@ -312,12 +332,12 @@ tree separately or fuse the two stages into a recursive loop — a Pratt parser.
     for(;;) {
       parse_statement();
       if (next() != SEMI_COLON) {
-	break;
+        break;
       }
     }
   }
 #+end_src
-   
+
 *** Eliminating Common Left Prefixes
 
 Look for all common prefixes of a given non-terminal and replace them with one rule that contains
@@ -333,6 +353,13 @@ which eliminates backtracking and redundant parsings.
 | 3. E | id[E]      |
 | 4. E | id(E)      |
 
+#+begin_example
+P ::= E
+E ::= id
+    | id[E]
+    | id(E)
+#+end_example
+
 **** After Left Factoring
 
 | rule  | production |
@@ -343,16 +370,25 @@ which eliminates backtracking and redundant parsings.
 | 4. E' | (E)        |
 | 5. E' | ε          |
 
-** First and Follow Sets
+#+begin_example
+P  ::= E
+E  ::= id E'
+E' ::=
+     | [E]
+     | (E)
+     | ε
+#+end_example
+
+*** First and Follow Sets
 
 In order to construct a complete parser for an *LL(1)* grammar, we must compute two sets, known as
 *FIRST* and *FOLLOW*.
 
-*** Computing First Sets for a Grammar *G*
+**** Computing First Sets for a Grammar *G*
 
 #+begin_example
 FIRST(α) is the set of terminals that begin all strings given by α,
-including  ε if α ⇒  ε.
+including  ε if α ⇒ ε.
 
 For Terminals:
 For each terminal a ∈ Σ: FIRST(a) = {a}
@@ -361,20 +397,20 @@ For Non-Terminals:
 Repeat:
     For each rule X -> Y1Y2...Yk in a grammar G:
         Add a to FIRST(X)
-	    if a is in FIRST(Y1)
-	    or a is in FIRST(Yn) and Y1...Yn-1 ⇒ ε
-	If Y1...Yk ⇒ ε then add ε to FIRST(X)
+            if a is in FIRST(Y1)
+            or a is in FIRST(Yn) and Y1...Yn-1 ⇒ ε
+        If Y1...Yk ⇒ ε then add ε to FIRST(X)
 until no more changes occur.
 
 For a Sentential Form α:
 For each symbol Y1Y2...Yk in α:
     Add a to FIRST(α)
         if a is in FIRST(Y1)
-	or a is in FIRST(Yn) and Y1...Yn-1 ⇒ ε
+        or a is in FIRST(Yn) and Y1...Yn-1 ⇒ ε
     If Y1...Yk ⇒ ε then add ε to FIRST(α).
 #+end_example
 
-*** Computing Follow Sets for Grammar *G*
+**** Computing Follow Sets for Grammar *G*
 
 #+begin_example
 FOLLOW(A) is the set of terminals that can come after
@@ -405,6 +441,18 @@ until no more changes occur.
 | 7. T' | ε          |
 | 8. F  | (E)        |
 | 9. F  | integer    |
+
+#+begin_example
+P  ::= E
+E  ::= T E'
+E' ::= + T E'
+     | ε
+T  ::= F T'
+T' ::= * F T'
+     | ε
+F  ::= (E)
+     | integer
+#+end_example
 
 **** First and Follow
 
