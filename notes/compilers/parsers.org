@@ -230,7 +230,7 @@ ident  E + E
 
 It is possible to re-write a grammar so that it is not ambiguous. With binary operators, we can require
 one side of an expression to be an atomic term (*T*). The grammar below is no longer ambiguous, because
-it only allows a left-most derivation.
+it allows only a left-most derivation.
 
 | rule | production |
 |------+------------|
