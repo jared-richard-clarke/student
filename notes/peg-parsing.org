@@ -2,13 +2,43 @@
 
 *Parsing Expression Grammars: A Recognition-Based Syntactic Foundation*, Bryan Ford
 
+** Keywords
+
+- context-free grammars
+- regular expressions
+- parsing expression grammars
+- BNF (Backus-Naur Form)
+- lexical analysis
+- unified grammars
+- scannerless parsing
+- packrat parsing
+- syntactic predicates
+- TDPL (Top Down Parsing Language)
+- GTDPL (Generalized Top Down Parsing Language)
+
 ** Generative System
 
 *{s ∈ a\star{} | s = (aa)ⁿ}*
 
+A generative definition over an unary character set, whose strings are constructed by
+concatenating pairs of a's.
+
 ** Recognition-Based System
 
 *{s ∈ a\star{} | (|s| mod 2 = 0)}*
+
+A recognition-based definition of the same language as the generative system but a string
+of a's is accepted if the predicate determines the strings length is even.
+
+** Prioritized Choice Operator: */*
+
+#+begin_example
+=== equivalent ===
+A → a b | a and A → a | a b
+
+=== non-equivalent ===
+A ← a b / a and A ← a / a b
+#+end_example
 
 ** PEG Operators
 
@@ -33,10 +63,10 @@ consumes the text matched by *e* if *e* succeeds, and the repetition expressions
 and *e+* always consume as many successive matches of *e* as possible.
 
 The *&* and *!* operators denote syntactic predicates. The expression *&e* attempts to match
-patter *e*, then unconditionally backtracks to the starting point, preserving only the
-knowledge of whether *e* succeeded or failed. Conversely, the expression *!e* fails if *e*
-succeeds, but succeeds if *e* fails. *Identifier !LEFTARROW* matches any identifier not
-followed by a *LEFTARROW*.
+pattern *e*, then unconditionally backtracks to the starting point, preserving only the
+knowledge of whether *e* succeeded or failed. *foo &(bar)* matches and consumes *foo* only if
+it is followed by *bar*. Conversely, the expression *!e* fails if *e* succeeds, but succeeds
+if *e* fails. *Identifier !LEFTARROW* matches any identifier not followed by a *LEFTARROW*.
 
 ** PEG ASCII Syntax
 
@@ -90,23 +120,33 @@ EndOfFile  <- !.
 
 A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
 
-- V_{N} :: a finite set of nonterminal symbols.
+- V_{N} :: A finite set of nonterminal symbols.
 
-- V_{T} :: a finite set of terminal symbols.
+- V_{T} :: A finite set of terminal symbols.
 
-- R :: a finite set of rules.
+- R :: A finite set of rules.
 
-- e_{S} :: a parsing expression termed the *start expression*.
+- e_{S} :: A parsing expression termed the *start expression*.
 
-- V_{N} ∩ V_{T} = ∅ :: the intersection of the nonterminals and terminal sets are the empty set,
-  meaning they share no members.
+- V_{N} ∩ V_{T} = ∅ :: The intersection of the nonterminals and terminal sets are the empty set,
+  meaning they share no members. They are disjoint.
 
-- r ∈ R :: is a pair *(A, e)*, written as *A ← e*, where *A ∈ V_{N}* and *e* is a parsing expression.
+- r ∈ R :: A pair *(A, e)*, written as *A ← e*, where *A ∈ V_{N}* and *e* is a parsing expression.
 
 - For any nonterminal *A*, there is exactly one *e* such that *A ← e ∈ R*. *R* is therefore
-  a function from nonterminals to expressions.
+  a function mapping nonterminals to expressions.
 
 - R(A) :: denotes the unique expression *e* such that *A ← e ∈ R*.
+
+If *e*, *e_{1}*, and *e_{2}* are parsing expressions, then so is:
+
+1. *ε*, the empty string.
+2. *a*, any terminal, where *a ∈ V_{T}*.
+3. *A*, any nonterminal, where *A ∈ V_{N}*.
+4. *e_{1} e_{2}*, a sequence.
+5. *e_{1} / e_{2}*, prioritized choice.
+6. *e\star{}*, zero or more repetitions.
+7. *!e*, a not predicate.
 
 ** Desugaring Concrete Syntax
 
