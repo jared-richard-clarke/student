@@ -133,13 +133,16 @@ corresponding non-terminal.
 
 - grammar :: A finite set of rules describing a valid set of sentences.
 
-- language :: The potentially infinite set of sentences described by a particular grammar.
+- language :: The potentially infinite set of sentences described or set of strings generated
+  by a particular grammar.
 
 - start symbol :: The special, non-terminal symbol representing the top-level definition
   of a program.
 
 - derivation :: A sequence of rule applications that prove a sentence is a member of a
   particular language.
+
+- (⇒) :: Shows that one sentential form is equal to another by applying a given rule.
 
 - top-down derivation :: Begins with the start symbol, applying rules to expand non-terminals
   until the desired sentence is reached.
@@ -151,10 +154,7 @@ corresponding non-terminal.
 
 - production :: A rewrite rule specifying symbol substitution to generate new symbol sequences.
 
-*** Example Grammar
-
-This grammar is ambiguous because there are two possible derivations for any sentence involving
-two plus signs.
+*** Derivation
 
 | rule | production |
 |------+------------|
@@ -194,11 +194,11 @@ E → E + E | identifier | integer
 | E                              | P → E          |
 | p                              |                |
 
-** Ambiguous Grammars
+*** Ambiguity
 
-~identifier + integer + integer~ is ambiguous because it has two possible derivations.
+~identifier + integer + integer~ for the grammar above is ambiguous because it has two possible derivations.
 
-*** Left-Most Derivation
+**** Left-Most Derivation
 
 #+begin_example
         P
@@ -212,7 +212,7 @@ E → E + E | identifier | integer
 ident  int
 #+end_example
 
-*** Right-Most Derivation
+**** Right-Most Derivation
 
 #+begin_example
       P
