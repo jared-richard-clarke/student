@@ -144,12 +144,12 @@ corresponding non-terminal.
 - top-down derivation :: Begins with the start symbol, applying rules to expand non-terminals
   until the desired sentence is reached.
 
-- bottom-up derivation :: Begina at the desired sentence, applying rules backward until reaching
+- bottom-up derivation :: Begins at the desired sentence, applying rules backward until reaching
   the start symbol.
 
-- weak equivalence :: two separate grammars that generate the same language.
+- weak equivalence :: Two separate grammars that generate the same language.
 
-- production :: a rewrite rule specifying symbol substitution to generate new symbol sequences.
+- production :: A rewrite rule specifying symbol substitution to generate new symbol sequences.
 
 *** Example Grammar
 
