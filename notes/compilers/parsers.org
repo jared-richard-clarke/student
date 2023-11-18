@@ -812,13 +812,5 @@ LL(1) ⊂ SLR ⊂ LALR ⊂ LR(1) ⊂ CFG
   consumption but not in execution time.
 
 - Recursively Enumerable Languages :: The least restrictive set of languages, described by the rules
-  *α -> β* where *α* and *β* can be any combination of terminals and non-terminals. These languages
+  *α → β* where *α* and *β* can be any combination of terminals and non-terminals. These languages
   can only be recognized by a full Turing machine.
-
-** General Principle of Language Design
-
-#+begin_quote
-The least powerful language gives the strongest guarantees.
-
-— Douglas Thain
-#+end_quote
