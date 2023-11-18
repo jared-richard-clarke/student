@@ -716,6 +716,10 @@ F ::= integer
 
 **** Tables GOTO and ACTION
 
+- goto :: *non-terminal* through *follow*
+
+- action :: *$* through *integer*
+
 | non-terminal | nullable? | first     | follow    | $        | +            | *             | integer       |
 |--------------+-----------+-----------+-----------+----------+--------------+---------------+---------------|
 | P            | ✖         | {integer} |           |          |              |               | P ::= E $     |
