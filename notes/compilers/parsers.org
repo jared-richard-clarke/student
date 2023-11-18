@@ -385,8 +385,7 @@ E ::= id
 #+begin_example
 P  ::= E
 E  ::= id E'
-E' ::=
-     | [E]
+E' ::= [E]
      | (E)
      | ε
 #+end_example
