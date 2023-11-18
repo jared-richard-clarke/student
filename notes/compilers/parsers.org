@@ -699,63 +699,50 @@ In practice, *LR(1)* is used for *LR* parsing.
     - State transition relation and action table typically combined into a single table,
       *GOTO and ACTION*.
 
-*** Shift-Reduce Parsing: ~A * 2 + 1~
+*** Shift-Reduce Parsing: ~integer + integer~
 
-| step | stack            | lookahead | unscanned | action | grammar rule                |
-|------+------------------+-----------+-----------+--------+-----------------------------|
-|    0 | empty            | id        | * 2 + 1   | shift  |                             |
-|    1 | id               | *         | 2 + 1     | reduce | Value → id                  |
-|    2 | Value            | *         | 2 + 1     | reduce | Products → Value            |
-|    3 | Products         | *         | 2 + 1     | shift  |                             |
-|    4 | Products *       | int       | + 1       | shift  |                             |
-|    5 | Products * int   | +         | 1         | reduce | Value → int                 |
-|    6 | Products * Value | +         | 1         | reduce | Products → Products * Value |
-|    7 | Products         | +         | 1         | shift  | Sum → Products              |
-|    8 | Sums             | +         | 1         | shift  |                             |
-|    9 | Sums +           | int       | eof       | shift  |                             |
-|   10 | Sums + int       | eof       |           | reduce | Value → int                 |
-|   11 | Sums + Value     | eof       |           | reduce | Products → Value            |
-|   12 | Sums + Products  | eof       |           | reduce | Sums → Sums + Products      |
-|   13 | Sums             | eof       |           | accept |                             |
+**** Grammar
 
 #+begin_example
-=== expression ===
-A * 2 + 1
-
-=== derivation ===
-                              13 Sums
-             -----------------
-            /           /     |
-           8 Sums      |      |
-           |           |      |
-   7 Products          |      |
- /         | \         |      |
-3 Products |  \        |      12 Products
-|          |   |       |      |
-2 Value    |   6 Value |      11 Value
-|          |   |       |      |
-1 id       4   5 int   9      10 int
-|          |   |       |      |
-A          *   2       +      1
-
-=== parser at step 6 ===
-                                  --------
-                                 | table  |
-                                 |--------|
-               /---------------> | loop   |
-              /                   --------
- stack       V                      ^
-|----------------------------|      |
- ----------------------------       |
-| Products | * | Value | ... |      |
- ----------------------------     lookahead
-  |          |     |                |
- ---        ---   ---              -------
-| A |      | * | | 2 |            | + | 1 | - unscanned
- ---        ---   ---              -------
-|-----------------------------------------|
- input stream
+P  ::= E $
+E  ::= T E'
+E' ::= + T E'
+     | ε
+T  ::= F T'
+T' ::= * F T'
+     | ε
+F ::= integer
 #+end_example
+
+**** Tables GOTO and ACTION
+
+| non-terminal | nullable? | first     | follow    | $        | +            | *             | integer       |
+|--------------+-----------+-----------+-----------+----------+--------------+---------------+---------------|
+| P            | ✖         | {integer} |           |          |              |               | P ::= E $     |
+| E            | ✖         | {integer} | {$}       |          |              |               | E ::= T E'    |
+| E'           | ✔         | {+}       | {$}       | E' ::= ε | E' ::= + T E |               |               |
+| T            | ✖         | {integer} | {+, $}    |          |              |               | T ::= F T'    |
+| T'           | ✔         | {*}       | {+, $}    | T' ::= ε | T' ::= ε     | T' ::= * F T' |               |
+| F            | ✖         | {integer} | {+, *, $} |          |              |               | F ::= integer |
+
+**** Parse
+
+| step | stack           | input               | rule          |
+|------+-----------------+---------------------+---------------|
+|    1 | $ E             | integer + integer $ |               |
+|    2 | $ E' T          | integer + integer $ | E ::= T E'    |
+|    3 | $ E' T' F       | integer + integer $ | T ::= F T'    |
+|    4 | $ E' T' integer | integer + integer $ | F ::= integer |
+|    5 | $ E' T'         | + integer $         | match integer |
+|    6 | $ E'            | + integer $         | T' ::= ε      |
+|    7 | $ E' T +        | + integer $         | E' ::= T E'   |
+|    8 | $ E' T          | integer $           | match +       |
+|    9 | $ E' T' F       | integer $           | T ::= F T'    |
+|   10 | $ E' T' integer | integer $           | F ::= integer |
+|   11 | $ E' T'         | $                   | match integer |
+|   12 | $ E'            | $                   | T' ::= ε      |
+|   13 | $               | $                   | E' ::= ε      |
+|   14 |                 |                     | match $       |
 
 ** Grammar Classes
 
