@@ -7,17 +7,17 @@
 ** Actions
 
 - L :: left-to-right parse
-  
+
 - R :: Right-most derivation. Expands the right-most nonterminal. Reductions in reverse order,
   from the leaves to the root.
-  
+
 - (k) :: k symbols of lookahead.
 
 An *LR(k)* parser has a stack and input. Given the contents of a stack and *k* tokens
 of lookahead, the parser does one of the following operations:
 
 1. *shift*: Push the current input symbol onto the stack. Scan the next symbol.
-  
+
 2. *reduce*: A grammar rule's right-hand side is on top of the stack. Pop the symbols
    and replace them with the grammar rule's left-hand-side.
 
@@ -108,13 +108,49 @@ end
 
 | rule | production |
 |------+------------|
-| S'   | S $        |
-| S    | ( L )      |
-| S    | x          |
-| L    | S          |
-| L    | L, S       |
+|    1 | S → S $    |
+|    2 | S → ( L )  |
+|    3 | S → x      |
+|    4 | L → S      |
+|    5 | L → L, S   |
 
-*** Automaton
+*** Configurating Sets
+
+1. Build action table.
+2. If state contains item *X → γ.$* then *accept*.
+3. If state contains item *X → γ.* then *reduce* *X → γ*.
+4. If state *i* has edge to *j* with terminal, then *shift*.
+
+| state | set        | successor |
+|-------+------------+-----------|
+| s1    | S' → .S $  | s4        |
+|       | S  → .(L)  | s3        |
+|       | S  → .x    | s2        |
+|-------+------------+-----------|
+| s2    | S → x.     | reduce 3  |
+|-------+------------+-----------|
+| s3    | S → (.L )  | s5        |
+|       | L → .S     | s7        |
+|       | L → .L, S  | s5        |
+|       | S → .( L ) |           |
+|       | S → .x     |           |
+|-------+------------+-----------|
+| s4    | S' → S.$   | accept    |
+|-------+------------+-----------|
+| s5    | S → ( L. ) | s6        |
+|       | L → L., S  | s8        |
+|-------+------------+-----------|
+| s6    | S → ( L ). | reduce 2  |
+|-------+------------+-----------|
+| s7    | L → S.     | reduce 4  |
+|-------+------------+-----------|
+| s8    | L → L,.S   | s9        |
+|       | S → .( L ) | s3        |
+|       | S → .x     | s2        |
+|-------+------------+-----------|
+| s9    | L → L, S.  | reduce 5  |
+
+*** Goto Graph / Transition Diagram
 
 #+begin_example
 1.
@@ -139,25 +175,6 @@ end
                                           ------------
 #+end_example
 
-*** Action Table
-
-1. Build action table.
-2. If state contains item *X → γ.$* then *accept*.
-3. If state contains item *X → γ.* then *reduce* *X → γ*.
-4. If state *i* has edge to *j* with terminal, then *shift*.
-
-| state | action           |
-|-------+------------------|
-|     1 | shift            |
-|     2 | reduce S → x     |
-|     3 | shift            |
-|     4 | accept           |
-|     5 | shift            |
-|     6 | reduce S → ( L ) |
-|     7 | reduce L → S     |
-|     8 | shift            |
-|     9 | reduce L → L, S  |
-
 ** LR(1) Parsing
 
 In practice, *LR(1)* is used for *LR* parsing.
@@ -166,7 +183,7 @@ In practice, *LR(1)* is used for *LR* parsing.
   - *γ* is at the top of the stack, and at the head of the input there is a string derivable
     from *δx* (where *x* is the terminal).
   - Algorithm for constructing state transition table and action table adapted.
-    - Closure operation when constructing states uses *FIRST()*, incorporating lookahead token.
+    - Closure operation when constructing states uses *FIRST*, incorporating lookahead token.
     - Action table columns now terminals.
     - State transition relation and action table typically combined into a single table,
       *GOTO and ACTION*.
