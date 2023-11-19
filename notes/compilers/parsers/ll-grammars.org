@@ -1,0 +1,273 @@
+* LL Grammars and Parsing
+
+** Notation
+
+The notation used in these notes is the notation used by Douglas Thain in his book *ICLD*.
+
+- Lowercase letters represent terminals: keywords, operators, identifiers, etc.
+- Uppercase letters represent non-terminals: *P*, *S*, *E*, etc.
+- Greek letters represent sentential forms — potentially mixed sequences of terminals and non-terminals:
+  *α*, *β*, *γ*, etc.
+
+- Sequences represent individual symbols in a sentential form: *Y_{1}Y_{2}...Y_{n}* where *Y_{i}* may
+  be either a terminal or non-terminal.
+
+** Actions
+
+- L :: left-to-right parsing
+
+- L :: left-most derivation
+
+- (k) :: k-symbol lookahead
+
+** LL(1)
+
+*LL* parsers are top-down parsers for restricted context-free languages. An *LL* parser is called an
+*LL(k)* parser if it uses *k* tokens of lookahead when parsing a sentence.
+
+*LL(1)* grammars are a subset of CFGs that can be parsed by considering only one non-terminal and
+the next token in the input stream. To make a grammar *LL(1)* we must do the following:
+
+1. Remove ambiguous derivations.
+2. Eliminate left recursion.
+3. Eliminate any common left prefixes through left factoring.
+4. Formally prove the grammar is *LL(1)* by generating *FIRST* and *FOLLOW* sets for the grammar.
+
+** Eliminating Left Recursion
+
+*Left Recursion*: *A → Bβ* such that *B ⇒ Aγ*.
+
+*LL(1)* grammars cannot contain left recursion. The expression *E → E + T* is left-recursive because *E*
+appears as the first symbol on the right-hand side. Thus *E → E + T* would expand to *(E + T) + T*,
+which would expand into *((E + T) + T) + T* and so on into infinity.
+
+Rewriting the rule as *E → T + E* would remove left recursion, but it creates a right-associative
+operation and a common left prefix. Instead the rules must be rewritten so that the formally recursive
+rule begins with the leading symbols of its alternatives.
+
+| rule  | production |
+|-------+------------|
+| 1. P  | E          |
+| 2. E  | T E'       |
+| 3. E' | + T E'     |
+| 4. E' | ε          |
+| 5. T  | id         |
+| 6. T  | 1          |
+
+#+begin_example
+P  ::= E
+E  ::= T E'
+E' ::= + T E'
+     | ε
+T  ::= id
+     | 1
+#+end_example
+
+Left recursion is primarily a theoretical problem. Looping constructs, or iteration, are excellent
+real-world solutions.
+
+Parsing expressions with precedence requires unintuitive rewritings of context-free grammars.
+It is simpler to either loop through a list of atoms separated by operators and reconstruct the
+tree separately or fuse the two stages into a recursive loop — a Pratt parser.
+
+#+begin_src c
+  Program parse_statements() {
+    for(;;) {
+      parse_statement();
+      if (next() != SEMI_COLON) {
+        break;
+      }
+    }
+  }
+#+end_src
+
+** Eliminating Common Left Prefixes
+
+Look for all common prefixes of a given non-terminal and replace them with one rule that contains
+the prefix and another that contains the variants. This process is called /left factorization/,
+which eliminates backtracking and redundant parsings.
+
+*** Before Left Factoring
+
+| rule | production |
+|------+------------|
+| 1. P | E          |
+| 2. E | id         |
+| 3. E | id[E]      |
+| 4. E | id(E)      |
+
+#+begin_example
+P ::= E
+E ::= id
+    | id[E]
+    | id(E)
+#+end_example
+
+*** After Left Factoring
+
+| rule  | production |
+|-------+------------|
+| 1. P  | E          |
+| 2. E  | id E'      |
+| 3. E' | [E]        |
+| 4. E' | (E)        |
+| 5. E' | ε          |
+
+#+begin_example
+P  ::= E
+E  ::= id E'
+E' ::= [E]
+     | (E)
+     | ε
+#+end_example
+
+** First and Follow Sets
+
+In order to construct a complete parser for an *LL(1)* grammar, we must compute two sets, known as
+*FIRST* and *FOLLOW*.
+
+*** Computing First Sets for a Grammar *G*
+
+#+begin_example
+FIRST(α) is the set of terminals that begin all strings given by α,
+including  ε if α ⇒ ε.
+
+For Terminals:
+For each terminal a ∈ Σ: FIRST(a) = {a}
+
+For Non-Terminals:
+Repeat:
+    For each rule X → Y1Y2...Yk in a grammar G:
+        Add a to FIRST(X)
+            if a is in FIRST(Y1)
+            or a is in FIRST(Yn) and Y1...Yn-1 ⇒ ε
+        If Y1...Yk ⇒ ε then add ε to FIRST(X)
+until no more changes occur.
+
+For a Sentential Form α:
+For each symbol Y1Y2...Yk in α:
+    Add a to FIRST(α)
+        if a is in FIRST(Y1)
+        or a is in FIRST(Yn) and Y1...Yn-1 ⇒ ε
+    If Y1...Yk ⇒ ε then add ε to FIRST(α).
+#+end_example
+
+*** Computing Follow Sets for Grammar *G*
+
+#+begin_example
+FOLLOW(A) is the set of terminals that can come after
+non-terminal A, including $ if A occurs at the end of the input.
+
+FOLLOW(S) = {$} where S is the start symbol.
+
+Repeat:
+    If A → αBβ then:
+        add FIRST(β) (excepting ε) to FOLLOW(B).
+    If A → αB or FIRST(β) contains ε then:
+        add FOLLOW(A) to FOLLOW(B).
+until no more changes occur.
+#+end_example
+
+*** Grammar Translated By First and Follow
+
+**** Grammmar
+
+| rule  | production |
+|-------+------------|
+| 1. P  | E          |
+| 2. E  | T E'       |
+| 3. E' | + T E'     |
+| 4. E' | ε          |
+| 5. T  | F T'       |
+| 6. T' | * F T'     |
+| 7. T' | ε          |
+| 8. F  | (E)        |
+| 9. F  | 1          |
+
+#+begin_example
+P  ::= E $
+E  ::= T E'
+E' ::= + T E'
+     | ε
+T  ::= F T'
+T' ::= * F T'
+     | ε
+F  ::= (E)
+     | 1
+#+end_example
+
+**** First and Follow
+
+|        | P      | E      | E'     | T         | T'        | F            |
+| FIRST  | {(, 1} | {(, 1} | {+, ε} | {(, 1}    | {*, ε}    | {(, 1}       |
+| FOLLOW | {$}    | {), $} | {), $} | {+, ), $} | {+, ), $} | {+, *, ), $} |
+
+** Recursive Descent Parsing
+
+*LL(1)* grammars are amenable to /recursive descent parsing/ in which there is one function for each
+non-terminal in a grammar. The body of each function follows the right-hand sides of the corresponding
+rules: non-terminals result in a call to another parse function, while terminals result in considering
+the next token.
+
+Two special cases must be considered:
+
+1. If rule *X* cannot produce *ε* and the token is not in *FIRST(X)*, then return error.
+2. If rule *X* could produce *ε* and the token is not in *FIRST(X)*, return success.
+   Another rule will consume that token.
+
+Three helper functions are needed:
+
+- ~next()~ :: returns the next token in the input stream.
+- ~peek()~ :: looks ahead to the next token without the parser consuming it.
+- ~match(t)~ :: consumes the next token if it matches ~t~.
+
+*** Grammar Translated into a Recursive Descent Parser
+
+This C program serves only to verify that the input program matches the grammar outlined above.
+
+#+begin_src c
+  // P ::= E $
+  int parse_P() {
+    return parse_E() && match(TOKEN_EOF);
+  }
+  // E ::= T E'
+  int parse_E() {
+    return parse_T() && parse_E_prime();
+  }
+  // E' ::= + T E' | ε 
+  int parse_E_prime() {
+    token_t t = peek();
+    if (t == TOKEN_PLUS) {
+      next();
+      return parse_T() && parse_E_prime();
+    }
+    return 1;
+  }
+  // T ::= F T'
+  int parse_T() {
+    return parse_F() && parse_T_prime();
+  }
+  // T' ::= * F T' | ε
+  int parse_T_prime() {
+    token_t t = peek();
+    if (t == TOKEN_MULTIPLY) {
+      next();
+      return parse_F() && parse_T_prime();
+    }
+    return 1;
+  }
+  // F ::= (E) | integer
+  int parse_F() {
+    token_t t = peek();
+    if (t == TOKEN_LPAREN) {
+      next();
+      return parse_E() && match(TOKEN_RPAREN);
+    } else if (t == TOKEN_INT) {
+      next();
+      return 1;
+    } else {
+      printf("parse error: unexpected token %s\n", token_string(t));
+      return 0;
+    }
+  }
+#+end_src
