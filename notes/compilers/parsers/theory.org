@@ -115,3 +115,52 @@ symbol ::= expression
 - ::= :: separates a rule from its productions.
 - expression :: expression is one or more sequences of either terminal or non-terminal symbols
   where each sequence is separated by a vertical bar *|*, indicating choice.
+
+** Grammar Classes
+
+#+begin_example
+LL(1) ⊂ SLR ⊂ LALR ⊂ LR(1) ⊂ CFG
+#+end_example
+
+- Context-Free Grammar :: Any grammar whose rules have the form *A -> α*. Requires a parse
+  table and a stack to track parser state. An ambiguous CFG creates a non-deterministic finite
+  automaton.
+
+- LR(k) :: Performs bottom-up, left-right scan and right-most parse of the input, deciding what rule
+  to apply next by examining the next *k* tokens. Requires a very large automaton, because the possible
+  lookaheads are encoded into states.
+
+- LALR :: A /Lookahead-LR/ parser created by constructing an *LR(1)* parser then merging all item sets
+  that have the same core.
+
+- SLR :: A /Simple-LR/ parser approximates an *LR(1)* parser by constructing an *LR(0)* state machine
+  and then relying on the *FIRST* and *FOLLOW* sets to select which rule to apply.
+
+- LL(k) :: Performs a top-down, left-right scan and left-most parse of the input, deciding what items
+  to rule to apply next by examining the next *k* tokens. *LL(1)* parsers require a only table that
+  is *O(nt)* where *t* is the number of tokens and *n* is the number of non-terminals.
+
+** The Chomsky Hierarchy
+
+| language class         | machine required        |
+|------------------------+-------------------------|
+| regular                | finite automata         |
+| context free           | pushdown automata       |
+| context sensitive      | linear bounded automata |
+| recursively enumerable | Turing machine          |
+
+- Regular Languages :: Languages described by regular expressions. Every regular expression corresponds
+  to a finite automaton that can be implemented with a table and a single integer to represent the
+  current state.
+
+- Context Free Languages :: The meaning of a non-terminal is the same in all places where it appears.
+  CFGs require pushdown automaton, which requires a finite automaton coupled with a stack. If the
+  grammar is ambiguous, the automaton will be non-deterministic and therefore impractical.
+
+- Context Sensitive Languages :: The meaning of a non-terminal is controlled by the context in which it
+  appears. CSLs require a non-deterministic linear bounded automaton, which is bounded in memory
+  consumption but not in execution time.
+
+- Recursively Enumerable Languages :: The least restrictive set of languages, described by the rules
+  *α → β* where *α* and *β* can be any combination of terminals and non-terminals. These languages
+  can only be recognized by a full Turing machine.
