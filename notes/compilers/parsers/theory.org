@@ -1,0 +1,117 @@
+* Parsers: Theory and Notation
+
+*Introduction to Compilers and Language Design*, Douglas Thain
+
+*Formal Languages* and *Set Theory*, Wikipedia
+
+** Set Theory: Basic Concepts and Notation
+
+- set :: Informally, a collection of unique objects: *{1, 2, 3}*.
+
+- empty set :: For *Ø*, a unique set containing no elements: *{}*.
+
+- disjoint sets :: Sets whose instersection is the empty set, meaning they have
+  no elements in common.
+
+- binary relation :: For *o ∈ A*, object *o* is a member of set *A*.
+ 
+- subset :: For *A ⊆ B*, set *A* is a subset of set *B*.
+
+- superset :: For *A ⊇ B*, set *A* is a superset of set *B*
+
+- proper subset :: For *A ⊂ B*, *A* is a subset of *B*, but *A* is not equal to *B*.
+
+- proper superset :: For *A ⊃ B*, *A* is a superset of *B*, but *A* is not equal to *B*.
+
+- union :: For *A ∪ B*, the set is members of *A* or *B* or both.
+
+- intersection :: For *A ∩ B*, the set is members of both *A* and *B*.
+
+- set difference :: For *A - B*, the set is members of *A* that are not members of *B*.
+
+- symmetric difference :: For *A ⊖ B*, the set is members that are in one set, not both.
+
+- cartesian product :: For *A × B*, the set whose members are all possible ordered pairs *(a, b)*,
+  where *a ∈ A* and *b ∈ B*.
+
+- power set :: For *P(A)*, the set whose members are all possible subsets of *A*.
+
+** Formal Languages
+
+In logic, mathematics, computer science, and linguistics, a formal language consists of words
+whose letters are taken from an /alphabet/ and are /well-formed/ according to a specific set of rules
+called a /formal grammar/.
+
+Terminals and non-terminals are the lexical elements used in specifying the production rules
+constituting a formal grammar. The terminals and non-terminals of a particular grammar are in
+two completely separate sets.
+
+*** Words over an Alphabet
+
+- formal language :: *L* over an alphabet *Σ* is a subset of *Σ\star{}*, that is, a set of words
+  over that alphabet.
+
+- alphabet :: a *set*, whose members are called *letters*.
+
+- word :: a finite sequence of letters who are members of an alphabet.
+
+- Σ* :: The set of all words over an alphabet *Σ*.
+
+-  Λ, e or ε :: For any alphabet, there is only one element of length zero. Combining a word with
+  the empty word is the original word.
+
+*** Degenerate Case
+
+For finite languages, all well-formed words can be explicitly enumerated. The *degenerate* case
+of this construction is the *empty language*, *L=Ø*, which contains no words at all.
+
+*** A Classic Formalization of Generative Grammars
+
+- A finite set *N* of non-terminal symbols.
+
+- A finite set *Σ* of terminal symbols that is disjoint from *N*.
+
+- A finite set of *P* of production rules, each rule of the form
+  *(Σ ∪ N)\star{}N(Σ ∪ N)\star{} → (Σ ∪ N)\star{}*
+  where *\star{}* is the Kleene star operator, denoting *concatenation*,
+  and *∪* denotes *set union*.
+
+- In the case that the body consists solely of an empty string, the body may be denoted with
+  a special notation, usually *Λ*, *e* or *ε*.
+
+- A distinguished symbol *S ∈ N* that is the start symbol.
+
+*** Kleene Closure
+
+1. If *V* is a set of strings, then *V\star{}* is defined as the smallest superset of *V* that
+   contains the empty string *ε* and is closed under the string concatenation operation.
+
+2. If *V* is a set of symbols or characters, then *V\star{}* is the set of all strings over symbols
+   in *V*, including the empty string *ε*.
+
+#+begin_example
+V⁰   = {ε}
+V¹   = V
+Vⁿ⁺¹ = {wv : w ∈ Vⁿ and v ∈ V} for each n > 0
+#+end_example
+
+Strings form a *monoid* with concatenation as the binary operation and *ε* the identity element.
+The Kleene Closure is defined for any monoid, not just strings.
+
+** Backus-Naur Form
+
+In computer science, a *Backus-Naur form* or *Backus normal form* is a metasyntax notation
+for context-free grammars. It is often used to describe the syntax of languages used in
+computing, such as programming languages, document formats, instruction sets, and
+communication protocols.
+
+*** A BNF Specification
+
+#+begin_example
+symbol ::= expression
+#+end_example
+
+- symbol :: a non-terminal.
+- ::= :: separates a rule from its productions.
+- expression :: expression is one or more sequences of either terminal or non-terminal symbols
+  where each sequence is separated by a vertical bar *|*, indicating choice.
