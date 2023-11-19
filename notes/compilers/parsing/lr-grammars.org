@@ -32,6 +32,13 @@ The difference between *SLR*, *LALR*, and *LR* parsers is in the tables that the
 tables use different techniques to determine when to *reduce*, and, if there is more than one grammar
 rule with the same right-hand side, which left-hand-side nonterminal to push.
 
+Two types of conflict can appear in an *LR* grammar:
+
+| shift-reduce | reduce-reduce |
+|--------------+---------------|
+| T → id.( E ) | S → id( E ).  |
+| T → id.      | E → id( E ).  |
+
 ** Choices
 
 *LR(k)* parsers use *deterministic finite automata (DFAs)* to choose when to shift or reduce. The symbols
@@ -177,16 +184,20 @@ end
 
 ** LR(1) Parsing
 
-In practice, *LR(1)* is used for *LR* parsing.
+The complete of canonical form of *LR(1)* parsing depends on the *LR(1)* automaton.
+The *LR(1)* automaton is like the *LR(0)* automaton, except that each item is annotated with
+the set of tokens that could potentially follow it, given the current state. This set is known
+as the *lookahead* of the item. The lookahead is always a subset of the *FOLLOW* of the
+relevant non-terminal.
 
-- Item is now pair *(X → γ.δ, x)*
-  - *γ* is at the top of the stack, and at the head of the input there is a string derivable
-    from *δx* (where *x* is the terminal).
-  - Algorithm for constructing state transition table and action table adapted.
-    - Closure operation when constructing states uses *FIRST*, incorporating lookahead token.
-    - Action table columns now terminals.
-    - State transition relation and action table typically combined into a single table,
-      *GOTO and ACTION*.
+- For an item like *A → α.B* with a lookahead of *{L}*, add new rules like *B → .γ* with a
+  lookahead of *{L}*.
+
+- For an item like *A → α.Bβ* with a lookahead of *{L}*, add new rules like *B → .γ* with a
+  lookahead as follows:
+
+  - If *β* cannot produce *ε*, the lookahead is *FIRST(β)*.
+  - If *β* can produce *ε*, the lookahead is *FIRST(β) ∪ {L}*
 
 ** Shift-Reduce Parsing Example
 
@@ -255,3 +266,26 @@ In practice, *LR(1)* is used for *LR* parsing.
 |   12 | 0, T, 2, E', 4             | $       | r1     |
 |   13 | 0, E                       | $       | 1      |
 |   14 | 0, E, 1                    | $       | accept |
+
+** LALR Parsing
+
+The main downside to *LR(1)* parsing is that the *LR(1)* automaton can be many times larger
+than an *LR(0)* automaton. *Lookahead LR* parsing is the practical answer to this problem.
+To construct an *LALR* parser, the states of an *LR(1)* automaton with the same *core* must
+be merged. The *core* of a state is simply the body of an *item*, ignoring lookahead.
+The resulting *LALR* automaton has the same number of states as the *LR(0)* automaton, but
+has more precise lookahead information available for each item.
+
+*** LR(1) States
+
+| state 1       | state 2       |
+|---------------+---------------|
+| E → .E+T {$+} | E → .E+T {)+} |
+| E → .T   {$+} | E → .T   {)+} |
+
+*** LALR State
+
+| state          |
+|----------------|
+| E → .E+T {$)+} |
+| E → .T   {$)+} |
