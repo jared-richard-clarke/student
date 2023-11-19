@@ -160,43 +160,42 @@ corresponding non-terminal.
 |------+------------|
 | 1. P | E          |
 | 2. E | E + E      |
-| 3. E | identifier |
-| 4. E | integer    |
+| 3. E | id         |
+| 4. E | 1          |
 
 For brevity, we occasionally condense a set of rules with a common left-hand side by combining all
 the right-hand sides with a logical-or symbol:
 
 #+begin_example
-E → E + E | identifier | integer
+E → E + E | id | 1
 #+end_example
 
 *** Top-Down Derivation
 
-| sentential form                | apply rule       |
-|--------------------------------+------------------|
-| P                              | P → E            |
-| E                              | E → E + E        |
-| E + E                          | E → identitifier |
-| identifier + E                 | E → E + E        |
-| identifier + E + E             | E → integer      |
-| identifier + integer + E       | E → integer      |
-| identifier + integer + integer |                  |
+| sentential form | apply rule |
+|-----------------+------------|
+| P               | P → E      |
+| E               | E → E + E  |
+| E + E           | E → id     |
+| id + E + E      | E → 1      |
+| id + 1 + E      | E → 1      |
+| id + 1 + 1      |            |
 
 *** Bottom-Up Derivation
 
-| sentential form                | apply rule     |
-|--------------------------------+----------------|
-| identifier + integer + integer | E → integer    |
-| identifier + integer + E       | E → integer    |
-| identifier + E + E             | E → E + E      |
-| identifier + E                 | E → identifier |
-| E + E                          | E → E + E      |
-| E                              | P → E          |
-| P                              |                |
+| sentential form | apply rule |
+|-----------------+------------|
+| id + 1 + 1      | E → 1      |
+| id + 1 + E      | E → 1      |
+| id + E + E      | E → E + E  |
+| id + E          | E → id     |
+| E + E           | E → E + E  |
+| E               | P → E      |
+| P               |            |
 
 *** Ambiguity
 
-~identifier + integer + integer~ for the grammar above is ambiguous because it has two possible derivations.
+~id + 1 + 1~ for the grammar above is ambiguous because it has two possible derivations.
 
 **** Left-Most Derivation
 
@@ -207,9 +206,9 @@ E → E + E | identifier | integer
 	|
       E + E
       /   \
-   E + E  int
+   E + E   1
    /   \
-ident  int
+ id     1
 #+end_example
 
 **** Right-Most Derivation
@@ -221,9 +220,9 @@ ident  int
       |
     E + E
     /   \
-ident  E + E
+  id   E + E
        /   \
-     int   int       
+      1     1
 #+end_example
 
 *** Removing Ambiguity
@@ -237,8 +236,8 @@ it allows only a left-most derivation.
 | 1. P | E          |
 | 2. E | E + T      |
 | 3. E | T          |
-| 4. T | identifier |
-| 5. T | integer    |
+| 4. T | id         |
+| 5. T | 1          |
 
 Further modification to the grammar is required to account for multiple levels of precedence. The usual
 approach is to construct a grammar with multiple levels, each reflecting the intended precedence of
@@ -252,8 +251,8 @@ of multiplied factors (*F*).
 | 3. E | T          |
 | 4. T | T * F      |
 | 5. T | F          |
-| 6. F | identifier |
-| 7. F | integer    |
+| 6. F | id         |
+| 7. F | 1          |
 
 #+begin_example
 === ambiguous ===
@@ -320,16 +319,16 @@ rule begins with the leading symbols of its alternatives.
 | 2. E  | T E'       |
 | 3. E' | + T E'     |
 | 4. E' | ε          |
-| 5. T  | identifier |
-| 6. T  | integer    |
+| 5. T  | id         |
+| 6. T  | 1          |
 
 #+begin_example
 P  ::= E
 E  ::= T E'
 E' ::= + T E'
      | ε
-T  ::= identifier
-     | integer
+T  ::= id
+     | 1
 #+end_example
 
 Left recursion is primarily a theoretical problem. Looping constructs, or iteration, are excellent
