@@ -62,10 +62,10 @@ with the action table specifying entries for terminals, and the goto table speci
 We start with the initial state *s_{0}* on the stack. The next input is the terminal *a* and the current
 state is *s_{t}*. The action of the parser is as follows:
 
-- If *Action[s_[t], a]* = *shift*, push the specified state onto the stack then grab the next token *a*
+- If *Action[s_{t}, a]* = *shift*, push the specified state onto the stack then grab the next token *a*
   from the input.
 
-- If *Action[s_{t}, a]* = *reduce T → X_{1}...X_[k]* then pop *k* states off the stack, leaving state *s_{u}*
+- If *Action[s_{t}, a]* = *reduce T → X_{1}...X_{k}* then pop *k* states off the stack, leaving state *s_{u}*
   on top. *Goto[s_{u}, Y]* gives a new state *s_{v}* to push onto the stack. The input remains unchanged.
 
 - If *Action[s_{t}, a]* = *accept*, then the parse is completed and successful.
