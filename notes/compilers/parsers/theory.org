@@ -98,24 +98,6 @@ Vⁿ⁺¹ = {wv : w ∈ Vⁿ and v ∈ V} for each n > 0
 Strings form a *monoid* with concatenation as the binary operation and *ε* the identity element.
 The Kleene Closure is defined for any monoid, not just strings.
 
-** Backus-Naur Form
-
-In computer science, a *Backus-Naur form* or *Backus normal form* is a metasyntax notation
-for context-free grammars. It is often used to describe the syntax of languages used in
-computing, such as programming languages, document formats, instruction sets, and
-communication protocols.
-
-*** A BNF Specification
-
-#+begin_example
-symbol ::= expression
-#+end_example
-
-- symbol :: a non-terminal.
-- ::= :: separates a rule from its productions.
-- expression :: expression is one or more sequences of either terminal or non-terminal symbols
-  where each sequence is separated by a vertical bar *|*, indicating choice.
-
 ** Grammar Classes
 
 #+begin_example
