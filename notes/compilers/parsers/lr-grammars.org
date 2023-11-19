@@ -2,7 +2,7 @@
 
 *Introduction to Compilers and Language Design*, Douglas Thain
 
-*Formal Languages* and *Set Theory*, Wikipedia
+*LR Parsing*, Wikipedia
 
 ** Actions
 
@@ -11,21 +11,21 @@
 - R :: Right-most derivation. Expands the right-most nonterminal. Reductions in reverse order,
   from the leaves to the root.
   
-- (k) :: k-symbol lookahead.
+- (k) :: k symbols of lookahead.
 
 An *LR(k)* parser has a stack and input. Given the contents of a stack and *k* tokens
 of lookahead, the parser does one of the following operations:
 
-1. *shift (SHIFT)*: Push the current input symbol onto the stack. Scan the next symbol.
+1. *shift*: Push the current input symbol onto the stack. Scan the next symbol.
   
-2. *reduce (REDUCE)*: A grammar rule's right-hand side is on top of the stack. Pop the symbols
-   and replace them with the grammar rule's left-hand-side nonterminal.
+2. *reduce*: A grammar rule's right-hand side is on top of the stack. Pop the symbols
+   and replace them with the grammar rule's left-hand-side.
 
-3. *accept (STOP)*: The parser has reached the end of the input without error, where the state
+3. *accept*: The parser has reached the end of the input without error, where the state
    at the top of the stack and the lookahead terminal symbol is within the subject grammar and
    represents the end of a program.
 
-4. *reject (ERROR)*: The input is syntactically incorrect, where the state at the top of the
+4. *reject*: The input is syntactically incorrect, where the state at the top of the
    stack and the lookahead symbol is not within the subject grammar.
 
 The difference between *SLR*, *LALR*, and *LR* parsers is in the tables that they use. Different
@@ -48,24 +48,33 @@ a finite state machine.
   - In general, item *X → γ . δ* means *γ* is at the top of the stack. At the head of the input
     there is a string derivable from *δ*
 
-*LR* parsers use two tables: the *action* table and the *goto* table.
+*LR* parsers use two tables: the *action* table and the *goto* table. The two tables are usually combined,
+with the action table specifying entries for terminals, and the goto table specifying entries for non-terminals.
 
-- action table :: Indexed by the top-of-the-stack symbol and the current token. Tells which of the four
-  actions — shift, reduce, accept, reject — to perform.
+- action table (Action[s, a]) :: Tells the parser what to do when the state on top of the stack is *s* and
+  terminal *a* is the next input token. Possible actions are *shift*, *reduce*, *accept*, or *error*.
 
-- goto table :: If a rule contains *n* symbols, we pop *n* states off the stack. The *goto table* is indexed
-  by state symbol *t* and nonterminal *A*, where *t* is the state symbol on the top of the stack after
-  popping *n* times
+- goto table (Goto[s, X]) :: Points to the next stack state after a reduction of non-terminal *X* while
+  state *s* is on top of the stack.
 
 ** Algorithm
 
-All *LR* parsers use this same basic algorithm. The states that are pushed onto the stack represent the states
-in the underlying finite state machine. Each place we might be in the input is represented within the state as
-an *item*.
+We start with the initial state *s_{0}* on the stack. The next input is the terminal *a* and the current
+state is *s_{t}*. The action of the parser is as follows:
+
+- If *Action[s_[t], a]* = *shift*, push the specified state onto the stack then grab the next token *a*
+  from the input.
+
+- If *Action[s_{t}, a]* = *reduce T → X_{1}...X_[k]* then pop *k* states off the stack, leaving state *s_{u}*
+  on top. *Goto[s_{u}, Y]* gives a new state *s_{v}* to push onto the stack. The input remains unchanged.
+
+- If *Action[s_{t}, a]* = *accept*, then the parse is completed and successful.
+
+- If *Action[s_{t}, a]* = *error* — the table location is blank — then the parser emits a syntax error.
 
 The differences between *LR* parsers:
 
-- The definition of an item.
+- The definition of an item: the place we might be in an input.
 - The number of states within the underlying finite state machine.
 - The amount of information within the state.
 
