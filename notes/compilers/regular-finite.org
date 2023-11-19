@@ -4,8 +4,8 @@
 
 ** Regular Expressions
 
-*s* = string
-*L(s)* = language of *s*, a set of strings drawn from alphabet *Σ*.
+- *s* = string
+- *L(s)* = language of *s*, a set of strings drawn from alphabet *Σ*.
 
 *** Definition
 
