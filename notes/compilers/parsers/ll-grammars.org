@@ -1,5 +1,9 @@
 * LL Grammars and Parsing
 
+*Introduction to Compilers and Language Design*, Douglas Thain
+
+*Formal Languages* and *Set Theory*, Wikipedia
+
 ** Notation
 
 The notation used in these notes is the notation used by Douglas Thain in his book *ICLD*.
