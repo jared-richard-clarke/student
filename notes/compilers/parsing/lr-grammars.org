@@ -278,14 +278,14 @@ has more precise lookahead information available for each item.
 
 *** LR(1) States
 
-| state 1       | state 2       |
-|---------------+---------------|
-| E → .E+T {$+} | E → .E+T {)+} |
-| E → .T   {$+} | E → .T   {)+} |
+| state 1    | LA     | state 2    | LA     |
+|------------+--------+------------+--------|
+| E → .E + T | {$, +} | E → .E + T | {), +} |
+| E → .T     | {$, +} | E → .T     | {), +} |
 
 *** LALR State
 
-| state          |
-|----------------|
-| E → .E+T {$)+} |
-| E → .T   {$)+} |
+| state      | LA        |
+|------------+-----------|
+| E → .E + T | {$, ), +} |
+| E → .T     | {$, ), +} |
