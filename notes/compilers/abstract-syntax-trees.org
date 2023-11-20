@@ -1,6 +1,6 @@
 * Abstract Syntax Trees
 
-*Introduction to Language Design and Compilers*, Douglas Thain
+*Introduction to Compilers and Language Design*, Douglas Thain
 
 ** B-Minor Syntax Tree
 
