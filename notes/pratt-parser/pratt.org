@@ -1,0 +1,103 @@
+* Top Down Operator Precedence
+
+** Lexical Semantics vs. Syntactic Semantics
+
+#+begin_quote
+"There are two advantages of separating semantics from syntax in this way.
+ First, phrase-structure rules interact more strongly than individual tokens
+ because rules can share non-terminals whereas tokens have nothing to share.
+ So our assignment of semantics to tokens has a much better chance of being
+ modular than an assignment to rules."
+
+"...I conjecture that the difficulty of learning and using a given language
+ specified with a BNF grammar increases in proportion to the number of rules
+ not identifiable by a single token."
+
+"...[This] is really the draw-back of BNF; the non-terminals tempt one to try to say
+ everything with just context-free rules...It would seem preferable to refer to the
+ semantic objects directly rather than to their abstraction in an inadequate language."
+
+"[We should prefer] a procedural embedding of semantics [so that] we can write arbitrary
+ code to find all the arguments when the language designer feels the need to complicate
+ things."
+
+— Vaughan R. Pratt
+#+end_quote
+
+** Implementation
+
+- nud :: null denotation — a token /without/ a left expression.
+
+- led :: left denotation — a token /with/ a left expression.
+
+#+begin_example
+    ●
+nud |
+    V    led
+    C <--------+
+    | advance; |
+    | run      |
+    V          |
+    left ------+
+#+end_example
+
+#+begin_quote
+"To combine lexical semantics with a procedural approach, we assign to each
+ semantic token a program called its semantic code, which contains almost all
+ the information about the token. To translate or interpret a string of tokens,
+ execute the code of each token in turn from left to right."
+
+"This parser is initially positioned at the beginning of the input. It runs the
+ code of the current token, stores the result in a variable called left, advances
+ the input, and repeats the process. If the input is exhausted, then by default
+ the parser halts and returns the value of left. The variable left may be consulted
+ by the code of the next token, which will use the value of left as either the
+ translation or value of the left-hand argument, depending on whether it is
+ translating or interpreting."
+
+"A possibly more important role for nuds and leds is in error detection. If a token
+ only has a nud and is given a left argument, or only has a led and is not given a
+ left argument, or has neither, then non-existent semantic code is invoked, which
+ can be arranged to result in the calling of an error routine."
+
+"[The] crucial property of recursive descent is that the stack entries are no longer
+ just operators or operands, but the environments of the programs that called the
+ parser recursively."
+
+— Vaughan R. Pratt
+#+end_quote
+
+* Definition
+
+A string *S* such that there exists a token *t* and an environment *E* in which if the
+parser is started with the input at the beginning of *St*, it will stop with the input
+at *t*, and return the interpretation of *S* relative to *E*.
+
+1. When the semantic code of a token *t* is run, it begins with the input positioned just
+   to the right of that token, and it returns the interpretation of an expression ending
+   just before the final position of the input, and starting either at *t* if *t* is a
+   *nud*, or if *t* is a *led*, then at the beginning of the expression of which *left*
+   was the interpretation when the code of *t* started.
+
+2. When the parser returns the interpretation of an expression *S* relative to an
+   environment *E*, *S* is immediately followed by a token with *lbp <= rbp* in *E*.
+
+3. The *led* of a token is called only if it immediately follows an expression whose
+   interpretation the parser has assigned to *left*.
+
+4. The *lbp* of a token whose *led* has just been called is greater than the *rbp* of the
+   current environment.
+
+5. Every expression is either returned by the parser or given to the following *led*
+   via *left*.
+
+6. A token used only as a *nud* does not need a left binding power.
+
+
+Property *1* says that a semantic token pushes the input pointer off the right end of
+the expression whose tree is the root. Properties *2*, *4*, and *5* together completely
+account for the two possible fates of the contents of *left*. Property *3* guarantees
+that when the code of a *led* runs, it has its left-hand argument interpreted for it
+in *left*. Property *5* guards against losing an expression in *left* by calling a *nud*
+which does not know the expression is there. Propery *6* declares binding powers are
+only relevant when an argument is involved.
