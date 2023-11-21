@@ -44,7 +44,7 @@ corresponding non-terminal.
 
 The notation used in these notes is the notation used by Douglas Thain in his book *ICLD*.
 
-- Lowercase letters represent terminals: *1*, *+*, *a* etc.
+- Lowercase letters represent terminals: *1*, *+*, *a*, etc.
 - Uppercase letters represent non-terminals: *P*, *S*, *E*, etc.
 - Greek letters represent sentential forms — potentially mixed sequences of terminals and non-terminals:
   *α*, *β*, *γ*, etc.
