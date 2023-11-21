@@ -155,11 +155,11 @@ of multiplied factors (*F*).
 #+begin_example
 === ambiguous ===
 
-E → E + E | E * E | (E) | number
+E → E + E | E * E | (E) | 1
 
 === unambiguous ===
 
 E → T | E + T
 T → F | T * F
-F → number | (E)
+F → 1 | (E)
 #+end_example
