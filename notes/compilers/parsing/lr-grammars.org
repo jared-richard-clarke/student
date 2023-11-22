@@ -11,7 +11,7 @@
 - R :: Right-most derivation. Expands the right-most nonterminal. Reductions in reverse order,
   from the leaves to the root.
 
-- (k) :: k symbols of lookahead.
+- (k) :: *k* symbols of lookahead.
 
 An *LR(k)* parser has a stack and input. Given the contents of a stack and *k* tokens
 of lookahead, the parser does one of the following operations:
