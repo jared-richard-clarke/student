@@ -116,7 +116,9 @@ E' ::= [E]
 ** First and Follow Sets
 
 In order to construct a complete parser for an *LL(1)* grammar, we must compute two sets, known as
-*FIRST* and *FOLLOW*.
+*FIRST* and *FOLLOW*. Informally, *FIRST(α)* is the set of terminals, inlcuding *ε*, that can appear
+at the start of the derivation of *α*. *FOLLOW(A)* is the set of terminals, including *$*, that can
+appear after the derivation of non-terminal *A*.
 
 *** Computing First Sets for a Grammar *G*
 
