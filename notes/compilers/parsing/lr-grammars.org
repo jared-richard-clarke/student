@@ -44,31 +44,6 @@ Two types of conflict can appear in an *LR* grammar:
 | T → id.( E ) | S → id( E ).  |
 | T → id.      | E → id( E ).  |
 
-** Choices
-
-*LR(k)* parsers use *deterministic finite automata (DFAs)* to choose when to shift or reduce. The symbols
-pushed onto the parser's stack are not actually terminals and nonterminals. They are *states* within
-a finite state machine.
-
-- At each step, the parser runs a *DFA* using symbols on the stack as input. The input
-  is a sequence of terminals and nonterminals from the bottom up.
-
-- The current state of the *DFA* plus the next *k* tokens of the input indicate whether to shift or reduce.
-
-- The states of a *DFA* are sets of *items*.
-  - An item is a production with a *marker(.)* indicating the current position of the parser.
-  - In general, item *X → γ . δ* means *γ* is at the top of the stack. At the head of the input
-    there is a string derivable from *δ*
-
-*LR* parsers use two tables: the *action* table and the *goto* table. The two tables are usually combined,
-with the action table specifying entries for terminals, and the goto table specifying entries for non-terminals.
-
-- action table (Action[s, a]) :: Tells the parser what to do when the state on top of the stack is *s* and
-  terminal *a* is the next input token. Possible actions are *shift*, *reduce*, *accept*, or *error*.
-
-- goto table (Goto[s, X]) :: Points to the next stack state after a reduction of non-terminal *X* while
-  state *s* is on top of the stack.
-
 ** Algorithm
 
 - *Input*: A LR-Parser for an unambiguous context-free grammar *G* over an alphabet *Σ* and a
@@ -117,21 +92,23 @@ while (true) {
 
 ** LR(0) Automaton
 
-- LR(0) Automaton :: All the possible *rules* that are currently under consideration by a shift-reduce
+- LR(0) Automaton :: All the possible rules that are currently under consideration by a shift-reduce
   parser. Each set of rules, or box, represents a state in the machine, connected by transitions from
   both terminals to non-terminals in a grammar. Also known as the *canonical collection* or
   *compact finite state machine* of a grammar.
 
-- Items :: The contents of each state, which are rules augmented by a *marker*.
+- Items :: The contents of each state, which are rules augmented by a *marker*.  In general, item
+  *X → γ . δ* means *γ* is at the top of the stack. At the head of the input there is a string
+  derivable from *δ*.
 
 - Marker(.) :: Marks the parser's current position in a rule.
 
-- Kernel :: *State 0* created by taking the production for the start symbol *S → E* and adding a *marker*
+- Kernel :: *State 0* created by taking the production for the start symbol *S → E* and adding a marker
   at the beginning of the right-hand side.
 
-- Closure :: For each *item* in the state with a non-terminal *X* immediately to the right of the
-  *marker*, add all rules in the grammar that have *X* as the left-hand side. The newly added *items*
-  have a *marker* at the beginning of the right-hand side.
+- Closure :: For each item in the state with a non-terminal *X* immediately to the right of the
+  marker, add all rules in the grammar that have *X* as the left-hand side. The newly added items
+  have a marker at the beginning of the right-hand side.
 
 *** Grammar
 
@@ -269,7 +246,7 @@ relevant non-terminal.
 |     6 | s5 |    | r3     |   |   |  7 |   |
 |     7 |    |    | r2     |   |   |    |   |
 
-*** Trace: ~1 + 1~
+*** Stack Trace: ~1 + 1~
 
 | step | stack                      | input   | action |
 |------+----------------------------+---------+--------|
