@@ -145,10 +145,9 @@ while (true) {
 
 *** Configurating Sets
 
-1. Build action table.
-2. If state contains item *X → γ.$* then *accept*.
-3. If state contains item *X → γ.* then *reduce* *X → γ*.
-4. If state *i* has edge to *j* with terminal, then *shift*.
+1. If state contains item *X → γ.$* then *accept*.
+2. If state contains item *X → γ.* then *reduce* *X → γ*.
+3. If state *i* has edge to *j* with terminal, then *shift*.
 
 | state | set        | successor |
 |-------+------------+-----------|
