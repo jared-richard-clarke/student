@@ -23,7 +23,7 @@ of lookahead, the parser does one of the following operations:
    - Remove the matched topmost *L* symbols from the parse stack.
    - This exposes a prior state *p* that was expecting an instance of the *Lhs* symbol.
    - Join the *L* parse trees together as one parse tree with new root symbol *Lhs*.
-   - Lookup the next state *n* from row *p* and column *Lhs* of the *LHS Goto* table.
+   - Lookup the next state *n* from row *p* and column *Lhs* of the *Goto* table.
    - Push the symbol and tree for *Lhs* onto the parse stack.
    - Push the next state *n* onto the parse stack as the new current state.
    - The lookahead and input stream remain unchanged.
