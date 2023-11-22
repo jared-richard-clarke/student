@@ -6,11 +6,11 @@
 
 ** Actions
 
-- L :: left-to-right parsing
+- L :: left-to-right parse
 
 - L :: left-most derivation
 
-- (k) :: k-symbol lookahead
+- (k) :: *k* symbols of lookahead
 
 ** LL(1)
 
