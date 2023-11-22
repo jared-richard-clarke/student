@@ -29,7 +29,7 @@ of lookahead, the parser does one of the following operations:
    - The lookahead and input stream remain unchanged.
 
 3. *accept*: Lookahead *t* is the *eof* marker. End of parsing. If the state stack contains just the
-   start state, report success. Otherwise, report a syntax error.
+   start state, report success. Otherwise report a syntax error.
 
 4. *error*: Report a syntax error. The parser ends, or attempts some recovery.
 
@@ -71,60 +71,77 @@ with the action table specifying entries for terminals, and the goto table speci
 
 ** Algorithm
 
-We start with the initial state *s_{0}* on the stack. The next input is the terminal *a* and the current
-state is *s_{t}*. The action of the parser is as follows:
+- *Input*: A LR-Parser for an unambiguous context-free grammar *G* over an alphabet *Σ* and a
+  word *w ∈ Σ\star{}*.
 
-- If *Action[s_{t}, a]* = *shift*, push the specified state onto the stack then grab the next token *a*
-  from the input.
+- *Output*: An error if *w ∉ L(G)* or a rightmost derivation for *w* otherwise.
 
-- If *Action[s_{t}, a]* = *reduce T → X_{1}...X_{k}* then pop *k* states off the stack, leaving state *s_{u}*
-  on top. *Goto[s_{u}, Y]* gives a new state *s_{v}* to push onto the stack. The input remains unchanged.
-
-- If *Action[s_{t}, a]* = *accept*, then the parse is completed and successful.
-
-- If *Action[s_{t}, a]* = *error* — the table location is blank — then the parser emits a syntax error.
-
-The differences between *LR* parsers:
-
-- The definition of an item: the place we might be in an input.
-- The number of states within the underlying finite state machine.
-- The amount of information within the state.
+  - Set the cursor to the rightmost symbol of *w$*.
+  - Push the initial state *s_{0}* on top of the empty stack.
+  - Repeat
+    - Let *s* be the state on top of the stack.
+    - Let *a* be the current pointed symbol in *w$*.
+    - If *action[s, a]* = *shift s-quote* then
+      - Push *a* on top of the stack.
+      - Push *s-quote* on top of the stack.
+      - Advance the cursor to the next symbol on the right in *w$*.
+    - else if *action[s, a]* = *reduce A → β* then
+      - pop 2 | *β* | symbols of the stack.
+      - let *s-quote* be the state on top of the stack.
+      - push *A* on top of the stack.
+      - push *goto[s, a]* on top of the stack.
+      - output *A → β*.
+    - else if *action[s, a]* = *accept* then
+      - return
+    - else
+      - error
 
 #+begin_example
-# === main loop: pseudo code ===
+# === parser-driving psuedo code ===
 
-push initial state s0
-a = scan()
-loop
-    t = top-of-stack (state) symbol
-    switch action[t, a] {
-       case shift s:
-           push(s)
-           a = scan()
-       case reduce by A → alpha:
-           for i = 1 to length(alpha) do pop() end
-           t = top-of-stack symbol
-           push(goto[t, A])
-       case accept:
-           return( SUCCESS )
-       case error:
-           call the error handler
-           return( FAILURE )
+while (true) {
+    switch (action(state_stack.top(), current_token)) {
+        case shift s':
+	    symbol_stack.push(current_token);
+	    state_stack.push(s');
+	    next_token();
+	case reduce A → β:
+	    pop length(β) symbols off symbol_stack and state_stack;
+	    symbol_stack.push(A);
+	    state_stack.push(goto(state_stack.top(), A));
+	case accept: return;
+	default: error;
     }
-end
+}
 #+end_example
 
 ** LR(0) Automaton
+
+- LR(0) Automaton :: All the possible *rules* that are currently under consideration by a shift-reduce
+  parser. Each set of rules, or box, represents a state in the machine, connected by transitions from
+  both terminals to non-terminals in a grammar. Also known as the *canonical collection* or
+  *compact finite state machine* of a grammar.
+
+- Items :: The contents of each state, which are rules augmented by a *marker*.
+
+- Marker(.) :: Marks the parser's current position in a rule.
+
+- Kernel :: *State 0* created by taking the production for the start symbol *S → E* and adding a *marker*
+  at the beginning of the right-hand side.
+
+- Closure :: For each *item* in the state with a non-terminal *X* immediately to the right of the
+  *marker*, add all rules in the grammar that have *X* as the left-hand side. The newly added *items*
+  have a *marker* at the beginning of the right-hand side.
 
 *** Grammar
 
 | rule | production |
 |------+------------|
-|    1 | S → S $    |
-|    2 | S → ( L )  |
-|    3 | S → x      |
-|    4 | L → S      |
-|    5 | L → L, S   |
+|    1 | S → E $    |
+|    2 | E → ( L )  |
+|    3 | E → x      |
+|    4 | L → E      |
+|    5 | L → L, E   |
 
 *** Configurating Sets
 
@@ -135,55 +152,55 @@ end
 
 | state | set        | successor |
 |-------+------------+-----------|
-| s1    | S' → .S $  | s4        |
-|       | S  → .(L)  | s3        |
-|       | S  → .x    | s2        |
+| s1    | S → .E $   | s4        |
+|       | E  → .(L)  | s3        |
+|       | E  → .x    | s2        |
 |-------+------------+-----------|
-| s2    | S → x.     | reduce 3  |
+| s2    | E → x.     | reduce 3  |
 |-------+------------+-----------|
-| s3    | S → (.L )  | s5        |
-|       | L → .S     | s7        |
-|       | L → .L, S  | s5        |
-|       | S → .( L ) |           |
-|       | S → .x     |           |
+| s3    | E → (.L )  | s5        |
+|       | L → .E     | s7        |
+|       | L → .L, E  | s5        |
+|       | E → .( L ) |           |
+|       | E → .x     |           |
 |-------+------------+-----------|
-| s4    | S' → S.$   | accept    |
+| s4    | S → E.$    | accept    |
 |-------+------------+-----------|
-| s5    | S → ( L. ) | s6        |
-|       | L → L., S  | s8        |
+| s5    | E → ( L. ) | s6        |
+|       | L → L., E  | s8        |
 |-------+------------+-----------|
-| s6    | S → ( L ). | reduce 2  |
+| s6    | E → ( L ). | reduce 2  |
 |-------+------------+-----------|
-| s7    | L → S.     | reduce 4  |
+| s7    | L → E.     | reduce 4  |
 |-------+------------+-----------|
-| s8    | L → L,.S   | s9        |
-|       | S → .( L ) | s3        |
-|       | S → .x     | s2        |
+| s8    | L → L,.E   | s9        |
+|       | E → .( L ) | s3        |
+|       | E → .x     | s2        |
 |-------+------------+-----------|
-| s9    | L → L, S.  | reduce 5  |
+| s9    | L → L, E.  | reduce 5  |
 
 *** Goto Graph / Transition Diagram
 
 #+begin_example
 1.
  -------------        2.             8.                   9.
-| S' → .S $   |  x    --------   x   ------------    S   ----------
-| S  → .(L)   |----->| S → x. |<----| L → L,.S   |----->| L → L,S. |
-| S  → .x     |-+     --------      | S → .( L ) |       ----------
- -------------  |    3.             | S → .x     |
+| S  → .E $   |  x    --------   x   ------------    E   -----------
+| E  → .( L ) |----->| E → x. |<----| L → L,.E   |----->| L → L, E. |
+| E  → .x     |-+     --------      | E → .( L ) |       -----------
+ -------------  |    3.             | E → .x     |
      S |      ( |     ------------   ------------
-4.     V        +--->| S → (.L )  | ( |     ^
- ------------        | L → .S     |<--+     | ,
-| S' → S.$   |       | L → .L, S  |         |       5.
- ------------        | S → .( L ) |  L    -----------
-                     | S → .x     |----->| S → ( L.) |
-                      ------------       | L → L.,S  |
+4.     V        +--->| E → (.L )  | ( |     ^
+ ------------        | L → .E     |<--+     | ,
+| S → E.$    |       | L → .L, E  |         |       5.
+ ------------        | E → .( L ) |  L    -----------
+                     | E → .x     |----->| E → ( L.) |
+                      ------------       | L → L., E |
                           |               -----------
-                        S |                 |
+                        E |                 |
                           V   7.            | )
                        --------             V        6.
-                      | L → S. |          ------------
-                       --------          | S → ( L ). |
+                      | L → E. |          ------------
+                       --------          | E → ( L ). |
                                           ------------
 #+end_example
 
@@ -208,13 +225,13 @@ relevant non-terminal.
 
 *** LR(1) Grammar
 
-| rule | production  |
-|------+-------------|
-|    0 | S → E $     |
-|    1 | E → T E'    |
-|    2 | E' → + T E' |
-|    3 | E' → ε      |
-|    4 | T → 1       |
+| number | rule | production |
+|--------+------+------------|
+|      0 | S    | E $        |
+|      1 | E    | T E'       |
+|      2 | E'   | + T E'     |
+|      3 | E'   | ε          |
+|      4 | T    | 1          |
 
 *** FIRST Table
 
