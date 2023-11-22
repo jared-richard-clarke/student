@@ -16,17 +16,22 @@
 An *LR(k)* parser has a stack and input. Given the contents of a stack and *k* tokens
 of lookahead, the parser does one of the following operations:
 
-1. *shift*: Push the current input symbol onto the stack. Scan the next symbol.
+1. *shift n*: Push the matched terminal *t* onto the parse stack and scan the next input symbol
+   into the lookahead buffer. Push next state *n* onto the parse stack as the new current state.
 
-2. *reduce*: A grammar rule's right-hand side is on top of the stack. Pop the symbols
-   and replace them with the grammar rule's left-hand-side.
+2. *reduce r_{m}*: Apply grammar rule *r_{m}: Lhs → S_{1} S_{2} ... S_{L}*.
+   - Remove the matched topmost *L* symbols from the parse stack.
+   - This exposes a prior state *p* that was expecting an instance of the *Lhs* symbol.
+   - Join the *L* parse trees together as one parse tree with new root symbol *Lhs*.
+   - Lookup the next state *n* from row *p* and column *Lhs* of the *LHS Goto* table.
+   - Push the symbol and tree for *Lhs* onto the parse stack.
+   - Push the next state *n* onto the parse stack as the new current state.
+   - The lookahead and input stream remain unchanged.
 
-3. *accept*: The parser has reached the end of the input without error, where the state
-   at the top of the stack and the lookahead terminal symbol is within the subject grammar and
-   represents the end of a program.
+3. *accept*: Lookahead *t* is the *eof* marker. End of parsing. If the state stack contains just the
+   start state, report success. Otherwise, report a syntax error.
 
-4. *reject*: The input is syntactically incorrect, where the state at the top of the
-   stack and the lookahead symbol is not within the subject grammar.
+4. *error*: Report a syntax error. The parser ends, or attempts some recovery.
 
 The difference between *SLR*, *LALR*, and *LR* parsers is in the tables that they use. Different
 tables use different techniques to determine when to *reduce*, and, if there is more than one grammar
