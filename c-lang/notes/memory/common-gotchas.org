@@ -105,4 +105,6 @@ if a pointer points to a valid address.
 
   // === potential solution ===
   #define safe_free(p) {free(p); (p) = NULL;}
+  // === alternative ===
+  #define FREE(p) do { free(p); (p) = NULL; } while(0)
 #+end_src
