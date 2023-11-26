@@ -61,7 +61,7 @@ Two types of conflict can appear in an *LR* grammar:
       - Push *s-prime* on top of the stack.
       - Advance the cursor to the next symbol on the right in *w$*.
     - else if *action[s, a]* = *reduce A → β* then
-      - pop 2 | *β* | symbols of the stack.
+      - pop 2 | *β* | symbols off the stack.
       - let *s-prime* be the state on top of the stack.
       - push *A* on top of the stack.
       - push *goto[s, a]* on top of the stack.
