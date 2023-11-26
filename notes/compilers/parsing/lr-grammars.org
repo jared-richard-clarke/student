@@ -75,7 +75,7 @@ Two types of conflict can appear in an *LR* grammar:
 # === parser-driving psuedo code ===
 
 while (true) {
-    switch (action(state_stack.top(), current_token)) {
+    switch (action[state_stack.top][current_token]) {
         case shift sn:
 	    symbol_stack.push(current_token);
 	    state_stack.push(sn);
@@ -83,7 +83,7 @@ while (true) {
 	case reduce A → β:
 	    pop length(β) symbols off symbol_stack and state_stack;
 	    symbol_stack.push(A);
-	    state_stack.push(goto(state_stack.top(), A));
+	    state_stack.push(goto[state_stack.top()][A]);
 	case accept: return;
 	default: error;
     }
@@ -107,7 +107,7 @@ while (true) {
   at the beginning of the right-hand side.
 
 - Closure ::  Any set of items can be extended by recursively adding all the appropriate items until
-  all non-terminals preceded by dots are accounted for. The minimal extension is called the closure
+  all non-terminals preceded by markers are accounted for. The minimal extension is called the closure
   of an item set.
 
 *** Grammar
