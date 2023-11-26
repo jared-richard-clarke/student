@@ -2,7 +2,7 @@
 
 *Introduction to Compilers and Language Design*, Douglas Thain
 
-** B-Minor Syntax Tree
+** B-Minor Function Declaration
 
 #+begin_example
 // === function declaration ===
