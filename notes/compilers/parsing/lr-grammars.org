@@ -287,3 +287,26 @@ has more precise lookahead information available for each item.
 |------------+-------------|
 | E → .E + T | { $, ), + } |
 | E → .T     | { $, ), + } |
+
+** Table Construction
+
+*** Finding the Reachable Item Sets
+
+1. Take the subset, *S*, of all items in the current item set where there is a dot in front of the symbol
+   of interest, *x*.
+
+2. For each item in *S*, move the dot to the right of *x*.
+
+3. Close the resulting set of items.
+
+*** Constructing Action and Goto
+
+1. The columns for non-terminals are copied to the goto table.
+   
+2. The columns for the terminals are copied to the action table as shift actions.
+   
+3. An extra column for *$* (eof) is added to the action table. An *accept* action is added to the *$*
+   column for each item set that contains an item of the form *S → w.$*.
+   
+4. If an item set *i* contains an item of the form *A → w.* and *A → w* is rule *m* with *m > 0* then
+   the row for state *i* in the action table is completely filled with the reduce action *r_{m}*.
