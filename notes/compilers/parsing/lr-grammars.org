@@ -56,13 +56,13 @@ Two types of conflict can appear in an *LR* grammar:
   - Repeat
     - Let *s* be the state on top of the stack.
     - Let *a* be the current pointed symbol in *w$*.
-    - If *action[s, a]* = *shift s-prime* then
+    - If *action[s, a]* = *shift s_{n}* then
       - Push *a* on top of the stack.
-      - Push *s-prime* on top of the stack.
+      - Push *s_{n}* on top of the stack.
       - Advance the cursor to the next symbol on the right in *w$*.
     - else if *action[s, a]* = *reduce A → β* then
-      - pop 2 | *β* | symbols off the stack.
-      - let *s-prime* be the state on top of the stack.
+      - pop | *β* | symbols off the stack.
+      - let *s_{n}* be the state on top of the stack.
       - push *A* on top of the stack.
       - push *goto[s, a]* on top of the stack.
       - output *A → β*.
