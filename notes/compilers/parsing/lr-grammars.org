@@ -76,9 +76,9 @@ Two types of conflict can appear in an *LR* grammar:
 
 while (true) {
     switch (action(state_stack.top(), current_token)) {
-        case shift s':
+        case shift sn:
 	    symbol_stack.push(current_token);
-	    state_stack.push(s');
+	    state_stack.push(sn);
 	    next_token();
 	case reduce A → β:
 	    pop length(β) symbols off symbol_stack and state_stack;
