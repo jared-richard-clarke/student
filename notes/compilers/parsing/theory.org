@@ -117,15 +117,15 @@ LL(1) ⊂ SLR ⊂ LALR ⊂ LR(1) ⊂ CFG
   to apply next by examining the next *k* tokens. Requires a very large automaton, because the possible
   lookaheads are encoded into states.
 
-- LALR :: A /Lookahead-LR/ parser created by constructing an *LR(1)* parser then merging all item sets
+- LALR :: A *Lookahead-LR* parser created by constructing an *LR(1)* parser then merging all item sets
   that have the same core.
 
-- SLR :: A /Simple-LR/ parser approximates an *LR(1)* parser by constructing an *LR(0)* state machine
+- SLR :: A *Simple-LR* parser approximates an *LR(1)* parser by constructing an *LR(0)* state machine
   and then relying on the *FIRST* and *FOLLOW* sets to select which rule to apply.
 
-- LL(k) :: Performs a top-down, left-right scan and left-most parse of the input, deciding what items
-  to rule to apply next by examining the next *k* tokens. *LL(1)* parsers require a only table that
-  is *O(nt)* where *t* is the number of tokens and *n* is the number of non-terminals.
+- LL(k) :: Performs a top-down, left-right scan and left-most parse of the input, deciding which rules
+  to apply by examining the next *k* tokens. *LL(1)* parsers require a only table that is *O(nt)* where
+  *t* is the number of tokens and *n* is the number of non-terminals.
 
 ** The Chomsky Hierarchy
 
