@@ -106,9 +106,9 @@ while (true) {
 - Kernel :: *State 0* created by taking the production for the start symbol *S → E* and adding a marker
   at the beginning of the right-hand side.
 
-- Closure :: For each item in the state with a non-terminal *X* immediately to the right of the
-  marker, add all rules in the grammar that have *X* as the left-hand side. The newly added items
-  have a marker at the beginning of the right-hand side.
+- Closure ::  Any set of items can be extended by recursively adding all the appropriate items until
+  all non-terminals preceded by dots are accounted for. The minimal extension is called the closure
+  of an item set.
 
 *** Grammar
 
