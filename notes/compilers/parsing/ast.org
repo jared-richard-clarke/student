@@ -2,7 +2,7 @@
 
 *Introduction to Compilers and Language Design*, Douglas Thain
 
-** B-Minor Function Declaration
+** B-Minor Abstract Syntax Tree
 
 #+begin_example
 // === function declaration ===
@@ -103,48 +103,4 @@ compute: function integer (x: integer) = {
                                                                             |-----------| |-----------|
                                                                             | total     | | i         |
                                                                              -----------   ----------- 
-#+end_example
-
-** B-Minor Function Call
-
-#+begin_example
-// === function call ===
-
-f(x, y, z)
-
-// === abstract syntax tree ===
-
-     --------------
-    | EXPR_CALL    |
-    |--------------|
-    | left | right |
-     --------------
-       /       \
-      V         V
- -----------   --------------
-| EXPR_NAME | | EXPR_ARG     |
-|-----------| |--------------|
-| f         | | left | right |
- -----------   --------------
-                 /       \
-                V         V
-         -----------   --------------
-        | EXPR_NAME | | EXPR_ARG     |
-        |-----------| |--------------|
-        | x         | | left | right |
-         -----------   --------------
-                         /       \
-                        V         V
-                 -----------   --------------
-                | EXPR_NAME | | EXPR_ARG     |
-                |-----------| |--------------|
-                | y         | | left | right |
-                 -----------   --------------
-                                 |
-                                 V
-                            -----------
-                           | EXPR_NAME |
-                           |-----------|
-                           | z         |
-                            -----------
 #+end_example
