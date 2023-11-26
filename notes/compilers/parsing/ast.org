@@ -104,3 +104,47 @@ compute: function integer (x: integer) = {
                                                                             | total     | | i         |
                                                                              -----------   ----------- 
 #+end_example
+
+** B-Minor Function Call
+
+#+begin_example
+=== expression ===
+
+f(x, y, z)
+
+=== AST ===
+
+     --------------
+    | EXPR_CALL    |
+    |--------------|
+    | left | right |
+     --------------
+       /       \
+      V         V
+ -----------   --------------
+| EXPR_NAME | | EXPR_ARG     |
+|-----------| |--------------|
+| f         | | left | right |
+ -----------   --------------
+                 /       \
+                V         V
+         -----------   --------------
+        | EXPR_NAME | | EXPR_ARG     |
+        |-----------| |--------------|
+        | x         | | left | right |
+         -----------   --------------
+                         /       \
+                        V         V
+                 -----------   --------------
+                | EXPR_NAME | | EXPR_ARG     |
+                |-----------| |--------------|
+                | y         | | left | right |
+                 -----------   --------------
+                                 |
+                                 V
+                            -----------
+                           | EXPR_NAME |
+                           |-----------|
+                           | z         |
+                            -----------
+#+end_example
