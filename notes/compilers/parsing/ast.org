@@ -5,7 +5,7 @@
 ** B-Minor Syntax Tree
 
 #+begin_example
-// === function ===
+// === function declaration ===
 
 compute: function integer (x: integer) = {
     i: integer;
@@ -16,7 +16,7 @@ compute: function integer (x: integer) = {
     return total;
 }
 
-// === Abstract Syntax Tree ===
+// === abstract syntax tree ===
 
                            ----------------------------
                           | DECL "compute"             |
@@ -108,11 +108,11 @@ compute: function integer (x: integer) = {
 ** B-Minor Function Call
 
 #+begin_example
-=== expression ===
+// === function call ===
 
 f(x, y, z)
 
-=== AST ===
+// === abstract syntax tree ===
 
      --------------
     | EXPR_CALL    |
