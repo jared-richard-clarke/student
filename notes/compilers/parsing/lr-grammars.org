@@ -265,6 +265,8 @@ relevant non-terminal.
 
 *** Stack Trace: ~1 + 1~
 
+*Side Note*: ~symbol~ and ~state~ are often combined into a single stack of symbol-state pairs.
+
 | step | symbol          | state             | input   | action |
 |------+-----------------+-------------------+---------+--------|
 |    1 |                 | [ 0 ]             | 1 + 1 $ | s3     |
