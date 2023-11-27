@@ -218,13 +218,13 @@ relevant non-terminal.
 
 *** LR(1) Grammar
 
-| number | rule | production |
-|--------+------+------------|
-|      0 | S    | E $        |
-|      1 | E    | T E'       |
-|      2 | E'   | + T E'     |
-|      3 | E'   | ε          |
-|      4 | T    | 1          |
+| rule | production  |
+|------+-------------|
+|    0 | S → E $     |
+|    1 | E → T E'    |
+|    2 | E' → + T E' |
+|    3 | E' → ε      |
+|    4 | T → 1       |
 
 *** FIRST Table
 
