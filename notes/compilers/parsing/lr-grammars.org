@@ -44,6 +44,10 @@ Two types of conflict can appear in an *LR* grammar:
 | T → id.( E ) | S → id( E ).  |
 | T → id.      | E → id( E ).  |
 
+The *LR(0)* automaton forms the basis of *LR* parsing by telling use which actions are available
+in each state, but it does not tell us which action to take or how to resolve shift-reduce and
+reduce-reduce conflicts.
+
 ** Algorithm
 
 - *Input*: A LR-Parser for an unambiguous context-free grammar *G* over an alphabet *Σ* and a
