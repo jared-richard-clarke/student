@@ -118,7 +118,9 @@ end loop;
   *X → γ . δ* means *γ* is at the top of the stack. At the head of the input there is a string
   derivable from *δ*.
 
-- Marker(.) :: Marks the parser's current position in a rule.
+- Marker(.) :: Marks the parser's current position in a rule. The symbols to the left of the marker
+  are those on the stack, and the symbols to the right of the marker are the next possible sequence
+  of tokens.
 
 - Kernel :: *State 0* created by taking the production for the start symbol *S → E* and adding a marker
   at the beginning of the right-hand side.
