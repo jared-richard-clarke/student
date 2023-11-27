@@ -85,7 +85,7 @@ while (true) {
             state_stack.push(sn);
             next_token();
         case reduce A → β:
-            pop length(β) symbols off symbol_stack and state_stack;
+            pop β symbols off symbol_stack and state_stack;
             symbol_stack.push(A);
             state_stack.push(goto[state_stack.top()][A]);
         case accept: return;
@@ -103,7 +103,7 @@ loop
         push(lookahead, s');
         lookahead = yylex();
     else if action[s, lookahead] = reduce A → β
-        pop size of β pairs
+        pop β pairs
         s' = state on top of stack
         push(A, goto[s', A]);
     else if action[s, lookahead] = accept then return
