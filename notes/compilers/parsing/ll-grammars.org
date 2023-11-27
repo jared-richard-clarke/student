@@ -198,7 +198,7 @@ F  ::= (E)
 
 ** Recursive Descent Parsing
 
-*LL(1)* grammars are amenable to /recursive descent parsing/ in which there is one function for each
+*LL(1)* grammars are amenable to *recursive descent parsing* in which there is one function for each
 non-terminal in a grammar. The body of each function follows the right-hand sides of the corresponding
 rules: non-terminals result in a call to another parse function, while terminals result in considering
 the next token.
