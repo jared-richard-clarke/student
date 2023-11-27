@@ -44,10 +44,10 @@ corresponding non-terminal.
 
 | rule | production |
 |------+------------|
-| 1. P | E          |
-| 2. E | E + E      |
-| 3. E | id         |
-| 4. E | 1          |
+|    1 | S → E      |
+|    2 | E → E + E  |
+|    3 | E → id     |
+|    4 | E → 1      |
 
 For brevity, we occasionally condense a set of rules with a common left-hand side by combining all
 the right-hand sides with a logical-or symbol:
@@ -60,7 +60,7 @@ E → E + E | id | 1
 
 | sentential form | apply rule |
 |-----------------+------------|
-| P               | P → E      |
+| S               | S → E      |
 | E               | E → E + E  |
 | E + E           | E → id     |
 | id + E + E      | E → 1      |
@@ -76,8 +76,8 @@ E → E + E | id | 1
 | id + E + E      | E → E + E  |
 | id + E          | E → id     |
 | E + E           | E → E + E  |
-| E               | P → E      |
-| P               |            |
+| E               | S → E      |
+| S               |            |
 
 ** Ambiguity
 
@@ -86,7 +86,7 @@ E → E + E | id | 1
 *** Left-Most Derivation
 
 #+begin_example
-        P
+        S
         |
         E
         |
@@ -100,7 +100,7 @@ E → E + E | id | 1
 *** Right-Most Derivation
 
 #+begin_example
-      P
+      S
       |
       E
       |
@@ -119,11 +119,11 @@ it allows only a left-most derivation.
 
 | rule | production |
 |------+------------|
-| 1. P | E          |
-| 2. E | E + T      |
-| 3. E | T          |
-| 4. T | id         |
-| 5. T | 1          |
+|    1 | S → E      |
+|    2 | E → E + T  |
+|    3 | E → T      |
+|    4 | T → id     |
+|    5 | T → 1      |
 
 Further modification to the grammar is required to account for multiple levels of precedence. The usual
 approach is to construct a grammar with multiple levels, each reflecting the intended precedence of
@@ -132,13 +132,13 @@ of multiplied factors (*F*).
 
 | rule | production |
 |------+------------|
-| 1. P | E          |
-| 2. E | E + T      |
-| 3. E | T          |
-| 4. T | T * F      |
-| 5. T | F          |
-| 6. F | id         |
-| 7. F | 1          |
+|    1 | S → E      |
+|    2 | E → E + T  |
+|    3 | E → T      |
+|    4 | T → T * F  |
+|    5 | T → F      |
+|    6 | F → id     |
+|    7 | F → 1      |
 
 #+begin_example
 === ambiguous ===
