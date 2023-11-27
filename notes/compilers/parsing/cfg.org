@@ -143,11 +143,11 @@ of multiplied factors (*F*).
 #+begin_example
 === ambiguous ===
 
-E → E + E | E * E | (E) | 1
+E → E + E | E * E | ( E ) | 1
 
 === unambiguous ===
 
 E → T | E + T
 T → F | T * F
-F → 1 | (E)
+F → 1 | ( E )
 #+end_example
