@@ -75,19 +75,36 @@ Two types of conflict can appear in an *LR* grammar:
 # === parser-driving psuedo code ===
 
 while (true) {
-    switch (action[state_stack.top][current_token]) {
+    switch (action[state_stack.top()][current_token]) {
         case shift sn:
-	    symbol_stack.push(current_token);
-	    state_stack.push(sn);
-	    next_token();
-	case reduce A → β:
-	    pop length(β) symbols off symbol_stack and state_stack;
-	    symbol_stack.push(A);
-	    state_stack.push(goto[state_stack.top()][A]);
-	case accept: return;
-	default: error;
+            symbol_stack.push(current_token);
+            state_stack.push(sn);
+            next_token();
+        case reduce A → β:
+            pop length(β) symbols off symbol_stack and state_stack;
+            symbol_stack.push(A);
+            state_stack.push(goto[state_stack.top()][A]);
+        case accept: return;
+        default: error;
     }
 }
+
+// === parser-driving psuedo code ===
+
+push($, 0) // <----- always pushing a symbol/state pair
+lookahead = yylex();
+loop
+    s = top(); // <- always a state
+    if action[s, lookahead] = shift s'
+        push(lookahead, s');
+        lookahead = yylex();
+    else if action[s, lookahead] = reduce A → β
+        pop size of β pairs
+        s' = state on top of stack
+        push(A, goto[s', A]);
+    else if action[s, lookahead] = accept then return
+    else error();
+end loop;
 #+end_example
 
 ** LR(0) Automaton
