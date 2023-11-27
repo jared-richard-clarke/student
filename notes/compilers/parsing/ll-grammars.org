@@ -166,33 +166,33 @@ until no more changes occur.
 
 **** Grammmar
 
-| rule  | production |
-|-------+------------|
-| 1. P  | E          |
-| 2. E  | T E'       |
-| 3. E' | + T E'     |
-| 4. E' | ε          |
-| 5. T  | F T'       |
-| 6. T' | * F T'     |
-| 7. T' | ε          |
-| 8. F  | (E)        |
-| 9. F  | 1          |
+| rule | production  |
+|------+-------------|
+|    1 | S → E       |
+|    2 | E → T E'    |
+|    3 | E' → + T E' |
+|    4 | E' → ε      |
+|    5 | T → F T'    |
+|    6 | T' → * F T' |
+|    7 | T' → ε      |
+|    8 | F → ( E )   |
+|    9 | F → 1       |
 
 #+begin_example
-P  ::= E $
+S  ::= E $
 E  ::= T E'
 E' ::= + T E'
      | ε
 T  ::= F T'
 T' ::= * F T'
      | ε
-F  ::= (E)
+F  ::= ( E )
      | 1
 #+end_example
 
 **** First and Follow
 
-|        | P      | E      | E'     | T         | T'        | F            |
+|        | S      | E      | E'     | T         | T'        | F            |
 | FIRST  | {(, 1} | {(, 1} | {+, ε} | {(, 1}    | {*, ε}    | {(, 1}       |
 | FOLLOW | {$}    | {), $} | {), $} | {+, ), $} | {+, ), $} | {+, *, ), $} |
 
@@ -220,8 +220,8 @@ Three helper functions are needed:
 This C program serves only to verify that the input program matches the grammar outlined above.
 
 #+begin_src c
-  // P ::= E $
-  int parse_P() {
+  // S ::= E $
+  int parse_S() {
     return parse_E() && match(TOKEN_EOF);
   }
   // E ::= T E'
@@ -250,7 +250,7 @@ This C program serves only to verify that the input program matches the grammar 
     }
     return 1;
   }
-  // F ::= (E) | integer
+  // F ::= ( E ) | 1
   int parse_F() {
     token_t t = peek();
     if (t == TOKEN_LPAREN) {
