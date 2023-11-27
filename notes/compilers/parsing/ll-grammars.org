@@ -124,7 +124,7 @@ appear after the derivation of non-terminal *A*.
 
 #+begin_example
 FIRST(α) is the set of terminals that begin all strings given by α,
-including  ε if α ⇒ ε.
+including ε if α ⇒ ε.
 
 For Terminals:
 For each terminal a ∈ Σ: FIRST(a) = {a}
@@ -265,3 +265,92 @@ This C program serves only to verify that the input program matches the grammar 
     }
   }
 #+end_src
+
+** LL(1) Table-Driven Parsing
+
+An *LL(1)*, table-driven parser requires a grammar, a parse table, and a stack to represent the
+current set of non-terminals. The *LL(1)* parse table is used to determine which rule should be
+applied for any combination of non-terminal on the stack and the next token on the input stream.
+
+*** LL(1) Parse Table Construction
+
+#+begin_example
+Given a grammar G and alphabet Σ, create a parse table T[A, a] that selects
+a rule for each combination of non-terminal A ∈ G and terminal a ∈ Σ.
+
+For each rule A → α in G:
+    For each terminal a (excepting ε) in FIRST(α):
+        Add A → α to T[A, a].
+    if ε is in FIRST(α):
+        For each terminal b (including $) in FOLLOW(A):
+	    Add A → α to T[A, b]
+#+end_example
+
+*** Grammar
+
+| rule | production  |
+|------+-------------|
+|    1 | S → E       |
+|    2 | E → T E'    |
+|    3 | E' → + T E' |
+|    4 | E' → ε      |
+|    5 | T → F T'    |
+|    6 | T' → * F T' |
+|    7 | T' → ε      |
+|    8 | F → ( E )   |
+|    9 | F → 1       |
+
+*** Parse Table
+
+|    | 1 | + | * | ( | ) | $ |
+|----+---+---+---+---+---+---|
+| S  | 1 |   |   | 1 |   |   |
+| E  | 2 |   |   | 2 |   |   |
+| E' |   | 3 |   |   | 4 | 4 |
+| T  | 5 |   |   | 5 |   |   |
+| T' |   | 7 | 6 |   | 7 | 7 |
+| F  | 9 |   |   | 8 |   |   |
+
+** LL(1) Table Parsing Algorithm
+
+Informally, the idea is to keep a stack that tracks the current state of the parser. In each step,
+we consider the top element of the stack and the next token on the input. If they match, then pop
+the stack, accept the token, and continue. If not, then consult the parse table for the next rule
+to apply. If we can continue until the end-of-file symbol is matched, then the parse succeeds.
+
+#+begin_example
+Given a grammar G with start symbol P and parse table T, parse a 
+sequence of tokens and determine whether they satisfy G.
+
+Create a stack S.
+Push $ and P onto S.
+Let c be the first token on the input.
+
+While S is not empty:
+    Let X be the top element of the stack.
+    If X matches c:
+        Remove X from the stack.
+        Advance c to the next token and repeat.
+    If X is any other terminal, stop with an error.
+    If T[X, c] indicates rule X → α:
+        Remove X from the stack.
+        Push symbol α on to the stack and repeat.
+    If T[X, c] indicates an error state, stop with an error
+#+end_example
+
+** Stack Trace
+
+| stack       | input   | action               |
+|-------------+---------+----------------------|
+| S $         | 1 * 1 $ | apply 1: S ⇒ E       |
+| E $         | 1 * 1 $ | apply 2: E ⇒ T E'    |
+| T E' $      | 1 * 1 $ | apply 5: T ⇒ F T'    |
+| F T' E' $   | 1 * 1 $ | apply 9: F ⇒ 1       |
+| 1 T' E' $   | 1 * 1 $ | match 1              |
+| T' E' $     | * 1 $   | apply 6: T' ⇒ * F T' |
+| * F T' E' $ | * 1 $   | match *              |
+| F T' E' $   | 1 $     | apply9: F ⇒ 1        |
+| 1 T' E' $   | 1 $     | match 1              |
+| T' E' $     | $       | apply 7: T' ⇒ ε      |
+| E' $        | $       | apply 4: E' ⇒ ε      |
+| \$          | $       | match $              |
