@@ -37,17 +37,17 @@ Rewriting the rule as *E → T + E* would remove left recursion, but it creates 
 operation and a common left prefix. Instead the rules must be rewritten so that the formally recursive
 rule begins with the leading symbols of its alternatives.
 
-| rule  | production |
-|-------+------------|
-| 1. P  | E          |
-| 2. E  | T E'       |
-| 3. E' | + T E'     |
-| 4. E' | ε          |
-| 5. T  | id         |
-| 6. T  | 1          |
+| rule | production  |
+|------+-------------|
+|    1 | S → E       |
+|    2 | E → T E'    |
+|    3 | E' → + T E' |
+|    4 | E' → ε      |
+|    5 | T → id      |
+|    6 | T → 1       |
 
 #+begin_example
-P  ::= E
+S  ::= E
 E  ::= T E'
 E' ::= + T E'
      | ε
@@ -83,13 +83,13 @@ which eliminates backtracking and redundant parsings.
 
 | rule | production |
 |------+------------|
-| 1. P | E          |
-| 2. E | id         |
-| 3. E | id[E]      |
-| 4. E | id(E)      |
+|    1 | S → E      |
+|    2 | E → id     |
+|    3 | E → id[E]  |
+|    4 | E → id(E)  |
 
 #+begin_example
-P ::= E
+S ::= E
 E ::= id
     | id[E]
     | id(E)
@@ -97,16 +97,16 @@ E ::= id
 
 *** After Left Factoring
 
-| rule  | production |
-|-------+------------|
-| 1. P  | E          |
-| 2. E  | id E'      |
-| 3. E' | [E]        |
-| 4. E' | (E)        |
-| 5. E' | ε          |
+| rule | production |
+|------+------------|
+|    1 | S → E      |
+|    2 | E → id E'  |
+|    3 | E' → [E]   |
+|    4 | E' → (E)   |
+|    5 | E' → ε     |
 
 #+begin_example
-P  ::= E
+S  ::= E
 E  ::= id E'
 E' ::= [E]
      | (E)
