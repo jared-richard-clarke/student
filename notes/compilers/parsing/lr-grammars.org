@@ -253,9 +253,9 @@ relevant non-terminal.
   - If *β* cannot produce *ε*, the lookahead is *FIRST(β)*.
   - If *β* can produce *ε*, the lookahead is *FIRST(β) ∪ {L}*
 
-** Shift-Reduce Parsing Example
+** Shift-Reduce Parsing For LR(1) Example
 
-*** LR(1) Grammar
+*** Grammar
 
 | rule | production  |
 |------+-------------|
@@ -274,7 +274,7 @@ relevant non-terminal.
 | E'           | { +, ε } |
 | T            | { 1 }    |
 
-*** LR(1) Closure Table
+*** Closure Table
 
 | goto        | kernel               | state | closure                                                |
 |-------------+----------------------+-------+--------------------------------------------------------|
@@ -289,7 +289,7 @@ relevant non-terminal.
 | goto(6, E') | [ E' → + T E' ., $ ] |     7 | [ E' → + T E' ., $ ]                                   |
 | goto(6, +)  | [ E' → +.T E', $ ]   |     5 |                                                        |
 
-*** LR Table: Action and Goto
+*** Action and Goto Table
 
 | state | +  | 1  | $      | S | E | E' | T |
 |-------+----+----+--------+---+---+----+---|
