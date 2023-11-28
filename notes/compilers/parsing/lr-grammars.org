@@ -13,37 +13,6 @@
 
 - (k) :: *k* symbols of lookahead.
 
-An *LR(k)* parser has a stack and input. Given the contents of a stack and *k* tokens
-of lookahead, the parser does one of the following operations:
-
-1. *shift n*: Push the matched terminal *t* onto the parse stack and scan the next input symbol
-   into the lookahead buffer. Push next state *n* onto the parse stack as the new current state.
-
-2. *reduce r_{m}*: Apply grammar rule *r_{m}: Lhs → S_{1} S_{2} ... S_{L}*.
-   - Remove the matched topmost *L* symbols from the parse stack.
-   - This exposes a prior state *p* that was expecting an instance of the *Lhs* symbol.
-   - Join the *L* parse trees together as one parse tree with new root symbol *Lhs*.
-   - Lookup the next state *n* from row *p* and column *Lhs* of the *Goto* table.
-   - Push the symbol and tree for *Lhs* onto the parse stack.
-   - Push the next state *n* onto the parse stack as the new current state.
-   - The lookahead and input stream remain unchanged.
-
-3. *accept*: Lookahead *t* is the *eof* marker. End of parsing. If the state stack contains just the
-   start state, report success. Otherwise report a syntax error.
-
-4. *error*: Report a syntax error. The parser ends, or attempts some recovery.
-
-The difference between *SLR*, *LALR*, and *LR* parsers is in the tables that they use. Different
-tables use different techniques to determine when to *reduce*, and, if there is more than one grammar
-rule with the same right-hand side, which left-hand-side nonterminal to push.
-
-Two types of conflict can appear in an *LR* grammar:
-
-| shift-reduce | reduce-reduce |
-|--------------+---------------|
-| T → id.( E ) | S → id( E ).  |
-| T → id.      | E → id( E ).  |
-
 ** Algorithm
 
 - *Input*: A LR-Parser for an unambiguous context-free grammar *G* over an alphabet *Σ* and a
@@ -55,57 +24,50 @@ Two types of conflict can appear in an *LR* grammar:
   - Push the initial state *s_{0}* on top of the empty stack.
   - Repeat
     - Let *s* be the state on top of the stack.
-    - Let *a* be the current pointed symbol in *w$*.
+    - Let *a* be the current symbol in *w$*.
     - If *action[s, a]* = *shift s_{n}* then
       - Push *a* on top of the stack.
       - Push *s_{n}* on top of the stack.
       - Advance the cursor to the next symbol on the right in *w$*.
-    - else if *action[s, a]* = *reduce A → β* then
+    - if *action[s, a]* = *reduce A → β* then
       - pop | *β* | symbols off the stack.
       - let *s_{n}* be the state on top of the stack.
       - push *A* on top of the stack.
       - push *goto[s, a]* on top of the stack.
-      - output *A → β*.
-    - else if *action[s, a]* = *accept* then
-      - return
+    - if *action[s, a]* = *accept* then
+      - return success
     - else
-      - error
+      - return error
 
 #+begin_example
 # === parser-driving psuedo code ===
 
-while (true) {
-    switch (action[state_stack.top()][current_token]) {
-        case shift sn:
-            symbol_stack.push(current_token);
-            state_stack.push(sn);
-            next_token();
-        case reduce A → β:
-            pop β symbols off symbol_stack and state_stack;
-            symbol_stack.push(A);
-            state_stack.push(goto[state_stack.top()][A]);
-        case accept: return;
-        default: error;
-    }
-}
-
-// === parser-driving psuedo code ===
-
-push($, 0) // <----- always pushing a symbol/state pair
-lookahead = yylex();
+stack.push($, 0) # <----- always push a symbol/state pair
+lookahead = scan()
 loop
-    s = top(); // <- always a state
-    if action[s, lookahead] = shift sn
-        push(lookahead, sn);
-        lookahead = yylex();
-    else if action[s, lookahead] = reduce A → β
-        pop β pairs
-        sn = state on top of stack
-        push(A, goto[sn, A]);
-    else if action[s, lookahead] = accept then return
-    else error();
-end loop;
+    s = stack.top() # <-- always a state
+    switch(action[s][lookahead])
+    case shift sn:
+        stack.push(lookahead, sn)
+        lookahead = scan()
+    case reduce A → β:
+        stack.pop(β)
+        sn = stack.top()
+        stack.push(A, goto[sn][A])
+    case accept: return success
+    default: return error
 #+end_example
+
+The difference between *SLR*, *LALR*, and *LR* parsers is in the tables that they use. Different
+tables use different techniques to determine when to *reduce*, and, if there is more than one grammar
+rule with the same right-hand side, which left-hand-side nonterminal to push.
+
+Two types of conflict can appear in an *LR* grammar:
+
+| shift-reduce | reduce-reduce |
+|--------------+---------------|
+| T → id.( E ) | S → id( E ).  |
+| T → id.      | E → id( E ).  |
 
 ** LR(0) Automaton
 
