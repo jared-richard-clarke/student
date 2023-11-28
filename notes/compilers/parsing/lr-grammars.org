@@ -44,7 +44,7 @@
 
 stack.push($, 0) # <----- always push a symbol/state pair
 lookahead = scan()
-loop
+loop:
     s = stack.top() # <-- always a state
     switch(action[s][lookahead])
     case shift sn:
