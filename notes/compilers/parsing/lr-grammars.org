@@ -176,9 +176,8 @@ Two types of conflict can appear in an *LR* grammar:
 
 *** Goto-Action Table
 
-Each parser state has its own row. Each possible next symbol has its own column.
-Some combinations of state and next symbol are impossible for valid input streams.
-These blank cells trigger syntax errors.
+Each parser state has its own row. Each possible symbol has its own column. Some combinations
+of state and symbol are impossible for valid input streams. These blank cells trigger syntax errors.
 
 | state | E | E' | T | +  | 1  | $      |
 |-------+---+----+---+----+----+--------|
