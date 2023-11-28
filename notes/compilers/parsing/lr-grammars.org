@@ -99,13 +99,13 @@ push($, 0) // <----- always pushing a symbol/state pair
 lookahead = yylex();
 loop
     s = top(); // <- always a state
-    if action[s, lookahead] = shift s'
-        push(lookahead, s');
+    if action[s, lookahead] = shift sn
+        push(lookahead, sn);
         lookahead = yylex();
     else if action[s, lookahead] = reduce A → β
         pop β pairs
-        s' = state on top of stack
-        push(A, goto[s', A]);
+        sn = state on top of stack
+        push(A, goto[sn, A]);
     else if action[s, lookahead] = accept then return
     else error();
 end loop;
