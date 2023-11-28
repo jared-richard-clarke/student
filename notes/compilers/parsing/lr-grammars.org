@@ -193,6 +193,25 @@ combinations are impossible for valid input streams. These blank cells trigger s
 |     6 |   |  7 |   | s5 |    | r3     |
 |     7 |   |    |   |    |    | r2     |
 
+*** Stack Trace: ~1 + 1~
+
+| state           | symbol        | input   | action |
+|-----------------+---------------+---------+--------|
+| [0]             | []            | 1 + 1 $ | s3     |
+| [0, 3]          | [1]           | + 1 $   | r4     |
+| [0]             | [T]           | + 1 $   | 2      |
+| [0, 2]          | [T]           | + 1 $   | s5     |
+| [0, 2, 5]       | [T, +]        | 1 $     | s3     |
+| [0, 2, 5, 3]    | [T, +, 1]     | $       | r4     |
+| [0, 2, 5]       | [T, +, T]     | $       | 6      |
+| [0, 2, 5, 6]    | [T, +, T]     | $       | r3     |
+| [0, 2, 5, 6]    | [T, +, T, E'] | $       | 7      |
+| [0, 2, 5, 6, 7] | [T, +, T, E'] | $       | r2     |
+| [0, 2]          | [T, E']       | $       | 4      |
+| [0, 2, 4]       | [T, E']       | $       | r1     |
+| [0]             | [E]           | $       | 1      |
+| [0, 1]          | [E]           | $       | accept |
+
 ** LR(1) Parsing
 
 The complete of canonical form of *LR(1)* parsing depends on the *LR(1)* automaton.
