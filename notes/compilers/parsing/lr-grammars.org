@@ -54,8 +54,10 @@ loop:
         stack.pop(β)
         sn = stack.top()
         stack.push(A, goto[sn][A])
-    case accept: return success
-    default: return error
+    case accept:
+        return success
+    default:
+        return error
 #+end_example
 
 The difference between *SLR*, *LALR*, and *LR* parsers is in the tables that they use. Different
