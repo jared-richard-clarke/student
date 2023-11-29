@@ -107,6 +107,8 @@ An *SLR* grammar is one that has no *shift-reduce* or *reduce-reduce* conflicts 
 
 *** Configurating Sets
 
+Finding the reachable item sets and the transitions between them.
+
 | state | set          | successor |
 |-------+--------------+-----------|
 | s0    | S → .E $     | s1        |
