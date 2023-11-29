@@ -109,6 +109,13 @@ An *SLR* grammar is one that has no *shift-reduce* or *reduce-reduce* conflicts 
 
 Finding the reachable item sets and the transitions between them.
 
+1. Take the subset, *S*, of all items in the current item set where there is a dot in front of the symbol
+   of interest, *x*.
+
+2. For each item in *S*, move the dot to the right of *x*.
+
+3. Close the resulting set of items.
+
 | state | set          | successor |
 |-------+--------------+-----------|
 | s0    | S → .E $     | s1        |
