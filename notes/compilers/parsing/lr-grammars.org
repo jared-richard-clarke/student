@@ -191,16 +191,16 @@ Finding the reachable item sets and the transitions between them.
 Each parser state has its own row. Each possible symbol has its own column. Some state-symbol
 combinations are impossible for valid input streams. These blank cells trigger syntax errors.
 
-| state | E | E' | T | +  | 1  | $      |
-|-------+---+----+---+----+----+--------|
-|     0 | 1 |    | 2 |    | s3 |        |
-|     1 |   |    |   |    |    | accept |
-|     2 |   |  4 |   | s5 |    | r3     |
-|     3 |   |    |   | r4 |    | r4     |
-|     4 |   |    |   |    |    | r1     |
-|     5 |   |    | 6 |    | s3 |        |
-|     6 |   |  7 |   | s5 |    | r3     |
-|     7 |   |    |   |    |    | r2     |
+| state / item set | E | E' | T | +  | 1  | $      |
+|------------------+---+----+---+----+----+--------|
+|                0 | 1 |    | 2 |    | s3 |        |
+|                1 |   |    |   |    |    | accept |
+|                2 |   |  4 |   | s5 |    | r3     |
+|                3 |   |    |   | r4 |    | r4     |
+|                4 |   |    |   |    |    | r1     |
+|                5 |   |    | 6 |    | s3 |        |
+|                6 |   |  7 |   | s5 |    | r3     |
+|                7 |   |    |   |    |    | r2     |
 
 *** Stack Trace: ~1 + 1~
 
