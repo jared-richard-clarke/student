@@ -1,0 +1,237 @@
+* Intermediate Representations
+
+*Introduction to Compilers and Language Design*, Douglas Thain
+
+*Intermediate Representation*, Wikipedia
+
+- intermediate representation (IR) :: simple and regular data structures or code used by a compiler or
+  virtual machine to represent source code. An *IR* is designed to facilitate analysis, optimizations,
+  translations, and portability of source code. A modular compiler will implement each optimization or
+  analysis tool as a separate module that consumes and produces the same *IR* so that it is easy to
+  select and compose optimizations in different orders.
+
+  - An *IR* may take one of several forms:
+
+    1. Graph: directed, cyclic, and extended ASTs.
+
+    2. Tuples: unbounded register machines.
+
+    3. Stack: virtual stack machines.
+
+** Directed Acyclic Graph (DAG)
+
+*** Expression: ~x = (a + 10) * (a + 10)~
+
+#+begin_example
+=== abstract syntax tree ===
+
+  assign
+     |
+ +---+---+
+ |       |
+ x      mul
+         |
+     +---+---+
+     |       |
+    add     add
+     |       |
+  +--+--+ +--+--+
+  |     | |     |
+  a    10 a    10
+
+=== directed acyclic graph ===
+
+assign
+   |
++--+--+
+|     |
+x    fmul
+     |  |
+     fadd
+       |
+    +--+--+
+    |     |
+    a    itof
+          |
+         10
+#+end_example
+
+*** Expression: ~x = a[i]~
+
+#+begin_example
+=== abstract syntax tree ===
+
+assign
+   |
++--+--+
+|     |
+x  lookup
+      |
+   +--+--+
+   |     |
+   a     i
+
+=== directed acyclic graph ===
+
+FP = Frame Pointer
+
+assign
+   |
++--+---+
+|      |
+x    deref
+       |
+     iadd
+       |
+   +---+----------+
+   |              |
+ deref          imul
+   |              |
+ iadd          +--+--+
+   |           |     |
++--+--+      deref   4
+|     |        |
+FP   16      iadd
+               |
+            +--+--+
+            |     |
+            FP   20
+
+=== external representation ===
+
+(assign x (deref (iadd (deref (iadd FP 16))
+                       (imul (deref (iadd FP 20)) 4))))
+#+end_example
+
+*** Value-Number Method: ~x = a[i]~
+
+A method used to construct a *DAG* from and *AST*, the idea is to build an array where each entry consists
+of a *DAG* node type and the array index of child nodes. The array is searched for matching nodes to
+avoid duplication.
+
+|   | type   | left | right | value |
+|---+--------+------+-------+-------|
+| 0 | name   |      |       | x     |
+| 1 | name   |      |       | a     |
+| 2 | int    |      |       | 10    |
+| 3 | itof   |    2 |       |       |
+| 4 | fadd   |    1 |     3 |       |
+| 5 | fmul   |    4 |     4 |       |
+| 6 | assign |    0 |     5 |       |
+
+*** Constant Folding
+
+The process of reducing an expression consisting of only constants into a single value. Constant folding
+is a narrow example of the more general technique of *partial execution* in which some parts of the
+program are executed at compile time.
+
+**** DAG Constant Folding Algorithm
+
+Examine a *DAG* recursively and collapse all operators on two constants into a single constant.
+
+#+begin_example
+ConstantFold(DagNode n):
+
+If n is a leaf:
+    return;
+Else:
+    n.left  = ConstantFold(n.left);
+    n.right = ConstantFold(n.right);
+
+    If n.left and n.right are constants:
+        n.value = n.operator(n.left, n.right);
+        n.kind  = constant;
+        delete n.left and n.right
+#+end_example
+
+**** Fold Expression: ~seconds = days * 24 * 60 * 60~
+
+#+begin_example
+     assign
+        |
+   +----+----+
+   |         |
+seconds    imul
+             |
+        +----+----+
+        |         |
+      days      imul
+                  |
+               +--+--+
+               |     |
+             imul    24
+               |
+            +--+--+
+            |     |
+           60    60
+
+--- fold -->
+
+     assign
+        |
+   +----+----+
+   |         |
+seconds    imul
+             |
+        +----+----+
+        |         |
+      days      86400
+#+end_example
+
+** Control Flow Graph
+
+A directed — possibly cyclic — graph where each node of the graph consists of a *basic block* of
+sequential statements, and the edges of the graph represent the possible flows of control between
+basic blocks. Conditionals create branches. Loops create reverse edges.
+
+*** Code Text
+
+#+begin_src c
+  for (i = 0; i < 10; i += 1) {
+      if (i % 2 == 0) {
+        print("even");
+      } else {
+        print("odd");
+      }
+      return;
+  }
+#+end_src
+
+*** Code Graph
+
+#+begin_example
+                   -------
+                  | i = 0 |
+                   -------
+                      |
+                      V
+                 ------------
+                | if (i < 0) |
+                 ------------
+               true | ^ | false
+              +-----+ | +---------------------+
+              |       +-------------+         |
+              V                     |         |
+        ---------------             |         |
+       | if (i%2 == 0) |            |         |
+        ---------------             |         |
+        true |  | false             |         |
+       +-----+  +------+            |         |
+       |               |            |         |
+       V               V            |         |
+ ---------------   --------------   |         |
+| print("even") | | print("odd") |  |         |
+ ---------------   --------------   |         |
+       |                |           |         |
+       |                V           |         |
+       |        --------------      |         |
+       +------>| print("\n"); |     |         |
+                --------------      |         |
+                       |        --------      |
+                       +------>| i += 1 |     |
+                                --------      |
+                                              V
+                                          --------
+                                         | return |
+                                          --------
+#+end_example
