@@ -1,0 +1,149 @@
+* Memory Organization
+
+** Introduction
+
+*Introduction to Compilers and Language Design*, Douglas Thain
+
+A process is free to use memory in any way that it chooses, but a convention has developed
+that divides areas of a program into logical segments, each with a different internal
+management strategy.
+
+** Logical Segmentation
+
+A conventional program sees memory as a linear sequence of words, each with a numeric address
+starting at zero and increasing up to some large number. Memory is commonly laid out in
+logical segments, where each segment is a sequential address range dedicated to a particular
+purpose within a program.
+
+*** Convential Layout
+
+The segments are typically laid out in the following order.
+
+#+begin_example
+ ----------------------------------------
+| Process                                |
+|----------------------------------------|
+| code | data | heap -> | ... | <- stack |
+ ----------------------------------------
+^----------------------------------------^
+ Address 0                      Address N
+#+end_example
+
+- code segment :: also known as the *text segment*, contains the machine code of the program,
+  corresponding to the bodies of functions in a C program.
+
+- data segment :: contains the global data of the program, corresponding to global variables
+  in a C program. The data segment may be further divided into *read-write* for variables
+  and *read-only* for constants.
+
+- heap segment :: contains the memory managed at runtime by ~malloc~ and ~free~ in a C program.
+  Historically, *break* is the top of the heap.
+
+- stack segment :: contains the current execution state of the program as well as local variable
+  currently in use.
+
+Typically, the heap grows up, from lower to higher addresses, and the stack grows down,
+from higher to lower addresses. In embedded systems and microcontrollers, the heap and
+stack — if managed improperly — can crash into each other.
+
+*** Multi-Program Layout
+
+On a computer with an OS, each process running has its own private memory space. If a process
+attempts to access prohibited memory or attempts to access an unused area, a *page fault* occurs.
+This forces a transfer of control to the OS. If the access indicates a violation of the logical
+segmentation of the program, the process is killed with the error message *segmentation fault*.
+
+#+begin_example
+ -----------------------------------------------------------------------
+| OS Kernel   | Process 1                  | Process 2                  |
+|-------------+----------------------------+----------------------------|
+| Code | Data | Code | Data | Heap | Stack | Code | Data | Heap | Stack |
+ -----------------------------------------------------------------------
+              ^----------------------------^----------------------------^
+               Virtual Addresses 0 - N       Virtual Addresses 0 - N
+#+end_example
+
+** The Heap
+
+The OS does not control the internal organization of the heap, except to limit its
+total size. Runtime software or a standard library manages the heap instead.
+
+In a C program, the functions ~malloc~ and ~free~ allocate and release memory on the heap.
+The simplest implementation of ~malloc~ and ~free~ is to treat the entire heap as one large
+linked list. Each entry in the list records the state of the region, the size of the region,
+and has pointers to the previous and next regions.
+
+#+begin_src c
+struct chunk {
+    enum { FREE, USED } state;
+    int size;
+    struct chunk *next;
+    struct chunk *prev;
+    char data[0];
+};
+#+end_src
+
+** The Stack
+
+Used to record the current state of the running program. Most CPUs have a specialized register
+— the *stack pointer* — which stores the address where the next item will be pushed or popped.
+Pushing an item on the stack moves the pointer to a lower number address, while popping an item
+causes the pointer to move to a higher number address.
+
+Each function call occupies a range of memory in the stack known as the *stack frame*.
+When a function is called, a stack frame is pushed. When the function returns, a stack frame
+is popped. Another specialized register known as the *frame pointer* or *base pointer*
+indicates the beginning of the current frame.
+
+#+begin_example
+--- main(f(g())) --->
+
+main | main parameters   |
+     | old frame pointer |
+     | local variables   |
+     | return address    |
+     | ----------------- |
+f    | f parameters      |
+     | old frame pointer |
+     | local variables   |
+     | return address    |
+     | ----------------- |
+g    | g parameters      | <- frame pointer
+     | old frame pointer |
+     | local variables   | <- stack pointer
+     V                   V
+#+end_example
+
+** Calling Conventions
+
+#+begin_example
+=== function ===
+
+f(10, 20)
+
+=== stack ===
+
+PUSH $20
+PUSH $10
+CALL f
+
+| 2nd argument (20) |
+| 1st argument (10) |
+| return address    |
+| old frame pointer | <- frame pointer
+| local variables   | <- stack pointer
+V                   V
+
+=== register ===
+
+MOVE $10 -> %R10
+MOVE $20 -> %R11
+CALL f
+
+| return address    |
+| old frame pointer | <- frame pointer
+| 1st argument (10) |
+| 2nd argument (20) |
+| local variables   | <- stack pointer
+V                   V
+#+end_example
