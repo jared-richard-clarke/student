@@ -4,6 +4,8 @@
 
 *Intermediate Representation*, Wikipedia
 
+** Introduction
+
 - intermediate representation (IR) :: simple and regular data structures or code used by a compiler or
   virtual machine to represent source code. An *IR* is designed to facilitate analysis, optimizations,
   translations, and portability of source code. A modular compiler will implement each optimization or
@@ -234,4 +236,155 @@ basic blocks. Conditionals create branches. Loops create reverse edges.
                                           --------
                                          | return |
                                           --------
+#+end_example
+
+** Linear IR
+
+A linear IR is an ordered sequence of instructions that often looks like an idealized assembly
+language with a large or infinite number of virtual registers and the usual arithmetic and control
+flow operations. There is, however, no universal standard.
+
+*** Expression: ~x = (a + 10) * (a + 10)~
+
+This particular implementation has a 4-tuple instruction set where the first instruction is an
+operation followed by a maximum of three arguments. By pretending there are an infinite number
+of registers, the lifetime of a value can be easily identified by observing the first point
+where a register is written and the last point where a register is used.
+
+#+begin_example
+1. LOAD a        -> %r1    live: %r1
+2. LOAD $10      -> %r2    live: %r1 %r2
+3. ITOF %r2      -> %r3    live: %r1 %r2 %r3
+4. FADD %r1, %r3 -> %r4    live: %r1 %r3 %r4
+5. FMUL %r4, %r4 -> %r5    live: %r4 %r5
+6. STOR %r5      -> x      live: %r5
+#+end_example
+
+** Stack Machine IR
+
+A representation designed to execute on a virtual stack machine that has only a stack to hold
+intermediate registers. To emit a stack machine IR from a *DAG*, post-order traverse the *AST*
+and emit ~PUSH~ for each leaf value, an arithmetic instruction for each interior node, and a
+~POP~ instruction to assign a value to a variable.
+
+*** Expression: ~x = (a + 10) * (a + 10)~
+
+#+begin_example
+PUSH a
+PUSH 10
+ITOF
+FADD
+COPY
+FMUL
+POP  x
+#+end_example
+
+** Example IRs
+
+*** B-Minor Expression
+
+#+begin_example
+float f(int a, int b, float x) {
+    float y = a*x*x + b*x + 100
+    return y;
+}
+#+end_example
+
+*** GIMPLE (GNU Simple Representation): ~x = (a + 10) * (a + 10)~
+
+- Used in the earliest stages of the GNU C compiler.
+- A drastically-simplified form of C.
+- Expressions broken down into individual operators on values in static, single assignment form.
+  Basic conditionals are allowed. Loops are implemented using ~GOTO~.
+- Each *SSA* is declared as a local variable with a long name.
+
+#+begin_example
+f (int a, int b, float x) {
+    float D.1597D.1597;
+    float D.1598D.1598;
+    float D.1599D.1599;
+    float D.1600D.1600;
+    float D.1601D.1601;
+    float D.1602D.1602;
+    float D.1603D.1603;
+    float y;
+    D.1597D.1597 = (float) a;
+    D.1598D.1598 = D.1597D.1597 * x;
+    D.1599D.1599 = D.1598D.1598 * x;
+    D.1600D.1600 = (float) b;
+    D.1601D.1601 = D.1600D.1600 * x;
+    D.1602D.1602 = D.1599D.1599 + D.1601D.1601;
+    y = D.1602D.1602 + 1.0e+2;
+    D.1603D.1603 = y;
+    return D.1603D.1603;
+}
+#+end_example
+
+*** LLVM: Low-Level Virtual Machine: ~x = (a + 10) * (a + 10)~
+
+- A language and corresponding suite of tools for building optimizing compilers and interpreters.
+
+- For this example, the first few ~alloca~ instructions allocate space for local variables,
+  followed by ~store~ instructions that move the parameters to local variables.
+
+- Each step of the expression is computed in *SSA* form and the result stored in local
+  variable ~y~.
+
+- The code is explicit at each step about the type and alignment of each value.
+
+#+begin_example
+define float @f(i32 %a, i32 %b, float %x) #0 {
+    %1 = alloca i32, align 4
+    %2 = alloca i32, align 4
+    %3 = alloca float, align 4
+    %y = alloca float, align 4
+    store i32 %a, i32* %1, align 4
+    store i32 %b, i32* %2, align 4
+    store float %x, float* %3, align 4
+    %4 = load i32* %1, align 4
+    %5 = sitofp i32 %4 to float
+    %6 = load float* %3, align 4
+    %7 = fmul float %5, %6
+    %8 = load float* %3, align 4
+    %9 = fmul float %7, %8
+    %10 = load i32* %2, align 4
+    %11 = sitofp i32 %10 to float
+    %12 = load float* %3, align 4
+    %13 = fmul float %11, %12
+    %14 = fadd float %9, %13
+    %15 = fadd float %14, 1.000000e+02
+    store float %15, float* %y, align 4
+    %16 = load float* %y, align 4
+    ret float %16
+}
+#+end_example
+
+*** JVM: Java Virtual Machine: ~x = (a + 10) * (a + 10)~
+
+- An abstract definition of a stack-based machine.
+
+- High-level Java is compiled into ~.class~ files, which contain a binary representation of the
+  JVM bytecode.
+
+- ~iload~ and ~fload~ refer to local variables.
+
+- Fixed constants are stored in an array and are referenced by position.
+
+#+begin_example
+ 0: iload  1
+ 1: i2f
+ 2: fload  3
+ 4: fmul
+ 5: fload  3
+ 7: fmul
+ 8: iload  2
+ 9: i2f
+10: fload 3
+12: fmul
+13: fadd
+14: ldc   #2
+16: fadd
+17: fstore 4
+19: fload  4
+21: freturn
 #+end_example
