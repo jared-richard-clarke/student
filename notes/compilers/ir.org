@@ -368,7 +368,8 @@ define float @f(i32 %a, i32 %b, float %x) #0 {
 
 - ~iload~ and ~fload~ refer to local variables.
 
-- Fixed constants are stored in an array and are referenced by position.
+- Fixed constants are stored in an array and are referenced by position. ~ldc #2~ pushes constant
+  in position two onto the stack.
 
 #+begin_example
  0: iload  1
