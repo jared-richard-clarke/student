@@ -6,19 +6,20 @@
 
 ** Introduction
 
-- intermediate representation (IR) :: simple and regular data structures or code used by a compiler or
-  virtual machine to represent source code. An *IR* is designed to facilitate analysis, optimizations,
-  translations, and portability of source code. A modular compiler will implement each optimization or
-  analysis tool as a separate module that consumes and produces the same *IR* so that it is easy to
-  select and compose optimizations in different orders.
+*Intermediate representations (IR)* are simple and regular data structures or code used by
+a compiler or virtual machine to represent source code. An *IR* is designed to facilitate
+analysis, optimizations, translations, and portability of source code. A modular compiler
+will implement each optimization or analysis tool as a separate module that consumes and
+produces the same *IR* so that it is easy to select and compose optimizations in different
+orders.
 
-  - An *IR* may take one of several forms:
+An *IR* may take one of several forms:
 
-    1. Graph: directed, cyclic, and extended ASTs.
+1. Graph: directed, cyclic, and extended ASTs.
 
-    2. Tuples: unbounded register machines.
+2. Tuples: unbounded register machines.
 
-    3. Stack: virtual stack machines.
+3. Stack: virtual stack machines.
 
 ** Directed Acyclic Graph (DAG)
 
