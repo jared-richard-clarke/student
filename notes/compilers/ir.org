@@ -380,7 +380,7 @@ define float @f(i32 %a, i32 %b, float %x) #0 {
  7: fmul
  8: iload  2
  9: i2f
-10: fload 3
+10: fload  3
 12: fmul
 13: fadd
 14: ldc   #2
