@@ -290,7 +290,7 @@ float f(int a, int b, float x) {
 }
 #+end_example
 
-*** GIMPLE (GNU Simple Representation): ~x = (a + 10) * (a + 10)~
+*** GIMPLE (GNU Simple Representation)
 
 - Used in the earliest stages of the GNU C compiler.
 - A drastically-simplified form of C.
@@ -320,7 +320,7 @@ f (int a, int b, float x) {
 }
 #+end_example
 
-*** LLVM: Low-Level Virtual Machine: ~x = (a + 10) * (a + 10)~
+*** LLVM: Low-Level Virtual Machine
 
 - A language and corresponding suite of tools for building optimizing compilers and interpreters.
 
@@ -359,7 +359,7 @@ define float @f(i32 %a, i32 %b, float %x) #0 {
 }
 #+end_example
 
-*** JVM: Java Virtual Machine: ~x = (a + 10) * (a + 10)~
+*** JVM: Java Virtual Machine
 
 - An abstract definition of a stack-based machine.
 
