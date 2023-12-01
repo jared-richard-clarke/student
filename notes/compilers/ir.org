@@ -17,7 +17,7 @@ An *IR* may take one of several forms:
 
 1. Graph: directed, cyclic, and extended ASTs.
 
-2. Tuples: unbounded register machines.
+2. Tuples: unbounded virtual register machines.
 
 3. Stack: virtual stack machines.
 
