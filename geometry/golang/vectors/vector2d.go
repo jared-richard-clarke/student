@@ -15,52 +15,32 @@ type Vec2 [2]float64
 // Check "didact/geometry/golang/utils/approx-eq.go" for details.
 func (v1 Vec2) ApproxEq(v2 Vec2) bool {
 	eq := utils.ApproxEq
-	for i := range v1 {
-		if !eq(v1[i], v2[i]) {
-			return false
-		}
-	}
-	return true
+	return eq(v1[0], v2[0]) && eq(v1[1], v2[1])
 }
 
 // Returns a 2D vector with the absolute values of its components.
 func (v Vec2) Abs() Vec2 {
-	for i := range v {
-		v[i] = math.Abs(v[i])
-	}
-	return v
+	return Vec2{math.Abs(v[0]), math.Abs(v[1])}
 }
 
 // Returns a 2D vector that is the sum of two 2D vectors.
 func (v1 Vec2) Add(v2 Vec2) Vec2 {
-	for i := range v1 {
-		v1[i] += v2[i]
-	}
-	return v1
+	return Vec2{v1[0] + v2[0], v1[1] + v2[1]}
 }
 
 // Returns a 2D vector that is the difference of two 2D vectors.
 func (v1 Vec2) Sub(v2 Vec2) Vec2 {
-	for i := range v1 {
-		v1[i] -= v2[i]
-	}
-	return v1
+	return Vec2{v1[0] - v2[0], v1[1] - v2[1]}
 }
 
 // Flips the signs of the 2D vector components.
 func (v Vec2) Negate() Vec2 {
-	for i := range v {
-		v[i] = -v[i]
-	}
-	return v
+	return Vec2{-v[0], -v[1]}
 }
 
 // Inverts the 2D vector components.
 func (v Vec2) Invert() Vec2 {
-	for i := range v {
-		v[i] = 1.0 / v[i]
-	}
-	return v
+	return Vec2{1.0 / v[0], 1.0 / v[1]}
 }
 
 // Returns the magnitude of a 2D vector.
@@ -70,19 +50,12 @@ func (v Vec2) Mag() float64 {
 
 // Multiplies a 2D vector by a scalar.
 func (v Vec2) Scale(s float64) Vec2 {
-	for i := range v {
-		v[i] *= s
-	}
-	return v
+	return Vec2{v[0] * s, v[1] * s}
 }
 
 // Computes the dot product of two 2D vectors.
 func (v1 Vec2) Dot(v2 Vec2) float64 {
-	s := 0.0
-	for i := range v1 {
-		s += v1[i] * v2[i]
-	}
-	return s
+	return v1[0]*v2[0] + v1[1]*v2[1]
 }
 
 // Calculates the distance between two 2D vector points.
@@ -98,18 +71,12 @@ func (v1 Vec2) Lerp(t float64, v2 Vec2) Vec2 {
 // Returns the unit vector of a 2D vector.
 func (v Vec2) Normalize() Vec2 {
 	mag := v.Mag()
-	for i := range v {
-		v[i] /= mag
-	}
-	return v
+	return Vec2{v[0] / mag, v[1] / mag}
 }
 
 // Returns a 2D vector with its components rounded.
 func (v Vec2) Round() Vec2 {
-	for i := range v {
-		v[i] = math.Round(v[i])
-	}
-	return v
+	return Vec2{math.Round(v[0]), math.Round(v[1])}
 }
 
 func (v Vec2) TransformBy(m matrices.Mat3) Vec2 {
@@ -121,7 +88,5 @@ func (v Vec2) TransformBy(m matrices.Mat3) Vec2 {
 
 // Fulfills the Stringer interface for Vec2.
 func (v Vec2) String() string {
-	x := v[0]
-	y := v[1]
-	return fmt.Sprintf("vec2(%.2f, %.2f)", x, y)
+	return fmt.Sprintf("vec2(%.2f, %.2f)", v[0], v[1])
 }
