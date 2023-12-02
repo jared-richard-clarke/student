@@ -44,7 +44,7 @@ func (v Vec2) Invert() Vec2 {
 }
 
 // Returns the magnitude of a 2D vector.
-func (v Vec2) Mag() float64 {
+func (v Vec2) Magnitude() float64 {
 	return math.Hypot(v[0], v[1])
 }
 
@@ -60,7 +60,7 @@ func (v1 Vec2) Dot(v2 Vec2) float64 {
 
 // Calculates the distance between two 2D vector points.
 func (v1 Vec2) Distance(v2 Vec2) float64 {
-	return v2.Sub(v1).Mag()
+	return v2.Sub(v1).Magnitude()
 }
 
 // Interpolates the components of the two 2D vectors.
@@ -70,7 +70,7 @@ func (v1 Vec2) Lerp(t float64, v2 Vec2) Vec2 {
 
 // Returns the unit vector of a 2D vector.
 func (v Vec2) Normalize() Vec2 {
-	mag := v.Mag()
+	mag := v.Magnitude()
 	return Vec2{v[0] / mag, v[1] / mag}
 }
 
