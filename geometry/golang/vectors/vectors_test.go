@@ -13,22 +13,22 @@ func TestApproxEq(t *testing.T) {
 
 	v1 := vector{3 + tolerance, 4 + tolerance}
 	v2 := vector{3, 4}
-	if v1.ApproxEq(v2) == false {
+	if v1.AboutEqual(v2) == false {
 		t.Errorf("Test ApproxEq vector failed: false negative. Check tolerance in test.")
 	}
 	// Push values past threshold for approximate equality
 	// by pushing epsilon into one figure higher in significance.
 	v1 = vector{3 + tolerance*10, 4 + tolerance}
-	if v1.ApproxEq(v2) == true {
+	if v1.AboutEqual(v2) == true {
 		t.Errorf("Test ApproxEq vector failed: false positive. Check tolerance in test.")
 	}
 }
 
-func TestAbs(t *testing.T) {
+func TestAbsolute(t *testing.T) {
 	expect := vector{3, 4}
-	result := vector{-3, -4}.Abs()
+	result := vector{-3, -4}.Absolute()
 	if expect != result {
-		t.Errorf("Test Abs vector failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Absolute vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
@@ -40,11 +40,11 @@ func TestAdd(t *testing.T) {
 	}
 }
 
-func TestSub(t *testing.T) {
+func TestSubtract(t *testing.T) {
 	expect := vector{2, 2}
-	result := vector{3, 4}.Sub(vector{1, 2})
+	result := vector{3, 4}.Subtract(vector{1, 2})
 	if expect != result {
-		t.Errorf("Test Sub vector failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Subtract vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
@@ -82,7 +82,7 @@ func TestScale(t *testing.T) {
 
 func TestDotProduct(t *testing.T) {
 	expect := 11.0
-	result := vector{3, 4}.Dot(vector{1, 2})
+	result := vector{3, 4}.DotProduct(vector{1, 2})
 	if expect != result {
 		t.Errorf("Test Dot Product vector failed. Expected: %.2f, Got: %.2f", expect, result)
 	}
