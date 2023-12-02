@@ -10,9 +10,9 @@ import (
 // A two-dimensional cartesian vector.
 type Vec2[T types.Float] struct{ X, Y T }
 
-// As opposed to operator "==", function "ApproxEq" tests whether
+// As opposed to operator "==", function "AboutEqual" tests whether
 // floating-point, 2D vector components are approximately equal.
-func (v1 Vec2[T]) ApproxEq(v2 Vec2[T]) bool {
+func (v1 Vec2[T]) AboutEqual(v2 Vec2[T]) bool {
 	eq := types.ApproxEq[T]
 	x1 := v1.X
 	y1 := v1.Y
@@ -22,7 +22,7 @@ func (v1 Vec2[T]) ApproxEq(v2 Vec2[T]) bool {
 }
 
 // Returns a 2D vector with the absolute values of its components.
-func (v Vec2[T]) Abs() Vec2[T] {
+func (v Vec2[T]) Absolute() Vec2[T] {
 	x := T(math.Abs(float64(v.X)))
 	y := T(math.Abs(float64(v.Y)))
 	return Vec2[T]{x, y}
@@ -38,7 +38,7 @@ func (v1 Vec2[T]) Add(v2 Vec2[T]) Vec2[T] {
 }
 
 // Returns a 2D vector that is the difference of two 2D vectors.
-func (v1 Vec2[T]) Sub(v2 Vec2[T]) Vec2[T] {
+func (v1 Vec2[T]) Subtract(v2 Vec2[T]) Vec2[T] {
 	x1 := v1.X
 	y1 := v1.Y
 	x2 := v2.X
@@ -86,12 +86,12 @@ func (v1 Vec2[T]) Dot(v2 Vec2[T]) T {
 
 // Calculates the distance between two 2D vector points.
 func (v1 Vec2[T]) Distance(v2 Vec2[T]) T {
-	return v2.Sub(v1).Magnitude()
+	return v2.Subtract(v1).Magnitude()
 }
 
 // Interpolates the components of the two 2D vectors.
 func (v1 Vec2[T]) Lerp(t T, v2 Vec2[T]) Vec2[T] {
-	return v1.Add(v2.Sub(v1).Scale(t))
+	return v1.Add(v2.Subtract(v1).Scale(t))
 }
 
 // Returns the unit vector of a 2D vector.
