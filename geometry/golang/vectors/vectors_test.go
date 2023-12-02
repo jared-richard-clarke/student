@@ -62,11 +62,11 @@ func TestInvert(t *testing.T) {
 	}
 }
 
-func TestMag(t *testing.T) {
+func TestMagnitude(t *testing.T) {
 	vec2Expect := 5.0
-	vec2Result := Vec2{3.0, 4.0}.Mag()
+	vec2Result := Vec2{3.0, 4.0}.Magnitude()
 	if vec2Expect != vec2Result {
-		t.Errorf("Test Mag Vec2 failed. Expected: %.2f, Got: %.2f", vec2Expect, vec2Result)
+		t.Errorf("Test Magnitude Vec2 failed. Expected: %.2f, Got: %.2f", vec2Expect, vec2Result)
 	}
 }
 
