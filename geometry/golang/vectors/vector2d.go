@@ -90,7 +90,7 @@ func (v1 Vec2[T]) Distance(v2 Vec2[T]) T {
 }
 
 // Interpolates the components of the two 2D vectors.
-func (v1 Vec2[T]) Lerp(t T, v2 Vec2[T]) Vec2[T] {
+func (v1 Vec2[T]) Interpolate(t T, v2 Vec2[T]) Vec2[T] {
 	return v1.Add(v2.Subtract(v1).Scale(t))
 }
 
