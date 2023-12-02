@@ -98,9 +98,9 @@ func TestDistance(t *testing.T) {
 
 func TestLerp(t *testing.T) {
 	expect := vector{2, 1.5}
-	result := vector{1, 1}.Lerp(0.5, vector{3, 2})
+	result := vector{1, 1}.Interpolate(0.5, vector{3, 2})
 	if expect != result {
-		t.Errorf("Test Lerp vector failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Interpolate vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
