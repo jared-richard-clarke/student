@@ -16,7 +16,6 @@ const (
 type Mat3[T types.Float] struct{ A, B, C, D, E, F T }
 
 // As opposed to operator "==", method "ApproxEq" checks whether floating-point matrix components are approximately equal.
-// Check "didact/geometry/golang/utils/approx-eq.go" for details.
 func (m Mat3[T]) ApproxEq(n Mat3[T]) bool {
 	eq := types.ApproxEq[T]
 	return eq(m.A, n.A) && eq(m.B, n.B) && eq(m.C, n.C) && eq(m.D, n.D) && eq(m.E, n.E) && eq(m.F, n.F)
