@@ -2,135 +2,137 @@ package vectors
 
 import (
 	"didact/geometry/golang/matrices"
-	"didact/geometry/golang/utils"
+	"didact/geometry/golang/types"
 	"testing"
 )
 
-func TestApproxEq(t *testing.T) {
-	tolerance := utils.Tolerance
+type vector = Vec2[float64]
 
-	v1 := Vec2{3.0 + tolerance, 4.0 + tolerance}
-	v2 := Vec2{3.0, 4.0}
+func TestApproxEq(t *testing.T) {
+	tolerance := types.Tolerance
+
+	v1 := vector{3 + tolerance, 4 + tolerance}
+	v2 := vector{3, 4}
 	if v1.ApproxEq(v2) == false {
-		t.Errorf("Test ApproxEq Vec2 failed: false negative. Check tolerance in test.")
+		t.Errorf("Test ApproxEq vector failed: false negative. Check tolerance in test.")
 	}
 	// Push values past threshold for approximate equality
 	// by pushing epsilon into one figure higher in significance.
-	v1 = Vec2{3.0 + tolerance*10, 4.0 + tolerance}
+	v1 = vector{3 + tolerance*10, 4 + tolerance}
 	if v1.ApproxEq(v2) == true {
-		t.Errorf("Test ApproxEq Vec2 failed: false positive. Check tolerance in test.")
+		t.Errorf("Test ApproxEq vector failed: false positive. Check tolerance in test.")
 	}
 }
 
 func TestAbs(t *testing.T) {
-	expect := Vec2{3.0, 4.0}
-	result := Vec2{-3.0, -4.0}.Abs()
+	expect := vector{3, 4}
+	result := vector{-3, -4}.Abs()
 	if expect != result {
-		t.Errorf("Test Abs Vec2 failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Abs vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestAdd(t *testing.T) {
-	expect := Vec2{2.0, 4.0}
-	result := Vec2{4.0, 6.0}.Add(Vec2{-2.0, -2.0})
+	expect := vector{2, 4}
+	result := vector{4, 6}.Add(vector{-2, -2})
 	if expect != result {
-		t.Errorf("Test Add Vec2 failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Add vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestSub(t *testing.T) {
-	expect := Vec2{2.0, 2.0}
-	result := Vec2{3.0, 4.0}.Sub(Vec2{1.0, 2.0})
+	expect := vector{2, 2}
+	result := vector{3, 4}.Sub(vector{1, 2})
 	if expect != result {
-		t.Errorf("Test Sub Vec2 failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Sub vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestNegate(t *testing.T) {
-	expect := Vec2{-3.0, -4.0}
-	result := Vec2{3.0, 4.0}.Negate()
+	expect := vector{-3, -4}
+	result := vector{3, 4}.Negate()
 	if expect != result {
-		t.Errorf("Test Negate Vec2 failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Negate vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestInvert(t *testing.T) {
-	expect := Vec2{0.5, 0.5}
-	result := Vec2{2.0, 2.0}.Invert()
+	expect := vector{0.5, 0.5}
+	result := vector{2, 2}.Invert()
 	if result != expect {
-		t.Errorf("Test Invert Vec2 failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Invert vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestMagnitude(t *testing.T) {
 	expect := 5.0
-	result := Vec2{3.0, 4.0}.Magnitude()
+	result := vector{3.0, 4.0}.Magnitude()
 	if expect != result {
-		t.Errorf("Test Magnitude Vec2 failed. Expected: %.2f, Got: %.2f", expect, result)
+		t.Errorf("Test Magnitude vector failed. Expected: %.2f, Got: %.2f", expect, result)
 	}
 }
 
 func TestScale(t *testing.T) {
-	expect := Vec2{1.0, 0.5}
-	result := Vec2{0.5, 0.25}.Scale(2.0)
+	expect := vector{1, 0.5}
+	result := vector{0.5, 0.25}.Scale(2.0)
 	if expect != result {
-		t.Errorf("Test Scale Vec2 failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Scale vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestDotProduct(t *testing.T) {
 	expect := 11.0
-	result := Vec2{3.0, 4.0}.Dot(Vec2{1.0, 2.0})
+	result := vector{3, 4}.Dot(vector{1, 2})
 	if expect != result {
-		t.Errorf("Test Dot Product Vec2 failed. Expected: %.2f, Got: %.2f", expect, result)
+		t.Errorf("Test Dot Product vector failed. Expected: %.2f, Got: %.2f", expect, result)
 	}
 }
 
 func TestDistance(t *testing.T) {
 	expect := 7.0
-	result := Vec2{8.0, 0.0}.Distance(Vec2{1.0, 0.0})
+	result := vector{8, 0}.Distance(vector{1, 0})
 	if expect != result {
-		t.Errorf("Test Distance Vec2 failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Distance vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestLerp(t *testing.T) {
-	expect := Vec2{2.0, 1.5}
-	result := Vec2{1.0, 1.0}.Lerp(0.5, Vec2{3.0, 2.0})
+	expect := vector{2, 1.5}
+	result := vector{1, 1}.Lerp(0.5, vector{3, 2})
 	if expect != result {
-		t.Errorf("Test Lerp Vec2 failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Lerp vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestNormalize(t *testing.T) {
-	expect := Vec2{0.6, 0.8}
-	result := Vec2{3.0, 4.0}.Normalize()
+	expect := vector{0.6, 0.8}
+	result := vector{3, 4}.Normalize()
 	if expect != result {
-		t.Errorf("Test Normalize Vec2 failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Normalize vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestRound(t *testing.T) {
-	expect := Vec2{1.0, 4.0}
-	result := Vec2{0.75, 4.25}.Round()
+	expect := vector{1, 4}
+	result := vector{0.75, 4.25}.Round()
 	if expect != result {
-		t.Errorf("Test Round Vec2 failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Round vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestTransformBy(t *testing.T) {
-	mat := matrices.Scale(10.0, 10.0)
-	expect := Vec2{30.0, 40.0}
-	result := Vec2{3.0, 4.0}.TransformBy(mat)
+	mat := matrices.Scale[float64](10, 10)
+	expect := vector{30, 40}
+	result := vector{3, 4}.TransformBy(mat)
 	if expect != result {
-		t.Errorf("Test Vec2 TransformBy failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test vector TransformBy failed. Expected: %v, Got: %v", expect, result)
 	}
 }
 
 func TestStringer(t *testing.T) {
-	expect := "vec2(3.00, 4.00)"
-	result := Vec2{3.0, 4.0}.String()
+	expect := "Vec2(3, 4)"
+	result := vector{3.0, 4.0}.String()
 	if expect != result {
-		t.Errorf("Test Stringer Vec2 failed. Expected: %v, Got: %v", expect, result)
+		t.Errorf("Test Stringer vector failed. Expected: %v, Got: %v", expect, result)
 	}
 }
