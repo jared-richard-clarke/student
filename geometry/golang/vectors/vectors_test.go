@@ -63,10 +63,10 @@ func TestInvert(t *testing.T) {
 }
 
 func TestMagnitude(t *testing.T) {
-	vec2Expect := 5.0
-	vec2Result := Vec2{3.0, 4.0}.Magnitude()
-	if vec2Expect != vec2Result {
-		t.Errorf("Test Magnitude Vec2 failed. Expected: %.2f, Got: %.2f", vec2Expect, vec2Result)
+	expect := 5.0
+	result := Vec2{3.0, 4.0}.Magnitude()
+	if expect != result {
+		t.Errorf("Test Magnitude Vec2 failed. Expected: %.2f, Got: %.2f", expect, result)
 	}
 }
 
