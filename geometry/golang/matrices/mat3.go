@@ -15,7 +15,8 @@ const (
 // column-major order. Constants are implied.
 type Mat3[T types.Float] struct{ A, B, C, D, E, F T }
 
-// As opposed to operator "==", method "ApproxEq" checks whether floating-point matrix components are approximately equal.
+// As opposed to operator "==", method "ApproxEq" checks whether
+// floating-point matrix components are approximately equal.
 func (m Mat3[T]) ApproxEq(n Mat3[T]) bool {
 	eq := types.ApproxEq[T]
 	return eq(m.A, n.A) && eq(m.B, n.B) && eq(m.C, n.C) && eq(m.D, n.D) && eq(m.E, n.E) && eq(m.F, n.F)
