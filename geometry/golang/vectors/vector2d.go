@@ -76,7 +76,7 @@ func (v Vec2[T]) Scale(s T) Vec2[T] {
 }
 
 // Computes the dot product of two 2D vectors.
-func (v1 Vec2[T]) Dot(v2 Vec2[T]) T {
+func (v1 Vec2[T]) DotProduct(v2 Vec2[T]) T {
 	x1 := v1.X
 	y1 := v1.Y
 	x2 := v2.X
