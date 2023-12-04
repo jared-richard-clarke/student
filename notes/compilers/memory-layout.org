@@ -1,8 +1,8 @@
 * Memory Organization
 
-** Introduction
-
 *Introduction to Compilers and Language Design*, Douglas Thain
+
+** Introduction
 
 A process is free to use memory in any way that it chooses, but a convention has developed
 that divides areas of a program into logical segments, each with a different internal
@@ -65,13 +65,18 @@ segmentation of the program, the process is killed with the error message *segme
 
 ** The Heap
 
-The OS does not control the internal organization of the heap, except to limit its
-total size. Runtime software or a standard library manages the heap instead.
+The heap contains memory that is managed dynamically at runtime. The OS does not control
+the internal organization of the heap, except to limit its total size. Runtime software
+or a standard library manages the heap instead.
 
 In a C program, the functions ~malloc~ and ~free~ allocate and release memory on the heap.
 The simplest implementation of ~malloc~ and ~free~ is to treat the entire heap as one large
 linked list. Each entry in the list records the state of the region, the size of the region,
 and has pointers to the previous and next regions.
+
+*** Linked List
+
+**** Code
 
 #+begin_src c
 struct chunk {
@@ -83,6 +88,46 @@ struct chunk {
 };
 #+end_src
 
+**** Allocation
+
+#+begin_example
+ ---------------------------------------------------------------
+| FREE | 1,000 |                                                |
+|------+-------|                     data                       |
+| prev | next  |                                                |
+ ---------------------------------------------------------------
+
+ === Allocate 100 bytes ===
+
+ ---------------------------------------------------------------
+| USED | 1,000 |      | FREE | 900  |                           |
+|------+-------| data |------+------|           data            |
+| prev | next  |      | prev | next |                           |
+ ---------------------------------------------------------------
+#+end_example
+
+*** Memory Fragmentation
+
+Memory can be allocated and freed in any order, possibly degenerating into a mix of oddly-sized
+chunks. Excessive fragmentation results in waste, where small pieces of memory are left unused.
+
+Memory allocators have limited ability to avoid fragmentation by strategically choosing memory
+locations:
+
+- Best Fit :: On each allocation, search the entire linked list for the *smallest* chunk that is
+  larger than the requested memory.
+
+- Worst Fit :: On each allocation, search the entire linked list for the *largest* free chunk that
+  is larger than the requested memory. Reduces fragmentation by avoiding the creation of tiny,
+  unusable fragments.
+
+- First Fit :: On each allocation, search the linked list only as far as the first fragment —
+  large or small — that satisfies the requested memory.
+
+- Next Fit :: On each allocation, search the linked list from the last examined location and
+  find the next fragment — large or small — that satisfies the request. The conventional wisdom
+  is that *Next Fit* results in good performance with acceptable levels of fragmentation.
+
 ** The Stack
 
 Used to record the current state of the running program. Most CPUs have a specialized register
@@ -90,10 +135,12 @@ Used to record the current state of the running program. Most CPUs have a specia
 Pushing an item on the stack moves the pointer to a lower number address, while popping an item
 causes the pointer to move to a higher number address.
 
-Each function call occupies a range of memory in the stack known as the *stack frame*.
-When a function is called, a stack frame is pushed. When the function returns, a stack frame
-is popped. Another specialized register known as the *frame pointer* or *base pointer*
-indicates the beginning of the current frame.
+Each function call occupies a range of memory in the stack known as the *stack frame*. The
+stack frame contains the parameters and the local variables used by that function. When a
+function is called, a stack frame is pushed. When the function returns, a stack frame is popped.
+Another specialized register known as the *frame pointer* — or *base pointer* — indicates the
+beginning of the current frame, identifying the location of the current parameters and local
+variables.
 
 #+begin_example
 --- main(f(g())) --->
@@ -108,13 +155,28 @@ f    | f parameters      |
      | local variables   |
      | return address    |
      | ----------------- |
-g    | g parameters      | <- frame pointer
-     | old frame pointer |
+g    | g parameters      |
+     | old frame pointer | <- frame pointer
      | local variables   | <- stack pointer
      V                   V
 #+end_example
 
 ** Calling Conventions
+
+The order and details of the elements in a stack frame differ somewhat between CPU architectures and
+operating systems. As long as caller and callee agree on what goes in the stack frame, then any
+function may call another, even if they are written in different languages. There are two broad
+categories of calling conventions: *stack* and *register*.
+
+*** Stack
+
+The conventional approach to calling a function is to push the arguments to a function onto the stack
+in reverse order and then jump to the address of the function, leaving behind a return address on
+the stack. To access its arguments or local variables, a function must load them from memory relative
+to the frame pointer. Function arguments are at fixed positions above the frame pointer, while local
+variables are found below. The arguments are pushed in reverse order to allow the possibility of a
+variable number of arguments. Argument 1 is always two words above the frame pointer, argument 2
+is three words above, and so on.
 
 #+begin_example
 === function ===
@@ -128,22 +190,72 @@ PUSH $10
 CALL f
 
 | 2nd argument (20) |
+|-------------------|
 | 1st argument (10) |
+|-------------------|
 | return address    |
+|-------------------|
 | old frame pointer | <- frame pointer
-| local variables   | <- stack pointer
+|-------------------|
+|                   |
+| local variables   |
+|                   | <- stack pointer
 V                   V
+#+end_example
 
-=== register ===
+*** Register
+
+An alternative approach to calling a function is to put the arguments into registers and then
+call the function. This way a function call doesn't have to load arguments from a stack, confering
+significant speed advantages by avoiding memory accesses. A stack frame, however, must reserve
+space for its arguments in case they must be saved during a call to another function. They are
+typically stored below the return address and the old frame pointer.
+
+#+begin_example
+=== function ===
+
+f(10, 20)
+
+=== registers ===
 
 MOVE $10 -> %R10
 MOVE $20 -> %R11
 CALL f
 
 | return address    |
+|-------------------|
 | old frame pointer | <- frame pointer
+|-------------------|
 | 1st argument (10) |
+|-------------------|
 | 2nd argument (20) |
-| local variables   | <- stack pointer
+|-------------------|
+|                   |
+| local variables   |
+|                   | <- stack pointer
 V                   V
 #+end_example
+
+** Locating Data
+
+*** Global Data
+
+- absolute address :: Gives the exact location of the data in program memory.
+
+- base-relative address :: A base address given by a register plus a fixed offset given by the
+  assembler.
+
+- PC-relative address :: The exact distance in bytes between the referring instruction and the
+  target data is computed and then encoded into the instruction.
+
+*** Local Data
+
+Because local variables are stored on the stack, a given local variable does not necessarily occupy the
+same absolute address space each time it is used. Local variables are always specified as an offset relative
+to the current frame pointer. Function parameters are just a special case of local variables.
+
+*** Heap Data
+
+Can only be accessed by way of pointers that are stored as global or local variables. To access data on
+the heap, the compiler must generate an address computation for the pointer itself, then dereference the
+pointer to reach the item on the heap.
