@@ -83,7 +83,7 @@ factorial:
 ```c
 // iterative
 int factorial(int x) {
-    if (x <= 1) {
+    if (x < 2) {
         return 1;
     } else {
         int i, p = 1;
@@ -96,7 +96,7 @@ int factorial(int x) {
 
 // recursive
 int factorial(int x) {
-    if (x <= 1) {
+    if (x < 2) {
         return 1;
     } else {
         return x * factorial(x - 1);
