@@ -236,7 +236,7 @@ function factorial (x)
         if iter < 2 then
             return product
         else
-            return loop(iter * product, iter - 1)
+            return loop(iter - 1, iter * product)
         end
     end
     return loop(x, 1)
