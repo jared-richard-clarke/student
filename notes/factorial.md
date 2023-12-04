@@ -30,7 +30,7 @@ Factorial 4 ⍝ -> 24
 - Intel syntax
 
 ```asm
-; recursive
+; === recursive ===
 factorial:
         push    rbp
         mov     rbp, rsp
@@ -48,33 +48,6 @@ factorial:
         imul    eax, DWORD PTR [rbp-4]
 .L3:
         leave
-        ret
-
-; iterative
-factorial:
-        push    rbp
-        mov     rbp, rsp
-        mov     DWORD PTR [rbp-20], edi
-        cmp     DWORD PTR [rbp-20], 1
-        jg      .L2
-        mov     eax, 1
-        jmp     .L3
-.L2:
-        mov     DWORD PTR [rbp-8], 1
-        mov     DWORD PTR [rbp-4], 1
-        jmp     .L4
-.L5:
-        mov     eax, DWORD PTR [rbp-8]
-        imul    eax, DWORD PTR [rbp-4]
-        mov     DWORD PTR [rbp-8], eax
-        add     DWORD PTR [rbp-4], 1
-.L4:
-        mov     eax, DWORD PTR [rbp-4]
-        cmp     eax, DWORD PTR [rbp-20]
-        jle     .L5
-        mov     eax, DWORD PTR [rbp-8]
-.L3:
-        pop     rbp
         ret
 ```
 
