@@ -127,7 +127,7 @@ USE: math.ranges
 
 ```forth
  : factorial  ( n -- n! )
-    dup 1 >  if   dup 1-  recurse  *  then
+    dup 1 > if dup 1- recurse * then
  ;
 ```
 
@@ -136,7 +136,7 @@ USE: math.ranges
 ```go
 // iterative
 func factorial(x int) int {
-	if x <= 0 {
+	if x < 2 {
 		return 1
 	}
 	p := 1
@@ -148,7 +148,7 @@ func factorial(x int) int {
 
 // recursive
 func factorial(x int) int {
-	if x <= 1 {
+	if x < 2 {
 		return 1
 	} else {
 		return x * factorial(x-1)
@@ -163,7 +163,7 @@ func factorial(x int) int {
 -- recursive
 factorial :: Integer -> Integer
 factorial x
-    | x <= 0 = 1
+    | x < 2 = 1
     | otherwise = x * factorial (x - 1)
 
 -- composition
@@ -223,7 +223,7 @@ end
 ```lua
 -- recursive
 function factorial (x)
-    if x <= 1 then
+    if x < 2 then
         return 1
     else
         return n * factorial(x - 1)
@@ -232,11 +232,11 @@ end
 
 -- tail-recursive
 function factorial (x)
-    function loop (product, x)
-        if x <= 1 then
+    function loop (iter, product)
+        if iter < 2 then
             return product
         else
-            return loop(x * product, x - 1)
+            return loop(iter * product, iter - 1)
         end
     end
     return loop(x, 1)
@@ -258,13 +258,13 @@ end
 (* recursive *)
 let rec factorial x =
   match x with
-  | x when x <= 1 -> 1
+  | x when x < 2 -> 1
   | _ -> x * factorial (x - 1)
   
 (* tail recursive *)
 let factorial x =
   let rec loop x product =
-    if x <= 1
+    if x < 2
     then product
     else loop (x - 1) (product * x)
   in
@@ -276,7 +276,7 @@ let factorial x =
 ```python
 # iterative
 def factorial(x):
-    if x <= 1:
+    if x < 2:
         return 1
     product = 1
     for i in range(1, x + 1):
@@ -284,7 +284,7 @@ def factorial(x):
     return product
     
 # recursive
-def factorial(n):
+def factorial(x):
     return x * factorial(x - 1) if x > 1 else 1
 ```
 
@@ -304,7 +304,7 @@ factorial(X, Y) :-
 ```ruby
 class Integer
     def factorial_recur
-        self <= 1 ? 1 : self * (self - 1).factorial_recur
+        self < 2 ? 1 : self * (self - 1).factorial_recur
     end
     def factorial_iter
         f = 1 
@@ -315,7 +315,7 @@ class Integer
     end
     def factorial_reduce
         # Creates a range object, which implements lazy evaluation.
-        self <= 1 ? 1 : (1..self).reduce(:*)
+        self < 2 ? 1 : (1..self).reduce(:*)
     end
     alias :factorial :factorial_iter
 end
@@ -329,7 +329,7 @@ end
 // recursive
 fn factorial(x: i64) -> i64 {
     match x {
-        x if x <= 1 => 1,
+        x if x < 2 => 1,
         _ => x * factorial(x - 1),
     }
 }
@@ -346,7 +346,7 @@ fn factorial(x: i64) -> i64 {
 ;; === recursive ===
 
 (define (factorial x)
-  (if (<= x 1)
+  (if (< x 2)
       1
       (* x (factorial (- x 1)))))
 
@@ -355,7 +355,7 @@ fn factorial(x: i64) -> i64 {
 (define (factorial x)
   (let loop ([product 1]
              [number x])
-    (if (<= number 1)
+    (if (< number 2)
         product
         (loop (* product number) 
               (- number 1)))))
@@ -385,7 +385,7 @@ fn factorial(x: i64) -> i64 {
 (define factorial
   (Y (lambda (fac)
        (lambda (n)
-         (if (<= n 2)
+         (if (< n 2)
              n
              (* n (fac (- n 1))))))))
 
@@ -432,7 +432,7 @@ fn factorial(x: i64) -> i64 {
 "=== class ==="
 Number extend [
   factorial [
-    (self <= 1) 
+    (self < 2) 
         ifTrue: [1]
         ifFalse: [(1 to: self) fold: [:a :b | a * b]]
   ]
@@ -442,7 +442,7 @@ Number extend [
 4 factorial.
 
 "=== block ==="
-factorial := [:n | n <= 1
+factorial := [:n | n < 2
                  ifTrue: [1]
                  ifFalse: [n * (factorial value: n - 1)]].
 		 
