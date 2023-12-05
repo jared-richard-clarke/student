@@ -1,0 +1,113 @@
+* Iterators, Generators, and Closures
+
+*Programming in Lua*, Roberto Ierusalimschy
+
+** Introduction
+
+#+begin_quote
+The name "iterator" is a little misleading, because our iterators do not iterate:
+What iterates is the for loop. Iterators only provide the successive values for
+the iteration. Maybe a better name would be "generator", but "iterator" is already
+well established in other languages, such as Java.
+
+— Roberto Ierusalimschy
+#+end_quote
+
+The generic ~for~ loop keeps three values:
+
+1. iterator function
+2. invariant state
+3. control variable
+
+~for~ first evaluates the expressions after ~in~. These expressions should result in three values:
+the iterator functions, the invariant state, and the initial control variable. When simple iterators
+are used, the factory returns only the iterator function.
+
+After initialization, ~for~ calls the iterator function with two arguments: the invariant state and
+the control variable. ~for~ assigns the values returned by the iterator function to variables
+declared by its variable list. If the first value returned, the control variable, is ~nil~, the
+loop terminates. Otherwise, ~for~ executes its body and calls the iteration function again, repeating
+the process.
+
+** Generic ~for~ Semantics
+
+#+begin_example
+for var_1 ... var_n in expressions do block end
+
+-- equivalent ->
+
+do
+    local f, s, var = expressions
+    while true do
+        local var_1 ... var_n = f(s, var)
+	var = var_1
+	if var == nil then break end
+	block
+    end
+end
+
+where f  = iterator function
+      s  = invariant state
+      a1 = initial value for control variable
+#+end_example
+
+** Closure as Iterator
+
+#+begin_src lua
+  function iter(xs)
+      local x = 0
+      local size = table.getn(xs)
+      return function()
+                 x = x + 1
+                 if x <= size then return xs[x] end
+             end
+  end
+
+  list = {1, 2, 3}
+
+  for element in iter(list) do
+      print(element)
+  end
+#+end_src
+
+** Definition of ~ipairs~ and ~pairs~
+
+#+begin_src lua
+  function iter (xs, i)
+     i = i + 1
+     local x = xs[i]
+     if x then
+         return i, x
+     end
+  end
+
+  -- iter = iterator function
+  -- xs   = invariant state
+  -- 0    = initial value for control variable
+  function ipairs (xs)
+      return iter, xs, 0
+  end
+
+  xs = {"one", "two", "three"}
+
+  for i, x in ipairs(xs) do
+      print(i, x)
+  end
+
+  -- pairs iterator
+  function pairs (t)
+      return next, t, nil
+  end
+
+  -- Calls "next(t, k)", where "k" is a key of the table "t",
+  -- and returns the next key in "t".
+  for k, v in pairs(t) do
+     print(k, v)
+  end
+
+  -- equivalent ->
+
+  for k, v in next, t do
+      print(k, v)
+  end
+#+end_src
