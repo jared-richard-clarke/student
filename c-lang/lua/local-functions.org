@@ -1,0 +1,28 @@
+* Non-Global Functions
+
+*Programming in Lua*, Roberto Ierusalimschy
+
+When Lua compiles the call ~factorial(n - 1)~ in the function body, the local variable ~factorial~
+is not yet defined. The call expression looks for the ~factorial~ definition in the outer
+environment instead.
+
+#+begin_src lua
+  local function factorial (n)
+      if n < 2 then
+          return 1
+      else
+          return n * factorial(n - 1)
+      end
+  end
+
+  -- expands ->
+
+  local factorial -- The local variable must be defined before it is called.
+  factorial = function (n)
+      if n < 2 then
+          return 1
+      else
+          return n * factorial(n - 1)
+      end
+  end
+#+end_src
