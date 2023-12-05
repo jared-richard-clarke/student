@@ -1,6 +1,6 @@
 # Bitwise Addition and Subtraction
 
-Original code by Douglas Crockford, **Add and Subtract**
+**Add and Subtract**, Douglas Crockford
 
 ---
 
