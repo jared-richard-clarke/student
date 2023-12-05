@@ -205,7 +205,7 @@ end
 
 -- tail-recursive
 function factorial (x)
-    function loop (iter, product)
+    local function loop (iter, product)
         if iter < 2 then
             return product
         else
