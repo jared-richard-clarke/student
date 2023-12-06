@@ -33,7 +33,7 @@
       - pop | *β* | symbols off the stack. ( For *X → A B C*, pop *C*, *B*, and *A* )
       - let *s_{n}* be the state on top of the stack.
       - push *A* on top of the stack.
-      - push *goto[s, a]* on top of the stack.
+      - push *goto[s, A]* on top of the stack.
     - if *action[s, a]* = *accept* then
       - return success
     - else
