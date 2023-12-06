@@ -87,7 +87,7 @@ reductions | +----+----+ | +----+----+
                        shifts
 #+end_example
 
-** LR(0) Automaton
+** LR(0) Parsing
 
 - LR(0) Automaton :: All the possible rules that are currently under consideration by a shift-reduce
   parser. Each set of rules, or box, represents a state in the machine, connected by transitions from
