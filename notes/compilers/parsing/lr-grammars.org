@@ -71,6 +71,22 @@ Two types of conflict can appear in an *LR* grammar:
 | T → id.( E ) | S → id( E ).  |
 | T → id.      | E → id( E ).  |
 
+** Parse Tree
+
+#+begin_example
+           ^
+           |             9
+           |      +------+------+
+           |      4      |      8
+reductions | +----+----+ | +----+----+
+           | |    3    | | |    7    |
+           | | 1--+--2 | | | 5--+--+ |
+           | | |  |  | | | | |  |  | |
+           | ( 3  +  4 ) + ( 5  +  6 )
+           <---------------------------
+                       shifts
+#+end_example
+
 ** LR(0) Automaton
 
 - LR(0) Automaton :: All the possible rules that are currently under consideration by a shift-reduce
