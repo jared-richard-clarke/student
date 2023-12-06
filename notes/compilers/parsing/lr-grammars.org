@@ -90,7 +90,7 @@ reductions | +----+----+ | +----+----+
 
 ** LR(0) Parsing
 
-- LR(0) Automaton :: All the possible rules that are currently under consideration by a shift-reduce
+- LR(0) Parser State :: All the possible rules that are currently under consideration by a shift-reduce
   parser. Each set of rules, or box, represents a state in the machine, connected by transitions from
   both terminals to non-terminals in a grammar. Also known as the *canonical collection* or
   *compact finite state machine* of a grammar.
