@@ -5,7 +5,6 @@ as written by others and myself. Most of these programs interpret Scheme program
 one, currently, interprets Joy programs.
 
 ## Table of Contents
-- `atsushi-satoshi`: A Lisp implemented in Smalltalk by Aoki Atsushi and Nishihara Satoshi.
 - `tang`: A Scheme interpreter implemented in Haskell by Jonathan Tang.
 - `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
 - `compute-stack.scm`: a stack-based calculator.
