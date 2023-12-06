@@ -237,6 +237,23 @@ combinations are impossible for valid input streams. These blank cells trigger s
 | [0]             | [E]           | $       | 1      |
 | [0, 1]          | [E]           | $       | accept |
 
+** LR(1) Parsing
+
+The complete of canonical form of *LR(1)* parsing depends on the *LR(1)* automaton.
+The *LR(1)* automaton is like the *LR(0)* automaton, except that each item is annotated with
+the set of tokens that could potentially follow it, given the current state. This set is known
+as the *lookahead* of the item. The lookahead is always a subset of the *FOLLOW* of the
+relevant non-terminal.
+
+- For an item like *A → α.B* with a lookahead of *{L}*, add new rules like *B → .γ* with a
+  lookahead of *{L}*.
+
+- For an item like *A → α.Bβ* with a lookahead of *{L}*, add new rules like *B → .γ* with a
+  lookahead as follows:
+
+  - If *β* cannot produce *ε*, the lookahead is *FIRST(β)*.
+  - If *β* can produce *ε*, the lookahead is *FIRST(β) ∪ {L}*
+
 ** LR(1) Parser Example
 
 *** Grammar
@@ -320,23 +337,6 @@ Find the item set that each symbol *x ∈ {0, 1, E, B}* closes over.
 | [0, 1, 6, 8] | [E, +, B] | $       | r2     |
 | [0]          | [E]       | $       | 1      |
 | [0, 1]       | [E]       | $       | accept |
-
-** LR(1) Parsing
-
-The complete of canonical form of *LR(1)* parsing depends on the *LR(1)* automaton.
-The *LR(1)* automaton is like the *LR(0)* automaton, except that each item is annotated with
-the set of tokens that could potentially follow it, given the current state. This set is known
-as the *lookahead* of the item. The lookahead is always a subset of the *FOLLOW* of the
-relevant non-terminal.
-
-- For an item like *A → α.B* with a lookahead of *{L}*, add new rules like *B → .γ* with a
-  lookahead of *{L}*.
-
-- For an item like *A → α.Bβ* with a lookahead of *{L}*, add new rules like *B → .γ* with a
-  lookahead as follows:
-
-  - If *β* cannot produce *ε*, the lookahead is *FIRST(β)*.
-  - If *β* can produce *ε*, the lookahead is *FIRST(β) ∪ {L}*
 
 ** LALR Parsing
 
