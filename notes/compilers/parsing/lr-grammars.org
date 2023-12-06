@@ -78,7 +78,7 @@ Two types of conflict can appear in an *LR* grammar:
   both terminals to non-terminals in a grammar. Also known as the *canonical collection* or
   *compact finite state machine* of a grammar.
 
-- Items :: The contents of each state, which are rules augmented by a *marker*.  In general, item
+- Item :: The contents of each state, which are rules augmented by a *marker*.  In general, item
   *X → γ . δ* means *γ* is at the top of the stack. At the head of the input there is a string
   derivable from *δ*.
 
