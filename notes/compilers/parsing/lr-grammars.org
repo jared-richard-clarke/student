@@ -254,6 +254,13 @@ combinations are impossible for valid input streams. These blank cells trigger s
 
 Find the item set that each symbol *x ∈ {0, 1, E, B}* closes over.
 
+1. Take the subset, *S*, of all items in the current item set where there is a dot in front of the symbol
+   of interest, *x*.
+
+2. For each item in *S*, move the dot to the right of *x*.
+
+3. Close the resulting set of items.
+
 | state | set            | follow set |
 |-------+----------------+------------|
 | s0    | S → .E $       | $          |
