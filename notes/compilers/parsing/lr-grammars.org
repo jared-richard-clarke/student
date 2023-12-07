@@ -110,6 +110,9 @@ reductions | +----+----+ | +----+----+
 
 ** SLR Parser Example
 
+An *SLR* grammar is one that has no *shift-reduce* or *reduce-reduce* conflicts when examining its
+*FOLLOW* sets.
+
 *** Grammar
 
 | rule | production |
