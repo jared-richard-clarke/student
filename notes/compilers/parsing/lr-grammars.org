@@ -388,9 +388,61 @@ has more precise lookahead information available for each item.
 | E → .E + T | { $, + } | E → .E + T | { ), + } |
 | E → .T     | { $, + } | E → .T     | { ), + } |
 
-*** LALR State
+*** LALR(1) State
 
 | state      | LA          |
 |------------+-------------|
 | E → .E + T | { $, ), + } |
 | E → .T     | { $, ), + } |
+
+** LALR(1) Parser Example
+
+*** Grammar
+
+*Side Note*: Th same grammar as the *LR(1)* parser example.
+
+| rule | production   |
+|------+--------------|
+|    0 | S → E $      |
+|    1 | E → E + T    |
+|    2 | E → T        |
+|    3 | T → id ( E ) |
+|    4 | T → id       |
+
+*** Configurating Sets
+
+*Side Note*: Although its lookup table is smaller — 8 states instead of 15 — this *LALR(1)* parser
+will process a sentence in the same number of steps as the previous *LR(1)* parser.
+
+| state | set             | follow set |
+|-------+-----------------+------------|
+|     0 | S → .E          | $          |
+|       | + E → .E + T    | $, +       |
+|       | + E → .T        | $, +       |
+|       | + T → .id ( E ) | $, +       |
+|       | + T → .id       | $, +       |
+|-------+-----------------+------------|
+|     1 | S → E.          | $          |
+|       | + E → E.+ T     | $, +       |
+|-------+-----------------+------------|
+|     2 | E → T.          | $, ), +    |
+|-------+-----------------+------------|
+|     3 | T → id.( E )    | $, ), +    |
+|       | + T → id.       | $, ), +    |
+|-------+-----------------+------------|
+|     4 | E → E +.T       | $, ), +    |
+|       | + T → .id ( E ) | $, ), +    |
+|       | + T → ,id       | $, ), +    |
+|-------+-----------------+------------|
+|     5 | T → id (.E )    | $, ), +    |
+|       | + E → .E + T    | ), +       |
+|       | + E → .T        | ), +       |
+|       | + T → .id ( E ) | ), +       |
+|       | + T → .id       | ), +       |
+|-------+-----------------+------------|
+|     6 | E → E + T.      | $, ), +    |
+|-------+-----------------+------------|
+|     7 | T → id ( E.)    | $, ), +    |
+|       | + E → E.+ T     | ), +       |
+|-------+-----------------+------------|
+|     8 | T → id ( E ).   | $, ), +    |
