@@ -321,8 +321,7 @@ int yychar;
 // The semantic value of the look-ahead symbol.
 YYSTYPE yylval;
 
-int yyparse()
-{
+int yyparse() {
     // current state
     int yystate;
     // This is an all purpose variable.
