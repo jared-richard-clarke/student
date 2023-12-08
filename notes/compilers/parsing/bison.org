@@ -310,7 +310,7 @@ Guard table used to check the legal bounds within portions of *yytable*.
 
 Original code by *Satya Kiran Popuri* and *GNU Bison*.
 
-Many macros and checks have been removed for clarity. Only the bare parsing algorithm remains.
+Many macros and error checks have been removed for clarity. Only the bare parsing algorithm remains.
 
 #+begin_src c
 // Global variables
