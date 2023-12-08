@@ -16,15 +16,15 @@
 - TDPL (Top Down Parsing Language)
 - GTDPL (Generalized Top Down Parsing Language)
 
-** Generative System
+** Generative Systems
 
-*{s ∈ a\star{} | s = (aa)ⁿ}*
+*{ s ∈ a\star{} | s = (aa)ⁿ }*
 
-** Recognition-Based System
+** Recognition-Based Systems
 
-*{s ∈ a\star{} | (|s| mod 2 = 0)}*
+*{ s ∈ a\star{} | (|s| mod 2 = 0) }*
 
-** Prioritized Choice Operator: */*
+** Prioritized Choice Operator: ~/~
 
 - Ordered
 - Non-Commutative
@@ -75,12 +75,14 @@ A ← a b / a and A ← a / a b
   input as possible, never backtracking.
 
 - and-predicate :: Expression *&e* invokes the sub-expression *e*, then succeeds if *e* succeeds and fails
-  if *e* fails. In either case it /never consumes any input/.
+  if *e* fails, but in either case /never consumes any input/.
 
 - not-predicate :: Expression *!e* succeeds if *e* fails and fails if *e* succeeds. In either case it
   /never consumes any input/.
 
-** PEG ASCII Syntax
+** PEG Syntax
+
+*PEG* formally describing its own *ASCII* syntax.
 
 #+begin_example
 # Hierarchical syntax
@@ -128,7 +130,7 @@ EndOfLine  <- '\r\n' / '\n' / '\r'
 EndOfFile  <- !.
 #+end_example
 
-** PEG Abstract Syntax
+** PEG Formal Abstract Syntax
 
 A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
 
@@ -150,7 +152,7 @@ A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
 
 - R(A) :: denotes the unique expression *e* such that *A ← e ∈ R*.
 
-If *e*, *e_{1}*, and *e_{2}* are parsing expressions, then so is:
+If *e*, *e_{1}*, and *e_{2}* are parsing expressions, then so is
 
 1. *ε*, the empty string.
 2. *a*, any terminal, where *a ∈ V_{T}*.
