@@ -41,7 +41,7 @@ by each call to *f*.
 #+end_quote
 
 #+begin_example
-for v1 ... vn in expressions do
+for v1, v2 ... vn in expressions do
     block
 end
 
@@ -50,7 +50,7 @@ end
 do
     local f, s, v = expressions
     while true do
-        local v1 ... vn = f(s, v)
+        local v1, v2 ... vn = f(s, v)
 	v = v1
 	if v == nil then
             break
@@ -59,9 +59,9 @@ do
     end
 end
 
-where f  = iterator function
-      s  = invariant state
-      v1 = initial control variable
+where f = iterator function
+      s = invariant state
+      v = control variable
 #+end_example
 
 ** Closure as Iterator
