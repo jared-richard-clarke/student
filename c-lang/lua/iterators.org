@@ -20,7 +20,7 @@ The generic ~for~ loop keeps three values:
 3. control variable
 
 ~for~ first evaluates the expressions after ~in~. These expressions should result in three values:
-the iterator functions, the invariant state, and the initial control variable. When simple iterators
+the iterator function, the invariant state, and the initial control variable. When simple iterators
 are used, the factory returns only the iterator function.
 
 After initialization, ~for~ calls the iterator function with two arguments: the invariant state and
