@@ -31,6 +31,15 @@ the process.
 
 ** Generic ~for~ Semantics
 
+#+begin_quote
+So, If the iterator function is *f*, the invariant state is *s*, and the initial value for the control
+variable is *a_{0}*, the control variable will loop over the values *a_{1} = f(s, a_{0}), a_{2} = f(s, a_{1})*,
+and so on, until *a_{i}* is *nil*. If the *for* has other variables, they simply get the extra values returned
+by each call to *f*.
+
+— Roberto Ierusalimschy
+#+end_quote
+
 #+begin_example
 for var_1 ... var_n in expressions do block end
 
@@ -83,7 +92,7 @@ where f  = iterator function
 
   -- iter = iterator function
   -- xs   = invariant state
-  -- 0    = initial value for control variable
+  -- 0    = initial control variable
   function ipairs (xs)
       return iter, xs, 0
   end
