@@ -79,7 +79,7 @@ where f  = iterator function
   end
 #+end_src
 
-** Definition of ~ipairs~ and ~pairs~
+** Stateless Iterators: ~ipairs~ and ~pairs~
 
 #+begin_src lua
   function iter (xs, i)
