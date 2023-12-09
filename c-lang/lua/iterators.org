@@ -46,18 +46,18 @@ for var_1 ... var_n in expressions do block end
 -- equivalent ->
 
 do
-    local f, s, var = expressions
+    local f, s, v = expressions
     while true do
-        local var_1 ... var_n = f(s, var)
-	var = var_1
-	if var == nil then break end
+        local v_1 ... v_n = f(s, v)
+	v = v_1
+	if v == nil then break end
 	block
     end
 end
 
-where f  = iterator function
-      s  = invariant state
-      var_1 = initial control variable
+where f   = iterator function
+      s   = invariant state
+      v_1 = initial control variable
 #+end_example
 
 ** Closure as Iterator
