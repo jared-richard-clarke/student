@@ -81,6 +81,8 @@ where f  = iterator function
 
 ** Stateless Iterators: ~ipairs~ and ~pairs~
 
+Iterators that keep all their state in the ~for~ variables.
+
 #+begin_src lua
   function iter (xs, i)
      i = i + 1
