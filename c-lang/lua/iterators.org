@@ -48,7 +48,7 @@ end
 
 where f  = iterator function
       s  = invariant state
-      a1 = initial value for control variable
+      var_1 = initial control variable
 #+end_example
 
 ** Closure as Iterator
