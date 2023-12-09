@@ -41,7 +41,9 @@ by each call to *f*.
 #+end_quote
 
 #+begin_example
-for v1 ... vn in expressions do block end
+for v1 ... vn in expressions do
+    block
+end
 
 -- equivalent ->
 
