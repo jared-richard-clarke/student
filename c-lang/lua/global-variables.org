@@ -12,22 +12,23 @@ behaviors for accessing global variables — like enforcing explicit declaration
   -- Enforcing declared global variables, which can hold nil.
   local declared = {}
 
-  function declare (name, initval)
-      rawset(_G, name, initval)
+  -- "declare(x, 7)" sets global variable "x" to "7".
+  function declare (name, value)
+      rawset(_G, name, value)
       declared[name] = true
   end
 
   setmetatable(_G, {
       __newindex = function (t, n, v)
           if not declared[n] then
-              error("attempt to write to undeclared var. "..n, 2)
+              error("attempt to write to undeclared variable. "..n, 2)
           else
               rawset(t, n, v)
           end
       end,
       __index = function (_, n)
           if not declared[n] then
-              error("attempt to read undeclared var. "..n, 2)
+              error("attempt to read undeclared variable. "..n, 2)
           else
               return nil
           end
