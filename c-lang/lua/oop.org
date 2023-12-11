@@ -1,6 +1,6 @@
 * Object-Oriented Programming
 
-Programming in Lua, Roberto Ierusalimschy
+*Programming in Lua*, Roberto Ierusalimschy
 
 ** Colon Syntax and Implicit Self
 
