@@ -1,0 +1,36 @@
+* Global Variables
+
+Lua combines variable declarations and initialization into a single syntax:
+~var x = 7~ becomes ~x = 7~. The variable ~x~ declared on it own initializes
+itself to ~x = nil~ and attaches itself to the global environment ~_G~.
+Implicit declarations can cause hard-to-find bugs in larger programs.
+
+Because the global ~_G~ is a regular table, metatables can be used to change
+behaviors for accessing global variables — like enforcing explicit declarations.
+
+#+begin_src lua
+  -- Enforcing declared global variables, which can hold nil.
+  local declared = {}
+
+  function declare (name, initval)
+      rawset(_G, name, initval)
+      declared[name] = true
+  end
+
+  setmetatable(_G, {
+      __newindex = function (t, n, v)
+          if not declared[n] then
+              error("attempt to write to undeclared var. "..n, 2)
+          else
+              rawset(t, n, v)
+          end
+      end,
+      __index = function (_, n)
+          if not declared[n] then
+              error("attempt to read undeclared var. "..n, 2)
+          else
+              return nil
+          end
+      end,
+  })
+#+end_src
