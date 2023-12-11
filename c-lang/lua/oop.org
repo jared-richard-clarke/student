@@ -1,0 +1,52 @@
+* Object-Oriented Programming
+
+** Colon Syntax and Implicit Self
+
+#+begin_src lua
+  Account = {
+      balance = 0,
+      withdraw = function (self, value)
+                     self.balance = self.balance - value
+                 end,
+      deposit = function (self, value)
+                    self.balance = self.balance + value
+                end
+  }
+
+  Account.withdraw(Account, 100)
+
+  -- equivalent ->
+
+  function Account:withdraw(value)
+      self.balance = self.balance - value
+  end
+
+  function Account:deposit(value)
+      self.balance = self.balance + value
+  end
+
+  Account:withdraw(100)
+#+end_src
+
+** Implementing Prototypal Inheritance
+
+#+begin_src lua
+  function Account:new (x)
+      x = x or {}
+      setmetatable(x, self)
+      self.__index = self
+      return x
+  end
+
+  a = Account:new{ balance = 0 }
+
+  a:deposit(100)
+
+  -- equivalent ->
+
+  getmetatable(a).__index.deposit(a, 100)
+
+  -- equivalent ->
+
+  Account.deposit(a, 100)
+#+end_src
