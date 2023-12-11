@@ -8,11 +8,11 @@
   Account = {
       balance = 0,
       withdraw = function (self, value)
-                     self.balance = self.balance - value
-                 end,
+          self.balance = self.balance - value
+      end,
       deposit = function (self, value)
-                    self.balance = self.balance + value
-                end
+          self.balance = self.balance + value
+      end
   }
 
   Account.withdraw(Account, 100)
@@ -51,4 +51,38 @@
   -- equivalent ->
 
   Account.deposit(a, 100)
+#+end_src
+
+** Private Fields Through Closure
+
+An alternative design is to represent each object through two tables: one for its state, the
+other its interface. The state object is held privately in a closure.
+
+#+begin_src lua
+  function create_account(x)
+      local self = {
+          balance = x,
+          LIMIT = 10000
+      }
+
+      local withdraw = function (value)
+          self.balance = self.balance - value
+      end
+
+      local deposit = function (value)
+          self.balance = self.balance + value
+      end
+
+      local extra = function ()
+          if self.balance > self.LIMIT then
+              return self.balance * 0.10
+          else
+              return 0
+          end
+      end
+
+      local get = function ()
+          return self.balance + self.extra()
+      end
+  end
 #+end_src
