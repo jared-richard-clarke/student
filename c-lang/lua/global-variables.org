@@ -1,5 +1,7 @@
 * Global Variables
 
+*Programming in Lua*, Roberto Ierusalimschy
+
 Lua combines variable declarations and initialization into a single syntax:
 ~var x = 7~ becomes ~x = 7~. The variable ~x~ declared on it own initializes
 itself to ~x = nil~ and attaches itself to the global environment ~_G~.
