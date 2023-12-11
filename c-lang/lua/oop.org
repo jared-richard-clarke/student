@@ -1,5 +1,7 @@
 * Object-Oriented Programming
 
+Programming in Lua, Roberto Ierusalimschy
+
 ** Colon Syntax and Implicit Self
 
 #+begin_src lua
