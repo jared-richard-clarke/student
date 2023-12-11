@@ -84,5 +84,12 @@ other its interface. The state object is held privately in a closure.
       local get = function ()
           return self.balance + self.extra()
       end
+
+     -- interface
+     return {
+         withdraw = withdraw,
+         deposit = deposit,
+         get = get
+     }
   end
 #+end_src
