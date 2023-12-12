@@ -6,19 +6,19 @@
 
 ** Set Theory: Basic Concepts and Notation
 
-| name            | notation | definition                                                    |
-|-----------------+----------+---------------------------------------------------------------|
-| binary relation | *a ∈ A*  | *a* is a member of *A*.                                       |
-| binary relation | *a ∉ A*  | *¬(a ∈ A)*, *a* is not a member of *A*                        |
-| empty set       | *Ø*      | The empty set, which contains no elements.                    |
-| subset          | *A ⊆ B*  | *A* is a subset of *B*, *∀x(x ∈ A → x ∈ B)*                   |
-| proper subset   | *A ⊂ B*  | *A* is a subset of *B* but not equal to *B*, *A ⊆ B ∧ A ≠ B*  |
-| superset        | *A ⊇ B*  | *A* is a superset of *B*.                                     |
-| proper superset | *A ⊃ B*  | *A* is a superset of *B* but not equal to *B*.                |
-| equality        | *A = B*  | *A* and *B* have the same members, *A ⊆ B ∧ B ⊆ A*            |
-| union           | *A ∪ B*  | Members of *A* and *B* or both, *{x \vert{} x ∈ A ∨ x ∈ B}*   |
-| intersection    | *A ∩ B*  | Only members of both *A* and *B*, *{x \vert{} x ∈ A ∧ x ∈ B}* |
-| difference      | *A - B*  | Members of *A* but not *B*,  *{x \vert{} x ∈ A ∧ x ∉ B}*      |
+| name            | notation    | definition                                                   |
+|-----------------+-------------+--------------------------------------------------------------|
+| binary relation | *a ∈ A*     | *a* is a member of *A*.                                      |
+| binary relation | *a ∉ A*     | *¬(a ∈ A)*, *a* is not a member of *A*                       |
+| empty set       | *Ø* or *{}* | The empty set, which contains no elements.                   |
+| subset          | *A ⊆ B*     | *A* is a subset of *B*, *∀x(x ∈ A → x ∈ B)*                  |
+| proper subset   | *A ⊂ B*     | *A* is a subset of *B* but not equal to *B*, *A ⊆ B ∧ A ≠ B* |
+| superset        | *A ⊇ B*     | *A* is a superset of *B*.                                    |
+| proper superset | *A ⊃ B*     | *A* is a superset of *B* but not equal to *B*.               |
+| equality        | *A = B*     | *A* and *B* have the same members, *A ⊆ B ∧ B ⊆ A*           |
+| union           | *A ∪ B*     | Members of *A* and *B* or both, *{x ¦ x ∈ A ∨ x ∈ B}*        |
+| intersection    | *A ∩ B*     | Only members of both *A* and *B*, *{x ¦ x ∈ A ∧ x ∈ B}*      |
+| difference      | *A - B*     | Members of *A* but not *B*,  *{x ¦ x ∈ A ∧ x ∉ B}*           |
 
 ** Formal Languages
 
