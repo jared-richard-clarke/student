@@ -4,7 +4,7 @@
 
 An interactive interpreter for Lua implemented in C.
 
-Orginal example authored by Roberto Ierusalimschy, Luiz Henrique de Figueiredo, Waldemar Celes Filho.
+Original example authored by Roberto Ierusalimschy, Luiz Henrique de Figueiredo, Waldemar Celes Filho.
 
 ```c
 #include <stdio.h>
@@ -27,7 +27,6 @@ int main (int argc, char *argv[]) {
 A simplified version of the Lua command line program.
 
 ```c
-
 #include <stdio.h>
 
 #include "luaxlib.h"
