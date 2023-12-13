@@ -4,7 +4,7 @@ The factorial function is a common example used in many programming tutorials.
 It is therefore an excellent tool for comparing the syntax of different programming languages.
 
 - A majority of these implementations (my programs) return the multiplicative identity for any number 
-  less than or equal to 1 instead of raising an error.
+  less than or equal to 2 instead of raising an error.
 - Many of these definitions are inefficient — consuming too much time and space.
   They are defined here solely to demonstrate the syntax of a particular language.
 
