@@ -1,5 +1,7 @@
 # Rust Generics
 
+**The Rust Programming Language**, chapter 10
+
 ## Method Definitions
 
 ```rust
