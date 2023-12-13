@@ -1,6 +1,6 @@
 # Geometry
 
-I'm teaching myself computer graphics and related geometry.
+I'm learning computer graphics and related geometry.
 
 I believe language influences how people understand and solve problems, so I implemented 
 the same library  in multiple programming languages to better understand my subject matter.
