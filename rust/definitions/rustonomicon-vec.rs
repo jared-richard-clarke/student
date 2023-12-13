@@ -1,10 +1,11 @@
+// === Vec as implemented in the Rustonomicon ===
+// Rustonomicon, Chapter 9.11
+// https://doc.rust-lang.org/nomicon/vec/vec-final.html
 use std::alloc::{self, Layout};
 use std::marker::PhantomData;
 use std::mem;
 use std::ops::{Deref, DerefMut};
 use std::ptr::{self, NonNull};
-
-// === Vec as implemented in the Rustonomicon ===
 
 struct RawVec<T> {
     ptr: NonNull<T>,
