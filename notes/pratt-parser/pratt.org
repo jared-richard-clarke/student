@@ -1,5 +1,7 @@
 * Top Down Operator Precedence
 
+*Top Down Operator Precedence*, Vaughan R. Pratt 
+
 ** Lexical Semantics vs. Syntactic Semantics
 
 #+begin_quote
