@@ -1,6 +1,6 @@
 # Lua's Virtual Machine
 
-Original text from **The Implementation of Lua 5.0**
+**The Implementation of Lua 5.0** by Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho
 
 There are 35 instructions in Lua's virtual machine. Most instructions correspond
 directly to language constructs, such as arithmetic, table creation and indexing,
