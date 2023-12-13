@@ -98,7 +98,7 @@ Iterators that keep all their state in the ~for~ variables.
 
   -- iter = iterator function
   -- xs   = invariant state
-  -- 0    = initial control variable
+  -- 0    = control variable
   function ipairs (xs)
       return iter, xs, 0
   end
