@@ -1,6 +1,6 @@
 # Rust Primitives Types
 
-Definitions pulled from the Rust Standard Library, Version 1.71.1
+**The Rust Standard Library**, Version 1.71.1
 
 - `array`: A fixed-size array, denoted `[T; N]`, for the element type `T`, and the
 non-negative compile-time constant size, `N`.
