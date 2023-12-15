@@ -1,47 +1,113 @@
-* Backus-Naur Syntax in BNF
+* Backus-Naur
 
-*Backus-Naur Form*, Wikipedia
+** Sources
+
+| source                       | author                        |
+|------------------------------+-------------------------------|
+| *Backus-Naur Form*           | Wikipedia                     |
+| *Foundations of Computation* | Carol Critchlow and David Eck |
+
+** Backus-Naur Syntax in BNF
 
 #+begin_example
- <syntax>     ::= <rule> | <rule> <syntax>
+<syntax>     ::= <rule>
+               | <rule> <syntax>
 
- <rule>       ::= <spaces> "<" <rule-name> ">" <spaces> "::=" <spaces> <expression> <line-end>
+<rule>       ::= <spaces> "<" <rule-name> ">" <spaces> "::=" <spaces> <expression> <line-end>
 
- <spaces>     ::= " " <spaces> | ""
+<spaces>     ::= " " <spaces>
+               | ""
 
- <expression> ::= <list> | <list> <spaces> "|" <spaces> <expression>
+<expression> ::= <list>
+               | <list> <spaces> "|" <spaces> <expression>
 
- <line-end>   ::= <spaces> <EOL> | <line-end> <line-end>
+<line-end>   ::= <spaces> <EOL>
+               | <line-end> <line-end>
 
- <list>       ::= <term> | <term> <spaces> <list>
+<list>       ::= <term>
+               | <term> <spaces> <list>
 
- <term>       ::= <literal> | "<" <rule-name> ">"
+<term>       ::= <literal>
+               | "<" <rule-name> ">"
 
- <literal>    ::= '"' <text1> '"' | "'" <text2> "'"
+<literal>    ::= '"' <text1> '"'
+               | "'" <text2> "'"
 
- <text1>      ::= "" | <character1> <text1>
+<text1>      ::= ""
+               | <character1> <text1>
 
- <text2>      ::= "" | <character2> <text2>
+<text2>      ::= ""
+               | <character2> <text2>
 
- <character>  ::= <letter> | <digit> | <symbol>
+<character>  ::= <letter>
+               | <digit>
+               | <symbol>
 
- <letter>     ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" |
-                  "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" |
-                  "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" |
-                  "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" |
-                  "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+<letter>     ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" |
+                 "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" |
+                 "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" |
+                 "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" |
+                 "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
 
- <digit>      ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+<digit>      ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
- <symbol>     ::= "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" |
-                  "," | "-" | "." | "/" | ":" | ";" | ">" | "=" | "<" | "?" | "@" |
-                  "[" | "\" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
+<symbol>     ::= "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" |
+                 "," | "-" | "." | "/" | ":" | ";" | ">" | "=" | "<" | "?" | "@" |
+                 "[" | "\" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
 
- <character1> ::= <character> | "'"
+<character1> ::= <character>
+               | "'"
 
- <character2> ::= <character> | '"'
+<character2> ::= <character>
+               | '"'
 
- <rule-name>  ::= <letter> | <rule-name> <rule-char>
+<rule-name>  ::= <letter>
+               | <rule-name> <rule-char>
 
- <rule-char>  ::= <letter> | <digit> | "-"
+<rule-char>  ::= <letter>
+               | <digit>
+               | "-"
+#+end_example
+
+** Simple English Grammar
+
+*** Productions
+
+#+begin_example
+<sentence>          ::= <simple-sentence> [ and <simple-sentence> ] ...
+<simple-sentence>   ::= <noun-part> <verb-part>
+<noun-part>         ::= <article> <noun> [ who <verb-part> ] ...
+<verb-part>         ::= <intransitive-verb>
+                      | ( <transitive-verb> <noun-part> )
+<article>           ::= the
+                      | a
+<noun>              ::= man
+                      | woman
+                      | dog
+                      | cat
+                      | computer
+<intransitive-verb> ::= runs
+                      | jumps
+                      | hides
+<transitive-verb>   ::= knows
+                      | loves
+                      | chases
+                      | owns
+#+end_example
+
+*** Derivation
+
+#+begin_example
+<sentence> ⇒ <simple-sentence>
+           ⇒ <noun-part> <verb-part>
+           ⇒ <article> <noun> <verb-part>
+           ⇒ the <noun> <verb-part>
+           ⇒ the man <verb-part>
+           ⇒ the man <transitive-verb> <noun-part>
+           ⇒ the man loves <noun-part>
+           ⇒ the man loves <article> <noun> who <verb-part>
+           ⇒ the man loves a <noun> who <verb-part>
+           ⇒ the man loves a woman who <verb-part>
+           ⇒ the man loves a woman who <intransitive-verb>
+           ⇒ the man loves a woman who runs
 #+end_example
