@@ -5,6 +5,7 @@
 | source                       | author                        |
 |------------------------------+-------------------------------|
 | *Backus-Naur Form*           | Wikipedia                     |
+| *Foundations of Computation* | Carol Critchlow and David Eck |
 
 ** Backus-Naur Syntax in BNF
 
@@ -66,4 +67,76 @@
 <rule-char>  ::= <letter>
                | <digit>
                | "-"
+#+end_example
+
+** Backus-Naur Form to Context-Free Grammar
+
+*** Backus-Naur Form
+
+#+begin_example
+E ::= T [ + T ] ...
+T ::= F [ * F ] ...
+F ::= "(" E ")" | x | y | z
+#+end_example
+
+*** Context-Free Grammar
+
+**** LL(1)
+
+#+begin_example
+=== grammar ===
+
+E → T A
+A → + T A
+A → ε
+T → F B
+B → * F B
+B → ε
+F → ( E )
+F → x
+F → y
+F → z
+
+=== derivation ===
+
+E ⇒ T A
+  ⇒ F B A
+  ⇒ x B A
+  ⇒ x A
+  ⇒ x + T A
+  ⇒ x + F B A
+  ⇒ x + y B A
+  ⇒ x + y * F B A
+  ⇒ x + y * z B A
+  ⇒ x + y * z A
+  ⇒ x + y * z
+#+end_example
+
+**** LR(1)
+
+#+begin_example
+=== grammar ===
+
+E → E + T
+E → T
+T → T * F
+T → F
+F → ( E )
+F → x
+F → y
+F → z
+
+=== derivation ===
+
+E ⇒ T
+  ⇒ T * F
+  ⇒ T * z
+  ⇒ F * z
+  ⇒ ( E ) * z
+  ⇒ ( E + T ) * z
+  ⇒ ( E + F ) * z
+  ⇒ ( E + y ) * z
+  ⇒ ( T + y ) * z
+  ⇒ ( F + y ) * z
+  ⇒ ( x + y ) * z
 #+end_example
