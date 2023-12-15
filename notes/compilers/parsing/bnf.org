@@ -5,7 +5,6 @@
 | source                       | author                        |
 |------------------------------+-------------------------------|
 | *Backus-Naur Form*           | Wikipedia                     |
-| *Foundations of Computation* | Carol Critchlow and David Eck |
 
 ** Backus-Naur Syntax in BNF
 
@@ -67,47 +66,4 @@
 <rule-char>  ::= <letter>
                | <digit>
                | "-"
-#+end_example
-
-** Simple English Grammar
-
-*** Productions
-
-#+begin_example
-<sentence>          ::= <simple-sentence> [ and <simple-sentence> ] ...
-<simple-sentence>   ::= <noun-part> <verb-part>
-<noun-part>         ::= <article> <noun> [ who <verb-part> ] ...
-<verb-part>         ::= <intransitive-verb>
-                      | ( <transitive-verb> <noun-part> )
-<article>           ::= the
-                      | a
-<noun>              ::= man
-                      | woman
-                      | dog
-                      | cat
-                      | computer
-<intransitive-verb> ::= runs
-                      | jumps
-                      | hides
-<transitive-verb>   ::= knows
-                      | loves
-                      | chases
-                      | owns
-#+end_example
-
-*** Derivation
-
-#+begin_example
-<sentence> ⇒ <simple-sentence>
-           ⇒ <noun-part> <verb-part>
-           ⇒ <article> <noun> <verb-part>
-           ⇒ the <noun> <verb-part>
-           ⇒ the man <verb-part>
-           ⇒ the man <transitive-verb> <noun-part>
-           ⇒ the man loves <noun-part>
-           ⇒ the man loves <article> <noun> who <verb-part>
-           ⇒ the man loves a <noun> who <verb-part>
-           ⇒ the man loves a woman who <verb-part>
-           ⇒ the man loves a woman who <intransitive-verb>
-           ⇒ the man loves a woman who runs
 #+end_example
