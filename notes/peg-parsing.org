@@ -1,6 +1,10 @@
 * Parsing Expression Grammars
 
-*Parsing Expression Grammars: A Recognition-Based Syntactic Foundation*, Bryan Ford
+** Sources
+
+| source                                                                  | author     |
+|-------------------------------------------------------------------------+------------|
+| *Parsing Expression Grammars: A Recognition-Based Syntactic Foundation* | Bryan Ford |
 
 ** Keywords
 
@@ -18,42 +22,42 @@
 
 ** Generative Systems
 
-*{ s ∈ a\star{} | s = (aa)ⁿ }*
+*{ s ∈ a\star | s = (aa)ⁿ }*
 
 ** Recognition-Based Systems
 
-*{ s ∈ a\star{} | (|s| mod 2 = 0) }*
+*{ s ∈ a\star | (|s| mod 2 = 0) }*
 
 ** Prioritized Choice Operator: ~/~
 
 - Ordered
-- Non-Commutative
+- Non-commutative
 - Unambiguous
 
 #+begin_example
 === equivalent ===
 A → a b | a and A → a | a b
 
-=== non-equivalent ===
+=== not equivalent ===
 A ← a b / a and A ← a / a b
 #+end_example
 
 ** PEG Operators
 
-| operator | type         | precedence | description        |
-|----------+--------------+------------+--------------------|
-| ' '      | primary      |          5 | literal string     |
-| " "      | primary      |          5 | literal string     |
-| [ ]      | primary      |          5 | character class    |
-| .        | primary      |          5 | any character      |
-| (e)      | primary      |          5 | grouping           |
-| e?       | unary suffix |          4 | optional           |
-| e*       | unary suffix |          4 | zero-or-more       |
-| e+       | unary suffix |          4 | one-or-more        |
-| &e       | unary prefix |          3 | and-predicate      |
-| !e       | unary prefix |          3 | not-predicate      |
-| e1 e2    | binary       |          2 | sequence           |
-| e1 / e2  | binary       |          1 | prioritized choice |
+| operator       | type         | precedence | description        |
+|----------------+--------------+------------+--------------------|
+| ' '            | primary      |          5 | literal string     |
+| " "            | primary      |          5 | literal string     |
+| [ ]            | primary      |          5 | character class    |
+| .              | primary      |          5 | any character      |
+| (e)            | primary      |          5 | grouping           |
+| e?             | unary suffix |          4 | optional           |
+| e*             | unary suffix |          4 | zero-or-more       |
+| e+             | unary suffix |          4 | one-or-more        |
+| &e             | unary prefix |          3 | and-predicate      |
+| !e             | unary prefix |          3 | not-predicate      |
+| e_{1} e_{2}    | binary       |          2 | sequence           |
+| e_{1} / e_{2}  | binary       |          1 | prioritized choice |
 
 - empty :: A parsing expression that always succeeds without consuming any input.
 
@@ -65,7 +69,7 @@ A ← a b / a and A ← a / a b
   immediately. Otherwise, if *e_{1}* fails, then the choice operator backtracks to the original input
   position at which it invoked *e_{1}* and then calls *e_{2}* instead, returning *e_{2}'s* result.
 
-- zero-or-more :: Operator *e\star{}* consumes zero or more consecutive repetitions of its
+- zero-or-more :: Operator *e\star* consumes zero or more consecutive repetitions of its
   sub-expression *e*. Consumes as much input as possible, never backtracking.
 
 - one-or-more :: Operator *e+* consumes one or more consecutive repetitions of its
@@ -82,7 +86,7 @@ A ← a b / a and A ← a / a b
 
 ** PEG Syntax
 
-*PEG* formally describing its own *ASCII* syntax.
+*PEG* describing *PEG* syntax using the *ASCII* character set.
 
 #+begin_example
 # Hierarchical syntax
@@ -113,15 +117,15 @@ Char       <- '\\' [nrt'"\[\]\\]
             / !'\\' .
 
 LEFTARROW  <- '<-' Spacing
-SLASH      <- '/' Spacing
-AND        <- '&' Spacing
-NOT        <- '!' Spacing
-QUESTION   <- '?' Spacing
-STAR       <- '*' Spacing
-PLUS       <- '+' Spacing
-OPEN       <- '(' Spacing
-CLOSE      <- ')' Spacing
-DOT        <- '.' Spacing
+SLASH      <- '/'  Spacing
+AND        <- '&'  Spacing
+NOT        <- '!'  Spacing
+QUESTION   <- '?'  Spacing
+STAR       <- '*'  Spacing
+PLUS       <- '+'  Spacing
+OPEN       <- '('  Spacing
+CLOSE      <- ')'  Spacing
+DOT        <- '.'  Spacing
 
 Spacing    <- (Space / Comment)*
 Comment    <- '#' (!EndOfLine .)* EndOfLine
@@ -130,11 +134,11 @@ EndOfLine  <- '\r\n' / '\n' / '\r'
 EndOfFile  <- !.
 #+end_example
 
-** PEG Formal Abstract Syntax
+** PEG Abstract Syntax
 
 A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
 
-- V_{N} :: A finite set of nonterminal symbols.
+- V_{N} :: A finite set of non-terminal symbols.
 
 - V_{T} :: A finite set of terminal symbols.
 
@@ -142,21 +146,21 @@ A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
 
 - e_{S} :: A parsing expression termed the *start expression*.
 
-- V_{N} ∩ V_{T} = ∅ :: The intersection of the nonterminals and terminal sets are the empty set,
+- V_{N} ∩ V_{T} = ∅ :: The intersection of the non-terminals and terminal sets are the empty set,
   meaning they share no members. They are disjoint.
 
 - r ∈ R :: A pair *(A, e)*, written as *A ← e*, where *A ∈ V_{N}* and *e* is a parsing expression.
 
-- For any nonterminal *A*, there is exactly one *e* such that *A ← e ∈ R*. *R* is therefore
+- For any non-terminal *A*, there is exactly one *e* such that *A ← e ∈ R*. *R* is therefore
   a function mapping nonterminals to expressions.
 
-- R(A) :: denotes the unique expression *e* such that *A ← e ∈ R*.
+- R(A) :: Denotes the unique expression *e* such that *A ← e ∈ R*.
 
 If *e*, *e_{1}*, and *e_{2}* are parsing expressions, then so is
 
 1. *ε*, the empty string.
 2. *a*, any terminal, where *a ∈ V_{T}*.
-3. *A*, any nonterminal, where *A ∈ V_{N}*.
+3. *A*, any non-terminal, where *A ∈ V_{N}*.
 4. *e_{1} e_{2}*, a sequence.
 5. *e_{1} / e_{2}*, prioritized choice.
 6. *e\star{}*, zero or more repetitions.
@@ -164,12 +168,58 @@ If *e*, *e_{1}*, and *e_{2}* are parsing expressions, then so is
 
 ** Desugaring Concrete Syntax
 
-| sugared                    | desugared                     |
-|----------------------------+-------------------------------|
-| *.*                        | all the terminals in *V_{T}*  |
-| *a_{1}, a_{2}, ..., a_{n}* | *a_{1} / a_{2} / ... / a_{n}* |
-| *e?*                       | *e_{d} / ε*                   |
-| *e+*                       | *e_{d}e\star{}_{d}*           |
-| *&e*                       | *!(!e_{d})*                   |
+| sugared                          | desugared                     |
+|----------------------------------+-------------------------------|
+| *.*                              | all the terminals in *V_{T}*  |
+| *[ a_{1}, a_{2}, ..., a_{n} ]*   | *a_{1} / a_{2} / ... / a_{n}* |
+| *e?*                             | *e_{d} / ε*                   |
+| *e+*                             | *e_{d} e_{d}\star*            |
+| *&e*                             |  *!(!e_{d})*                  |
 
-Where *e_{d}* is the desugaring of *e*.
+Where *e_d* is the desugaring of *e*.
+
+** Inductive Definition  of a Grammar
+
+For grammar *G = (V_{N} ,V_{T} , R, e_{S})*, *⇒G* is a relation between pairs *(e, x)* to *(n, o)*,
+where *e* is a parsing expression, *x ∈ V_{T}\star* is an input string to be recognized, *n ≥ 0*
+serves as a step counter, and *o ∈ V_{T}\star ∪ {f}* indicates the result of a recognition attempt.
+The output *o* of a successful match is the portion of the input string recognized and consumed,
+while *f ∉ V_{T}* indicates failure. *((e, x), (n, o)) ∈ ⇒G* is equivalent to *(e, x) ⇒ (n, o)* where
+the reference to *G* is implied.
+
+- Empty :: *(ε, x) ⇒ (1, ε)* for any *x ∈ V_{T}\star*.
+
+- Terminal (success case) :: *(a, ax) ⇒ (1, a)* if *a ∈ V_{T}, x ∈ V_{T}\star*.
+
+- Terminal (failure case) :: *(a, bx) ⇒ (1, f)* if *a ≠ b*, and *(a, ε) ⇒ (1, f)*.
+
+- Non-Terminal :: *(A, x) ⇒ (n + 1, o)* if *A ← e ∈ R* and *(e, x) ⇒ (n, o)*.
+
+- Sequence (success case) :: If *(e_{1}, x_{1}x_{2}y) ⇒ (n_{1}, x_{1})* and *(e_{2}, x_{2}y) ⇒ (n_{2}, x_{2})*,
+  then *(e_{1}e_{2}, x_{1}x_{2}y) ⇒ (n_{1} + n_{2} + 1, x_{1}x_{2})*. Expressions *e_{1}* and *e_{2}* are matched
+  in sequence, and if each succeeds and consumes input portions *x_{1}* and *x_{2}* respectively,
+  then the sequence succeeds and consumes the string *x_{1}x_{2}*.
+
+- Sequence (failure case 1) :: If *(e_{1}, x) ⇒ (n_{1}, f)*, then *(e_{1}e_{2}, x) ⇒ (n_{1} + 1, f)*.
+  If *e_{1}* is tested and fails, then the sequence *e_{1}e_{2}* fails without attempting *e_{2}*.
+
+- Sequence (failure case 2) :: If *(e_{1}, x_{1}y) ⇒ (n_{1}, x_{1})* and *(e_{2}, y) ⇒ (n_{2}, f)*, then
+  *(e_{1}e_{2}, x_{1}y) ⇒ (n_{1} + n_{2} + 1, f)*. If *e_{1}* succeeds but *e_{2}* fails, then the expression fails.
+
+- Alternation (case 1) :: If *(e_{1}, xy) ⇒ (n_{1}, x)*, then *(e_{1}/e_{2}, xy) ⇒ (n_{1} + 1, x)*.
+  Alternative *e_{1}* is first tested, and if it succeeds, the expression *e_{1}/e_{2}* succeeds
+  without testing *e_{2}*.
+
+- Alternation (case 2) :: If *(e_{1}, x) ⇒ (n_{1}, f)* and *(e_{2}, x) ⇒ (n_{2}, o)*, then
+  *(e_{1}/e_{2}, x) ⇒ (n_{1} + n_{2} + 1, o)*. If *e_{1}* fails, then *e_{2}* is tested and its result is used instead.
+
+- Zero-or-more repetitions (repetition case) :: If *(e, x_{1}x_{2}y) ⇒ (n_{1}, x_{1})* and
+  *(e\star{}, x_{2}y) ⇒ (n_{2}, x_{2})*, then *(e\star, x_{1}x_{2}y) ⇒ (n_{1} + n_{2} + 1, x_{1}x_{2})*
+
+- Zero-or-more repetitions (termination case) :: If *(e, x) ⇒ (n_{1}, f)*, then *(e\star, x) ⇒ (n_{1} + 1, ε)*.
+
+- Not-predicate (case 1) :: If *(e, xy) ⇒ (n, x)*, then *(!e, xy) ⇒ (n + 1, f)*. If expression
+  *e* succeeds consuming input *x*, then syntactic predicate *!e* fails.
+
+- Not-predicate (case 2) :: If *(e, x) ⇒ (n, f)*, then *(!e, x) ⇒ (n + 1, ε)*. If *e* fails,
+  then *!e* succeeds but consumes nothing.
