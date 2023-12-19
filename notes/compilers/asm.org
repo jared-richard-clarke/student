@@ -1,4 +1,4 @@
-* Compiling Assembly
+* Assembly Language
 
 ** Sources
 
