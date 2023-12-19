@@ -1,4 +1,4 @@
-* Compiling Assembly: X86-64
+* Compiling Assembly
 
 ** Sources
 
@@ -426,7 +426,7 @@ refer to arguments and local variables within the function body.
 | saved register ~%r14~ | ~-72(%rbp)~ |                       |
 | saved register ~%r15~ | ~-80(%rbp)~ | <- ~%rsp~ points here |
 
-** Function Call Example
+** Complex Function Call Example
 
 *** C Code
 
