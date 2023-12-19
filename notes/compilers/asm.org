@@ -1,0 +1,494 @@
+* Compiling Assembly: X86-64
+
+** Sources
+
+| source                                          | author        |
+|-------------------------------------------------+---------------|
+| *Introduction to Compilers and Language Design* | Douglas Thain |
+
+** Assembly: X86-64
+
+*X86-64* is a generic name that covers both *AMD64* and *Intel64* architectures. It is a
+*CISC* — complex intruction set computing — where there are a very large number of instructions
+with many different sub-modes. Some of them are designed for very narrow tasks.
+
+** Introductory Example
+
+Compile: ~gcc -S hello.c -o hello.s~
+
+*** ~hello.c~
+
+#+begin_src c
+  #include <stdio.h>
+
+  int main(int argc, char *argv[]) {
+    printf("Hello %s\n", "world.");
+    return 0;
+  }
+#+end_src
+
+*** ~hello.s~
+
+#+begin_src
+.LC0:
+        .string "world."
+.LC1:
+        .string "Hello %s\n"
+main:
+; === main ===
+        PUSH    rbp
+        MOV     rbp, rsp
+        SUB     rsp, 16
+        MOV     DWORD PTR [rbp-4], edi
+        MOV     QWORD PTR [rbp-16], rsi
+; === printf ===
+        MOV     esi, OFFSET FLAT:.LC0
+        MOV     edi, OFFSET FLAT:.LC1
+        MOV     eax, 0
+        CALL    printf
+; === return ===
+        MOV     eax, 0
+; === exit main ===
+        LEAVE
+        RET
+#+end_src
+
+** Elements
+
+Regardless of CPU architecture, assembly code has three different kinds of elements.
+
+1. Directives
+2. Labels
+3. Instructions
+
+*** Directives
+
+Begin with a dot and indicate structural information useful to the assembler, linker, or debugger.
+
+- ~.file~: the name of the original source file.
+- ~.data~: the start of the data segment of a program.
+- ~.text~: the start of the program segment.
+- ~.string~: a string constant within the data section.
+- ~.global main~: names the global ~main~ that can be accessed by other code modules.
+
+*** Labels
+
+End with a colon and indicate by their position the association between names and locations.
+The label ~main:~, for example, indicates that the following instruction is the first instruction
+of the main function. Labels do not become part of the machine code, but they are present in the
+resulting object code for the purposes of linking and debugging.
+
+*** Instructions
+
+Instructions, like ~PUSHQ %rbp~, are the actual assembly. They are indented to distinguish
+them from directives and labels. They are formatted fully-uppercase by convention.
+
+** Registers and Data Types
+
+*X86-64* has sixteen general purpose, 64-bit integer registers. These registers are
+*almost general purpose*. Earlier versions of the assembler intended for each register to be used
+for a specific purpose, and not all instructions could be applied to every register. The names of
+the lower eight registers indicate the purpose for which each was intended. ~%rax~, for example,
+is the accumulator.
+
+*** General Purpose 64-bit Registers
+
+1. ~%rax~
+2. ~%rbx~
+3. ~%rcx~
+4. ~%rdx~
+5. ~%rsi~
+6. ~%rdi~
+7. ~%rbp~
+8. ~%rsp~
+9. ~%r8~
+10. ~%r9~
+11. ~%r10~
+12. ~%r11~
+13. ~%r12~
+14. ~%r13~
+15. ~%r14~
+16. ~%r15~
+
+*** Restricted Registers
+
+| name              | purpose           |
+|-------------------+-------------------|
+| ~%rsi~ and ~%rdi~ | string processors |
+| ~%rsp~            | stack pointer     |
+| ~%rbp~            | base pointer      |
+
+*** Syntax
+
+With AT&T syntax, the source is first and the destination is second. Intel syntax dispenses
+with percent signs and reverses the order of the arguments.
+
+| AT&T              | Intel           |
+|-------------------+-----------------|
+| ~MOVQ %rsp, %rbp~ | ~MOVQ rbp, rsp~ |
+
+*** Register Structure
+
+#+begin_example
+=== register %rax ===
+
+          ----- -----
+8  bits: | al  | ah  |
+         |-----------|
+16 bits: |    ax     |
+         |----------------------
+32 bits: |         eax          |
+         |--------------------------------------------
+64 bits: |                 rax                        |
+          --------------------------------------------
+
+=== registers %r8-%r15 ===
+
+          -----
+8  bits: | r8b |
+         |-----------
+16 bits: |    r8w    |
+         |----------------------
+32 bits: |        eax           |
+         |--------------------------------------------
+64 bits: |                   rax                      |
+          --------------------------------------------
+ #+end_example
+
+** Addressing Modes
+
+*** Suffixes
+
+A single letter suffix determines the size of data to be moved.
+
+| suffix | name     | size    |
+|--------+----------+---------|
+| ~B~    | BYTE     | 1 byte  |
+| ~W~    | WORD     | 2 bytes |
+| ~L~    | LONG     | 4 bytes |
+| ~Q~    | QUADWORD | 8 bytes |
+
+*** Modes
+
+- global symbol :: An unadorned name, like ~printf~, which the assembler translates into an absolute
+  address or an address computation.
+
+- immediate :: A constant value indicated by a dollar sign. Has a limited range, depending on
+  the instruction in use.
+
+- register :: The name of a register.
+
+- indirect :: Reference to a value by the address contained in a register.
+
+- complex :: The form *D(R_{A}, R_{B}, C)* refers to the value at address *R_{A} + R_{B} * C + D*.
+  This mode is used to select an item within an array. *R_{A}* gives the base of an array, *R_{B}* gives
+  the index into an array, *C* gives the size of items in the array, and *D* is an offset relative to
+  that item.
+
+Below is are examples of each kind of addressing mode loading a 64-bit value into ~%rax~.
+
+| mode          | example                         |
+|---------------+---------------------------------|
+| global Symbol | ~MOVQ x, %rax~                  |
+| immediate     | ~MOVQ $56, %rax~                |
+| register      | ~MOVQ %rbx, %rax~               |
+| indirect      | ~MOVQ (%rsp), %rax~             |
+| base-relative | ~MOVQ -8(%rbp), %rax~           |
+| complex       | ~MOVQ -16(%rbx, %rcx, 8), %rax~ |
+
+*** Load Effective Address
+
+Loads the address of a variable instead of its value. Useful for working with strings or arrays.
+
+| mode          | example                         |
+|---------------+---------------------------------|
+| global symbol | ~LEAQ x, %rax~                  |
+| base-relative | ~LEAQ -8(%rbp), %rax~           |
+| complex       | ~LEAQ -16(%rbx, %rcx, 8), %rax~ |
+
+** Basic Arithmetic
+
+*** ~ADD~ and ~SUB~
+
+Has two operands: a source and a destructive target.
+
+~ADDQ %rbx, %rax~ adds ~%rbx~ to ~%rax~ and places the result in ~%rax~, overwriting
+the previous value.
+
+#+begin_src
+  # === expression ===
+
+  # c = a + b + b
+
+  # === assembly ===
+
+  MOVQ    a, %rax
+  MOVQ    b, %rbx
+  ADDQ %rbx, %rax
+  ADDQ %rbx, %rax
+  MOVQ %rax, c
+#+end_src
+
+*** ~IMUL~
+
+Because multiplying two 64-bit integers results in a 128-bit integer, ~IMUL~ takes
+a single argument, multiplies it by the contents of ~%rax~ and then places the low
+64 bits of the result in ~%rax~ and then, implicitly, places the high 64 bits in ~%rdx~.
+
+#+begin_src
+  # === expression ===
+
+  # c = b * (b + a)
+
+  # === assembly ===
+
+  MOVQ     a, %rax
+  MOVQ     b, %rbx
+  ADDQ  %rbx, %rax
+  IMULQ %rbx
+  MOVQ  %rax, c
+#+end_src
+
+*** ~IDIV~
+
+Computes the same as ~IMUL~ but in reverse. The quotient is placed in ~%rax~ and the
+remainder in ~%rdx~. To set up division, ~%rax~ must be sign-extended into ~%rdx~.
+
+#+begin_src
+  MOVQ a, %rax    # set the low 64 bits of the dividend
+  CQO             # sign-extend %rax into %rdx
+  IDIVQ $5        # divide %rdx:%rax by 5, leaving the result in %rax
+#+end_src
+
+** Comparisons and Jumps
+
+#+begin_src
+# === infinite loop ===
+
+      MOVQ $0, %rax
+loop: INCQ %rax
+      JMP  loop
+#+end_src
+
+| instruction | meaning                  |
+|-------------+--------------------------|
+| ~JE~        | jump if equal            |
+| ~JNE~       | jump if not equal        |
+| ~JL~        | jump if less             |
+| ~JLE~       | jump if less or equal    |
+| ~JG~        | jump if greater          |
+| ~JGE~       | jump if greater or equal |
+
+#+begin_src
+# === count 0 through 5 ===
+
+      MOVQ  x, %rax
+loop: INCQ %rax
+      CMPQ $5, %rax
+      JLE  loop
+
+# === if x > 0 then y = 10 else y = 20 ===
+
+      MOVQ x, %rax
+      CMPQ $0, %rax
+      JLE  .L1
+.L0:
+      MOVQ $10, $rbx
+      JMP  .L2
+.L1:
+      MOVQ $20, $rbx
+.L2:
+      MOVQ %rbx, y
+#+end_src
+
+** The Stack
+
+The stack is an auxiliary data structure used primarily to record the function call
+history of the program along with local variables that do not fit in registers.
+By convention, the stack grows downward from high values to low values. The ~%rsp~
+register is known as the *stack pointer* and keeps track of the bottom-most item
+on the stack.
+
+*** Push, Pop, and Drop
+
+#+begin_src
+  # === push ===
+  SUBQ   $8, %rsp
+  MOVQ %rax, (%rsp)
+
+  # === pop ===
+  MOVQ (%rsp), %rax
+  ADDQ     $8, %rsp
+
+  # === drop ===
+  ADDQ $8, %rsp
+
+  # === dedicated 64-bit instructions ===
+  PUSHQ %rax
+  POPQ  %rax
+#+end_src
+
+** Function Calling Conventions
+
+Prior to the 64-bit architectures, a simple call stack convention was used: arguments were
+pushed onto the stack in reverse order, then the function was invoked with ~CALL~. The function
+returned its result in ~%eax~ and the caller then removed the arguments from the stack.
+
+64-bit code, however, uses a register-based calling convention: *System V ABI*.
+
+- The first six integer arguments (including pointers and other types that can be stored as
+  integers) are placed in registers ~%rdi, %rsi, %rdx, %rcx, %r8, and %r9~ in that order.
+
+- The first eight floating point arguments are placed in the registers ~%xmm0-%xmm7~ in
+  that order.
+
+- Arguments in excess of those registers are pushed onto the stack.
+
+- If the function takes a variable number of arguments (like ~printf~) then the ~%rax~ register must
+  be set to the number of floating point arguments.
+
+- The return value of the function is placed in ~%rax~.
+
+*** System V ABI Register Assignments
+
+| Register | Purpose       | Who Saves?   |
+|----------+---------------+--------------|
+| ~%rax~   | result        | not saved    |
+| ~%rbx~   | scratch       | callee saves |
+| ~%rcx~   | argument 4    | not saved    |
+| ~%rdx~   | argument 3    | not saved    |
+| ~%rsi~   | argument 2    | not saved    |
+| ~%rdi~   | argument 1    | not saved    |
+| ~%rbp~   | base pointer  | callee saves |
+| ~%rsp~   | stack pointer | callee saves |
+| ~%r8~    | argument 5    | not saved    |
+| ~%r9~    | argument 6    | not saved    |
+| ~%r10~   | scratch       | CALLER saves |
+| ~%r11~   | scratch       | CALLER saves |
+| ~%r12~   | scratch       | callee saves |
+| ~%r13~   | scratch       | callee saves |
+| ~%r14~   | scratch       | callee saves |
+| ~%r15~   | scratch       | callee saves |
+
+
+*** Defining Complex Functions
+
+A complex function must be able to invoke other functions and compute expressions of
+arbritrary complexity, and then return to the caller with the original state intact.
+
+The pointer ~%rsp~ points to the end of the stack where new data will be pushed. The base pointer
+~%rbp~ points to the start of the values used by the current function. The space between
+~%rbp~ and ~%rsp~ is called the *stack frame*.
+
+#+begin_src
+  # Three-argument function that uses two local variables.
+  .global func
+  func:
+      PUSHQ %rbp      # save the base pointer
+      MOVQ %rsp, %rbp # set new base pointer
+      PUSHQ %rdi      # save first argument on the stack
+      PUSHQ %rsi      # save second argument on the stack
+      PUSHQ %rdx      # save third argument on the stack
+      SUBQ $16, %rsp  # allocate two more local variables
+      PUSHQ %rbx      # save callee-saved registers
+      PUSHQ %r12
+      PUSHQ %r13
+      PUSHQ %r14
+      PUSHQ %r15
+
+      # === body of function goes here ===
+
+      POPQ %r15       # restore callee-saved registers
+      POPQ %r14
+      POPQ %r13
+      POPQ %r12
+      POPQ %rbx
+      MOVQ %rbp, %rsp # reset stack pointer
+      POPQ %rbp       # recover previous base pointer
+      RET             # return to the caller
+#+end_src
+
+The base pointer ~(%rbp)~ locates the start of the stack frame. Addresses relative to the base pointer
+refer to arguments and local variables within the function body.
+
+| Contents              | Address     | Pointers              |
+|-----------------------+-------------+-----------------------|
+| old ~%rip~ register   | ~8(%rbp)~   |                       |
+| old ~%rbp~ register   | ~(%rbp)~    | <- ~%rbp~ points here |
+| argument 0            | ~-8(%rbp)~  |                       |
+| argument 1            | ~-16(%rbp)~ |                       |
+| argument 2            | ~-24(%rbp)~ |                       |
+| local variable 0      | ~-32(%rbp)~ |                       |
+| local variable 1      | ~-40(%rbp)~ |                       |
+| saved register ~%rbx~ | ~-48(%rbp)~ |                       |
+| saved register ~%r12~ | ~-56(%rbp)~ |                       |
+| saved register ~%r13~ | ~-64(%rbp)~ |                       |
+| saved register ~%r14~ | ~-72(%rbp)~ |                       |
+| saved register ~%r15~ | ~-80(%rbp)~ | <- ~%rsp~ points here |
+
+** Function Call Example
+
+*** C Code
+
+#+begin_src c
+  int add(int x, int y) {
+      return x + y;
+  }
+
+  int sub(int x, int y) {
+      return x - y;
+  }
+
+  int main() {
+      int sum = add(1, sub(2, 3));
+      return 0;
+  }
+#+end_src
+
+*** Assembly
+
+#+begin_src
+  add:
+  ; === add(x, y) ===
+        PUSH    rbp
+        MOV     rbp, rsp
+        MOV     DWORD PTR [rbp-4], edi
+        MOV     DWORD PTR [rbp-8], esi
+  ; === x + y; ===
+        MOV     edx, DWORD PTR [rbp-4]
+        MOV     eax, DWORD PTR [rbp-8]
+        ADD     eax, edx
+  ; === return ===
+        POP     rbp
+        RET
+  sub:
+  ; === sub(x, y) ===
+        PUSH    rbp
+        MOV     rbp, rsp
+        MOV     DWORD PTR [rbp-4], edi
+        MOV     DWORD PTR [rbp-8], esi
+  ; === x - y ===
+        MOV     eax, DWORD PTR [rbp-4]
+        SUB     eax, DWORD PTR [rbp-8]
+  ; === return ===
+        POP     rbp
+        RET
+  main:
+  ; === main() ===
+        PUSH    rbp
+        MOV     rbp, rsp
+        SUB     rsp, 16
+  ; === sum = add(1, sub(2, 3)) ===
+        MOV     esi, 3
+        MOV     edi, 2
+        CALL    sub
+        MOV     esi, eax
+        MOV     edi, 1
+        CALL    add
+        MOV     DWORD PTR [rbp-4], eax
+  ; === return 0 ===
+        MOV     eax, 0
+  ; === exit ===
+        LEAVE
+        RET
+#+end_src
