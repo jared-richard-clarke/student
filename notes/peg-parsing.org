@@ -79,10 +79,10 @@ A ← a b / a and A ← a / a b
   input as possible, never backtracking.
 
 - and-predicate :: Expression *&e* invokes the sub-expression *e*, then succeeds if *e* succeeds and fails
-  if *e* fails, but in either case /never consumes any input/.
+  if *e* fails, but in either case *never consumes any input*.
 
 - not-predicate :: Expression *!e* succeeds if *e* fails and fails if *e* succeeds. In either case it
-  /never consumes any input/.
+  *never consumes any input*.
 
 ** PEG Syntax
 
