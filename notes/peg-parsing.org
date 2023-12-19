@@ -176,7 +176,7 @@ If *e*, *e_{1}*, and *e_{2}* are parsing expressions, then so is
 | *e+*                             | *e_{d} e_{d}\star*            |
 | *&e*                             |  *!(!e_{d})*                  |
 
-Where *e_d* is the desugaring of *e*.
+Where *e_{d}* is the desugaring of *e*.
 
 ** Inductive Definition  of a Grammar
 
