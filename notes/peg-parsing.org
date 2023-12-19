@@ -180,6 +180,9 @@ Where *e_{d}* is the desugaring of *e*.
 
 ** Inductive Definition  of a Grammar
 
+The expression set *E(G)* of *G* is the set containing the start expression *e_{S}*, the expressions
+used in all grammar rules, and all subexpressions of those expressions.
+
 For grammar *G = (V_{N} ,V_{T} , R, e_{S})*, *⇒G* is a relation between pairs *(e, x)* to *(n, o)*,
 where *e* is a parsing expression, *x ∈ V_{T}\star* is an input string to be recognized, *n ≥ 0*
 serves as a step counter, and *o ∈ V_{T}\star ∪ {f}* indicates the result of a recognition attempt.
