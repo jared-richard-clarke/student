@@ -9,8 +9,8 @@
 ** Assembly: X86-64
 
 *X86-64* is a generic name that covers both *AMD64* and *Intel64* architectures. It is a
-*CISC* — complex intruction set computing — where there are a very large number of instructions
-with many different sub-modes. Some of them are designed for very narrow tasks.
+*Complex Intruction Set Computer (CISC)*, where there are a very large number of instructions
+with many different sub-modes, some of them designed for very narrow tasks.
 
 ** Introductory Example
 
