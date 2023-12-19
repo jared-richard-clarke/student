@@ -146,17 +146,17 @@ variables.
 --- main(f(g())) --->
 
 main | main parameters   |
-     | old frame pointer |
+     | old base pointer  |
      | local variables   |
      | return address    |
      | ----------------- |
 f    | f parameters      |
-     | old frame pointer |
+     | old base pointer  |
      | local variables   |
      | return address    |
      | ----------------- |
 g    | g parameters      |
-     | old frame pointer | <- frame pointer
+     | old base pointer  | <- base pointer
      | local variables   | <- stack pointer
      V                   V
 #+end_example
@@ -195,7 +195,7 @@ CALL f
 |-------------------|
 | return address    |
 |-------------------|
-| old frame pointer | <- frame pointer
+| old base pointer  | <- base pointer
 |-------------------|
 |                   |
 | local variables   |
@@ -224,7 +224,7 @@ CALL f
 
 | return address    |
 |-------------------|
-| old frame pointer | <- frame pointer
+| old base pointer  | <- base pointer
 |-------------------|
 | 1st argument (10) |
 |-------------------|
