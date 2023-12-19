@@ -486,9 +486,9 @@ refer to arguments and local variables within the function body.
         MOV     edi, 1
         CALL    add
         MOV     DWORD PTR [rbp-4], eax
-  ; === return 0 ===
+  ; === assign 0 ===
         MOV     eax, 0
-  ; === exit ===
+  ; === return ===
         LEAVE
         RET
 #+end_src
