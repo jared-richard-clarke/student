@@ -256,12 +256,12 @@ of registers, the lifetime of a value can be easily identified by observing the 
 where a register is written and the last point where a register is used.
 
 #+begin_example
-1. LOAD a        -> %r1    live: %r1
-2. LOAD $10      -> %r2    live: %r1 %r2
-3. ITOF %r2      -> %r3    live: %r1 %r2 %r3
-4. FADD %r1, %r3 -> %r4    live: %r1 %r3 %r4
-5. FMUL %r4, %r4 -> %r5    live: %r4 %r5
-6. STOR %r5      -> x      live: %r5
+1. LOAD a        -> %r1    lifetime: %r1
+2. LOAD $10      -> %r2    lifetime: %r1 %r2
+3. ITOF %r2      -> %r3    lifetime: %r1 %r2 %r3
+4. FADD %r1, %r3 -> %r4    lifetime: %r1 %r3 %r4
+5. FMUL %r4, %r4 -> %r5    lifetime: %r4 %r5
+6. STOR %r5      -> x      lifetime: %r5
 #+end_example
 
 ** Stack Machine IR
