@@ -1,4 +1,4 @@
-* Assembly Language
+* Assembly Language: X86-64
 
 ** Sources
 
@@ -6,7 +6,7 @@
 |-------------------------------------------------+---------------|
 | *Introduction to Compilers and Language Design* | Douglas Thain |
 
-** Assembly: X86-64
+** Introduction
 
 *X86-64* is a generic name that covers both *AMD64* and *Intel64* architectures. It is a
 *Complex Intruction Set Computer (CISC)*, where there are a very large number of instructions
