@@ -1,8 +1,11 @@
 * Intermediate Representations
 
-*Introduction to Compilers and Language Design*, Douglas Thain
+** Sources
 
-*Intermediate Representation*, Wikipedia
+| source                                          | author        |
+|-------------------------------------------------+---------------|
+| *Introduction to Compilers and Language Design* | Douglas Thain |
+| *Intermediate Representation*                   | Wikipedia     |
 
 ** Introduction
 
