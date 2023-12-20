@@ -92,3 +92,21 @@ efficiency.
   associated data.
 
 - ~union~ :: Untagged union.
+
+** Dynamically Sized Types
+
+- Dynamically Sized Type (DST) :: Types without a statically known size or alignment. These types
+  can only exist behind a pointer — usually a wide pointer consisting of a pointer paired with
+  some extra data.
+
+- trait object :: Referred to as ~dyn Trait~, the original type is erased and replaced by a
+  pointer to a *virtual table (vtable)*, which allows runtime reflection.
+
+- slice :: A view into some contigous storage — usually an array or ~Vec~. A slice is a pointer
+  paired with the number of elements in the underlying data.
+
+** Zero Sized Types
+
+A *Zero Sized Type (ZST)* is a Rust type that occupies no space. ~Set<Key>~ is a wrapper around
+~Map<Key, ()>~. Calling the generic type ~Map<Key, Value>~ with the unit type for ~Value~ allows
+Rust to compile a hashset without the overhead of loading and discarding unused space for ~Value~.
