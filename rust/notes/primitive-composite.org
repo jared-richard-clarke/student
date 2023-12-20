@@ -1,0 +1,94 @@
+* Rust: Primitives and Composite Types
+
+** Sources
+
+| source                                      | author        |
+|---------------------------------------------+---------------|
+| *The Rust Standard Library*, Version 1.71.1 | rust-lang.org |
+| *The Rustonomicon*                          | rust-lang.org |
+
+** Primitive Types
+
+#+begin_quote
+"Primitives are usually aligned to their size, although this is platform-specific behavior."
+
+— Rustonomicon
+#+end_quote
+
+- ~array~ :: A fixed-size array, denoted ~[T; N]~, for the element type ~T~, and the
+  non-negative compile-time constant size, ~N~.
+  
+- ~bool~ :: The boolean type.
+  
+- ~char~ :: A Unicode scalar value, which is any Unicode code point other than a surrogate
+  code point. Always four bytes in size.
+  
+- ~f32~ :: A 32-bit floating point type (specifically, the *binary32* type defined in IEEE 754-2008).
+  
+- ~f64~ :: A 64-bit floating point type (specifically, the *binary64* type defined in IEEE 754-2008).
+  
+- ~fn~ :: Function pointers, like ~fn(usize) -> bool~.
+  
+- ~i8~ :: The 8-bit signed integer type.
+  
+- ~i16~ :: The 16-bit signed integer type.
+  
+- ~i32~ :: The 32-bit signed integer type.
+  
+- ~i64~ :: The 64-bit signed integer type.
+  
+- ~i128~ :: The 128-bit signed integer type.
+  
+- ~isize~ :: The pointer-sized signed integer type.
+  
+- ~pointer~ :: Raw, unsafe pointers, ~*const T~, and ~*mut T~.
+  
+- ~reference~ :: References, ~&T~ and ~&mut T~. A pointer that is assumed to be aligned, not
+  null, and pointing to memory containing a valid value of ~T~.
+  
+- ~slice~ :: A dynamically-sized view into a contiguous sequence, ~[T]~. Contiguous here
+  means that elements are laid out so that every element is the same distance from its
+  neighbors.
+  
+- ~str~ :: String slices.
+  
+- ~tuple~ :: A finite heterogeneous sequence, ~(T, U, ..)~.
+  
+- ~u8~ :: The 8-bit unsigned integer type.
+  
+- ~u16~ :: The 16-bit unsigned integer type.
+  
+- ~u32~ :: The 32-bit unsigned integer type.
+  
+- ~u64~ :: The 64-bit unsigned integer type.
+  
+- ~u128~ :: The 128-bit unsigned integer type.
+  
+- ~unit~ :: The ~()~ type, also called *unit*.
+  
+- ~usize~ :: The pointer-sized unsigned integer type.
+
+** Composite and Custom Types
+
+#+begin_quote
+"By default, composite structures have an alignment equal to the maximum of their field alignments.
+Rust will ... insert padding where necessary to ensure that all fields are properly aligned and that
+the overall type's size is a multiple of its alignment."
+
+— Rustonomicon
+#+end_quote
+
+Although data is stored within these types directly, their layout — with the exception of arrays —
+is unspecified. This omission allows the Rust compiler to reorder and realign data for improved
+efficiency.
+
+- ~struct~ :: Named product type.
+
+- ~tuple~ :: Unnamed product type.
+
+- ~array~ :: Homogeneous product type.
+
+- ~enum~ :: Named sum type or tagged union. An *enum* is *field-less* if none of its variants have
+  associated data.
+
+- ~union~ :: Untagged union.
