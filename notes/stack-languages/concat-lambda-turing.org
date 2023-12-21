@@ -2,16 +2,21 @@
 
 ** Sources
 
-| source                                    | author      |
-|-------------------------------------------+-------------|
-| *The Theory of Concatenative Combinators* | Brent Kirby |
-| *Turing Machine*                          | Wikipedia   |
+| source                                           | author      |
+|--------------------------------------------------+-------------|
+| *Concatenative Programming: From Ivory to Metal* | John Purdy  |
+| *The Theory of Concatenative Combinators*        | Brent Kirby |
+| *Turing Machine*                                 | Wikipedia   |
 
 ** Concatenative Programming
 
 - Concatenative Calculus ≈ Combinatory Logic + Continuation-Passing Style
 
-- Variables are the ~GOTOs~ of concatenative programming.
+- Variables are the ~GOTOs~ of data.
+
+- Syntax Monoid :: Concatenation and an empty program.
+
+- Semantic Monoid :: Function composition and identity function on stacks.  
 
 ** Lambda Calculus
 
@@ -36,7 +41,7 @@
   ∑ ⊆ Γ \ {b}                     ; Set of input symbols.
   q₀ ∈ Q, F ⊆ Q                   ; Initial state and final states.                              
   δ: (Q \ F) × Γ → Q × Γ × {L, R} ; State transition function where L = left-shift and R = right-shift.
-                                  ; If δ is not defined on the current state and symbol, the machine halts. 
+                                  ; If δ is not defined on the current state and symbol, the machine halts.
 
   Begin with initial state and tape.
   Repeat:
@@ -44,6 +49,17 @@
       - Apply transition function.
       - Modify tape.
       - Shift left or right.
+#+end_example
+
+** General Recursive Functions
+
+#+begin_example
+  f(x₁, x₂ ...) = n    ; Constant
+  S(x) = x + 1         ; Successor
+  Pᵢᵏ(x₁, x₂ ...) = xᵢ ; Projection
+  f ∘ g                ; Composition
+  p(f, g)              ; Primitive recursion
+  μ(f)                 ; Minimization
 #+end_example
 
 ** Combinatory Logic
@@ -76,11 +92,12 @@ argument within an environment. ~K~ selects 1 of 2 arguments.
 ** Concatenative Calculus
 
 #+begin_example
-  ; === Turing-complete combinators ===
   E ::= C     ; Combinator
     |   [E]   ; Quotation
     |   E₁ E₂ ; Composition
               ; (E₂ ∘ E₁)
+
+  ; === Turing-complete combinators ===
 
   [A] dup      = [A] [A]
   [A] [B] swap = [B] [A]
@@ -90,7 +107,7 @@ argument within an environment. ~K~ selects 1 of 2 arguments.
   [A] call     = A
 #+end_example
 
-*** Smaller Basis
+*** A Smaller Basis
 
 #+begin_example
   [B] [A] k    = A
