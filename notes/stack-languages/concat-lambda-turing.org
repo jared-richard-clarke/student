@@ -90,7 +90,7 @@ argument within an environment. ~K~ selects 1 of 2 arguments.
   [A] call     = A
 #+end_example
 
-** Smaller Basis
+*** Smaller Basis
 
 #+begin_example
   [B] [A] k    = A
