@@ -30,11 +30,11 @@
 #+begin_example
   M = (Q, Γ, b, ∑, δ, q₀, F)
 
-  Q                               ; Finite, non-empty set of states
-  Γ                               ; Finite, non-empty set of alphabet symbols
-  b ∈ Γ                           ; Blank symbol
-  ∑ ⊆ Γ \ {b}                     ; Set of input symbols
-  q₀ ∈ Q, F ⊆ Q                   ; Initial state and final states                              
+  Q                               ; Finite, non-empty set of states.
+  Γ                               ; Finite, non-empty set of alphabet symbols.
+  b ∈ Γ                           ; Blank symbol.
+  ∑ ⊆ Γ \ {b}                     ; Set of input symbols.
+  q₀ ∈ Q, F ⊆ Q                   ; Initial state and final states.                              
   δ: (Q \ F) × Γ → Q × Γ × {L, R} ; State transition function where L = left-shift and R = right-shift.
                                   ; If δ is not defined on the current state and symbol, the machine halts. 
 
