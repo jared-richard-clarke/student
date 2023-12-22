@@ -54,6 +54,22 @@ func TestNegate(t *testing.T) {
 	}
 }
 
+func TestSum(t *testing.T) {
+	expect := Vec2{3, 4}
+	result := Vec2{1, 2}.Sum(Vec2{1, 1}, Vec2{1, 1})
+	if expect != result {
+		t.Errorf("Test Sum Vec2 failed. Expected: %v, Got: %v", expect, result)
+	}
+}
+
+func TestDifference(t *testing.T) {
+	expect := Vec2{1, 2}
+	result := Vec2{3, 4}.Difference(Vec2{1, 1}, Vec2{1, 1})
+	if expect != result {
+		t.Errorf("Test Difference Vec2 failed. Expected: %v, Got: %v", expect, result)
+	}
+}
+
 func TestInvert(t *testing.T) {
 	expect := Vec2{0.5, 0.5}
 	result := Vec2{2, 2}.Invert()
