@@ -16,7 +16,7 @@
 
 - Syntactic Monoid :: Concatenation and an empty program.
 
-- Semantic Monoid :: Function composition and identity function on stacks.  
+- Semantic Monoid :: Function composition and identity function over stacks.  
 
 ** Lambda Calculus
 
