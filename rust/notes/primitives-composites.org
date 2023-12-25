@@ -99,8 +99,8 @@ efficiency.
   can only exist behind a pointer — usually a wide pointer consisting of a pointer paired with
   some extra data.
 
-- trait object :: Referred to as ~dyn Trait~, the original type is erased and replaced by a
-  pointer to a *virtual table (vtable)*, which allows runtime reflection.
+- trait object :: Referred to as ~Box<dyn Trait>~, a trait object points to both an instance of a type
+  implementing our specified trait and a table used to look up trait methods on that type at runtime. 
 
 - slice :: A view into some contigous storage — usually an array or ~Vec~. A slice is a pointer
   paired with the number of elements in the underlying data.
