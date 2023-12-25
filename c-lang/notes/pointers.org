@@ -193,12 +193,12 @@ Function pointers can be used to implement a form of polymorphic code.
 ** Pointer Decay
 
 #+begin_quote
-"In C when you pass an array to a function it decays to a pointer - meaning what you
+"In C when you pass an array to a function it decays to a pointer — meaning what you
 actually pass is just a pointer to the first element in the array. This means there
 is no way to know how many elements are in the Array you've been passed.
 
 The conventional way to deal with this is to also pass in the array size separately
-- or - as is done by C strings, use some special value to represent the end of the array.
+— or — as is done by C strings, use some special value to represent the end of the array.
 But both of these methods are famously prone to abuse. It is simply too unreliable
 to get programmers (or malicious users) to provide this extra information accurately."
 
