@@ -1,0 +1,206 @@
+* Pointers in C
+
+** Sources
+
+| source                       | author                             |
+|------------------------------+------------------------------------|
+| libcello.org                 | Daniel Holden                      |
+| *The C Programming Language* | Brian Kernighan and Dennis Ritchie |
+
+** Pointer Examples
+
+*** Example #1
+
+#+begin_src c
+  void main()
+  {
+      int *x, *y;
+
+      x = (int *)malloc(sizeof(int));
+      y = x;
+
+      ,*x = 7;
+      ,*y = 11;
+  }
+
+  // 1. x  y | 2. x  y | 3. x  y | 4. x  y | 5. x  y
+  //         |    |    |    | /  |    | /  |    | /
+  //         |    ?    |    ?    |    7    |   11
+#+end_src
+
+*** Example #2
+
+#+begin_src c
+  void main()
+  {
+      int *x, *y;
+
+      x = (int *)malloc(sizeof(int));
+      y = (int *)malloc(sizeof(int));
+
+      ,*x = 7;
+      ,*y = 11;
+
+      ,*x = *y;
+  }
+
+  // 1. x  y | 2. x  y | 3. x  y | 4. x  y | 5. x  y  | 6. x  y
+  //         |    |    |    |  | |    |  | |    |  |  |    |  |
+  //         |    ?    |    ?  ? |    7  ? |    7  11 |   11  11
+#+end_src
+
+*** Example #3
+
+C is a *call-by-value* language. Pointers allow functions to change variables within the code that called them.
+
+#+begin_src c
+  void swap(int *px, int *py)
+  {
+    int temp;
+
+      temp = *px;
+      ,*px = *py;
+      ,*py = temp;
+  }
+
+  void main()
+  {
+      swap(&a, &b);
+  }
+
+  // caller:
+  // b <-----+
+  // a <---+ |
+  //       | |
+  // swap: | |
+  // px *----+
+  // py *--+
+#+end_src
+
+** Arrays and Pointers
+
+The value of a pointer is not adjusted by the integer amount, but is adjusted by the amount multiplied by the size of
+the type to which the pointer refers in bytes. ~pointer + x~ is equivalent to ~pointer + (x * sizeof(*type))~
+
+#+begin_src c
+  // array indexing
+  array[i]
+  // pointer arithmetic
+  *(array+i)
+#+end_src
+
+** Strings and Pointers
+
+#+begin_src c
+  // statically declared string with implicit null
+  static const char *text = "Hello, World!";
+
+  // static array of 14 characters, including an explicit null
+  static const char text[] = {'H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!', '\0'};
+
+  // static array of strings
+  static const char *colors[] = {"red", "yellow", "green", "cyan", "blue", "magenta"};
+
+  // statically declared string with compile-time concatenation.
+  static char *text = "Over the wintry"
+                      "forest, winds howl in rage"
+                      "with no leaves to blow."
+#+end_src
+
+** Function Pointers
+
+Function pointers can be used to implement a form of polymorphic code.
+
+*** Non-Polymorphic
+
+#+begin_src c
+  #include <stdio.h>
+
+  int add(int x, int y)
+  {
+      return (x + y);
+  }
+  int sub(int x, int y)
+  {
+      return (x - y);
+  }
+   int mul(int x, int y)
+  {
+    return (x * y);
+  }
+  int div(int x, int y)
+  {
+      return (x / y);
+  }
+
+  int main()
+  {
+      int i, result;
+      int x = 10;
+      int y = 5;
+
+      printf("Enter the value between 0 and 3 : ");
+      scanf("%d",&i);
+ 
+      switch(i)
+      {
+          case 0:  result = add(x, y); break;
+          case 1:  result = sub(x, y); break;
+          case 2:  result = mul(x, y); break;
+          case 3:  result = div(x, y); break;
+      }
+  }
+#+end_src
+
+*** Polymorphic
+
+#+begin_src c
+  #include <stdio.h>
+
+  int add(int x, int y)
+  {
+      return (x + y);
+  }
+  int sub(int x, int y)
+  {
+      return (x - y);
+  }
+  int mul(int x, int y)
+  {
+      return (x * y);
+  }
+  int div(int x, int y)
+  {
+      return (x / y);
+  }
+
+  // compute is an array of function pointers
+  int (*compute[4])(int x, int y) = {add, sub, mul, div};
+
+  int main()
+  {
+      int i,result;
+      int x = 10;
+      int y = 5;
+
+      printf("Enter the value between 0 and 3 : ");
+      scanf("%d",&i);
+
+      result = compute[i](x, y);
+  }
+#+end_src
+
+** Pointer Decay
+
+#+begin_quote
+"In C when you pass an array to a function it decays to a pointer - meaning what you
+actually pass is just a pointer to the first element in the array. This means there
+is no way to know how many elements are in the Array you've been passed.
+
+The conventional way to deal with this is to also pass in the array size separately
+- or - as is done by C strings, use some special value to represent the end of the array.
+But both of these methods are famously prone to abuse. It is simply too unreliable
+to get programmers (or malicious users) to provide this extra information accurately."
+
+— Daniel Holden
+#+end_quote
