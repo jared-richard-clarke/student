@@ -2,7 +2,7 @@
 
 ** Stack Shuffling
 
-#+begin_src
+#+begin_src factor
   dup   ( x -- x x )
   drop  ( x -- )
   swap  ( x y -- y x )
@@ -20,7 +20,7 @@
 Factor provides a set of combinators that encapsulate common data-flow patterns.
 Their purpose is to reduce stack shuffling, also known as *stack noise*.
 
-#+begin_src
+#+begin_src factor
   ! cleave ( x sequence -- )
   6 { [ 1 + ] [ 2 - ] } cleave ! -> 7 4
 
@@ -33,7 +33,7 @@ Their purpose is to reduce stack shuffling, also known as *stack noise*.
 
 ** Data Flow vs. Application
 
-#+begin_src
+#+begin_src factor
   ! === applicative ===
   ! var x = ...;
   ! var y = foo(x);
