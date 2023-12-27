@@ -12,15 +12,15 @@
   #include "stack.h"
   #include <stdio.h>
 
-  // Stack library implemented as a linked list
+  // Stack library implemented using a linked list
 
-  struct stack_rec
+  struct stack
   {
       stack_data data;
-      struct stack_rec *next;
+      struct stack *next;
   };
 
-  struct stack_rec *top = NULL;
+  struct stack *top = NULL;
 
   void stack_init()
   // Initializes this library.
@@ -50,8 +50,8 @@
   void stack_push(stack_data d)
   // Pushes the value "d" onto the stack.
   {
-      struct stack_rec *temp;
-      temp = (struct stack_rec *)malloc(sizeof(struct stack_rec));
+      struct stack *temp;
+      temp = (struct stack *)malloc(sizeof(struct stack));
       temp->data = d;
       temp->next = top;
       top = temp;
@@ -62,7 +62,7 @@
   // and removes that element.
   // Returns garbage if the stack is empty.
   {
-      struct stack_rec *temp;
+      struct stack *temp;
       stack_data d = 0;
       if (top != NULL)
       {
