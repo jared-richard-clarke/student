@@ -1,0 +1,44 @@
+* The Factor Programming Language
+
+** Stack Shuffling
+
+#+begin_src
+  dup   ( x -- x x )
+  drop  ( x -- )
+  swap  ( x y -- y x )
+  over  ( x y -- x y x )
+  dupd  ( x y -- x x y )
+  swapd ( x y z -- y x z )
+  nip   ( x y -- y )
+  rot   ( x y z -- y z x )
+  -rot  ( x y z -- z x y )
+  2dup  ( x y -- x y x y )
+#+end_src
+
+** Data Flow Combinators
+
+Factor provides a set of combinators that encapsulate common data-flow patterns.
+Their purpose is to reduce stack shuffling, also known as *stack noise*.
+
+#+begin_src
+  ! cleave ( x sequence -- )
+  6 { [ 1 + ] [ 2 - ] } cleave ! -> 7 4
+
+  ! spread ( objects... sequence -- )
+  "X" "y" { [ >lower ] [ >upper ] } spread ! -> "x" "Y"
+
+  ! napply ( quote n -- )
+  "X" "Y" [ >lower ] 2 napply ! -> "x" "y"
+#+end_src
+
+** Data Flow vs. Application
+
+#+begin_src
+  ! === applicative ===
+  ! var x = ...;
+  ! var y = foo(x);
+  ! var z = bar(x);
+
+  ! === data flow ===
+  [ foo ] [ bar ] bi
+#+end_src
