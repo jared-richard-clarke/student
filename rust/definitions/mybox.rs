@@ -1,4 +1,6 @@
-// === MyBox as implemented in The Rust Programming Language, chapter 15.2 ===
+// === MyBox as implemented in The Rust Programming Language ===
+// The Rust Programming Language, chapter 15.2, by Steve Klabnik and Carol Nichols
+//
 // Side Note: MyBox does not store data on the heap like Box<T>.
 // This is an an example implementation of the Deref trait.
 
