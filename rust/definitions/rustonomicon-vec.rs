@@ -17,8 +17,8 @@ unsafe impl<T: Sync> Sync for RawVec<T> {}
 
 impl<T> RawVec<T> {
     fn new() -> Self {
-        // !0 is usize::MAX. This branch should be stripped at compile time.
-        let cap = if mem::size_of::<T>() == 0 { !0 } else { 0 };
+        // This branch should be stripped at compile time.
+        let cap = if mem::size_of::<T>() == 0 { usize::MAX } else { 0 };
 
         // `NonNull::dangling()` doubles as "unallocated" and "zero-sized allocation"
         RawVec {
