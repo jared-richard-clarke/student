@@ -50,7 +50,7 @@ impl Neg for Vec2 {
     }
 }
 
-impl Sum<Self> for Vec2 {
+impl Sum for Vec2 {
     fn sum<I>(iter: I) -> Self
     where
         I: Iterator<Item = Self>,
@@ -166,7 +166,7 @@ impl Neg for Vec3 {
     }
 }
 
-impl Sum<Self> for Vec3 {
+impl Sum for Vec3 {
     fn sum<I>(iter: I) -> Self
     where
         I: Iterator<Item = Self>,
