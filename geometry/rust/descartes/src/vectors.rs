@@ -55,7 +55,7 @@ impl Sum<Self> for Vec2 {
     where
         I: Iterator<Item = Self>,
     {
-        iter.fold(Vec2(0.0, 0.0), |accum, el| accum + el)
+        iter.fold(Vec2(0.0, 0.0), |accum, next| accum + next)
     }
 }
 
@@ -171,7 +171,7 @@ impl Sum<Self> for Vec3 {
     where
         I: Iterator<Item = Self>,
     {
-        iter.fold(Vec3(0.0, 0.0, 0.0), |accum, el| accum + el)
+        iter.fold(Vec3(0.0, 0.0, 0.0), |accum, next| accum + next)
     }
 }
 
