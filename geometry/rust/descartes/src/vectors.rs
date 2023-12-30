@@ -50,13 +50,22 @@ impl Neg for Vec2 {
     }
 }
 
+impl Sum<Self> for Vec2 {
+    fn sum<I>(iter: I) -> Self
+    where
+        I: Iterator<Item = Self>,
+    {
+        iter.fold(Vec2(0.0, 0.0), |accum, el| accum + el)
+    }
+}
+
 impl<'a> Sum<&'a Self> for Vec2 {
     fn sum<I>(iter: I) -> Self
     where
         I: Iterator<Item = &'a Self>,
     {
-        iter.fold(Vec2(0.0, 0.0), |accum, el| {
-            Self(accum.0 + el.0, accum.1 + el.1)
+        iter.fold(Vec2(0.0, 0.0), |Self(x1, y1), Self(x2, y2)| {
+            Self(x1 + x2, y1 + y2)
         })
     }
 }
@@ -157,13 +166,22 @@ impl Neg for Vec3 {
     }
 }
 
+impl Sum<Self> for Vec3 {
+    fn sum<I>(iter: I) -> Self
+    where
+        I: Iterator<Item = Self>,
+    {
+        iter.fold(Vec3(0.0, 0.0, 0.0), |accum, el| accum + el)
+    }
+}
+
 impl<'a> Sum<&'a Self> for Vec3 {
     fn sum<I>(iter: I) -> Self
     where
         I: Iterator<Item = &'a Self>,
     {
-        iter.fold(Vec3(0.0, 0.0, 0.0), |accum, el| {
-            Self(accum.0 + el.0, accum.1 + el.1, accum.2 + el.2)
+        iter.fold(Vec3(0.0, 0.0, 0.0), |Self(x1, y1, z1), Self(x2, y2, z2)| {
+            Self(x1 + x2, y1 + y2, z1 + z2)
         })
     }
 }
@@ -267,7 +285,15 @@ mod vec2_tests {
         assert_eq!(result, expect);
     }
     #[test]
-    fn test_sum() {
+    fn test_sum_owned() {
+        let expect = Vec2(6.0, 8.0);
+        let result: Vec2 = [Vec2(1.0, 2.0), Vec2(3.0, 4.0), Vec2(2.0, 2.0)]
+            .into_iter()
+            .sum();
+        assert_eq!(result, expect);
+    }
+    #[test]
+    fn test_sum_borrowed() {
         let array_expect = Vec2(6.0, 8.0);
         let array_result: Vec2 = [Vec2(1.0, 2.0), Vec2(3.0, 4.0), Vec2(2.0, 2.0)]
             .iter()
@@ -385,7 +411,7 @@ mod vec3_tests {
         assert_eq!(result, expect);
     }
     #[test]
-    fn test_sum() {
+    fn test_sum_borrowed() {
         let array_expect = Vec3(6.0, 8.0, 3.0);
         let array_result: Vec3 = [
             Vec3(1.0, 2.0, 1.0),
@@ -404,6 +430,18 @@ mod vec3_tests {
         .iter()
         .sum();
         assert_eq!(vector_result, vector_expect);
+    }
+    #[test]
+    fn test_sum_owned() {
+        let expect = Vec3(6.0, 8.0, 3.0);
+        let result: Vec3 = [
+            Vec3(1.0, 2.0, 1.0),
+            Vec3(3.0, 4.0, 1.0),
+            Vec3(2.0, 2.0, 1.0),
+        ]
+        .into_iter()
+        .sum();
+        assert_eq!(result, expect);
     }
     #[test]
     fn test_mag() {
