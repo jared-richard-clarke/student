@@ -142,7 +142,7 @@ and ~filter~.
 
 ** Infinity
 
-Iterators are lazily evaluated. They can be infinite in range.
+Because iterators are lazily evaluated, they can be infinite in range.
 
 #+begin_src rust
   let numbers = 0..;
