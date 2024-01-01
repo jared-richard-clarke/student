@@ -40,6 +40,13 @@ The Turing machine is a 4-tuple *(Q, Λ, q0, δ)* where
   that when the Turing machine is in state *q* and reads symbol *σ*, it writes the symbol *τ*,
   moves one cell in the direction *d*, and enters state *r*.
 
+*** Turing Computable
+
+If *Σ* and *Γ* are alphabets that do not contain *#* and *f* is a function from *Σ\star{}*
+and *Γ\star{}*, then *f* is Turing computable if there is a Turing machine *M = (Q, Λ, q0, δ)*
+such that *Σ ⊆ Λ* and *Γ ⊆ Λ* and for each string *w ∈ Σ\star{}*. When *M* is run with input
+*w*, it halts with output *f(w)*. *M* computes *f*.
+
 *** Alternative Definition
 
 #+begin_example
@@ -60,10 +67,3 @@ The Turing machine is a 4-tuple *(Q, Λ, q0, δ)* where
       - Modify tape.
       - Shift left or right.
 #+end_example
-
-*** Turing Computable
-
-If *Σ* and *Γ* are alphabets that do not contain *#* and *f* is a function from *Σ\star{}*
-and *Γ\star{}*, then *f* is Turing computable if there is a Turing machine *M = (Q, Λ, q0, δ)*
-such that *Σ ⊆ Λ* and *Γ ⊆ Λ* and for each string *w ∈ Σ\star{}*. When *M* is run with input
-*w*, it halts with output *f(w)*. *M* computes *f*.
