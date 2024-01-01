@@ -67,12 +67,12 @@ and *Y*      = *{ x | W(x) }*
 |                    | *A ∪ A = A*                             |
 | commutative laws   | *A ∩ B = B ∩ A*                         |
 |                    | *A ∪ B = B ∪ A*                         |
-| associative laws   | *A ∩ ( B ∩ C ) = ( A ∩ B ) ∩ C*         |
-|                    | *A ∪ ( B ∪ C ) = ( A ∪ B ) ∪ C*         |
-| distributive laws  | *A ∩ ( B ∪ C ) = ( A ∩ B ) ∪ ( A ∩ C )* |
-|                    | *A ∪ ( B ∩ C ) = ( A ∪ B ) ∩ ( A ∪ C )* |
-| DeMorgan's laws    | *( A ∩ B )^C = A^C ∪ B^C*               |
-|                    | *( A ∪ B )^C = A^C ∩ B^C*               |
+| associative laws   | *A ∩ (B ∩ C) = (A ∩ B) ∩ C*             |
+|                    | *A ∪ (B ∪ C) = (A ∪ B) ∪ C*             |
+| distributive laws  | *A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)*       |
+|                    | *A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)*       |
+| DeMorgan's laws    | *(A ∩ B)^C = A^C ∪ B^C*                 |
+|                    | *(A ∪ B)^C = A^C ∩ B^C*                 |
 
 *** Logic and Set Theory
 
