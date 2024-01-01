@@ -1,0 +1,47 @@
+* Machines
+
+** Sources
+
+| source                       | author                        |
+|------------------------------+-------------------------------|
+| *Foundations of Computation* | Carol Critchlow and David Eck |
+
+** Pushdown Automata
+
+A pushdown automaton *M* is specified by six components *M = (Q, Σ, Λ, q0, ∂, F)* where
+
+- *Q* is a finite set of states.
+
+- *Σ* is the input alphabet for *M*.
+
+- *Λ* is the stack alphabet for *M*.
+
+- *q0 ∈ Q* is the start of *M*.
+
+- *F ⊆ Q* is the set of final or accepting states in *M*.
+
+- *∂* is the set of transitions in *M*. *∂* can be taken to be a finite subset of the set
+  *(Q × (Σ ∪ {ε}) × Λ\star{}) × (Q × Λ\star{})*. An element *((q1, σ, x), (q2, y))* of *∂*
+  represents a transition from state *q1* to state *q2* in which *M* reads *σ* from its
+  input string, pops *x* from the stack, and pushes *y* onto the stack.
+
+** Turing Machine
+
+The Turing machine is a 4-tuple *(Q, Λ, q0, δ)* where
+
+- *Q* is a finite set of states, including the halt state *h*.
+
+- *Λ* is an alphabet which includes the blank symbol *#*.
+
+- *q0 ∈ Q* is the start state.
+
+- *δ : (Q \ {h}) × Λ → Λ × {L, R} × Q* is the transition function. *δ(q, σ) = (τ, d, r)* means
+  that when the Turing machine is in state *q* and reads symbol *σ*, it writes the symbol *τ*,
+  moves one cell in the direction *d*, and enters state *r*.
+
+*** Turing Computable
+
+If *Σ* and *Γ* are alphabets that do not contain *#* and *f* is a function from *Σ\star{}*
+and *Γ\star{}*, then *f* is Turing computable if there is a Turing machine *M = (Q, Λ, q0, δ)*
+such that *Σ ⊆ Λ* and *Γ ⊆ Λ* and for each string *w ∈ Σ\star{}*. When *M* is run with input
+*w*, it halts with output *f(w)*. *M* computes *f*.
