@@ -1,0 +1,328 @@
+* Logic and Proof
+
+** Sources
+
+| source                       | author                        |
+|------------------------------+-------------------------------|
+| *Foundations of Computation* | Carol Critchlow and David Eck |
+
+** Propositional Logic
+
+- proposition :: a statement that is either true or false.
+
+- propositional variable :: lowercase letters such as *p*, *q*, and *r* that are used to represent
+  propositions. Uppercase letters represent compound propositions.
+
+- logical operator :: an operator applied to one or more propositions to produce a new proposition.
+  Operators *∧*, *∨*, and *¬* are similar but not equivalent to *and*, *or*, and *not*. These
+  operators are referred to as *conjunction*, *disjunction*, and *negation* respectively.
+  *→*, *↔*, and *⊕* are the *conditional*, *biconditional*, and *exclusive-or* operators.
+
+  - *p ∧ q* is true when both *p* is true and *q* is true, and in no other case.
+
+  - *p ∨ q* reads "*p* or *q*, or both".
+
+  - *¬p* is true when *p* is false, and in no other case.
+
+  - *p → q* reads "*p* implies *q*". Equivalent to *¬p ∨ q*
+
+  - *p ↔ q* reads "*p* if and only if *q*". Equivalent to *(p → q) ∧ (q → p)*.
+
+  - *p ⊕ q* reads "*p* or *q*, but not both".
+
+*** *∧*, *∨*, and *¬*
+
+| p | q | p ∧ q | p ∨ q | ¬p |
+|---+---+-------+-------+----|
+| T | T | T     | T     | F  |
+| F | T | F     | T     | T  |
+| T | F | F     | T     | F  |
+| F | F | F     | F     | T  |
+
+*** *→*, *↔*, and *⊕*
+
+| p | q | p → q | p ↔ q | p ⊕ q |
+|---+---+-------+-------+-------|
+| F | F | T     | T     | F     |
+| F | T | T     | F     | T     |
+| T | F | F     | F     | T     |
+| T | T | T     | T     | F     |
+
+- compound proposition :: A proposition made up of simpler propositions and logical operators.
+
+- precedence :: *¬* > *∧* > *∨* > *→* > *↔* and *⊕* = *∨*.
+
+- truth table :: Shows the value of one or more compound propositions for each possible combination
+  of values of the propositional variables that they contain. In general, if there are *n* variables,
+  then there are *2_n* different ways to assign truth values to variables.
+
+- logically equivalent :: If two compound expressions have the same value, no matter what truth
+  values are assigned to the propositional variables that they contain. *P ≡ Q* reads
+  "*P* is logically equivalent to *Q*".
+
+- implication :: *p → q* reads "*p* implies *q*"
+
+- contrapositive :: *(¬q) → (¬p)* is equivalent to *p → q*.
+
+- converse :: *p → q* is *not* equivalent to *q → p*.
+
+- tautology :: a compound proposition that is true for all possible combinations of truth values
+  of the propositional variables that it contains.
+
+- contradiction :: a compound proposition that is false for all possible combinations of truth
+  values of the propositional variables that it contains.
+
+** Boolean Algebra
+
+*** Laws of Boolean Algebra
+
+These laws hold for any propositions *p*, *q*, and *r*. All laws, except the first, come in pairs.
+Each law in a pair can be obtained from the other by interchanging *∧* with *∨* and *T* with *F*.
+This is an example of a more general rule known as *duality*.
+
+Propositional variables in the laws of Boolean algebra can stand for any propositions, including
+compound propositions.
+
+| Law                           | Algebra                         |
+|-------------------------------+---------------------------------|
+| Double Negation               | ¬(¬p) ≡ p                       |
+|-------------------------------+---------------------------------|
+| Excluded Middle Contradiction | p ∨ ¬p ≡ T                      |
+|                               | p ∧ ¬p ≡ F                      |
+|-------------------------------+---------------------------------|
+| Identity Laws                 | T ∧ p ≡ p                       |
+|                               | F ∨ p ≡ p                       |
+|-------------------------------+---------------------------------|
+| Idempotent Laws               | p ∧ p ≡ p                       |
+|                               | p ∨ p ≡ p                       |
+|-------------------------------+---------------------------------|
+| Commutative Laws              | p ∧ q ≡ q ∧ p                   |
+|                               | p ∨ q ≡ q ∨ p                   |
+|-------------------------------+---------------------------------|
+| Associative Laws              | (p ∧ q) ∧ r ≡ p ∧ (q ∧ r)       |
+|                               | (p ∨ q) ∨ r ≡ p ∨ (q ∨ r)       |
+|-------------------------------+---------------------------------|
+| Distributive Laws             | p ∧ (q ∨ r) ≡ (p ∧ q) ∨ (p ∧ r) |
+|                               | p ∨ (q ∧ r) ≡ (p ∨ q) ∧ (p ∨ r) |
+|-------------------------------+---------------------------------|
+| DeMorgan's Laws               | ¬(p ∧ q) ≡ (¬p) ∨ (¬q)          |
+|                               | ¬(p ∨ q) ≡ (¬p) ∧ (¬q)          |
+
+** Predicates and Quantifiers
+
+- predicate :: Associates a proposition with each entity in some collection of entities.
+  This collection is called the *domain of discourse* for the predicate. If *P* is a predicate and
+  *a* is an entity in the domain of discourse for *P*, then *P(a)* denotes the proposition that is
+  associated with *a* by *P*. *P(a)* is the result of *applying* *P* to *a*.
+
+When predicates are applied to entities, the results are propositions and all the operators of
+propositional logic can be applied to them.
+
+Let *R(x)* = entity is red
+and *L(x, y)* = entity loves entity
+and *a*, *b*, *j*, *m* = entities
+
+| predicate            | translation                              |
+|----------------------+------------------------------------------|
+| *R(a) ∧ R(b)*        | *a* is red and *b* is red                |
+| *¬R(a)*              | *a* is not red                           |
+| *L(j, m) ∧ ¬L(m, j)* | *j* loves *m*, and *m* does not love *j* |
+| *L(j, m) → L(b, m)*  | if *j* loves *m* then *b* loves *m*      |
+| *R(a) ↔ L(j, j)*     | *a* is red if and only if *j* loves *j*  |
+
+- universal quantifier :: Symbol *∀* where *∀x(P(x))* is true if and only if *P(a)* is true
+  for every entity *a* in the domain of discourse for *P*. *x* is a variable, and *a* is an entity.
+
+- existential quantifier :: Symbol *∃* where *∃x(P(x))* is true if and only if there is at least
+  one entity, *a*, in the domain of discourse for *P* for which *P(a)* is true. *x* is a variable,
+  and *a* is an entity.
+
+- open statement :: an expression that contains one or more entity variables, which becomes a
+  proposition when entities are substituted for the variables. Open statement *P(x)* becomes
+  the proposition *P(a)*.
+
+- free variables :: The variables in an open statement.
+
+- bound variables :: *x* is free in *P(x)* and is bound in *∀x(P(x))* and *∃x(P(x))*.
+
+| predicate logic                      | translation                                               |
+|--------------------------------------+-----------------------------------------------------------|
+| *∀x(Red(x))*                         | Roses are red.                                            |
+| *∀x(Rose(x) → Red(x))*               | For any flower, if that flower is a rose, then it is red. |
+| *Rose(x) ∧ Red(x)*                   | A red rose.                                               |
+| *∀x((Rose(x) ∧ Red(x)) → Pretty(x))* | All red roses are pretty.                                 |
+| *∃x(O(jack, x) ∧ C(x))*              | Jack owns a computer.                                     |
+| *∀x(O(jack, x) → C(x))*              | Everything Jack owns is a computer.                       |
+| *∃y(O(jack, y) ∧ C(y))) → H(jack)*   | If Jack owns a computer, then he's happy.                 |
+| *∀x((∃y(O(x, y) ∧ C(y)) → H(x)))*    | Everyone who owns a computer is happy.                    |
+| *∀x(H(x))*                           | Everyone is happy.                                        |
+| *∀x(¬H(x))*                          | Everyone is unhappy.                                      |
+| *∃x(¬H(x))*                          | Someone is unhappy.                                       |
+
+*P* is a formula of predicate logic that contains one or more predicated variables. *P* is a
+*tautology* if it is true whenever all the predicate variables that it contains are replaced by
+actual predicates. *P* and *Q* are logically equivalent if *P ↔ Q* is a tautology, that is *P*
+and *Q* always have the same truth value when the predicate variables they contain are replaced
+by actual predicates.
+
+| number | rule                            |
+|--------+---------------------------------|
+|      1 | *¬(∀xP(x)) ≡ ∃x(¬P(x))*         |
+|      2 | *¬(∃xP(x)) ≡ ∀x(¬P (x))*        |
+|      3 | *∀x∀y(Q(x, y)) ≡ ∀y∀x(Q(x, y))* |
+|      4 | *∃x∃y(Q(x, y)) ≡ ∃y∃x(Q(x, y))* |
+
+Rules 1 and 2 are called *DeMorgan's Laws* for predicate logic.
+
+** Deduction
+
+If you believe that the premises are true, then the logic forces you to accept that the conclusion is true.
+
+- premise :: A proposition that is known to be true or that has been accepted to be true for the sake
+  of argument.
+
+- conclusion :: A proposition that can be deduced logically from the premises.
+
+- argument :: A claim that a certain conclusion follows from a given set of premises.
+
+- valid argument :: An argument in which the conclusion follows logically from the premises.
+
+- *∴*: Reads "therefore". Used to identify the conclusion of an argument.
+
+- formal proof :: A sequence of propositions such that the last proposition in the sequence is the
+  conclusion of the argument, and every proposition in the sequence is either a premise of the argument
+  or follows by logical deduction from propositions that precede it in the list.
+
+- Modus Ponens :: Latin for "method of affirming". *P* implies *Q*. *P* is true. Therefore *Q* must
+  also be true.
+
+- Modus Tollens :: Latin for "method of denying". *P* implies *Q*. *Q* is false. Therefore *P* must
+  also be false.
+
+- hypothesis :: An assumption that is made in a theorem that states conditions whose truth will
+  guarantee the conclusion of the theorem. To prove a theorem is to assume that the hypotheses are true,
+  and to show, under that assumption, that the conclusion must be true.
+
+If *p → q* is true and *p* is true, then *q* must be true.
+
+#+begin_example
+  p → q -+
+  p      |- premises
+  ----- -+
+  ∴ q   --- conclusion
+
+  -- equivalent ->
+
+  ((p → q) ∧ p) → q
+#+end_example
+
+If *P* and *Q* are formulas in either propositional or predicate logic, the notation *P ⇒ Q* means that
+*P → Q* is a tautology, meaning that in all cases where *P* is true, *Q* is also true. *Q* can be
+*logically deduced* from *P* or *P* *logically implies* *Q*.
+
+#+begin_example
+  === Law of Syllogism ===
+
+  p → q
+  q → r
+  -------
+  ∴ p → r
+
+  === some other rules ===
+
+  p ∨ q
+  ¬p
+  -----
+  ∴ q
+
+  p
+  q
+  -----
+  ∴ p ∧ q
+
+  p ∧ q
+  -----
+  ∴ p
+
+  p
+  -----
+  ∴ p ∨ q
+#+end_example
+
+** Proof
+
+#+begin_quote
+"Mathematics is unique in that it claims a certainty that is beyond all possible doubt or argument.
+A mathematical proof shows how some result follows by logic alone from a given set of assumptions,
+and once the result has been proven, it is as solid as the foundations of logic themselves. Of course,
+mathematics achieves this certainty by restricting itself to an artificial, mathematical world, and
+its application to the real world does not carry the same degree of certainty.
+
+...In this world, axioms are set up as signposts in a void, and then structures of logic are built
+around them. For example, instead of talking about the set theory that describes the real world, we
+have a set theory, based on a given set of axioms. That set theory is necessarily incomplete, and it
+might differ from other set theories which are based on other sets of axioms."
+
+— Carol Critchlow and David Eck
+#+end_quote
+
+*** Proposition
+
+*∀n(P(n) → Q(n))* where *P(n)* is "*n* is even" and *Q(n)* is "*n^2* is even."
+
+#+begin_example
+n is even
+-------------
+∴ n^2 is even
+#+end_example
+
+*** Proof
+
+Let *n* be an arbitrary integer.
+
+| 1. *n* is even                       | premise                  |
+| 2. *n = 2k* for some integer *k*     | definition of even       |
+| 3. *n^2 = 4k^2* for that integer *k* | basic algebra            |
+| 4. *n^2 = 2(2k^2)* for that *k*      | basic algebra            |
+| 5. *n^2 = 2k'* for some integer *k'* | substituting *k' = 2k^2* |
+| 6. *n^2* is even                     | definition of even       |
+
+** Proof by Contradiction
+
+When the laws of logic are applied to true statements, the statements that are derived will also be
+true. If we derive a false statement by applying the rules of logic to a set of assumptions, then at
+least one of those assumptions must be false.
+
+*¬p* is false proves that *p* is true. If *p* is false, then some statement that is known to be false
+could be proved true. Generally, the false statement that is derived in a proof by contradiction is of
+the form *q ∧ ¬q*. This statement is a contradiction in the sense that it is false no matter what is
+the value of *q*.
+
+** Mathematical Induction
+
+Let *P* be a one-place predicate whose domain of discourse includes all natural numbers. Suppose *P(0)*
+is true. Suppose *P(0) → P(1)*, *P(1) → P(2)*, *P(2) → *P(3)*, and so on are also true. We can then
+conclude that *P(n)* is true for all natural numbers *n*. The whole point of induction is to avoid an
+infinite amount of work. Instead we prove *∀k(P(k) → P(k + 1))* where the domain of discourse for the
+predicate *P* is natural numbers.
+
+If we can prove the statement *P(0) ∧ (∀k(P(k) → P(k + 1))*, then we can deduce that *∀nP(n)* with
+natural numbers again as the domain of discourse. The list *0, 1, 2, 3, ...*, if extended long enough,
+will eventually include any given natural number.
+
+#+begin_example
+            case
+  +-------------------------+
+  base        inductive
+  +--+   +------------------+
+  P(0) ∧ (∀k(P(k) → P(k + 1))
+#+end_example
+
+#+begin_quote
+"Mathematical induction can be applied in many situations: you can prove things about strings of
+characters by doing induction on the length of the string, things about graphs by doing induction
+on the number of nodes in the graph, things about grammars by doing induction on the number of
+productions in the grammar, and so on."
+
+— Carol Critchlow and David Eck
+#+end_quote
