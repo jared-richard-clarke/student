@@ -16,59 +16,63 @@ and *a* = entity
 
 *** Definitions
 
-| name            | notation    | definition                                                   |
-|-----------------+-------------+--------------------------------------------------------------|
-| binary relation | *a ∈ A*     | Object *a* is a member of set *A*.                           |
-| binary relation | *a ∉ A*     | *¬(a ∈ A)*, *a* is not a member of *A*                       |
-| empty set       | *Ø* or *{}* | The empty set, which contains no elements.                   |
-| subset          | *A ⊆ B*     | *A* is a subset of *B*, *∀x(x ∈ A → x ∈ B)*                  |
-| proper subset   | *A ⊂ B*     | *A* is a subset of *B* but not equal to *B*, *A ⊆ B ∧ A ≠ B* |
-| superset        | *A ⊇ B*     | *A* is a superset of *B*.                                    |
-| proper superset | *A ⊃ B*     | *A* is a superset of *B* but not equal to *B*.               |
-| equality        | *A = B*     | *A* and *B* have the same members, *A ⊆ B ∧ B ⊆ A*           |
-| union           | *A ∪ B*     | Members of *A* and *B* or both, *{x ¦ x ∈ A ∨ x ∈ B}*        |
-| intersection    | *A ∩ B*     | Only members of both *A* and *B*, *{x ¦ x ∈ A ∧ x ∈ B}*      |
-| difference      | *A \ B*     | Members of *A* but not *B*,  *{x ¦ x ∈ A ∧ x ∉ B}*           |
+| name            | notation    | definition                                                      |
+|-----------------+-------------+-----------------------------------------------------------------|
+| binary relation | *a ∈ A*     | Object *a* is a member of set *A*.                              |
+| binary relation | *a ∉ A*     | *¬(a ∈ A)*, *a* is not a member of *A*                          |
+| empty set       | *Ø* or *{}* | The empty set, which contains no elements.                      |
+| subset          | *A ⊆ B*     | *A* is a subset of *B*, *∀x(x ∈ A → x ∈ B)*                     |
+| proper subset   | *A ⊂ B*     | *A* is a subset of *B* but not equal to *B*, *A ⊆ B ∧ A ≠ B*    |
+| superset        | *A ⊇ B*     | *A* is a superset of *B*.                                       |
+| proper superset | *A ⊃ B*     | *A* is a superset of *B* but not equal to *B*.                  |
+| equality        | *A = B*     | *A* and *B* have the same members, *A ⊆ B ∧ B ⊆ A*              |
+| union           | *A ∪ B*     | Members of *A* and *B* or both, *{ x \vert{} x ∈ A ∨ x ∈ B }*   |
+| intersection    | *A ∩ B*     | Only members of both *A* and *B*, *{ x \vert{} x ∈ A ∧ x ∈ B }* |
+| difference      | *A \ B*     | Members of *A* but not *B*,  *{ x \vert{} x ∈ A ∧ x ∉ B }*      |
 
 *** Examples
 
 Let *L(x)*   = *x* is lucky
-and *W(x)*   = *x* is wise
-and *domain* = people
-and *X*      = *{x | L(x)}*
-and *Y*      = *{x | W(x)}*
 
-| set                          | translation                        |
-|------------------------------+------------------------------------|
-| *X ∪ Y = {x ¦ L(x) ∨  W(x)}* | People who are lucky or wise.      |
-| *X ∩ Y = {x ¦ L(x) ∧  W(x)}* | People who are lucky and wise.     |
-| *X \ Y = {x ¦ L(x) ∧ ¬W(x)}* | People who are not lucky and wise. |
-| *Y \ X = {x ¦ W(x) ∧ ¬L(x)}* | People who are wise but not lucky. |
+and *W(x)*   = *x* is wise
+
+and *domain* = people
+
+and *X*      = *{ x | L(x) }*
+
+and *Y*      = *{ x | W(x) }*
+
+| set                                  | translation                        |
+|--------------------------------------+------------------------------------|
+| *X ∪ Y = { x \vert{} L(x) ∨  W(x) }* | People who are lucky or wise.      |
+| *X ∩ Y = { x \vert{} L(x) ∧  W(x) }* | People who are lucky and wise.     |
+| *X \ Y = { x \vert{} L(x) ∧ ¬W(x) }* | People who are not lucky and wise. |
+| *Y \ X = { x \vert{} W(x) ∧ ¬L(x) }* | People who are wise but not lucky. |
 
 ** The Boolean Algebra of Sets
 
 - universal set :: Some set that is large enough to contain all the sets under discussion as subsets.
-  Given a universal set *U* and any subset *A* of *U*, *{x ∈ U | ¬(x ∈ A)}*.
+  Given a universal set *U* and any subset *A* of *U*, *{ x ∈ U | ¬(x ∈ A) }*.
 
-- complement :: *A^C = {x ∈ U | x ∉ A}*
+- complement :: *A^C = { x ∈ U | x ∉ A }*
 
-| rule               | algebra                           |
-|--------------------+-----------------------------------|
-| double complement  | *(A^C)^C = A*                     |
-| miscellaneous laws | *A ∪ A^C = U*                     |
-|                    | *A ∩ A^C = Ø*                     |
-|                    | *Ø ∪ A^C = A*                     |
-|                    | *Ø ∩ A^C = Ø*                     |
-| idempotent laws    | *A ∩ A = A*                       |
-|                    | *A ∪ A = A*                       |
-| commutative laws   | *A ∩ B = B ∩ A*                   |
-|                    | *A ∪ B = B ∪ A*                   |
-| associative laws   | *A ∩ (B ∩ C) = (A ∩ B) ∩ C*       |
-|                    | *A ∪ (B ∪ C) = (A ∪ B) ∪ C*       |
-| distributive laws  | *A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)* |
-|                    | *A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)* |
-| DeMorgan's laws    | *(A ∩ B)^C* = *A^C ∪ B^C*         |
-|                    | *(A ∪ B)^C = A^C ∩ B^C*           |
+| rule               | algebra                                 |
+|--------------------+-----------------------------------------|
+| double complement  | *(A^C)^C = A*                           |
+| miscellaneous laws | *A ∪ A^C = U*                           |
+|                    | *A ∩ A^C = Ø*                           |
+|                    | *Ø ∪ A^C = A*                           |
+|                    | *Ø ∩ A^C = Ø*                           |
+| idempotent laws    | *A ∩ A = A*                             |
+|                    | *A ∪ A = A*                             |
+| commutative laws   | *A ∩ B = B ∩ A*                         |
+|                    | *A ∪ B = B ∪ A*                         |
+| associative laws   | *A ∩ ( B ∩ C ) = ( A ∩ B ) ∩ C*         |
+|                    | *A ∪ ( B ∪ C ) = ( A ∪ B ) ∪ C*         |
+| distributive laws  | *A ∩ ( B ∪ C ) = ( A ∩ B ) ∪ ( A ∩ C )* |
+|                    | *A ∪ ( B ∩ C ) = ( A ∪ B ) ∩ ( A ∪ C )* |
+| DeMorgan's laws    | *( A ∩ B )^C = A^C ∪ B^C*               |
+|                    | *( A ∪ B )^C = A^C ∩ B^C*               |
 
 *** Logic and Set Theory
 
@@ -102,7 +106,7 @@ If *(a, b)* is that ordered pair, then *b* is called the value of the function a
 *f(a)*. If *b = f(a)*, then we also say that the function *f* maps *a* to *b*. The fact that *f* is
 a function from *A* to *B* is indicated by the notation *f: A → B*.
 
-*A* is the *domain* and *B* is the *range*. The *image* of *f* is the set *{f(a) | a ∈ A}*.
+*A* is the *domain* and *B* is the *range*. The *image* of *f* is the set *{ f(a) | a ∈ A }*.
 
 A formula by itself is not a function, although it might well specify a function between two given
 sets of numbers. Functions can apply to all kinds of sets, not just sets of numbers.
@@ -120,12 +124,12 @@ the *value* of the function *f* at *a*.
 - composition :: If *f: A → B* and *g: B → C* are functions, then *g ◦ f: A → C* is the function that
   is defined by *(g ◦ f)(a) = g(f(a))* for each *a ∈ A*.
 
-- cross/cartesian product :: *A × B = {(a, b) | a ∈ A and b ∈ B}*
+- cross/cartesian product :: *A × B = { (a, b) | a ∈ A and b ∈ B }*
 
 - tuple :: The general term for the member of a cross product. More specifically called
   an *ordered n-tuple*.
 
-- graph :: The graph of function *f: A → B* is the set *{(a, b) ∈ A × B | a ∈ A and b = f(a)}*
+- graph :: The graph of function *f: A → B* is the set *{ (a, b) ∈ A × B | a ∈ A and b = f(a) }*
 
 - first-class objects :: A set, ordered pair, or function that can be used just like any other entity.
 
@@ -149,8 +153,8 @@ add: integer × integer → integer
 A set *A* is said to be *finite* if there is a one-to-one correspondence between *A* and *N_n* for
 some natural number *n*. We then say that *n* is the *cardinality* of *A*. The notation *|A|* is
 used to indicate the cardinality of *A*. That is, if *A* is a finite set, then *|A|* is the natural
-number *n* such that there is a one-to-one correspondence between *A* and *N_n*. A set *B* is
-*infinite* if for every *n ∈ N*, there is no one-to-one correspondence between *B* and *N_n*.
+number *n* such that there is a one-to-one correspondence between *A* and *N_{n}*. A set *B* is
+*infinite* if for every *n ∈ N*, there is no one-to-one correspondence between *B* and *N_{n}*.
 
 ** Relations
 
