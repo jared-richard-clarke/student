@@ -1,0 +1,153 @@
+* Rust Iterators
+
+** Sources
+
+| source                      | author        |
+|-----------------------------+---------------|
+| *The Rust Standard Library* | rust-lang.org |
+
+** Iterator Core
+
+- iterator :: A stateful cursor into a collection.
+
+#+begin_src rust
+  trait Iterator {
+      type Item;
+      fn next(&mut self) -> Option<Self::Item>;
+  }
+#+end_src
+
+An iterator has a method, ~next~, which when called, returns an ~Option<Item>~.
+Calling ~next~ will return ~Some(Item)~ as long as there are elements, and once
+they’ve all been exhausted, will return ~None~ to indicate that iteration is finished.
+
+* Three Forms of Iteration
+
+1. ~iter()~, which iterates over ~&T~. ( immutable borrow )
+2. ~iter_mut()~, which iterates over ~&mut T~. ( mutable borrow )
+3. ~into_iter()~, which iterates over ~T~. ( own )
+
+** Implementing an Iterator
+
+Creating an iterator involves two steps: creating a ~struct~ to hold the iterator’s state, 
+and then implementing the ~next~ method of the ~Iterator~ trait for that ~struct~.
+There is a corresponding ~struct~ for each iterator and iterator adapter in the
+~std::iter~ module.
+
+#+begin_src rust
+  use std::iter::Iterator
+
+  struct Counter {
+      count: usize,
+  }
+
+  impl Counter {
+      fn new() -> Counter {
+          Counter { count: 0 }
+      }
+  }
+
+  impl Iterator for Counter {
+      type Item = usize;
+
+      fn next(&mut self) -> Option<Self::Item> {
+          if self.count <= 3 {
+              self.count += 1;
+              Some(self.count)
+          } else {
+              None
+          }
+      }
+  }
+
+  let mut count = Counter::new();
+
+  assert_eq!(counter.next(), Some(1));
+  assert_eq!(counter.next(), Some(2));
+  assert_eq!(counter.next(), Some(3));
+  assert_eq!(counter.next(), None);
+#+end_src
+
+** ~for~ loops and ~IntoIterator~
+
+Rust's ~for~ loop is syntactic sugar for producing and using iterators. In order to use this
+syntax, a data structure must implement the method ~into_iter~ of the ~IntoIterator~ trait.
+
+#+begin_src rust
+  let values = vec![1, 2, 3, 4, 5, 6, 7];
+
+  for x in values {
+      println!("{x}");
+  }
+
+  // - compiles into ->
+
+  let values = vec![1, 2, 3, 4, 5, 6, 7];
+  {
+      let result = match IntoIterator::into_iter(values) {
+          mut iter => loop {
+              let next;
+              match iter.next() {
+                  Some(val) => next = val,
+                  None => break,
+              };
+              let x = next;
+              let () = { println!("{x}"); };
+          },
+      };
+      result
+  }
+#+end_src
+
+The standard library implements the ~IntoIterator~ trait for all implementations of ~Iterator~.
+This means ~Counter::new()~ can be used in a ~for~ loop as it is.
+
+#+begin_src rust
+  trait IntoIterator {
+      type Item;
+      type IntoIter: Iterator<Item = Self::Item>;
+
+      fn into_iter(self) -> Self::IntoIter;
+  }
+
+  impl<I: Iterator> IntoIterator for I {
+      type Item = I::Item;
+      type IntoIter = I;
+
+      fn into_iter(self) -> I {
+          self
+      }
+  }
+#+end_src
+
+** Adapters
+
+Functions which take an ~Iterator~ and return another ~Iterator~, such as ~map~, ~take~,
+and ~filter~.
+
+#+begin_src rust
+  let mut count = Counter::new().map(|x| x * 2);
+
+  assert_eq!(count.next(), Some(2));
+  assert_eq!(count.next(), Some(4));
+  assert_eq!(count.next(), Some(6));
+  assert_eq!(count.next(), None);
+
+  let mut counter = Count::new().map(|x| x * 2).filter(|x| x < 6);
+
+  assert_eq!(count.next(), Some(2));
+  assert_eq!(count.next(), Some(4));
+  assert_eq!(count.next(), None);
+#+end_src
+
+** Infinity
+
+Iterators are lazily evaluated. They can be infinite in range.
+
+#+begin_src rust
+  let numbers = 0..;
+
+  for number in numbers.take(7) {
+      println!("{number}");
+  }
+#+end_src
