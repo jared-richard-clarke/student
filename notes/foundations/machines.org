@@ -2,9 +2,10 @@
 
 ** Sources
 
-| source                       | author                        |
-|------------------------------+-------------------------------|
-| *Foundations of Computation* | Carol Critchlow and David Eck |
+| source                                           | author                        |
+|--------------------------------------------------+-------------------------------|
+| *Foundations of Computation*                     | Carol Critchlow and David Eck |
+| *Concatenative Programming: From Ivory to Metal* | John Purdy                    |
 
 ** Pushdown Automata
 
@@ -38,6 +39,27 @@ The Turing machine is a 4-tuple *(Q, Λ, q0, δ)* where
 - *δ : (Q \ {h}) × Λ → Λ × {L, R} × Q* is the transition function. *δ(q, σ) = (τ, d, r)* means
   that when the Turing machine is in state *q* and reads symbol *σ*, it writes the symbol *τ*,
   moves one cell in the direction *d*, and enters state *r*.
+
+*** Alternative Definition
+
+#+begin_example
+  M = (Q, Γ, b, ∑, δ, q₀, F)
+
+  Q                               ; Finite, non-empty set of states.
+  Γ                               ; Finite, non-empty set of alphabet symbols.
+  b ∈ Γ                           ; Blank symbol.
+  ∑ ⊆ Γ \ {b}                     ; Set of input symbols.
+  q₀ ∈ Q, F ⊆ Q                   ; Initial state and final states.                              
+  δ: (Q \ F) × Γ → Q × Γ × {L, R} ; State transition function where L = left-shift and R = right-shift.
+                                  ; If δ is not defined on the current state and symbol, the machine halts.
+
+  Begin with initial state and tape.
+  Repeat:
+      - If final state, then halt.
+      - Apply transition function.
+      - Modify tape.
+      - Shift left or right.
+#+end_example
 
 *** Turing Computable
 
