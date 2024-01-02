@@ -280,12 +280,12 @@ n is even
 
 Let *n* be an arbitrary integer.
 
-| 1. *n* is even                       | premise                     |
-| 2. *n = 2k* for some integer *k*     | definition of even          |
-| 3. *n^2 = 4k^2* for that integer *k* | basic algebra               |
-| 4. *n^2 = 2(2k^2)* for that *k*      | basic algebra               |
-| 5. *n^2 = 2j* for some integer *j*   | substituting *j* for *2k^2* |
-| 6. *n^2* is even                     | definition of even          |
+| 1 | *n* is even                       | premise                     |
+| 2 | *n = 2k* for some integer *k*     | definition of even          |
+| 3 | *n^2 = 4k^2* for that integer *k* | basic algebra               |
+| 4 | *n^2 = 2(2k^2)* for that *k*      | basic algebra               |
+| 5 | *n^2 = 2j* for some integer *j*   | substituting *j* for *2k^2* |
+| 6 | *n^2* is even                     | definition of even          |
 
 ** Proof by Contradiction
 
