@@ -22,8 +22,8 @@ For example, *Σ = {0, 1}* is an alphabet, and *001*, *1*, and *11* are all stri
 - length :: The number of symbols in a string. Denoted by *|x|* where *x* is a string.
 
 - concatenation :: The combination of two strings, where *x* and *y* become *x • y* or *xy*.
-  Associative but not commutative. *(xy)z = x(yz)* for all strings *x*, *y*, and *z*, but
-  *xy ≠ yx* for all strings *x* and *y*.
+  Associative: *(xy)z = x(yz)* for all strings *x*, *y*, and *z*. Non-commutative: *xy ≠ yx*
+  for all strings *x* and *y*.
 
 - reversal :: If *x = a_{1} a_{2} ... a_{n}* then *x^R = a_{n} ... a_{2} a_{1}*.
 
