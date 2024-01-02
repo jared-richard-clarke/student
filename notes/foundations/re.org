@@ -15,7 +15,7 @@
 
 - string :: A finite sequence of symbols from an alphabet. Called a *string over an alphabet*.
 
-For example, *Σ = {0, 1}* is an alphabet, and *001*, *1*, and *11* are all strings over *Σ*.
+  - For example, *Σ = {0, 1}* is an alphabet, and *001*, *1*, and *11* are all strings over *Σ*.
 
 *** Operations on Strings
 
