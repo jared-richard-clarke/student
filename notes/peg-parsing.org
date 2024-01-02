@@ -192,37 +192,37 @@ the reference to *G* is implied.
 
 - Empty :: *(ε, x) ⇒ (1, ε)* for any *x ∈ V_{T}\star*.
 
-- Terminal (success case) :: *(a, ax) ⇒ (1, a)* if *a ∈ V_{T}, x ∈ V_{T}\star*.
+- Terminal ( success case ) :: *(a, ax) ⇒ (1, a)* if *a ∈ V_{T}, x ∈ V_{T}\star*.
 
-- Terminal (failure case) :: *(a, bx) ⇒ (1, f)* if *a ≠ b*, and *(a, ε) ⇒ (1, f)*.
+- Terminal ( failure case ) :: *(a, bx) ⇒ (1, f)* if *a ≠ b*, and *(a, ε) ⇒ (1, f)*.
 
 - Non-Terminal :: *(A, x) ⇒ (n + 1, o)* if *A ← e ∈ R* and *(e, x) ⇒ (n, o)*.
 
-- Sequence (success case) :: If *(e_{1}, x_{1}x_{2}y) ⇒ (n_{1}, x_{1})* and *(e_{2}, x_{2}y) ⇒ (n_{2}, x_{2})*,
+- Sequence ( success case ) :: If *(e_{1}, x_{1}x_{2}y) ⇒ (n_{1}, x_{1})* and *(e_{2}, x_{2}y) ⇒ (n_{2}, x_{2})*,
   then *(e_{1}e_{2}, x_{1}x_{2}y) ⇒ (n_{1} + n_{2} + 1, x_{1}x_{2})*. Expressions *e_{1}* and *e_{2}* are matched
   in sequence, and if each succeeds and consumes input portions *x_{1}* and *x_{2}* respectively,
   then the sequence succeeds and consumes the string *x_{1}x_{2}*.
 
-- Sequence (failure case 1) :: If *(e_{1}, x) ⇒ (n_{1}, f)*, then *(e_{1}e_{2}, x) ⇒ (n_{1} + 1, f)*.
+- Sequence ( failure case 1 ) :: If *(e_{1}, x) ⇒ (n_{1}, f)*, then *(e_{1}e_{2}, x) ⇒ (n_{1} + 1, f)*.
   If *e_{1}* is tested and fails, then the sequence *e_{1}e_{2}* fails without attempting *e_{2}*.
 
-- Sequence (failure case 2) :: If *(e_{1}, x_{1}y) ⇒ (n_{1}, x_{1})* and *(e_{2}, y) ⇒ (n_{2}, f)*, then
+- Sequence ( failure case 2 ) :: If *(e_{1}, x_{1}y) ⇒ (n_{1}, x_{1})* and *(e_{2}, y) ⇒ (n_{2}, f)*, then
   *(e_{1}e_{2}, x_{1}y) ⇒ (n_{1} + n_{2} + 1, f)*. If *e_{1}* succeeds but *e_{2}* fails, then the expression fails.
 
-- Alternation (case 1) :: If *(e_{1}, xy) ⇒ (n_{1}, x)*, then *(e_{1}/e_{2}, xy) ⇒ (n_{1} + 1, x)*.
+- Alternation ( case 1 ) :: If *(e_{1}, xy) ⇒ (n_{1}, x)*, then *(e_{1}/e_{2}, xy) ⇒ (n_{1} + 1, x)*.
   Alternative *e_{1}* is first tested, and if it succeeds, the expression *e_{1}/e_{2}* succeeds
   without testing *e_{2}*.
 
-- Alternation (case 2) :: If *(e_{1}, x) ⇒ (n_{1}, f)* and *(e_{2}, x) ⇒ (n_{2}, o)*, then
+- Alternation ( case 2 ) :: If *(e_{1}, x) ⇒ (n_{1}, f)* and *(e_{2}, x) ⇒ (n_{2}, o)*, then
   *(e_{1}/e_{2}, x) ⇒ (n_{1} + n_{2} + 1, o)*. If *e_{1}* fails, then *e_{2}* is tested and its result is used instead.
 
-- Zero-or-more repetitions (repetition case) :: If *(e, x_{1}x_{2}y) ⇒ (n_{1}, x_{1})* and
+- Zero-or-more repetitions ( repetition case ) :: If *(e, x_{1}x_{2}y) ⇒ (n_{1}, x_{1})* and
   *(e\star{}, x_{2}y) ⇒ (n_{2}, x_{2})*, then *(e\star, x_{1}x_{2}y) ⇒ (n_{1} + n_{2} + 1, x_{1}x_{2})*
 
-- Zero-or-more repetitions (termination case) :: If *(e, x) ⇒ (n_{1}, f)*, then *(e\star, x) ⇒ (n_{1} + 1, ε)*.
+- Zero-or-more repetitions ( termination case ) :: If *(e, x) ⇒ (n_{1}, f)*, then *(e\star, x) ⇒ (n_{1} + 1, ε)*.
 
-- Not-predicate (case 1) :: If *(e, xy) ⇒ (n, x)*, then *(!e, xy) ⇒ (n + 1, f)*. If expression
+- Not-predicate ( case 1 ) :: If *(e, xy) ⇒ (n, x)*, then *(!e, xy) ⇒ (n + 1, f)*. If expression
   *e* succeeds consuming input *x*, then syntactic predicate *!e* fails.
 
-- Not-predicate (case 2) :: If *(e, x) ⇒ (n, f)*, then *(!e, x) ⇒ (n + 1, ε)*. If *e* fails,
+- Not-predicate ( case 2 ) :: If *(e, x) ⇒ (n, f)*, then *(!e, x) ⇒ (n + 1, ε)*. If *e* fails,
   then *!e* succeeds but consumes nothing.
