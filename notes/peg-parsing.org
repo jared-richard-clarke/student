@@ -156,8 +156,6 @@ A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
 
 - R(A) :: Denotes the unique expression *e* such that *A ← e ∈ R*.
 
-*** Inductive Definition
-
 If *e*, *e_{1}*, and *e_{2}* are parsing expressions, then so is
 
 1. *ε*, the empty string.
