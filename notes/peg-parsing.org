@@ -136,6 +136,13 @@ EndOfFile  <- !.
 
 ** PEG Formal Definition
 
+| notation   | meaning              |
+|------------+----------------------|
+| A, B, C, D | non-terminals        |
+| a, b, c, d | terminals            |
+| x, y, z    | strings of terminals |
+| e          | parsing expression   |
+
 A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
 
 - V_{N} :: A finite set of non-terminal symbols.
