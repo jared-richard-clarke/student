@@ -187,7 +187,7 @@ If you believe that the premises are true, then the logic forces you to accept t
 
 - valid argument :: An argument in which the conclusion follows logically from the premises.
 
-- *∴*: Reads "therefore". Used to identify the conclusion of an argument.
+- ∴ :: Reads "therefore". Used to identify the conclusion of an argument.
 
 - formal proof :: A sequence of propositions such that the last proposition in the sequence is the
   conclusion of the argument, and every proposition in the sequence is either a premise of the argument
