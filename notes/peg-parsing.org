@@ -134,7 +134,7 @@ EndOfLine  <- '\r\n' / '\n' / '\r'
 EndOfFile  <- !.
 #+end_example
 
-** PEG Abstract Syntax
+** PEG Formal Definition
 
 A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
 
@@ -155,6 +155,8 @@ A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
   a function mapping nonterminals to expressions.
 
 - R(A) :: Denotes the unique expression *e* such that *A ← e ∈ R*.
+
+*** Inductive Definition
 
 If *e*, *e_{1}*, and *e_{2}* are parsing expressions, then so is
 
