@@ -42,12 +42,12 @@ and *X*      = *{ x | L(x) }*
 
 and *Y*      = *{ x | W(x) }*
 
-| set                                  | translation                        |
-|--------------------------------------+------------------------------------|
-| *X ∪ Y = { x \vert{} L(x) ∨  W(x) }* | People who are lucky or wise.      |
-| *X ∩ Y = { x \vert{} L(x) ∧  W(x) }* | People who are lucky and wise.     |
-| *X \ Y = { x \vert{} L(x) ∧ ¬W(x) }* | People who are not lucky and wise. |
-| *Y \ X = { x \vert{} W(x) ∧ ¬L(x) }* | People who are wise but not lucky. |
+| set                                | translation                        |
+|------------------------------------+------------------------------------|
+| X ∪ Y = { x \vert{} L(x) ∨  W(x) } | People who are lucky or wise.      |
+| X ∩ Y = { x \vert{} L(x) ∧  W(x) } | People who are lucky and wise.     |
+| X \ Y = { x \vert{} L(x) ∧ ¬W(x) } | People who are not lucky and wise. |
+| Y \ X = { x \vert{} W(x) ∧ ¬L(x) } | People who are wise but not lucky. |
 
 ** The Boolean Algebra of Sets
 
@@ -56,23 +56,23 @@ and *Y*      = *{ x | W(x) }*
 
 - complement :: *A^C = { x ∈ U | x ∉ A }*
 
-| rule               | algebra                                 |
-|--------------------+-----------------------------------------|
-| double complement  | *(A^C)^C = A*                           |
-| miscellaneous laws | *A ∪ A^C = U*                           |
-|                    | *A ∩ A^C = Ø*                           |
-|                    | *Ø ∪ A^C = A*                           |
-|                    | *Ø ∩ A^C = Ø*                           |
-| idempotent laws    | *A ∩ A = A*                             |
-|                    | *A ∪ A = A*                             |
-| commutative laws   | *A ∩ B = B ∩ A*                         |
-|                    | *A ∪ B = B ∪ A*                         |
-| associative laws   | *A ∩ (B ∩ C) = (A ∩ B) ∩ C*             |
-|                    | *A ∪ (B ∪ C) = (A ∪ B) ∪ C*             |
-| distributive laws  | *A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)*       |
-|                    | *A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)*       |
-| DeMorgan's laws    | *(A ∩ B)^C = A^C ∪ B^C*                 |
-|                    | *(A ∪ B)^C = A^C ∩ B^C*                 |
+| rule               | algebra                         |
+|--------------------+---------------------------------|
+| double complement  | (A^C)^C = A                     |
+| miscellaneous laws | A ∪ A^C = U                     |
+|                    | A ∩ A^C = Ø                     |
+|                    | Ø ∪ A^C = A                     |
+|                    | Ø ∩ A^C = Ø                     |
+| idempotent laws    | A ∩ A = A                       |
+|                    | A ∪ A = A                       |
+| commutative laws   | A ∩ B = B ∩ A                   |
+|                    | A ∪ B = B ∪ A                   |
+| associative laws   | A ∩ (B ∩ C) = (A ∩ B) ∩ C       |
+|                    | A ∪ (B ∪ C) = (A ∪ B) ∪ C       |
+| distributive laws  | A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) |
+|                    | A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) |
+| DeMorgan's laws    | (A ∩ B)^C = A^C ∪ B^C           |
+|                    | (A ∪ B)^C = A^C ∩ B^C           |
 
 *** Logic and Set Theory
 
@@ -92,11 +92,11 @@ and *B* = set
 
 | Logic   | Set Theory |
 |---------+------------|
-| *T*     | *U*        |
-| *F*     | *Ø*        |
-| *p ∧ q* | *A ∩ B*    |
-| *p ∨ q* | *A ∪ B*    |
-| *¬p*    | *A^C*      |
+| T       | U          |
+| F       | Ø          |
+| p ∧ q   | A ∩ B      |
+| p ∨ q   | A ∪ B      |
+| ¬p      | A^C        |
 
 ** Functions
 
