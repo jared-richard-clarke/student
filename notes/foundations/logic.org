@@ -122,13 +122,13 @@ Let *R(x)* = entity is red
 and *L(x, y)* = entity loves entity
 and *a*, *b*, *j*, *m* = entities
 
-| predicate            | translation                              |
-|----------------------+------------------------------------------|
-| *R(a) ∧ R(b)*        | *a* is red and *b* is red                |
-| *¬R(a)*              | *a* is not red                           |
-| *L(j, m) ∧ ¬L(m, j)* | *j* loves *m*, and *m* does not love *j* |
-| *L(j, m) → L(b, m)*  | if *j* loves *m* then *b* loves *m*      |
-| *R(a) ↔ L(j, j)*     | *a* is red if and only if *j* loves *j*  |
+| predicate          | translation                              |
+|--------------------+------------------------------------------|
+| R(a) ∧ R(b)        | *a* is red and *b* is red                |
+| ¬R(a)              | *a* is not red                           |
+| L(j, m) ∧ ¬L(m, j) | *j* loves *m*, and *m* does not love *j* |
+| L(j, m) → L(b, m)  | if *j* loves *m* then *b* loves *m*      |
+| R(a) ↔ L(j, j)     | *a* is red if and only if *j* loves *j*  |
 
 - universal quantifier :: Symbol *∀* where *∀x(P(x))* is true if and only if *P(a)* is true
   for every entity *a* in the domain of discourse for *P*. *x* is a variable, and *a* is an entity.
@@ -145,19 +145,19 @@ and *a*, *b*, *j*, *m* = entities
 
 - bound variables :: *x* is free in *P(x)* and is bound in *∀x(P(x))* and *∃x(P(x))*.
 
-| predicate logic                      | translation                                               |
-|--------------------------------------+-----------------------------------------------------------|
-| *∀x(Red(x))*                         | Roses are red.                                            |
-| *∀x(Rose(x) → Red(x))*               | For any flower, if that flower is a rose, then it is red. |
-| *Rose(x) ∧ Red(x)*                   | A red rose.                                               |
-| *∀x((Rose(x) ∧ Red(x)) → Pretty(x))* | All red roses are pretty.                                 |
-| *∃x(O(jack, x) ∧ C(x))*              | Jack owns a computer.                                     |
-| *∀x(O(jack, x) → C(x))*              | Everything Jack owns is a computer.                       |
-| *∃y(O(jack, y) ∧ C(y))) → H(jack)*   | If Jack owns a computer, then he's happy.                 |
-| *∀x((∃y(O(x, y) ∧ C(y)) → H(x)))*    | Everyone who owns a computer is happy.                    |
-| *∀x(H(x))*                           | Everyone is happy.                                        |
-| *∀x(¬H(x))*                          | Everyone is unhappy.                                      |
-| *∃x(¬H(x))*                          | Someone is unhappy.                                       |
+| predicate logic                    | translation                                               |
+|------------------------------------+-----------------------------------------------------------|
+| ∀x(Red(x))                         | Roses are red.                                            |
+| ∀x(Rose(x) → Red(x))               | For any flower, if that flower is a rose, then it is red. |
+| Rose(x) ∧ Red(x)                   | A red rose.                                               |
+| ∀x((Rose(x) ∧ Red(x)) → Pretty(x)) | All red roses are pretty.                                 |
+| ∃x(O(jack, x) ∧ C(x))              | Jack owns a computer.                                     |
+| ∀x(O(jack, x) → C(x))              | Everything Jack owns is a computer.                       |
+| ∃y(O(jack, y) ∧ C(y))) → H(jack)   | If Jack owns a computer, then he's happy.                 |
+| ∀x((∃y(O(x, y) ∧ C(y)) → H(x)))    | Everyone who owns a computer is happy.                    |
+| ∀x(H(x))                           | Everyone is happy.                                        |
+| ∀x(¬H(x))                          | Everyone is unhappy.                                      |
+| ∃x(¬H(x))                          | Someone is unhappy.                                       |
 
 *P* is a formula of predicate logic that contains one or more predicated variables. *P* is a
 *tautology* if it is true whenever all the predicate variables that it contains are replaced by
@@ -165,12 +165,12 @@ actual predicates. *P* and *Q* are logically equivalent if *P ↔ Q* is a tautol
 and *Q* always have the same truth value when the predicate variables they contain are replaced
 by actual predicates.
 
-| number | rule                            |
-|--------+---------------------------------|
-|      1 | *¬(∀xP(x)) ≡ ∃x(¬P(x))*         |
-|      2 | *¬(∃xP(x)) ≡ ∀x(¬P (x))*        |
-|      3 | *∀x∀y(Q(x, y)) ≡ ∀y∀x(Q(x, y))* |
-|      4 | *∃x∃y(Q(x, y)) ≡ ∃y∃x(Q(x, y))* |
+| number | rule                          |
+|--------+-------------------------------|
+|      1 | ¬(∀xP(x)) ≡ ∃x(¬P(x))         |
+|      2 | ¬(∃xP(x)) ≡ ∀x(¬P (x))        |
+|      3 | ∀x∀y(Q(x, y)) ≡ ∀y∀x(Q(x, y)) |
+|      4 | ∃x∃y(Q(x, y)) ≡ ∃y∃x(Q(x, y)) |
 
 Rules 1 and 2 are called *DeMorgan's Laws* for predicate logic.
 
@@ -280,12 +280,12 @@ n is even
 
 Let *n* be an arbitrary integer.
 
-| 1. *n* is even                       | premise                  |
-| 2. *n = 2k* for some integer *k*     | definition of even       |
-| 3. *n^2 = 4k^2* for that integer *k* | basic algebra            |
-| 4. *n^2 = 2(2k^2)* for that *k*      | basic algebra            |
-| 5. *n^2 = 2k'* for some integer *k'* | substituting *k' = 2k^2* |
-| 6. *n^2* is even                     | definition of even       |
+| 1. *n* is even                       | premise                     |
+| 2. *n = 2k* for some integer *k*     | definition of even          |
+| 3. *n^2 = 4k^2* for that integer *k* | basic algebra               |
+| 4. *n^2 = 2(2k^2)* for that *k*      | basic algebra               |
+| 5. *n^2 = 2j* for some integer *j*   | substituting *j* for *2k^2* |
+| 6. *n^2* is even                     | definition of even          |
 
 ** Proof by Contradiction
 
