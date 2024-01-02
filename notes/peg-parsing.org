@@ -146,7 +146,7 @@ A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
 
 - e_{S} :: A parsing expression termed the *start expression*.
 
-- V_{N} ∩ V_{T} = ∅ :: The intersection of the non-terminals and terminal sets are the empty set,
+- V_{N} ∩ V_{T} = Ø :: The intersection of the non-terminals and terminal sets are the empty set,
   meaning they share no members. They are disjoint.
 
 - r ∈ R :: A pair *(A, e)*, written as *A ← e*, where *A ∈ V_{N}* and *e* is a parsing expression.
