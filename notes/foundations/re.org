@@ -120,7 +120,7 @@ The collection of regular languages over an alphabet *Σ* is defined recursively
   can make.
 
 The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ Σ\star{}* that are
-accepted by *M: L(M) = {w ∈ Σ\star{} | δ\star{}(q₀, w) ∈ F}*.
+accepted by *M: L(M) = { w ∈ Σ\star{} | δ\star{}(q₀, w) ∈ F }*.
 
 *** Non-deterministic Finite-State Automaton
 
@@ -135,4 +135,4 @@ accepted by *M: L(M) = {w ∈ Σ\star{} | δ\star{}(q₀, w) ∈ F}*.
   description of *∂* is *∂: Q × (Σ ∪ {ε}) → P(Q)*.
 
 The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ Σ\star{}* that are
-accepted by *M: L(M) = {w ∈ Σ\star{} | ∂\star{}(q₀, w) ∩ F ≠ Ø}*.
+accepted by *M: L(M) = { w ∈ Σ\star{} | ∂\star{}(q₀, w) ∩ F ≠ Ø }*.
