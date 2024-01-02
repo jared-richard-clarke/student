@@ -102,13 +102,13 @@ The collection of regular languages over an alphabet *Σ* is defined recursively
 
 *** Deterministic Finite-State Automaton
 
-*M* is specified by five components: *M = (Q, Σ, q_{0}, δ, F)* where
+*M* is specified by five components: *M = (Q, Σ, q₀, δ, F)* where
 
 - Q :: A finite set of states.
 
 - Σ :: The input alphabet.
 
-- q_{0} ∈ Q :: The start state.
+- q₀ ∈ Q :: The start state.
 
 - F :: A subset of *Q*. The states designated as *final* or *accepting* states.
 
@@ -120,19 +120,19 @@ The collection of regular languages over an alphabet *Σ* is defined recursively
   can make.
 
 The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ Σ\star{}* that are
-accepted by *M: L(M) = { w ∈ Σ\star{} | δ\star{}(q_{0}, w) ∈ F }*.
+accepted by *M: L(M) = {w ∈ Σ\star{} | δ\star{}(q₀, w) ∈ F}*.
 
 *** Non-deterministic Finite-State Automaton
 
-*M* is specified by five components: *M = (Q, Σ, q_{0}, ∂, F)* where
+*M* is specified by five components: *M = (Q, Σ, q₀, ∂, F)* where
 
-- *Q*, *Σ*, *q_{0}* and *F* are as in the definition of DFAs.
+- *Q*, *Σ*, *q₀* and *F* are as in the definition of DFAs.
 
 - *∂* is a transition function that takes *(state, input symbol)* pairs and maps each one to a set
-  of states. To say *∂(q, a) = { q_{1}, q_{2}, ..., q_{n} }* means that if the machine is in state *q* and
+  of states. To say *∂(q, a) = {q₁, q₂, ..., qn}* means that if the machine is in state *q* and
   the input symbol *a* is consumed, then the machine may move directly into any one of states
-  *q_{1}, q_{2}, ..., q_{n}*. The function *∂* must also be defined for every *(state, ε)* pair.
-  The formal description of *∂* is *∂: Q × (Σ ∪ {ε}) → P(Q)*.
+  *q₁, q₂, ..., qn*. The function *∂* must also be defined for every *(state, ε)* pair. The formal
+  description of *∂* is *∂: Q × (Σ ∪ {ε}) → P(Q)*.
 
-The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ Σ\star{}* that are accepted
-by *M: L(M) = { w ∈ Σ\star{} | ∂\star{}(q_{0}, w) ∩ F ≠ ∅ }*.
+The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ Σ\star{}* that are
+accepted by *M: L(M) = {w ∈ Σ\star{} | ∂\star{}(q₀, w) ∩ F ≠ Ø}*.
