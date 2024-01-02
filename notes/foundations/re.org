@@ -54,7 +54,7 @@ The collection of regular languages over an alphabet *Σ* is defined recursively
 
 1. The empty language *Ø* is a regular language.
 
-2. For each *a ∈ Σ*, the singleton *{a}* is a regular language.
+2. For each *a ∈ Σ*, the singleton language *{a}* is a regular language.
 
 3. If *A* is a regular language, *A\star{}* is a regular language. Due to this, the empty string
    language *{ε}* is also regular.
@@ -80,11 +80,13 @@ The collection of regular languages over an alphabet *Σ* is defined recursively
 
 - L((r)) = L(r) :: *(r)* matches exactly those strings matched by *r*.
 
-| precedence | operation |
-|------------+-----------|
-|          1 | *\vert{}* |
-|          2 | *·*       |
-|          3 | *\star{}* |
+*** Operators
+
+| precedence | name          | operator  |
+|------------+---------------+-----------|
+|          1 | alternation   | *\vert{}* |
+|          2 | concatenation | *•*       |
+|          3 | Kleene star   | *\star{}* |
 
 ** Finite-State Automata
 
