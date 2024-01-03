@@ -1,4 +1,6 @@
 /// Provides affine transformation matrices and functions.
 pub mod matrices;
-pub mod vectors;
 
+/// Provides vectors and associated operations and functions
+/// in linear vector space.
+pub mod vectors;
