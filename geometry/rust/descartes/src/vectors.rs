@@ -1,3 +1,4 @@
+use std::fmt;
 use std::iter::Sum;
 use std::ops::{Add, Mul, Neg, Sub};
 
@@ -6,6 +7,13 @@ use crate::matrices::Mat3;
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub struct Vec2(pub f64, pub f64);
 
+impl fmt::Display for Vec2 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let Vec2(x, y) = self;
+        write!(f, "Vec2({x}, {y})")
+    }
+}
+// Vec2 + Vec2 -> Vec2
 impl Add for Vec2 {
     type Output = Self;
     fn add(self, other: Self) -> Self {
@@ -14,7 +22,7 @@ impl Add for Vec2 {
         Self(x1 + x2, y1 + y2)
     }
 }
-
+// Vec2 - Vec2 -> Vec2
 impl Sub for Vec2 {
     type Output = Self;
     fn sub(self, other: Self) -> Self {
@@ -41,7 +49,7 @@ impl Mul<Vec2> for f64 {
         Vec2(self * x, self * y)
     }
 }
-
+// --Vec2 -> Vec2
 impl Neg for Vec2 {
     type Output = Self;
     fn neg(self) -> Self {
@@ -71,49 +79,51 @@ impl<'a> Sum<&'a Self> for Vec2 {
 }
 
 impl Vec2 {
+    /// Returns the absolute value of a two-part vector.
     pub fn abs(self) -> Self {
         let Self(x, y) = self;
         Self(x.abs(), y.abs())
     }
+    /// Returns an inverted two-part vector.
     pub fn invert(self) -> Self {
         let Self(x, y) = self;
         Self(1.0 / x, 1.0 / y)
     }
-    // Returns the magnitude of a vector.
+    /// Returns the magnitude of a two-part vector.
     pub fn mag(self) -> f64 {
         let Self(x, y) = self;
         (x * x + y * y).sqrt()
     }
-
+    /// Returns a two-part vector multiplied by a scalar.
     pub fn scale(self, scalar: f64) -> Self {
         self * scalar
     }
-    // Dot product.
+    /// Returns the dot product of a two-part vector.
     pub fn dot(self, other: Self) -> f64 {
         let Self(x1, y1) = self;
         let Self(x2, y2) = other;
         x1 * x2 + y1 * y2
     }
-    // Calculates the distance between the tips of two vectors.
+    /// Returns the distance between the tips of two, two-part vectors.
     pub fn distance(self, other: Self) -> f64 {
         (self - other).mag()
     }
-    // Interpolates two vectors.
+    /// Returns the interpolation of two, two-part vectors.
     pub fn lerp(self, other: Self, t: f64) -> Self {
         self + (other - self) * t
     }
-
+    /// Returns the normalization of a two-part vector.
     pub fn normalize(self) -> Self {
         let mag = self.mag();
         let Self(x, y) = self;
         Self(x / mag, y / mag)
     }
-
+    /// Returns the rounded value of a two-part vector.
     pub fn round(self) -> Self {
         let Self(x, y) = self;
         Self(x.round(), y.round())
     }
-
+    /// Returns the transformation a two-part vector by a 3 x 3 matrix.
     pub fn transform_by(self, m: Mat3) -> Self {
         let Self(x, y) = self;
         let Mat3(a, b, c, d, ..) = m;
@@ -124,6 +134,13 @@ impl Vec2 {
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub struct Vec3(pub f64, pub f64, pub f64);
 
+impl fmt::Display for Vec3 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let Vec3(x, y, z) = self;
+        write!(f, "Vec3({}, {}, {})", x, y, z)
+    }
+}
+// Vec3 + Vec3 -> Vec3
 impl Add for Vec3 {
     type Output = Self;
     fn add(self, other: Self) -> Self {
@@ -132,7 +149,7 @@ impl Add for Vec3 {
         Self(x1 + x2, y1 + y2, z1 + z2)
     }
 }
-
+// Vec3 - Vec3 -> Vec3
 impl Sub for Vec3 {
     type Output = Self;
     fn sub(self, other: Self) -> Self {
@@ -157,7 +174,7 @@ impl Mul<Vec3> for f64 {
         Vec3(self * x, self * y, self * z)
     }
 }
-
+// --Vec3 -> Vec3
 impl Neg for Vec3 {
     type Output = Self;
     fn neg(self) -> Self {
@@ -187,44 +204,46 @@ impl<'a> Sum<&'a Self> for Vec3 {
 }
 
 impl Vec3 {
+    /// Returns the absolute value of a three-part vector.
     pub fn abs(self) -> Self {
         let Self(x, y, z) = self;
         Self(x.abs(), y.abs(), z.abs())
     }
+    /// Returns an inverted three-part vector.
     pub fn invert(self) -> Self {
         let Self(x, y, z) = self;
         Self(1.0 / x, 1.0 / y, 1.0 / z)
     }
-    // Returns the magnitude of a vector.
+    /// Returns the magnitude of a three-part vector.
     pub fn mag(self) -> f64 {
         let Self(x, y, z) = self;
         (x * x + y * y + z * z).sqrt()
     }
-
+    /// Returns a three-part vector multiplied by a scalar.
     pub fn scale(self, scalar: f64) -> Self {
         self * scalar
     }
-    // Dot product.
+    /// Returns the dot product of a three-part vector.
     pub fn dot(self, other: Self) -> f64 {
         let Self(x1, y1, z1) = self;
         let Self(x2, y2, z2) = other;
         x1 * x2 + y1 * y2 + z1 * z2
     }
-    // Calculates the distance between the tips of two vectors.
+    /// Returns the distance between the tips of two, three-part vectors.
     pub fn distance(self, other: Self) -> f64 {
         (self - other).mag()
     }
-    // Interpolates two vectors.
+    /// Returns the interpolation of two, three-part vectors.
     pub fn lerp(self, other: Self, t: f64) -> Self {
         self + (other - self) * t
     }
-
+    /// Returns the normalization of two, three-part vectors.
     pub fn normalize(self) -> Self {
         let mag = self.mag();
         let Self(x, y, z) = self;
         Self(x / mag, y / mag, z / mag)
     }
-
+    /// Returns the rounded value of a three-part vector.
     pub fn round(self) -> Self {
         let Self(x, y, z) = self;
         Self(x.round(), y.round(), z.round())
