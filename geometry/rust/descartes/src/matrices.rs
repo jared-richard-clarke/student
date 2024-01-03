@@ -1,3 +1,4 @@
+use std::fmt;
 use std::ops::Mul;
 
 /// A column-major, 3 x 3 affine transformation matrix. The third row is implicit.
@@ -9,8 +10,15 @@ use std::ops::Mul;
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub struct Mat3(pub f64, pub f64, pub f64, pub f64, pub f64, pub f64);
 
+impl fmt::Display for Mat3 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let Mat3(a, b, c, d, e, f) = self;
+        write!(formatter, "Mat3({a}, {b}, {c}, {d}, {e}, {f})")
+    }
+}
+
 // Combines matrix transformations through multiplication.
-// Overloads the `*` operator for `Mat3`.
+// Mat3 * Mat3 -> Mat3
 impl Mul for Mat3 {
     type Output = Self;
     fn mul(self, other: Self) -> Self {
@@ -126,4 +134,3 @@ mod tests {
         assert_eq!(result, expect);
     }
 }
-
