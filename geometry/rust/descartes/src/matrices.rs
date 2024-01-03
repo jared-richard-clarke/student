@@ -1,8 +1,16 @@
 use std::ops::Mul;
 
+/// A column-major, 3 x 3 affine transformation matrix. The third row is implicit.
+/// Constant fields are implied.
+///
+/// ( a b c d ) <- linear transformations
+///
+/// ( e f ) <----- translations
 #[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub struct Mat3(pub f64, pub f64, pub f64, pub f64, pub f64, pub f64);
 
+// Combines matrix transformations through multiplication.
+// Overloads the `*` operator for `Mat3`.
 impl Mul for Mat3 {
     type Output = Self;
     fn mul(self, other: Self) -> Self {
@@ -38,18 +46,23 @@ fn shear(x: f64, y: f64) -> Mat3 {
 }
 
 impl Mat3 {
+    /// Creates a 3 x 3 identity matrix: `Mat3(1, 0, 0, 1, 0, 0)`
     pub fn identity() -> Self {
         Self(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
     }
+    /// Translates matrix by scalars `x` and `y`. Transformations can be chained.
     pub fn translate(self, x: f64, y: f64) -> Self {
         translate(x, y) * self
     }
+    /// Scales matrix by scalars `x` and `y`. Transformations can be chained.
     pub fn scale(self, x: f64, y: f64) -> Self {
         scale(x, y) * self
     }
+    /// Rotates matrix by `angle`, which is measured in radians. Transformations can be chained.
     pub fn rotate(self, angle: f64) -> Self {
         rotate(angle) * self
     }
+    /// Shears matrix by scalars `x` and `y`. Transformations can be chained.
     pub fn shear(self, x: f64, y: f64) -> Self {
         shear(x, y) * self
     }
@@ -113,3 +126,4 @@ mod tests {
         assert_eq!(result, expect);
     }
 }
+
