@@ -123,7 +123,7 @@ impl Vec2 {
         let Self(x, y) = self;
         Self(x.round(), y.round())
     }
-    /// Returns the transformation a two-part vector by a 3 x 3 matrix.
+    /// Returns the transformation of a two-part vector by a 3 x 3 matrix.
     pub fn transform_by(self, m: Mat3) -> Self {
         let Self(x, y) = self;
         let Mat3(a, b, c, d, ..) = m;
