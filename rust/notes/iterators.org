@@ -25,7 +25,7 @@ they’ve all been exhausted, will return ~None~ to indicate that iteration is f
 
 1. ~iter()~, which iterates over ~&T~. ( immutable borrow )
 2. ~iter_mut()~, which iterates over ~&mut T~. ( mutable borrow )
-3. ~into_iter()~, which iterates over ~T~. ( own )
+3. ~into_iter()~, which iterates over ~T~. ( owned data )
 
 ** Implementing an Iterator
 
