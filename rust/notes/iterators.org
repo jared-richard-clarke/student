@@ -60,7 +60,7 @@ There is a corresponding ~struct~ for each iterator and iterator adapter in the
       }
   }
 
-  let mut count = Counter::new();
+  let mut counter = Counter::new();
 
   assert_eq!(counter.next(), Some(1));
   assert_eq!(counter.next(), Some(2));
@@ -126,18 +126,18 @@ Functions which take an ~Iterator~ and return another ~Iterator~, such as ~map~,
 and ~filter~.
 
 #+begin_src rust
-  let mut count = Counter::new().map(|x| x * 2);
+  let mut counter = Counter::new().map(|x| x * 2);
 
-  assert_eq!(count.next(), Some(2));
-  assert_eq!(count.next(), Some(4));
-  assert_eq!(count.next(), Some(6));
-  assert_eq!(count.next(), None);
+  assert_eq!(counter.next(), Some(2));
+  assert_eq!(counter.next(), Some(4));
+  assert_eq!(counter.next(), Some(6));
+  assert_eq!(counter.next(), None);
 
   let mut counter = Count::new().map(|x| x * 2).filter(|x| x < 6);
 
-  assert_eq!(count.next(), Some(2));
-  assert_eq!(count.next(), Some(4));
-  assert_eq!(count.next(), None);
+  assert_eq!(counter.next(), Some(2));
+  assert_eq!(counter.next(), Some(4));
+  assert_eq!(counter.next(), None);
 #+end_src
 
 ** Infinity
