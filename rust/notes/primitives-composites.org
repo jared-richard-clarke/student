@@ -4,9 +4,9 @@
 
 | source                                      | author        |
 |---------------------------------------------+---------------|
-| *The Rust Standard Library*, Version 1.71.1 | rust-lang.org |
+| *The Rust Standard Library*, version 1.71.1 | rust-lang.org |
 | *The Rustonomicon*                          | rust-lang.org |
-| *The Rust Reference*                        | rust-lang.org |
+| *The Rust Reference*,  version 1.71.1       | rust-lang.org |
 
 ** Overview
 
@@ -21,7 +21,7 @@
   - array
   - slice
 
-- user-definede types:
+- user-defined types:
   - struct
   - enum
   - union
