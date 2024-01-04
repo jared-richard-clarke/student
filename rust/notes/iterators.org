@@ -21,7 +21,7 @@ An iterator has a method, ~next~, which when called, returns an ~Option<Item>~.
 Calling ~next~ will return ~Some(Item)~ as long as there are elements, and once
 they’ve all been exhausted, will return ~None~ to indicate that iteration is finished.
 
-* Three Forms of Iteration
+** Three Forms of Iteration
 
 1. ~iter()~, which iterates over ~&T~. ( immutable borrow )
 2. ~iter_mut()~, which iterates over ~&mut T~. ( mutable borrow )
