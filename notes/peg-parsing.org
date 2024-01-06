@@ -233,3 +233,17 @@ the reference to *G* is implied.
 
 - Not-predicate ( case 2 ) :: If *(e, x) ⇒ (n, f)*, then *(!e, x) ⇒ (n + 1, ε)*. If *e* fails,
   then *!e* succeeds but consumes nothing.
+
+Define relation *⇒+ G* from pairs *(e, x)* to outcomes *o*, such that *(e, x) ⇒+ o* if and only if
+an *n* exists such that *(e, x) ⇒ (n, o)*.
+
+If *(e, x) ⇒+ y* for *y ∈ V_{T}\star{}*, *e* matches *x* in *G*. If *(e, x) ⇒+ f*, *e* fails on *x*
+in *G*. The match set *M_{G}(e)* of expression *e* in *G* is the set of inputs *x* such that *e* matches
+*x* in *G*.
+
+An expression *e* handles a string *x ∈ V_{T}\star{}* if it either matches or fails on *x* in *G*. A
+grammar *G* handles string *x* if its start expression *e_{S}* handles *x*. *G* is complete if it handles
+all strings *x ∈ V_{T}\star{}*.
+
+Two expressions *e_{1}* and *e_{2}* are equivalent, written *e_{1} ≡ e_{2}*, if *(e_{1}, x) ⇒+ o* implies
+*(e_{2}, x) ⇒+ o* and vice versa. The resulting step counts need not be the same.
