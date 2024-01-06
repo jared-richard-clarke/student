@@ -18,7 +18,7 @@ A *context-free grammar (CFG)* is a 4-tuple *(V, Σ, P, S)* where
 - *P* is a set of production rules. Each rule is of the form *A → w* where *A* is one of the symbols
   in *V* and *w* is a string in the language *(V ∪ Σ)\star{}*.
 
-- *S ∈ V*. *S* is the start symbol of the grammar.
+- *S ∈ V*, where *S* is the start symbol of the grammar.
 
 #+begin_example
   Grammar G = (V, Σ, P, T)
