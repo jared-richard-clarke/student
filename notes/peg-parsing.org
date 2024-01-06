@@ -185,7 +185,7 @@ If *e*, *e_{1}*, and *e_{2}* are parsing expressions, then so is
 
 Where *e_{d}* is the desugaring of *e*.
 
-** Inductive Definition  of a Grammar
+** PEG Formal Interpretation
 
 The expression set *E(G)* of *G* is the set containing the start expression *e_{S}*, the expressions
 used in all grammar rules, and all subexpressions of those expressions.
