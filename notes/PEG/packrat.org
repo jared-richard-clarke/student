@@ -1,0 +1,180 @@
+* Packrat Parsers
+
+** Source
+
+| source                                       | author                         |
+|----------------------------------------------+--------------------------------|
+| *Packrat Parsing*                            | Bryan Ford                     |
+| *Packrat Parsers Can Support Left Recursion* | Warth, Douglass, and Millstein |
+
+** Keywords
+
+- Haskell
+- memoization
+- top-down parsing
+- backtracking
+- lexical analysis
+- scannerless parsing
+- parser combinators 
+
+** Trivial Arithmetic Grammar
+
+#+begin_example
+  Additive  <- Multitive "+" Additive | Multitive
+  Multitive <- Primary "*" Multitive | Primary
+  Primary   <- "(" Additive ")" | Decimal
+  Decimal   <- "0" | "1" | ... | "9"
+#+end_example
+
+** ArithmeticPackrat.hs
+
+The original Haskell code is Bryan Ford's, although I renamed some of the functions
+and data structures for greater clarity.
+
+#+begin_src haskell
+-- Packrat parser for trivial arithmetic language.
+module ArithmeticPackrat where
+
+
+data Result value = Parsed value Derivation
+                  | NoParse
+
+data Derivation = Derivation {
+                Additive      :: Result Int,
+                Multitive     :: Result Int,
+                Primary       :: Result Int,
+                Decimal       :: Result Int,
+                Character     :: Result Char
+        }
+
+
+-- Evaluate an expression and return the unpackaged result,
+-- ignoring any unparsed remainder.
+eval s = case Additive (parse s) of
+              Parsed value remainder -> value
+              _ -> error "Parse error"
+
+
+-- Construct a (lazy) parse result structure for an input string,
+-- in which any result can be computed in linear time
+-- with respect to the length of the input.
+parse :: String -> Derivation
+parse s = d where
+    d    = Derivation add mul prim dec chr
+    add  = parseAdditive d
+    mul  = parseMultitive d
+    prim = parsePrimary d
+    dec  = parseDecimal d
+    chr  = case s of
+             (c:s') -> Parsed c (parse s')
+             []     -> NoParse
+
+
+-- Parse an additive-precedence expression
+parseAdditive :: Derivation -> Result Int
+parseAdditive d = alt1 where
+
+    -- Additive <- Multitive '+' Additive
+    alt1 = case Multitive d of
+             Parsed left d' ->
+               case Character d' of
+                 Parsed '+' d'' ->
+                   case Additive d'' of
+                     Parsed right d''' ->
+                       Parsed (left + right) d'''
+                     _ -> alt2
+                 _ -> alt2
+             _ -> alt2
+
+    -- Additive <- Multitive
+    alt2 = case Multitive d of
+             Parsed value d' -> Parsed value d'
+             NoParse         -> NoParse
+
+
+-- Parse a multiplicative-precedence expression
+parseMultitive :: Derivation -> Result Int
+parseMultitive d = alt1 where
+
+    -- Multitive <- Primary '*' Multitive
+    alt1 = case Primary d of
+             Parsed left d' ->
+               case Character d' of
+                 Parsed '*' d'' ->
+                   case Multitive d'' of
+                     Parsed right d''' ->
+                       Parsed (left * right) d'''
+                     _ -> alt2
+                 _ -> alt2
+             _ -> alt2
+
+    -- Multitive <- Primary
+    alt2 = case Primary d of
+             Parsed value d' -> Parsed value d'
+             NoParse         -> NoParse
+
+-- Parse a primary expression
+parsePrimary :: Derivation -> Result Int
+parsePrimary d = alt1 where
+
+    -- Primary <- '(' Additive ')'
+    alt1 = case Character d of
+             Parsed '(' d' ->
+               case Additive d' of
+                 Parsed value d'' ->
+                   case Character d'' of
+                     Parsed ')' d''' -> Parsed value d'''
+                     _ -> alt2
+                 _ -> alt2
+             _ -> alt2
+
+    -- Primary <- Decimal
+    alt2 = case Decimal d of
+             Parsed value d' -> Parsed value d'
+             NoParse         -> NoParse
+
+-- Parse a decimal digit
+parseDecimal :: Derivation -> Result Int
+parseDecimal d = case Character d of
+                   Parsed '0' d' -> Parsed 0 d'
+                   Parsed '1' d' -> Parsed 1 d'
+                   Parsed '2' d' -> Parsed 2 d'
+                   Parsed '3' d' -> Parsed 3 d'
+                   Parsed '4' d' -> Parsed 4 d'
+                   Parsed '5' d' -> Parsed 5 d'
+                   Parsed '6' d' -> Parsed 6 d'
+                   Parsed '7' d' -> Parsed 7 d'
+                   Parsed '8' d' -> Parsed 8 d'
+                   Parsed '9' d' -> Parsed 9 d'
+                   _             -> NoParse
+#+end_src
+
+** Apply-Rule: Strict Version
+
+#+begin_quote
+  "The *Apply-Rule* procedure, used in every rule application, ensures that no rule is ever evaluated
+   more than once at a given position. When rule *R* is applied at position *P*, *Apply-Rule* consults
+   the memo table. If the memo table indicates that *R* was previously applied at *P*, the appropriate
+   parse tree node is returned, and the parser's current position is updated accordingly. Otherwise,
+   *Apply-Rule* evaluates the rule, stores the result in the memo table, and returns the corresponding
+   parse tree node."
+
+   — *Packrat Parsers Can Support Left Recursion*, by Warth, Douglass, and Millstein
+#+end_quote
+
+*** Psuedo Code Example
+
+#+begin_example
+  Apply-Rule(R, P)
+      let m = Memo(R, P)
+      if m = nil
+          then let ans = Eval(R.body)
+               m <- new MemoEntry(ans, Pos)
+               Memo(R, P) <- m
+               return ans
+          else Pos <- m.pos
+               return m.ans
+
+  where Memo      = (Rule, Pos) -> MemoEntry
+        MemoEntry = (ans: AST, pos: Pos)
+#+end_example
