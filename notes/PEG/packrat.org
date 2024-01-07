@@ -28,8 +28,8 @@
 
 ** ArithmeticPackrat.hs
 
-The original Haskell code is Bryan Ford's, although I renamed some of the functions
-and data structures for greater clarity.
+*SideNote*: The original Haskell code is Bryan Ford's. I renamed some of the functions
+            and data structures for greater clarity.
 
 #+begin_src haskell
 -- Packrat parser for trivial arithmetic language.
