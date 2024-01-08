@@ -1,0 +1,89 @@
+* Closures in Rust
+
+** Sources
+
+| source                          | author                          |
+|---------------------------------+---------------------------------|
+| *The Rust Programming Language* | Steve Klabnik and Carol Nichols |
+| *The Rust Reference*            | rust-lang.org                   |
+
+** Closure Types
+
+#+begin_quote
+  "A closure expression produces a closure value with a unique, anonymous type that cannot be written out.
+   A closure type is approximately equivalent to a struct which contains the captured variables."
+
+   — The Rust Reference
+#+end_quote
+
+*** Example
+
+#+begin_src rust
+  fn f<F : FnOnce() -> String> (g: F) {
+      println!("{}", g());
+  }
+
+  let mut s = String::from("foo");
+  let t = String::from("bar");
+
+  f(|| {
+      s += &t;
+      s
+  });
+
+  // -- roughly equivalent ->
+
+  struct Closure<'a> {
+      s : String,
+      t : &'a String,
+  }
+
+  impl<'a> FnOnce<()> for Closure<'a> {
+      type Output = String;
+      fn call_once(self) -> String {
+          self.s += &*self.t;
+          self.s
+      }
+  }
+
+f(Closure{s: s, t: &t});
+#+end_src
+
+** Capture Modes and Closure Traits
+
+#+begin_quote
+  "The compiler prefers to capture a closed-over variable by immutable borrow, followed by unique
+   immutable borrow, by mutable borrow, and finally by move."
+
+  — The Rust Reference
+#+end_quote
+
+To capture variables from their environment, closures are encoded by the ~FnOnce~ trait by default
+and ~FnMut~ and ~Fn~ by option.
+
+1. ~FnOnce~ takes ownership of captured variables. A closure cannot take ownership of the same 
+    variable more than once. The ~move~ keyword forces closures to take ownership of a value.
+
+2. ~FnMut~ mutably borrows values.
+
+3. ~Fn~ immutably borrows values.
+
+*** Non-Capturing Closures
+
+Closures that capture nothing from their environment. Can be coerced to function pointers.
+
+#+begin_src rust
+  let add = | x, y | x + y;
+
+  let mut x = add(1, 6);
+
+  type Binary = fn(i32, i32) -> i32
+  let operation: Binary = add;
+
+  x = sum(1, 6);
+#+end_src
+
+** Caveats
+
+Rust's memory model disallows methods and regular functions from capturing their environment, meaning
+values must be passed explicitly through their arguments.
