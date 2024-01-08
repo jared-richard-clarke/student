@@ -70,7 +70,7 @@ and ~FnMut~ and ~Fn~ by option.
 
 *** Non-Capturing Closures
 
-Closures that capture nothing from their environment. Can be coerced to function pointers.
+Closures that capture nothing from their environment can be coerced to function pointers.
 
 #+begin_src rust
   let add = | x, y | x + y;
