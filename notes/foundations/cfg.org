@@ -24,9 +24,8 @@ A *context-free grammar (CFG)* is a 4-tuple *(V, Σ, P, S)* where
   Grammar G = (V, Σ, P, S)
 
   where V = {S, E, B}
-        Σ = {0, 1, +, *}
+        Σ = {0, 1, +}
         P = S → E $
-            E → E * B
             E → E + B
             E → B
             B → 0
