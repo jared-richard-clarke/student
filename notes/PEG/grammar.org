@@ -2,9 +2,10 @@
 
 ** Sources
 
-| source                                                                  | author     |
-|-------------------------------------------------------------------------+------------|
-| *Parsing Expression Grammars: A Recognition-Based Syntactic Foundation* | Bryan Ford |
+| source                                                                  | author                |
+|-------------------------------------------------------------------------+-----------------------|
+| *Parsing Expression Grammars: A Recognition-Based Syntactic Foundation* | Bryan Ford            |
+| *A Text Pattern-Matching Tool Based on Parsing Expression Grammars*     | Roberto Ierusalimschy |
 
 ** Keywords
 
@@ -91,6 +92,8 @@ A ← a b / a and A ← a / a b
 #+begin_example
 # Hierarchical syntax
 
+# === Bryan Ford ===
+
 Grammar    <- Spacing Definition+ EndOfFile
 Definition <- Identifier LEFTARROW expression
 
@@ -132,6 +135,19 @@ Comment    <- '#' (!EndOfLine .)* EndOfLine
 Space      <- ' ' / '\t' / EndOfLine
 EndOfLine  <- '\r\n' / '\n' / '\r'
 EndOfFile  <- !.
+
+# === Roberto Ierusalimschy ===
+
+grammar      <- (non-terminal '<-' space pattern)+
+pattern      <- alternative ('/' space alternative)*
+alternative  <- ([!&]? space suffix)+
+suffix       <- primary ([*+?] space)*
+primary      <- '(' space pattern ')' space / '.' space / literal /
+                char-class / non-terminal !'<-'
+literal      <- ['] (!['] .)* ['] space
+char-class   <- '[' (!']' (. '-' . / .))* ']' space
+non-terminal <- [a-zA-Z]+ space
+space        <- [ \t\n]*
 #+end_example
 
 ** PEG Formal Definition
