@@ -134,7 +134,7 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
 
 #+begin_example
   TRUE  := λx.λy.x
-  FALSE := λx.λ.y.y
+  FALSE := λx.λy.y
 
   AND := λp.λq.p q p
   OR  := λp.λq.p p q
