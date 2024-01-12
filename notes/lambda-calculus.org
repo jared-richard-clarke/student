@@ -1,0 +1,224 @@
+* The Lambda Calculus
+
+** Sources
+
+| source               | author                                 |
+|----------------------+----------------------------------------|
+| *Lambda Calculus*    | Wikipedia                              |
+| *The Little Schemer* | Daniel Friedman and Matthias Felleisen |
+
+** Introduction
+
+- lambda calculus :: A formal system in mathematical logic for expressing computation based on function
+  abstraction and application using variable binding and substitution. Consists of constructing
+  lambda terms and performing reduction operations on them.
+
+- x :: A variable, which is a character or string representing a parameter.
+
+- λx.M :: A lambda abstraction, which is a function definition, taking as input the bound variable
+  *x* and returning the body *M*.
+
+- (M N) :: An application, which applies function *M* to argument *N*. Both *M* and *N* are lambda terms.
+
+*** Reduction Operations
+
+- (λx.M[x]) → (λy.M[y]) :: α-conversion, which renames bound variables in an expression. Used to avoid
+  name collisions.
+
+- ((λxM) N) → (M[x := N]) :: β-conversion, which replaces bound variables with the argument expression
+  in the body of the abstraction.
+
+** Formal Definition
+
+*** Definition
+
+- Lambda components:
+
+  - variables x₁, x₂, ...
+
+  - abstraction symbols *λ* (lambda) and *.* (punctum/dot)
+
+  - parentheses *(* and *)*
+
+- Lambda expressions, *Λ*:
+
+  1. If *x* is a variable, then *x ∈ Λ*.
+
+  2. If *x* is a variable and *M ∈ Λ*, then *(λx.M) ∈ Λ*.
+
+  3. If *M*, *N ∈ Λ*, then *(M N) ∈ Λ*
+
+*** Notational Conventions
+
+- Outermost parentheses are dropped: *M N* instead of *(M N)*.
+
+- Applications are assumed to be left associative: *M N P* instead of *((M N) P)*.
+
+- When all variables are single-letter, spaces in applications may be removed. *MNP* instead of *M N P*.
+
+- The body of an abstraction extends as far right as possible: *λx.M N* means *λx.(M N)*, not *(λx.M) N*.
+
+- A sequence of abstractions can be contracted: *λx.λy.λz.N* is abbreviated as *λxyz.N*.
+
+*** Free and Bound Variables
+
+The operator *λ* binds its variable wherever it occurs in the body of the abstraction. Variables that
+fall within the scope of an abstraction is *bound*. All other variables are free.
+
+- The set of free variables of a lambda expression *M* is denoted as *FV(M)*:
+
+  1. *FV(x) = {x}*, where *x* is a variable
+
+  2. *FV(λx.M) = FV(M) \ {x}*
+
+  3. *FV(M N) = FV(M) ∪ FV(N)*
+
+An expression that contains no free variables is *closed*. Closed lambda expressions are also known as
+*combinators* and are equivalent to terms in *comnbinatory logic*.
+
+** Encoding Datatypes
+
+The basic lambda calculus may be used to model arithmetic, booleans, data structures, and recursion.
+
+*** Arithmetic
+
+#+begin_example
+  === Church Numerals ===
+  0 := λf.λx.x
+  1 := λf.λx.f x
+  2 := λf.λx.f (f x)
+  3 := λf.λx.f (f (f x))
+
+  === or ===
+
+  0 := λfx.x
+  1 := λfx.f x
+  2 := λfx.f (f x)
+  3 := λfx.f (f (f x))
+
+  === Operations ===
+
+  Takes a Church numeral "n" and returns "n + 1".
+  SUCC := λn.λf.λx.f (n f x)
+
+  Addition: "m+n-th" composition of "f"
+  PLUS := λm.λn.λf.λx.m f (n f x)
+  PLUS := λm.λn.m SUCC n
+
+  Multiplication
+  MULT := λm.λn.λf.m (n f)
+  MULT := λm.λn.m (PLUS n) 0
+
+  Exponentiation
+  POW := λb.λe.e b
+
+  Predecessor
+  PRED := λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)
+
+  Subtraction
+  SUB := λm.λn.n PRED m
+#+end_example
+
+*** Logic and Predicates
+
+#+begin_example
+  TRUE  := λx.λy.x
+  FALSE := λx.λ.y.y
+
+  AND := λp.λq.p q p
+  OR  := λp.λq.p p q
+  NOT := λp.p FALSE TRUE
+
+  IF := λp.λa.λb.p a b
+
+  === example ===
+
+  AND TRUE FALSE
+    ≡ (λp.λq.p q p) TRUE FALSE → TRUE FALSE TRUE
+    ≡ (λx.λy.x) FALSE TRUE → FALSE
+#+end_example
+
+*** Pairs
+
+#+begin_example
+  PAIR := λx.λy.λz.z x y
+
+  HEAD := λp.p (λx.λy.x)
+
+  TAIL := λp.p (λx.λy.y)
+#+end_example
+
+**** Scheme Example
+
+#+begin_src scheme
+  (define pair
+    (lambda (x y)
+      (lambda (f) (f x y))))
+
+  (define head
+    (lambda (p)
+      (p (lambda (x y) x))))
+
+  (define tail
+    (lambda (p)
+      (p (lambda (x y) y))))
+#+end_src
+
+*** Recursion
+
+#+begin_example
+  === Y Combinator ===
+  Y := λf.(λx.f (x x)) (λx.f (x x))
+
+  === fixed point ===
+  Y f
+
+  ≡ (λg.(λx.g (x x)) (λx.g (x x))) f
+
+  ≡ (λx.f (x x)) (λx.f (x x))
+
+  ≡ f ((λx.f (x x)) (λx.f (x x)))
+
+  ≡ f (Y f)
+#+end_example
+
+**** Scheme Example
+
+#+begin_src scheme
+  ;; The Y combinator as implemented in The Little Schemer.
+
+  (define Y
+    (lambda (f)
+      ((lambda (i) (i i))
+       (lambda (i)
+         (f (lambda (x) ((i i) x)))))))
+
+  ;; This definition of Y causes an infinite loop in a strictly-evaluated
+  ;; language like Scheme.
+
+  (define Y
+    (lambda (f)
+      (f (Y f))))
+
+  ;; Scheme is a strict language so the evaluation of "(f (Y f))"
+  ;; must be delayed by wrapping it in a function — also called a thunk.
+  ;; This, however, is not a true combinator because "Y" is a free variable
+  ;; within its own definition.
+
+  (define Y
+    (lambda (f)
+      (lambda (x)
+        ((f (Y f)) x))))
+#+end_src
+
+**** Joy Example
+
+#+begin_src
+  (* recursive *)
+
+  y == dup  [[y] cons]  dip  i
+
+  (* non-recursive *)
+
+  y == [dup cons]  swap  concat  dup  cons  i
+#+end_src
