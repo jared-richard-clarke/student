@@ -34,7 +34,7 @@
 
 - Lambda components:
 
-  - variables x₁, x₂, ...
+  - variables *x₁*, *x₂*, ...
 
   - abstraction symbols *λ* (lambda) and *.* (punctum/dot)
 
