@@ -2,10 +2,11 @@
 
 ** Sources
 
-| source               | author                                 |
-|----------------------+----------------------------------------|
-| *Lambda Calculus*    | Wikipedia                              |
-| *The Little Schemer* | Daniel Friedman and Matthias Felleisen |
+| source                                    | author                                 |
+|-------------------------------------------+----------------------------------------|
+| *Lambda Calculus*                         | Wikipedia                              |
+| *The Little Schemer*                      | Daniel Friedman and Matthias Felleisen |
+| *The Essentials of Programming Languages* | Daniel Friedman and Mitchell Wand      |
 
 ** Introduction
 
@@ -13,12 +14,22 @@
   abstraction and application using variable binding and substitution. Consists of constructing
   lambda terms and performing reduction operations on them.
 
-- x :: A variable, which is a character or string representing a parameter.
+| syntax  | name        | description                                                                           |
+|---------+-------------+---------------------------------------------------------------------------------------|
+| *x*     | variable    | A character or string representing a parametric, mathematical, or logical value.      |
+| *λx.M*  | abstraction | Function definition *M* — a lambda term. The variable *x* is bound in the expression. |
+| *(M N)* | application | Applying a function to an argument. *M* and *N* are lambda terms.                     |
 
-- λx.M :: A lambda abstraction, which is a function definition, taking as input the bound variable
-  *x* and returning the body *M*.
+#+begin_example
+  λx.+ x 7
 
-- (M N) :: An application, which applies function *M* to argument *N*. Both *M* and *N* are lambda terms.
+  - translates ->
+
+  λ                x  .    +   x    7
+  ^                ^  ^    ^   ^    ^
+  |                |  |    |   |    |
+  That function of x that adds x to 7
+#+end_example
 
 *** Reduction Operations
 
@@ -216,9 +227,9 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
 #+begin_src
   (* recursive *)
 
-  y == dup  [[y] cons]  dip  i
+  y == dup [[y] cons] dip i
 
   (* non-recursive *)
 
-  y == [dup cons]  swap  concat  dup  cons  i
+  y == [dup cons] swap concat dup cons i
 #+end_src
