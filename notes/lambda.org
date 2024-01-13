@@ -40,7 +40,7 @@
 - λx.M[x] → λy.M[y] :: α-conversion, which renames bound variables in an expression. Used to avoid
   name collisions.
 
-- (λxM) N → M[x := N] :: β-reduction, which replaces bound variables with the argument expression
+- (λx.M) N → M[x/N] :: β-reduction, which replaces bound variables with the argument expression
   in the body of the abstraction.
 
 ** Formal Definition
