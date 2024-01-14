@@ -9,6 +9,11 @@
 -- normal order      -> 7
 
 λx.7 infinity
+
+-- applicative order -> (λx.xx)(λx.xx) ...
+-- normal order -> z
+
+(λy.z)((λx.xx)(λx.xx))
 ```
 
 ## Eager and Lazy Evaluation
