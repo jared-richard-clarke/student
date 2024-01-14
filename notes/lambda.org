@@ -73,7 +73,7 @@
 
 - The body of an abstraction extends as far right as possible: *λx.M N* means *λx.(M N)*, not *(λx.M) N*.
 
-- A sequence of abstractions can be contracted: *λx.λy.λz.N* is abbreviated as *λxyz.N*.
+- A sequence of abstractions can be contracted: *λx.λy.λz.N* abbreviates to *λxyz.N*.
 
 *** Free and Bound Variables
 
