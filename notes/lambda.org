@@ -39,8 +39,8 @@
   That function of x that adds x to 7
 #+end_example
 
-- λ-conversion :: Written *⇔*, the smallest reflexive, symmetric, transitive, substitutive relation on
-  terms including *→β*.
+- λ-conversion :: Written *⇔*, the smallest reflexive, symmetric, transitive, and substitutive relation
+  on terms including *→β*.
 
 - λ-reduction :: Written *⇒*, omits the symmetry of the previous definition.
 
