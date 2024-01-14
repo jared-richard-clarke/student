@@ -58,6 +58,10 @@
 - Normal Order Theorem :: Stated informally: the normal form of a normalizing term can be found by
   repeatedly reducing its left-most (outer-most) redex.
 
+- Normal Order Reduction :: A sequential procedure — provided by the normal order theorem — that is
+  guaranteed to reach normal form if there is one. Substitutes arguments into function bodies
+  without first reducing any redexes inside the argument.
+
 *** Reduction Operations
 
 - λx.M[x] → λy.M[y] :: α-conversion, which renames bound variables in an expression. Used to avoid
