@@ -47,6 +47,27 @@
 - (λx.M) N → M[N/x] :: β-reduction, which replaces bound variables with the argument expression
   in the body of the abstraction.
 
+*** Terms
+
+- λ-conversion :: Written *⇔*, the smallest reflexive, symmetric, transitive, substitutive relation on
+  terms including *→β*.
+
+- λ-reduction :: Written *⇒*, omits the symmetry of the previous definition.
+
+- redex :: Called the *reducible expression*, it is the left-hand side of rule *β*.
+
+- normal form :: A term containing no redex.
+
+- normalizing :: A term that can be converted to normal form.
+
+- non-normalizing :: A term that cannoted be converted to normal form, such as
+  *(λx.xx)(λx.xx) →β (λx.xx)(λx.xx)*
+
+- Church-Rosser Theorem :: If *A ⇔ B*, there is a term *C* such that *A ⇒ C* and *B ⇒ C*.
+
+- Normal Order Theorem :: Stated informally: the normal form of a normalizing term can be found by
+  repeatedly reducing its left-most (outer-most) redex.
+
 ** Formal Definition
 
 *** Definition
