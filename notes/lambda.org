@@ -39,16 +39,6 @@
   That function of x that adds x to 7
 #+end_example
 
-*** Reduction Operations
-
-- λx.M[x] → λy.M[y] :: α-conversion, which renames bound variables in an expression. Used to avoid
-  name collisions.
-
-- (λx.M) N → M[N/x] :: β-reduction, which replaces bound variables with the argument expression
-  in the body of the abstraction.
-
-*** Terms
-
 - λ-conversion :: Written *⇔*, the smallest reflexive, symmetric, transitive, substitutive relation on
   terms including *→β*.
 
@@ -68,17 +58,25 @@
 - Normal Order Theorem :: Stated informally: the normal form of a normalizing term can be found by
   repeatedly reducing its left-most (outer-most) redex.
 
+*** Reduction Operations
+
+- λx.M[x] → λy.M[y] :: α-conversion, which renames bound variables in an expression. Used to avoid
+  name collisions.
+
+- (λx.M) N → M[N/x] :: β-reduction, which replaces bound variables with the argument expression
+  in the body of the abstraction.
+
 ** Formal Definition
 
 *** Definition
 
 - Lambda components:
 
-  - variables *x₁*, *x₂*, ...
+  - variables: *x₁*, *x₂*, ...
 
-  - abstraction symbols *λ* (lambda) and *.* (punctum/dot)
+  - abstraction symbols: *λ* (lambda) and *.* (punctum/dot)
 
-  - parentheses *(* and *)*
+  - parentheses: *(* and *)*
 
 - Lambda expressions, *Λ*:
 
