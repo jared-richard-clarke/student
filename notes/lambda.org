@@ -21,7 +21,7 @@
 
   λx.M[x] → λy.M[y] # α-conversion
 
-  (λx.M)E → M[E/x]  # β-reduction
+  (λx.M)N → M[N/x]  # β-reduction
 
   === example ===
 
