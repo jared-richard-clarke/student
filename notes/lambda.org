@@ -16,13 +16,16 @@
   lambda terms and performing reduction operations on them.
 
 #+begin_example
-  e ::= x           # Variables
-    |   λx.e        # Abstraction
-    |   e1 e2       # Application
+  e ::= x                 # Variables
+    |   λx.e              # Abstraction
+    |   e1 e2             # Application
 
-  λx.M[x] → λy.M[y] # α-conversion
+  λx.M[x] → λy.M[y]       # α-conversion
 
-  (λx.M)N → M[N/x]  # β-reduction
+  (λx.M)N → M[N/x]        # β-reduction
+
+  λx.M x → M              # η-conversion
+    where x is bound in M
 
   === example ===
 
