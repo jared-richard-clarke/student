@@ -2,11 +2,12 @@
 
 ** Sources
 
-| source                                    | author                                 |
-|-------------------------------------------+----------------------------------------|
-| *Lambda Calculus*                         | Wikipedia                              |
-| *The Little Schemer*                      | Daniel Friedman and Matthias Felleisen |
-| *The Essentials of Programming Languages* | Daniel Friedman and Mitchell Wand      |
+| source                                       | author                                 |
+|----------------------------------------------+----------------------------------------|
+| *Lambda Calculus*                            | Wikipedia                              |
+| *The Little Schemer*                         | Daniel Friedman and Matthias Felleisen |
+| *The Essentials of Programming Languages*    | Daniel Friedman and Mitchell Wand      |
+| *Church's Thesis and Functional Programming* | David Turner                           |
 
 ** Introduction
 
