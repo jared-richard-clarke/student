@@ -130,12 +130,6 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
 
   Exponentiation
   POW := λb.λe.e b
-
-  Predecessor
-  PRED := λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)
-
-  Subtraction
-  SUB := λm.λn.n PRED m
 #+end_example
 
 *** Logic and Predicates
