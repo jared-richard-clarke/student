@@ -89,7 +89,7 @@ fall within the scope of an abstraction is *bound*. All other variables are free
   3. *FV(M N) = FV(M) ∪ FV(N)*
 
 An expression that contains no free variables is *closed*. Closed lambda expressions are also known as
-*combinators* and are equivalent to terms in *comnbinatory logic*.
+*combinators* and are equivalent to terms in *combinatory logic*.
 
 ** Encoding Datatypes
 
