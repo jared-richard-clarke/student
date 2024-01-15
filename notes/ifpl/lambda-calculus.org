@@ -2,84 +2,96 @@
 
 ** Lambda Expression Syntax
 
-- Lower case names denote variables.
-- Single, upper-case letters denote whole lambda expressions.
-- Upper-case identifiers denote built-in functions.
+For this particular lambda calculus:
+
+- Lower case names denote variables: (*x*, *y*).
+
+- Single, upper-case letters denote whole lambda expressions: (*M*, *E*).
+
+- Symbols and upper-case identifiers denote built-in functions: (*AND*, *IF*, *+*, *CONS*).
 
 #+begin_example
-<exp> ::= <constant>        Built-in constants
-      |   <variable>        Variable names
-      |   <exp><exp>        Applications
-      |   λ<variable>.<exp> Lambda abstractions
+  <expression> ::= <constant>               Built-in constant
+               |   <variable>               Variable name
+               |   <expression><expression> Application
+               |   λ<variable>.<expression> Lambda abstraction
 #+end_example
+
+As opposed to the pure lambda calculus, an applied lambda calculus — such as the
+one in this book — can be extended with primitive constants and operations:
+
+1. arithmetic functions: (*+*, *-*, *\times{}*, */*)
+
+2. constants: ((*0*, *1*, *2* ...), (*TRUE*, *FALSE*), ('*a*', '*b*', '*c*' ...), (*NIL*))
+
+3. logical functions: (*AND*, *OR*, *NOT*, *IF*)
+
+4. data constructors: (*CONS*, *HEAD*, *TAIL*)
+
+** Lambda Abstraction
+
+#+begin_example
+  λx.+ x 7
+
+  -- reads ->
+
+  λ                x  .    +   x    7
+  ^                ^  ^    ^   ^    ^
+  |                |  |    |   |    |
+  That function of x that adds x to 7
+#+end_example
+
+The body of a lambda abstraction extends as far to the right as possible:
+*λx.M N* implies *λx.(M E)*, not *(λx.M) E*.
 
 ** Bound and Free Variables
 
-#+begin_example
-      +-- bound
-(λx.+ x y)
-	+-- free
-#+end_example
+The operator *λ* binds its variable wherever it occurs in the body of the abstraction.
+Variables that fall within the scope of an abstraction is *bound*. All other variables
+are free.
 
-** β-Conversion: Reduction and Abstraction (Beta)
+- The set of free variables of a lambda expression *M* is denoted as *FV(M)*:
 
-Use: Function Application
+  1. *FV(x) = {x}*, where *x* is a variable.
 
-1. Beta reduction is only valid provided the free variables of the
-   argument do not clash with any formal parameters in the body of
-   the lambda abstraction.
-2. Alpha conversion is sometimes necessary to avoid such name clashes.
+  2. *FV(λx.M) = FV(M) \ {x}*
+
+  3. *FV(M N) = FV(M) ∪ FV(N)*
 
 #+begin_example
-=== conversion ==
-(λx.E) M <-> E[M/x]
-    where expression E with M substituted for free occurrences of x.
-   
-=== reduction ===
-(λx.+ x 1) 4 -> (+ 4 1)
+       +-- bound
+  λx.+ x y
+         +-- free
 
-=== abstraction ===
-(+ 4 1) <- (λx.+ x 1) 4
+             +-- bound
+  + x ((λx.+ x 7) 4)
+    +-- free
 #+end_example
 
-*** Lambda Abstractions as Data Constructors
+** β-Conversion (Beta)
 
-#+begin_example
-CONS = (λa.λb.λf.f a b)
-HEAD = (λc.c (λa.λb.a))
-TAIL = (λc.c (λa.λb.b))
-#+end_example
+*(λx.M) E ⟷ M[E/x]*
+
+Denotes relation between function abstraction and application.
 
 ** α-Conversion (Alpha)
 
-Use: Prevent name capture.
+*λx.M[x] ⟷ λy.M[y]*
 
-Alpha conversion is used to prevent name clashes of formal parameters.
+Prevents name clashes of formal parameters within lambda abstractions through
+consistent renaming.
 
-#+begin_example
-(λx.+ x 1) <-> (λy.+ y 1)
-#+end_example
+** η-Conversion (Eta)
 
-** η-conversion (Eta)
+*λx.M x ⟷ M* where *x ∉ FV(M)* and *M* denotes a function.
 
-Use: Eliminate Redundant Lambda Abstractions
-   
-#+begin_example
-(λx.+ 1 x) <-> (+ 1)
+Eliminates redundant lambda abstractions.
 
-=== more generally ===
+** The Name-Capture Problem
 
-(λx.F x) <-> F
-    where x does not occur free in F and F is a function.
-#+end_example
-
-** Formal Conversion Rules
-
-When used left to right, the β and η rules are called reductions.
-
-| α-Conversion | (λx.E) <-> λy.E[y/x] if y is not free in E                    |
-| β-Conversion | (λx.E) M <-> E[M/x]                                           |
-| η-conversion | (λx.E x) <-> E if x is not free in E and E denotes a function |
+β-reduction is only valid provided the free variables of the argument do not clash
+with any formal parameters in the body of the lambda abstraction. α-Conversion is
+sometimes necessary to avoid this.
 
 ** Denotational Semantics of The Lambda Calculus (Simplified)
 
