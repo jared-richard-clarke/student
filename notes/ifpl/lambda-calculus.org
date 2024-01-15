@@ -20,9 +20,9 @@ For this particular lambda calculus:
 As opposed to the pure lambda calculus, an applied lambda calculus — such as the
 one in this book — can be extended with primitive constants and operations:
 
-1. arithmetic functions: (*+*, *-*, *\times{}*, */*)
+1. arithmetic functions: (*+*, *-*, *\star{}*, */*)
 
-2. constants: ((*0*, *1*, *2* ...), (*TRUE*, *FALSE*), ('*a*', '*b*', '*c*' ...), (*NIL*))
+2. constants: ((*0*, *1*, *2* ...), (*TRUE*, *FALSE*), ('*a*'*, '*b*', '*c*' ...), (*NIL*))
 
 3. logical functions: (*AND*, *OR*, *NOT*, *IF*)
 
@@ -42,7 +42,7 @@ one in this book — can be extended with primitive constants and operations:
 #+end_example
 
 The body of a lambda abstraction extends as far to the right as possible:
-*λx.M N* implies *λx.(M E)*, not *(λx.M) E*.
+*λx.M E* implies *λx.(M E)*, not *(λx.M) E*.
 
 ** Bound and Free Variables
 
@@ -87,78 +87,108 @@ consistent renaming.
 
 Eliminates redundant lambda abstractions.
 
-** The Name-Capture Problem
-
-β-reduction is only valid provided the free variables of the argument do not clash
-with any formal parameters in the body of the lambda abstraction. α-Conversion is
-sometimes necessary to avoid this.
-
-** Denotational Semantics of The Lambda Calculus (Simplified)
+** Recursion
 
 #+begin_example
-Eval[k] p      = difference between syntactic abstraction
-		 and equational operations. Allow precision that
-		 is hard to achieve using only reduction rules.
+  === Y Combinator ===
+  Y := λf.(λx.f (x x)) (λx.f (x x))
+
+  === fixed point ===
+  Y F
+
+  ≡ (λf.(λx.f (x x)) (λx.f (x x))) F
+
+  ≡ (λx.F (x x)) (λx.F (x x))
+
+  ≡ F ((λx.F (x x)) (λx.F (x x)))
+
+  ≡ F (Y F)
+
+  Y F → F (Y F)
+#+end_example
+
+** Denotational Semantics of The Lambda Calculus
+
+Two perspectives on functions:
+
+1. An algorithm, which will produce a value given an argument. A dynamic or operational
+   view of a function as a sequence of operations in time.
+
+2. A set of ordered argument-value pairs. A static or denotational view of a function
+   as a fixed set of associations.
+
+*β*, *α*, and *η* are purely syntactic transformations. The lambda calculus can be regarded
+as a formal system for manipulating syntactic symbols.
+
+The purpose of denotational semantics of a language is to assign a value to every expression
+in that language. An expression is a syntactic object, formed according to the syntax rules
+of the language. A value, by contrast, is an abstract mathematical object.
+
+A function, like *Eval*, maps syntactic expressions to mathematical values.
+
+#+begin_example
+Eval[k] p      = A built-in operation that requires semantic equations to specify
+                 both its meaning and imply its operational behavior.
+
 Eval[x] p      = p x
+
 Eval[E1, E2] p = (Eval[E1] p) (Eval[E2] p)
+
 Eval[λx.E] p a = Eval[E] p[x=a]
 
     where k          is a constant or built-in function
-	  x          is a variable
-	  E, E1, E2  are expressions
-	  p          is the environment
+          x          is a variable
+          E, E1, E2  are expressions
+          p          is the environment, a function that maps variables to values
 #+end_example
 
-* The Enriched Lambda Calculus
-
-This enriched lambda calculus is specific to
-*The Implementation of Functional Programming Languages*
+** The Enriched Lambda Calculus
   
 #+begin_example
-<exp> ::= <constant>
-      |   <variable>
-      |   <exp><exp>
-      |   λ<pattern>.<exp>
-      |   let <pattern> = <exp> in <exp>
-      |   letrec <pattern> = <exp>
-		 ...
-		 <pattern> = <exp>
-	  in <exp>
-      |   <exp> ▯ <exp>
-      |   case <variable> of
-	  <pattern> -> <exp>
-	  ...
-	  <pattern> -> <exp>
+  <expression> ::= <constant>
+               |   <variable>
+               |   <expression><expression>
+               |   λ<pattern>.<expression>
+               |   let <pattern> = <expression> in <expression>
+               |   letrec <pattern> = <expression>
+                                      ...
+                                      <pattern> = <expression>
+                   in <expression>
+               |   <expression> ▯ <expression>
+               |   case <variable> of
+                   <pattern> -> <expression>
+                   ...
+                   <pattern> -> <expression>
 
-<pattern> ::= <constant>
-	  |   <variable>
-	  |   <constructor><pattern>
-			   ...
-			   <pattern>
+  <pattern> ::= <constant>
+            |   <variable>
+            |   <constructor><pattern>
+                             ...
+                             <pattern>
 
- ▯ is an infix operator for handling pattern match errors:
+  ▯ is an infix operator for handling pattern match errors:
 
- a    ▯ b = a
- FAIL ▯ b = b
- ⊥    ▯ b = ⊥
+  a    ▯ b = a
+  FAIL ▯ b = b
+  ⊥    ▯ b = ⊥
 
- hd (x:xs) = x
- hd = λxs'.(((λ(CONS x xs).x) xs') ▯ ERROR)
+  hd (x:xs) = x
+  hd = λxs'.(((λ(CONS x xs).x) xs') ▯ ERROR)
 
- if hd is applied to NIL, then an ERROR will result.
- #+end_example
+  if hd is applied to NIL, then an ERROR will result.
+#+end_example
 
 ** *let* Semantics
 
-   #+begin_example
-   (let v = B in E) ≡ ((λv.E) B)
-   #+end_example
+#+begin_example
+  (let v = B in E) ≡ ((λv.E) B)
+#+end_example
 
 ** *letrec* Semantics
 
 #+begin_example
-(letrec v = B in E) ≡ (let v = Y (λv.B) in E)
-    where Y = (λh.(λx.h (x x)) (λx.h (x x)))
+  (letrec v = B in E) ≡ (let v = Y (λv.B) in E)
+            where Y = (λh.(λx.h (x x)) (λx.h (x x)))
 #+end_example
 
 ** Example Translation
