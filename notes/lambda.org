@@ -92,7 +92,7 @@
 
   - parentheses: *(* and *)*
 
-- Lambda expressions, *Λ*:
+- For lambda expressions, *Λ*:
 
   1. If *x* is a variable, then *x ∈ Λ*.
 
