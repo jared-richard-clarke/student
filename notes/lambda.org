@@ -236,15 +236,15 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
   Y := λf.(λx.f (x x)) (λx.f (x x))
 
   === fixed point ===
-  Y f
+  Y F
 
-  ≡ (λg.(λx.g (x x)) (λx.g (x x))) f
+  ≡ (λf.(λx.f (x x)) (λx.f (x x))) F
 
-  ≡ (λx.f (x x)) (λx.f (x x))
+  ≡ (λx.F (x x)) (λx.F (x x))
 
-  ≡ f ((λx.f (x x)) (λx.f (x x)))
+  ≡ F ((λx.F (x x)) (λx.F (x x)))
 
-  ≡ f (Y f)
+  ≡ F (Y F)
 #+end_example
 
 **** Scheme Example
