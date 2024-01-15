@@ -73,7 +73,7 @@
 
 - Normal Order Reduction :: A sequential procedure — provided by the normal order theorem — that is
   guaranteed to reach normal form for a normalizing expression. Substitutes arguments into function bodies
-  without first reducing any redexes inside the arguments.
+  without first reducing any redexes inside their arguments.
 
 *** Reduction Operations
 
