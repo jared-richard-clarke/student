@@ -16,6 +16,9 @@
   abstraction and application using variable binding and substitution. Consists of constructing
   lambda terms and performing reduction operations on them.
 
+- δ-rules :: Rules for an applied lambda calculus, where constants representing various types of primitive
+  data and operations are added for extended utility.
+
 #+begin_quote
   "The lambda calculus originates from an endeavour by Church, Curry and others to define an alternative
    foundation for mathematics based on functions rather than sets. The attempt foundered in the late 1920's
