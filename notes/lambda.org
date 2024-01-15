@@ -54,7 +54,7 @@
 
 - λ-reduction :: Written *⇒*, omits the symmetry of the previous definition for an oriented relation.
 
-- redex :: Called the *reducible expression*, it is the left-hand side of rule *β*.
+- redex :: Called the *reducible expression*, it is the left-hand side of rule *β* or *η*.
 
 - normal form :: A term containing no redex.
 
