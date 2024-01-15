@@ -69,8 +69,8 @@
   repeatedly reducing its left-most (outer-most) redex.
 
 - Normal Order Reduction :: A sequential procedure — provided by the normal order theorem — that is
-  guaranteed to reach normal form if there is one. Substitutes arguments into function bodies
-  without first reducing any redexes inside the argument.
+  guaranteed to reach normal form for a normalizing expression. Substitutes arguments into function bodies
+  without first reducing any redexes inside the arguments.
 
 *** Reduction Operations
 
