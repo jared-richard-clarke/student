@@ -2,18 +2,28 @@
 
 ** Sources
 
-| source                                       | author                                 |
-|----------------------------------------------+----------------------------------------|
-| *Lambda Calculus*                            | Wikipedia                              |
-| *The Little Schemer*                         | Daniel Friedman and Matthias Felleisen |
-| *The Essentials of Programming Languages*    | Daniel Friedman and Mitchell Wand      |
-| *Church's Thesis and Functional Programming* | David Turner                           |
+| source                                             | author                                 |
+|----------------------------------------------------+----------------------------------------|
+| *Lambda Calculus*                                  | Wikipedia                              |
+| *The Little Schemer*                               | Daniel Friedman and Matthias Felleisen |
+| *The Essentials of Programming Languages*          | Daniel Friedman and Mitchell Wand      |
+| *Church's Thesis and Functional Programming*       | David Turner                           |
+| *Some History of Functional Programming Languages* | David Turner                           |
 
 ** Introduction
 
 - lambda calculus :: A formal system in mathematical logic for expressing computation based on function
   abstraction and application using variable binding and substitution. Consists of constructing
   lambda terms and performing reduction operations on them.
+
+#+begin_quote
+  "The lambda calculus originates from an endeavour by Church, Curry and others to define an alternative
+   foundation for mathematics based on functions rather than sets. The attempt foundered in the late 1920's
+   on paradoxes analogous to those which sank Cantor's untyped set theory. What remained after the
+   propositional parts of the theory were removed is a consistent equational theory of functions."
+
+  — *Some History of Functional Programming Languages*, David Turner
+#+end_quote
 
 #+begin_example
   e ::= x                 # Variables
@@ -51,7 +61,7 @@
 - normalizing :: A term that can be converted to normal form.
 
 - non-normalizing :: A term that cannoted be converted to normal form, such as
-  *(λx.xx)(λx.xx) →β (λx.xx)(λx.xx)*
+  *(λx.xx)(λx.xx) →β (λx.xx)(λx.xx)*.
 
 - Church-Rosser Theorem :: If *A ⇔ B*, there is a term *C* such that *A ⇒ C* and *B ⇒ C*.
 
