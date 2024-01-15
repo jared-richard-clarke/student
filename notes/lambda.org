@@ -170,15 +170,15 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
   === Operations ===
 
   Takes a Church numeral "n" and returns "n + 1".
-  SUCC := λn.λf.λx.f (n f x)
+  INC := λn.λf.λx.f (n f x)
 
   Addition: "m+n-th" composition of "f"
-  PLUS := λm.λn.λf.λx.m f (n f x)
-  PLUS := λm.λn.m SUCC n
+  ADD := λm.λn.λf.λx.m f (n f x)
+  ADD := λm.λn.m INC n
 
   Multiplication
-  MULT := λm.λn.λf.m (n f)
-  MULT := λm.λn.m (PLUS n) 0
+  MUL := λm.λn.λf.m (n f)
+  MUL := λm.λn.m (ADD n) 0
 
   Exponentiation
   POW := λb.λe.e b
