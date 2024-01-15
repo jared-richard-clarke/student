@@ -50,9 +50,9 @@
 #+end_example
 
 - λ-conversion :: Written *⇔*, the smallest reflexive, symmetric, transitive, and substitutive relation
-  on terms including *→β*.
+  on terms *→α*, *→β* and *→η*.
 
-- λ-reduction :: Written *⇒*, omits the symmetry of the previous definition.
+- λ-reduction :: Written *⇒*, omits the symmetry of the previous definition for an oriented relation.
 
 - redex :: Called the *reducible expression*, it is the left-hand side of rule *β*.
 
