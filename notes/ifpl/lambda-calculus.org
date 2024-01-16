@@ -147,7 +147,7 @@ Eval[λx.E] p a = Eval[E] p[x=a]
 #+begin_example
   <expression> ::= <constant>
                |   <variable>
-               |   <expression><expression>
+               |   <expression> <expression>
                |   λ<pattern>.<expression>
                |   let <pattern> = <expression> in <expression>
                |   letrec <pattern> = <expression>
@@ -165,47 +165,74 @@ Eval[λx.E] p a = Eval[E] p[x=a]
             |   <constructor><pattern>
                              ...
                              <pattern>
-
-  ▯ is an infix operator for handling pattern match errors:
-
-  a    ▯ b = a
-  FAIL ▯ b = b
-  ⊥    ▯ b = ⊥
-
-  hd (x:xs) = x
-  hd = λxs'.(((λ(CONS x xs).x) xs') ▯ ERROR)
-
-  if hd is applied to NIL, then an ERROR will result.
 #+end_example
 
 ** *let* Semantics
 
 #+begin_example
-  (let v = B in E) ≡ ((λv.E) B)
+  let v = B in E ≡ (λv.E) B
+#+end_example
+
+As a matter of convenience, multiple definitions can be written in the same ~let~.
+
+#+begin_example
+  === example 1 ===
+
+  let x = 3
+      y = 4
+  in (* x y)
+
+  -- equivalent ->
+
+  let x = 3
+  in (let y = 4
+      in (* x y))
+
+  -- equivalent ->
+
+  λx.λy.(* x y) 3 4
+
+  === example 2 ===
+
+  let x = 3
+      y = 4
+      z = (* x y)
+  in z
+
+  -- equivalent ->
+
+  let x = 3
+  in (let y = 4
+      in (let z = (* x y)
+          in z))
+
+  -- equivalent ->
+
+  λx.(λy.(λz.(z) (* x y)) 4) 3
 #+end_example
 
 ** *letrec* Semantics
 
 #+begin_example
-  (letrec v = B in E) ≡ (let v = Y (λv.B) in E)
-            where Y = (λh.(λx.h (x x)) (λx.h (x x)))
+  letrec v = B in E ≡ let v = Y (λv.B) in E
+                      where Y = (λf.(λx.f (x x)) (λx.f (x x)))
 #+end_example
 
 ** Example Translation
 
 #+begin_example
--- definition
-average a b = (a + b) / 2
+  -- definition
+  average a b = (a + b) / 2
 
--- expression
-average 2 (3 + 5)
+  -- expression
+  average 2 (3 + 5)
 
--- enriched lambda calculus
-let
-  average = λa.λb.(/ (+ a b) 2)
-in
-  average 2 (+ 3 5)
+  -- enriched lambda calculus
+  let
+    average = λa.λb.(/ (+ a b) 2)
+  in
+    average 2 (+ 3 5)
 
--- plain lambda calculus
-(λaverage.(average 2 (+ 3 5))) (λa.λb.(/ (+ a b) 2))
+  -- plain lambda calculus
+  (λaverage.(average 2 (+ 3 5))) (λa.λb.(/ (+ a b) 2))
 #+end_example
