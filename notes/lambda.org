@@ -9,6 +9,7 @@
 | *The Essentials of Programming Languages*          | Daniel Friedman and Mitchell Wand      |
 | *Church's Thesis and Functional Programming*       | David Turner                           |
 | *Some History of Functional Programming Languages* | David Turner                           |
+| *The Lambda Calculus*                              | Stanford Encyclopedia of Philosophy    |
 
 ** Introduction
 
@@ -35,7 +36,7 @@
 
   λx.M[x] → λy.M[y]       # α-conversion
 
-  (λx.M)N → M[N/x]        # β-reduction
+  (λx.M)N → M[N := x]     # β-reduction
 
   λx.M x → M              # η-conversion
     where x is bound in M
@@ -80,7 +81,7 @@
 - λx.M[x] → λy.M[y] :: α-conversion, which renames bound variables in an expression. Used to avoid
   name collisions.
 
-- (λx.M) N → M[N/x] :: β-reduction, which replaces bound variables with the argument expression
+- (λx.M) N → M[N := x] :: β-reduction, which replaces bound variables with the argument expression
   in the body of the abstraction.
 
 ** Formal Definition
@@ -118,34 +119,33 @@
 *** Free and Bound Variables
 
 The operator *λ* binds its variable wherever it occurs in the body of the abstraction. Variables that
-fall within the scope of an abstraction is *bound*. All other variables are free.
+fall within the scope of an abstraction are *bound*. All other variables are *free*.
 
 - The set of free variables of a lambda expression *M* is denoted as *FV(M)*:
 
-  1. *FV(x) = {x}*, where *x* is a variable
+| free                      | bound                     |
+|---------------------------+---------------------------|
+| *FV(x) = {x}*             | *BV(x) = ∅*               |
+| *FV(M N) = FV(M) ∪ FV(N)* | *BV(M N) = BV(M) ∪ BV(N)* |
+| *FV(λx[M]) = FV(M) \ {x}* | *BV(λx[M]) = BV(M) ∪ {x}* |
 
-  2. *FV(λx.M) = FV(M) \ {x}*
-
-  3. *FV(M N) = FV(M) ∪ FV(N)*
+If *FV(M) = ∅* then *M* is called a *combinator*.
 
 ** Combinators
 
 An expression that contains no free variables is *closed*. Closed lambda expressions are also known as
 *combinators* and are equivalent to terms in *combinatory logic*.
 
-#+begin_example
-  S = λx.λy.λz.xz(yz)
-  
-  K = λx.λy.x
-  
-  I = λx.x
-  
-  B = λx.λy.λz.x(yz)
-  
-  C = λx.λy.λz.xzy
-
-  Y = λf.(λx.f(xx))(λx.f(xx))
-#+end_example
+| combinator                    | meaning              |
+|-------------------------------+----------------------|
+| *S = λx.λy.λz.xz(yz)*         | Substitute-and-apply |
+| *K = λx.λy.x*                 | Constant             |
+| *I = λx.x*                    | Identity             |
+| *B = λx.λy.λz.x(yz)*          | Non-trivial Identity |
+| *C = λx.λy.λz.xzy*            | Swap                 |
+| *T = λx.λy.x*                 | True                 |
+| *F = λx.λy.y*                 | False                |
+| *Y = λf.(λx.f(xx))(λx.f(xx))* | Fixed Point          |
 
 ** Encoding Datatypes
 
@@ -233,9 +233,11 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
 
 #+begin_example
   === Y Combinator ===
+  
   Y := λf.(λx.f (x x)) (λx.f (x x))
 
   === fixed point ===
+  
   Y F
 
   ≡ (λf.(λx.f (x x)) (λx.f (x x))) F
@@ -245,6 +247,8 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
   ≡ F ((λx.F (x x)) (λx.F (x x)))
 
   ≡ F (Y F)
+
+  Y F → F (Y F)
 #+end_example
 
 **** Scheme Example
