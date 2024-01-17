@@ -272,8 +272,7 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
 
   (define Y
     (lambda (f)
-      (lambda (x)
-        ((f (Y f)) x))))
+      (f (lambda (x) ((Y f) x)))))
 #+end_src
 
 **** Joy Example
