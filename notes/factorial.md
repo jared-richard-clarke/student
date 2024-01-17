@@ -345,8 +345,7 @@ fn factorial(x: i64) -> i64 {
 ;; Simplified definition. Y should not occur free in its own definition.
 (define Y
   (lambda (f)
-    (lambda (x)
-      ((f (Y f)) x))))
+    (f (lambda (x) ((Y f) x)))))
 
 ;; Complete definition.
 (define Y
