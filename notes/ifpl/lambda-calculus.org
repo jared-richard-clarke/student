@@ -127,19 +127,19 @@ of the language. A value, by contrast, is an abstract mathematical object.
 A function, like *Eval*, maps syntactic expressions to mathematical values.
 
 #+begin_example
-Eval[k] p      = A built-in operation that requires semantic equations to specify
-                 both its meaning and imply its operational behavior.
+  Eval[k] p      = A built-in operation that requires semantic equations to specify
+                   both its meaning and imply its operational behavior.
 
-Eval[x] p      = p x
+  Eval[x] p      = p x
 
-Eval[E1, E2] p = (Eval[E1] p) (Eval[E2] p)
+  Eval[E1, E2] p = (Eval[E1] p) (Eval[E2] p)
 
-Eval[λx.E] p a = Eval[E] p[x=a]
+  Eval[λx.E] p a = Eval[E] p[x=a]
 
-    where k          is a constant or built-in function
-          x          is a variable
-          E, E1, E2  are expressions
-          p          is the environment, a function that maps variables to values
+      where k          is a constant or built-in function
+            x          is a variable
+            E, E1, E2  are expressions
+            p          is the environment, a function that maps variables to values
 #+end_example
 
 ** The Enriched Lambda Calculus
@@ -176,37 +176,37 @@ Eval[λx.E] p a = Eval[E] p[x=a]
 As a matter of convenience, multiple definitions can be written in the same ~let~.
 
 #+begin_example
-  === example 1 ===
+  # === example 1 ===
 
   let x = 3
       y = 4
   in (* x y)
 
-  -- equivalent ->
+  # - equivalent ->
 
   let x = 3
   in (let y = 4
       in (* x y))
 
-  -- equivalent ->
+  # - equivalent ->
 
   λx.λy.(* x y) 3 4
 
-  === example 2 ===
+  # === example 2 ===
 
   let x = 3
       y = 4
       z = (* x y)
   in z
 
-  -- equivalent ->
+  # - equivalent ->
 
   let x = 3
   in (let y = 4
       in (let z = (* x y)
           in z))
 
-  -- equivalent ->
+  # - equivalent ->
 
   λx.(λy.(λz.(z) (* x y)) 4) 3
 #+end_example
@@ -221,18 +221,32 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 ** Example Translation
 
 #+begin_example
-  -- definition
+  # definition
   average a b = (a + b) / 2
 
-  -- expression
+  # expression
   average 2 (3 + 5)
 
-  -- enriched lambda calculus
+  # enriched lambda calculus
   let
     average = λa.λb.(/ (+ a b) 2)
   in
     average 2 (+ 3 5)
 
-  -- plain lambda calculus
+  # plain lambda calculus
   (λaverage.(average 2 (+ 3 5))) (λa.λb.(/ (+ a b) 2))
+#+end_example
+
+** *▯* Operator Semantics
+
+- infix
+
+- associative
+
+- identity = *FAIL*
+
+#+begin_example
+  a    ▯ b = a    if a ≠ ⊥ and a ≠ FAIL
+  FAIL ▯ b = b
+  ⊥    ▯ b = ⊥
 #+end_example
