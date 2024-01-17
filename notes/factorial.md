@@ -342,7 +342,8 @@ fn factorial(x: i64) -> i64 {
 
 ;; === Y Combinator ===
 
-;; Simplified definition. Y should not occur free in its own definition.
+;; Simplified definition. In the lambda calculus,
+;; Y should not occur free in its own definition.
 (define Y
   (lambda (f)
     (f (lambda (x) ((Y f) x)))))
@@ -350,9 +351,9 @@ fn factorial(x: i64) -> i64 {
 ;; Complete definition.
 (define Y
   (lambda (f)
-    ((lambda (i) (i i))
-     (lambda (i)
-       (f (lambda (x) ((i i) x)))))))
+    ((lambda (g) (g g))
+     (lambda (g)
+       (f (lambda (x) ((g g) x)))))))
 
 (define factorial
   (Y (lambda (fac)
