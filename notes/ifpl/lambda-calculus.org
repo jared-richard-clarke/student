@@ -11,10 +11,10 @@ For this particular lambda calculus:
 - Symbols and upper-case identifiers denote built-in functions: (*AND*, *IF*, *+*, *CONS*).
 
 #+begin_example
-  <expression> ::= <constant>                # Built-in constant
-               |   <variable>                # Variable name
-               |   <expression> <expression> # Application
-               |   λ<variable>.<expression>  # Lambda abstraction
+  <expression> ::= <constant>               # Built-in constant
+               |   <variable>               # Variable name
+               |   <expression><expression> # Application
+               |   λ<variable>.<expression> # Lambda abstraction
 #+end_example
 
 As opposed to the pure lambda calculus, an applied lambda calculus — such as the
@@ -147,12 +147,12 @@ Eval[λx.E] p a = Eval[E] p[x=a]
 #+begin_example
   <expression> ::= <constant>
                |   <variable>
-               |   <expression> <expression>
+               |   <expression><expression>
                |   λ<pattern>.<expression>
                |   let <pattern> = <expression> in <expression>
                |   letrec <pattern> = <expression>
-                                      ...
-                                      <pattern> = <expression>
+                          ...
+                          <pattern> = <expression>
                    in <expression>
                |   <expression> ▯ <expression>
                |   case <variable> of
