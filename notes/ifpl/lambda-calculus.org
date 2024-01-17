@@ -33,7 +33,7 @@ one in this book — can be extended with primitive constants and operations:
 #+begin_example
   λx.+ x 7
 
-  -- reads ->
+  # - reads ->
 
   λ                x  .    +   x    7
   ^                ^  ^    ^   ^    ^
@@ -90,10 +90,10 @@ Eliminates redundant lambda abstractions.
 ** Recursion
 
 #+begin_example
-  === Y Combinator ===
+  # === Y Combinator ===
   Y := λf.(λx.f (x x)) (λx.f (x x))
 
-  === fixed point ===
+  # === fixed point ===
   Y F
 
   ≡ (λf.(λx.f (x x)) (λx.f (x x))) F
