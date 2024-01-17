@@ -252,11 +252,11 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
 #+begin_src scheme
   ;; The Y combinator as implemented in The Little Schemer.
 
-  (define Y
+  (define y
     (lambda (f)
-      ((lambda (i) (i i))
-       (lambda (i)
-         (f (lambda (x) ((i i) x)))))))
+      ((lambda (g) (g g))
+       (lambda (g)
+         (f (lambda (x) ((g g) x)))))))
 
   ;; This definition of Y causes an infinite loop in a strictly-evaluated
   ;; language like Scheme.
