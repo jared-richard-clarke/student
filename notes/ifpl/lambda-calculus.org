@@ -90,10 +90,12 @@ Eliminates redundant lambda abstractions.
 ** Recursion
 
 #+begin_example
-  # Y Combinator
+  # === Y Combinator ===
+
   Y := λf.(λx.f (x x)) (λx.f (x x))
 
-  # fixed point
+  # === fixed point ===
+
   Y F
 
   ≡ (λf.(λx.f (x x)) (λx.f (x x))) F
