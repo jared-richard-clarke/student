@@ -108,7 +108,7 @@
 
 - Outermost parentheses are dropped: *M N* instead of *(M N)*.
 
-- Applications are assumed to be left associative: *M N P* instead of *((M N) P)*.
+- Applications are assumed to be left associative: *M N P* implies *(M N) P*.
 
 - When all variables are single-letter, spaces in applications may be removed. *MNP* instead of *M N P*.
 
