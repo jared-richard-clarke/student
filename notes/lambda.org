@@ -39,7 +39,7 @@
   (λx.M)N → M[x := N]     # β-reduction
 
   λx.M x → M              # η-conversion
-    where x is bound in M
+    where x ∉ FV(M)
 
   === example ===
 
