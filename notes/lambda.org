@@ -88,25 +88,17 @@
 
 *** Definition
 
-- Lambda components:
+For lambda term *Λ*:
 
-  - variables: *x₁*, *x₂*, ...
+1. If *x* is a variable, then *x ∈ Λ*.
 
-  - abstraction symbols: *λ* (lambda) and *.* (punctum/dot)
+2. If *M*, *N ∈ Λ*, then *(M N) ∈ Λ*.
 
-  - parentheses: *(* and *)*
-
-- For lambda expression, *Λ*:
-
-  1. If *x* is a variable, then *x ∈ Λ*.
-
-  2. If *x* is a variable and *M ∈ Λ*, then *(λx.M) ∈ Λ*.
-
-  3. If *M*, *N ∈ Λ*, then *(M N) ∈ Λ*
+3. If *x* is a variable and *M ∈ Λ*, then *(λx.M) ∈ Λ*.
 
 *** Notational Conventions
 
-- Outermost parentheses are dropped: *M N* instead of *(M N)*.
+- Outermost parentheses are dropped: *M N* implies *(M N)*.
 
 - Applications are assumed to be left associative: *M N P* implies *(M N) P*.
 
@@ -114,7 +106,7 @@
 
 - The body of an abstraction extends as far right as possible: *λx.M N* means *λx.(M N)*, not *(λx.M) N*.
 
-- A sequence of abstractions can be contracted: *λx.λy.λz.N* abbreviates to *λxyz.N*.
+- A sequence of abstractions can be contracted: *λx.λy.λz.N* equals *λxyz.N*.
 
 *** Free and Bound Variables
 
