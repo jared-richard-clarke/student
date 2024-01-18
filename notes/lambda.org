@@ -111,7 +111,8 @@ For lambda term *Λ*:
 *** Free and Bound Variables
 
 The operator *λ* binds its variable wherever it occurs in the body of the abstraction. Variables that
-fall within the scope of an abstraction are *bound*. All other variables are *free*.
+fall within the scope of an abstraction are *bound*. All other variables are *free*. *λ* is analogous
+to the universal and existential quantifiers *∀* and *∃* of first-order logic.
 
 | free                      | bound                     |
 |---------------------------+---------------------------|
