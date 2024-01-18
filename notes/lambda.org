@@ -88,7 +88,7 @@
 
 *** Definition
 
-For lambda term *Λ*:
+For lambda terms *Λ*:
 
 1. If *x* is a variable, then *x ∈ Λ*.
 
