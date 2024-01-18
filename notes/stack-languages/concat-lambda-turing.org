@@ -14,20 +14,20 @@
 
 - Variables are the ~GOTOs~ of data.
 
-- Syntactic Monoid :: Concatenation and an empty program.
+- Syntactic Monoid :: Concatenation and an empty expression.
 
-- Semantic Monoid :: Function composition and identity function over stacks.  
+- Semantic Monoid :: Function composition and identity function.  
 
 ** Lambda Calculus
 
 #+begin_example
-  e ::= x           ; Variables
-    |   λx.e        ; Abstraction
-    |   e1 e2       ; Application
+  e ::= x             # Variables
+    |   λx.e          # Abstraction
+    |   e1 e2         # Application
 
-  λx.M[x] → λy.M[y] ; α-conversion
+  λx.M[x] → λy.M[y]   # α-conversion
 
-  (λx.M)E → M[E/x]  ; β-reduction
+  (λx.M)N → M[x := N] # β-reduction
 #+end_example
 
 ** Turing Machines
@@ -35,13 +35,13 @@
 #+begin_example
   M = (Q, Γ, b, ∑, δ, q₀, F)
 
-  Q                               ; Finite, non-empty set of states.
-  Γ                               ; Finite, non-empty set of alphabet symbols.
-  b ∈ Γ                           ; Blank symbol.
-  ∑ ⊆ Γ \ {b}                     ; Set of input symbols.
-  q₀ ∈ Q, F ⊆ Q                   ; Initial state and final states.                              
-  δ: (Q \ F) × Γ → Q × Γ × {L, R} ; State transition function where L = left-shift and R = right-shift.
-                                  ; If δ is not defined on the current state and symbol, the machine halts.
+  Q                               # Finite, non-empty set of states.
+  Γ                               # Finite, non-empty set of alphabet symbols.
+  b ∈ Γ                           # Blank symbol.
+  ∑ ⊆ Γ \ {b}                     # Set of input symbols.
+  q₀ ∈ Q, F ⊆ Q                   # Initial state and final states.                              
+  δ: (Q \ F) × Γ → Q × Γ × {L, R} # State transition function where L = left-shift and R = right-shift.
+                                  # If δ is not defined on the current state and symbol, the machine halts.
 
   Begin with initial state and tape.
   Repeat:
@@ -54,12 +54,12 @@
 ** General Recursive Functions
 
 #+begin_example
-  f(x₁, x₂ ...) = n    ; Constant
-  S(x) = x + 1         ; Successor
-  Pᵢᵏ(x₁, x₂ ...) = xᵢ ; Projection
-  f ∘ g                ; Composition
-  p(f, g)              ; Primitive recursion
-  μ(f)                 ; Minimization
+  f(x₁, x₂ ...) = n    # Constant
+  S(x) = x + 1         # Successor
+  Pᵢᵏ(x₁, x₂ ...) = xᵢ # Projection
+  f ∘ g                # Composition
+  p(f, g)              # Primitive recursion
+  μ(f)                 # Minimization
 #+end_example
 
 ** Combinatory Logic
@@ -68,19 +68,19 @@ The most basic combinators are ~S~ and ~K~. ~S~ applies a function to an
 argument within an environment. ~K~ selects 1 of 2 arguments.
 
 #+begin_example
-  Sxyz = xz(yz)          ; Application
-  S    = λx.λy.λz.xy(yz) ; "Starling"
+  Sxyz = xz(yz)          # Application
+  S    = λx.λy.λz.xy(yz) # "Starling"
 
-  Kxy  = x               ; Constant
-  K    = λx.λy.x         ; "Kestrel"
+  Kxy  = x               # Constant
+  K    = λx.λy.x         # "Kestrel"
 
-  Ix   = x               ; Identity
-  I    = λx.x            ; "Idiot"
+  Ix   = x               # Identity
+  I    = λx.x            # "Idiot"
 
-  Bxyz = x(yz) ; Compose
-  Cxyz = xzy   ; Flip
-  Kxy = x      ; Constant
-  Wxy = xyy    ; Duplicate
+  Bxyz = x(yz)           # Compose
+  Cxyz = xzy             # Flip
+  Kxy = x                # Constant
+  Wxy = xyy              # Duplicate
 
   SKKx = Kx(Kx) = x
 
@@ -92,12 +92,12 @@ argument within an environment. ~K~ selects 1 of 2 arguments.
 ** Concatenative Calculus
 
 #+begin_example
-  E ::= C     ; Combinator
-    |   [E]   ; Quotation
-    |   E₁ E₂ ; Composition
-              ; (E₂ ∘ E₁)
+  E ::= C     # Combinator
+    |   [E]   # Quotation
+    |   E₁ E₂ # Composition
+              # (E₂ ∘ E₁)
 
-  ; === Turing-complete combinators ===
+  # === Turing-complete combinators ===
 
   [A] dup      = [A] [A]
   [A] [B] swap = [B] [A]
@@ -116,3 +116,4 @@ argument within an environment. ~K~ selects 1 of 2 arguments.
   [B] [A] cons = [[B] A]
   [B] [A] take = [A [B]]
 #+end_example
+
