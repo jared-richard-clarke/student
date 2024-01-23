@@ -426,7 +426,7 @@ and ~s~ is the state. ~State~ automates the threading of state between functions
         newpos = case x of
                    '\n' -> (l + 1, 0)
                    '\t' -> (l, ((c `div` 8) + 1) * 8)
-                   _    -> (l, c + 1)
+                    _   -> (l, c + 1)
 
   junk :: Parser :: ()
   junk = [() | _ <- setenv (0, -1) (many (spaces +++ comment))]
