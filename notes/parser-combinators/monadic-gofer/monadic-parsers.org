@@ -36,8 +36,9 @@ provide a means to structure the building of such computations.
   -- unit :: a → M a
   result :: a -> m a
 
+  -- Apply function (a → M b) to computation (M a).
   -- (*) :: M a → (a → M b) → M b
-  -- M * λa.N ≈ let a = M in N
+  -- m * λa.n ≈ let a = m in n
   bind   :: m a -> (a -> m b) -> m b
 
   zero   :: m a
