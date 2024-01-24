@@ -333,6 +333,7 @@ and ~s~ is the state. ~State~ automates the threading of state between functions
   -- to the result of the computation.
   type StateT m s a = s -> m (a, s)
   -- type Parser a = String -> [(a, String)]
+  -- type Parser a = String -> Maybe (a, String)
 
   -- Make "(StateT m s)" a monadic instance.
   -- Inherit/overload monad operations from base monad "m".
