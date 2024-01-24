@@ -257,7 +257,7 @@ asks selector = ask >>= return . selector
 
 ## Defining Functors, Applicatives, and Monads
 
-Functor and Applicative must be defined for an instances of Monad.
+Functor and Applicative must be defined for instances of Monad.
 You can implement types moving down the class hierarchy from
 Functor to Applicative to Monad.
 
@@ -273,7 +273,7 @@ instance Monad M where
     (>>=) = -- etc.
 ```
 
-Coversely, Functor and Applicative can be derived from Monad.
+Conversely, Functor and Applicative can be derived from Monad.
 
 ```haskell
 instance Monad M where
