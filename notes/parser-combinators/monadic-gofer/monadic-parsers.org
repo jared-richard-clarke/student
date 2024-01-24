@@ -363,6 +363,8 @@ and ~s~ is the state. ~State~ automates the threading of state between functions
   -- Stateful, deterministic parser.
   type Parser a = StateT Maybe String a
 
+  -- Redefined in the monadic style. Does not depend on the internal
+  -- details of the parser type.
   item = [x | (x : _) <- update tail]
 #+end_src
 
