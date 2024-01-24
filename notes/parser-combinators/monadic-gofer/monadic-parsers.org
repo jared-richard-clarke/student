@@ -361,7 +361,7 @@ and ~s~ is the state. ~State~ automates the threading of state between functions
   --              ----------------
   --                    monad
 
-  -- Stateful, deterministic parser.
+  -- A stateful, deterministic parser.
   type Parser a = StateT Maybe String a
 
   -- Redefined in the monadic style. Does not depend on the internal
