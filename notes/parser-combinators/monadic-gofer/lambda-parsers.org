@@ -1,6 +1,6 @@
 * Parsers for λ-expressions
 
-*Monadic Parser Combinators* by Graham Hutton and Erik Meijer, chapter 6.2, page 24
+*Monadic Parser Combinators* by Graham Hutton and Erik Meijer
 
 ** Basic Parser
 
