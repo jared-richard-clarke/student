@@ -377,6 +377,7 @@ and ~s~ is the state. ~State~ automates the threading of state between functions
   type Position = (Int, Int)
 
   -- type Parser a = Position -> StateT [] Pstring a
+  -- type Parser a = Position -> Pstring -> [(a, Pstring)]
   type ReaderT m s a = s -> m a
 
   instance Monad m => Monad (ReaderT m s) where
