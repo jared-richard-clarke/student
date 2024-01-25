@@ -49,11 +49,11 @@
                        , x <- name
                        , _ <- symbol "->"
                        , e <- expression]
-
-  local = [Let x e e'  | _  <- symbol "let"
-                       , ds <- many1_offside definition
-                       , _  <- symbol "in"
-                       , e  <- expression]
+  
+  local = [Let ds e | _  <- symbol "let"
+                    , ds <- many1_offside definition
+                    , _  <- symbol "in"
+                    , e  <- expression]
 
   definition = [(x, e) | x <- identifier
                        , _ <- symbol "="
