@@ -416,6 +416,8 @@ and ~s~ is the state. ~State~ automates the threading of state between functions
   --              ------------------------------------
   --                             monad
 
+  -- "item" fails if the position of the character to be consumed is not onside
+  -- the current definition.
   item :: Parser Char
   item = [x | (pos, x:_) <- update newstate
             , defpos     <- env
