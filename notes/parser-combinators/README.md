@@ -1,16 +1,5 @@
 # Parser Combinators
 
-```haskell
-type Parser a
-
-return  :: a -> Parser a
-(>>=)   :: Parser a (a -> Parser b) -> Parser b
-
-satisfy :: (a -> Bool) -> Parser a
-
-(<|>)   :: Parser a -> Parser a -> Parser a
-```
-
 > "In computer programming, a parser combinator is a higher-order function that accepts 
 >  several parsers as input and returns a new parser as its output. In this context, a parser 
 >  is a function accepting strings as input and returning some structure as output, typically 
