@@ -17,7 +17,7 @@
 ** Monad Reader
 
 #+begin_src haskell
-  newtype Reader env a = Reader {runReader :: env -> a}
+  newtype Reader env a = Reader { runReader :: env -> a }
 
   instance Functor (Reader env) where
      fmap f (Reader g) = Reader $ f . g
