@@ -53,7 +53,7 @@ be read as a function that accepts an argument of type *a* and returns a result 
 
   evaluate :: Term -> Int
   evaluate (Constant a) = a
-  evaluate (Divide t t) = evaluate t / evaluate u
+  evaluate (Divide t u) = evaluate t / evaluate u
 
   # === Identity Monad ===
 
