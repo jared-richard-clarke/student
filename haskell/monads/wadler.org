@@ -15,10 +15,10 @@ be read as a function that accepts an argument of type *a* and returns a result 
 #+begin_example
   monad = (M, unit, *)
 
-  unit :: a → M a
+  unit :: a -> M a
 
-  # Apply function (a → M b) to computation (M a).
-  (*) :: M a → (a → M b) → M b
+  # Apply function (a -> M b) to computation (M a).
+  (*) :: M a -> (a -> M b) -> M b
   m * λa.n ≈ let a = m in n
 #+end_example
 
@@ -195,7 +195,7 @@ be read as a function that accepts an argument of type *a* and returns a result 
   item [] = []
   item (x:xs) = [(x, xs)]
 
-  # === empty and sequence ===
+  # === emptiness and sequencing ===
 
   unit :: a -> M a
   unit a xs = [(a, xs)]
@@ -223,13 +223,45 @@ be read as a function that accepts an argument of type *a* and returns a result 
 
   # === repetition ===
 
-  # Yields all possible parses with the longest parse first.
+  # Yields all possible parses with the longest match first.
 
   iterate :: M a -> M [a]
-  iterate m = (m * λa.iterate m * λx.unit (a : x)) ⊕ unit []
+  iterate m = (m * λa.iterate m * λx.unit (a:x)) ⊕ unit []
 
   # Biased choice yields only the longest possible parse.
 
   reiterate :: M a -> M [a]
-  reiterate m = (m * λa.reiterate m * λx.unit (a : x)) ⊘ unit []
+  reiterate m = (m * λa.reiterate m * λx.unit (a:x)) ⊘ unit []
+#+end_example
+
+** Parser Example
+
+#+begin_example
+  # === grammar ===
+
+  term   ::= factor term'
+  term'  ::= "/" factor term' | unit
+  factor ::= number | "(" term ")"
+
+  # === parsers ===
+
+  term :: M Term
+  term = factor * λt.term' t
+
+  term' :: Term -> M Term
+  term' t = (literal "/"         * λ_.
+             factor              * λu.
+             term' (Divide t u))
+          ⊕  unit t
+
+  factor :: M Term
+  factor  = (number              * λa.
+             unit (Constant a))
+          ⊕ (literal "("         * λ_.
+             term                * λt.
+             literal ")"         * λ_.
+             unit t)
+
+  literal :: Char -> M Char
+  literal c = item ▷ (λa.a == c)
 #+end_example
