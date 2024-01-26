@@ -1,0 +1,42 @@
+* Reader or The Environment Monad
+
+** S and K Combinators
+
+- (K x) y = x :: Produces constant functions. The constancy combinator.
+
+- S f g x = f x (g x) :: Applies *f* to *g* inside the environment *x*. The fusion combinator.
+
+#+begin_quote
+  "Clearly, the practical use of the function S will be to enable us to reduce the number
+  of occurrences of a variable — and to some extent also of a particular function — from
+  several to a single one."
+
+  — Moses Schönfinkel
+#+end_quote
+
+** Monad Reader
+
+#+begin_src haskell
+  newtype Reader env a = Reader {runReader :: env -> a}
+
+  instance Functor (Reader env) where
+     fmap f (Reader g) = Reader $ f . g
+
+  instance Monad (Reader env) where
+     return x = Reader (\_ -> x)
+     (Reader f) >>= g = Reader $ \x -> runReader (g (f x)) x
+
+
+  ask = Reader $ \x -> x
+
+  local f (Reader g) = Reader $ \x -> runReader g (f x)
+
+  -- === or ===
+
+  instance Functor ((->) env) where
+    fmap = (.)
+
+  instance Monad ((->) env) where
+    return = const
+    f >>= g = \x -> g (f x) x
+#+end_src
