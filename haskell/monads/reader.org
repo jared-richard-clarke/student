@@ -26,7 +26,6 @@
      return x = Reader (\_ -> x)
      (Reader f) >>= g = Reader $ \x -> runReader (g (f x)) x
 
-
   ask = Reader $ \x -> x
 
   local f (Reader g) = Reader $ \x -> runReader g (f x)
