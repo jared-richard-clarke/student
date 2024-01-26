@@ -1,0 +1,235 @@
+* Monads for Functional Programming
+
+** Sources
+
+| source                              | author        |
+|-------------------------------------+---------------|
+| *Monads for Functional Programming* | Philip Wadler |
+
+** Monads
+
+A function of type *a → b* is replaced by the function of type *a → M b*, which can
+be read as a function that accepts an argument of type *a* and returns a result of type
+*b*, with a possible additional effect of type *M*.
+
+#+begin_example
+  monad = (M, unit, *)
+
+  unit :: a → M a
+
+  # Apply function (a → M b) to computation (M a).
+  (*) :: M a → (a → M b) → M b
+  m * λa.n ≈ let a = m in n
+#+end_example
+
+** Monad Laws
+
+#+begin_example
+  # === Left Unit ===
+  unit a * λb.n = n[a/b]
+
+  # === Right Unit ===
+  m * λa.unit a = m
+
+  # === Associative ===
+  # Valid only when "a" does not appear free in "o".
+  m * (λa.n * λb.o) = (m * λa.n) * λb.o
+#+end_example
+
+** Monadic Evaluator
+
+#+begin_example
+  # === Monadic Evaluator ===
+
+  # Variation may be achieved by changing the definitions of M, unit, and *.
+
+  evaluate :: Term -> M Int
+  evaluate (Constant a) = unit a
+  evaluate (Divide t u) = evaluate t * λa.evaluate u * λb.unit (a / b)
+
+  # === Base ===
+
+  Term ::= Constant Int | Divide Term Term
+
+  evaluate :: Term -> Int
+  evaluate (Constant a) = a
+  evaluate (Divide t t) = evaluate t / evaluate u
+
+  # === Identity Monad ===
+
+  M a == a
+
+  # identity
+  unit :: a -> I a
+  unit a = a
+
+  # application
+  (*) :: M a -> (a -> M b) -> M b
+  a * k = k a
+
+  # === Exceptions ===
+
+  M a ::= Raise Exception | Return a
+  Exception == String
+
+  evaluate :: Term -> M Int
+  evaluate (Constant a) = Return a
+  evaluate (Divide t u) = case evaluate t of
+                            Raise e  -> Raise e
+                            Return a ->
+                              case evaluate u of
+                                Raise e  -> Raise e
+                                Return b ->
+                                  if b == 0
+                                    then Raise "divide by zero"
+                                    else Return (a / b)
+
+  # === Exception Monad ===
+
+  M a ::= Raise Exception | Return a
+  Exception == String
+
+  unit :: a -> M a
+  unit a = Return a
+
+  (*) :: M a -> (a -> M b) -> M b
+  m * k = case m of
+            Raise e  -> Raise e
+            Return a -> k a
+
+  raise :: Exception -> M a
+  raise e = Raise e
+
+  # For the monadic evaluator, replace "unit (a / b)" with
+  # "if b == 0 then raise 'divide by zero' else unit (a / b)"
+
+  # === State ===
+
+  M a   == State -> (a, State)
+  State == Int
+
+  evaluate :: Term -> M Int
+  evaluate (Constant a) x = (a, x)
+  evaluate (Divide t u) x = let (a, y) = evaluate t x in
+                            let (b, z) = evaluate u y in
+                            (a / b, z + 1)
+
+  # === State Monad ===
+
+  M a   == State -> (a, State)
+  State == Int
+
+  unit :: a -> M a
+  unit a = λx.(a, x)
+
+  (*) :: M a -> (a -> M b) -> M b
+  m * k = λx.let (a, y) = m x in
+             let (b, z) = k a y in
+             (b, z)
+
+  tick :: M ()
+  tick = λx.((), x + 1)
+
+  # For the monadic evaluator, replace "unit (a / b)" with
+  # "tick * λ().unit (a / b)"
+
+  # === Output ===
+
+  M a    == (Output, a)
+  Output == String
+
+  evaluate :: Term -> M Int
+  evaluate (Constant a) = (line (Constant a) a, a)
+  evaluate (Divide t u) = let (x, a) = evaluate t in
+                          let (y, b) = evaluate u in
+                          (x ++ y ++ line (Divide t u) (a / b), a / b)
+
+  line :: Term -> Int -> Output
+  line t a = "eval(" ++ showterm t ++ ") ⇐ " ++ showint a ++ "\n"
+
+  # === Output Monad ===
+
+  M a    == (Output, a)
+  Output == String
+
+  unit :: a -> M a
+  unit a = ("", a)
+
+  (*) :: M a -> (a -> M b) -> M b
+  m * k = let (x, a) = m in
+          let (y, b) = k a in
+          (x ++ y, b)
+
+  out :: Output -> M ()
+  out x = (x, ())
+
+  # For the monadic evaluator above, replace "unit a" with
+  # "out(line (Constant a) a) * λ().unit a".
+  # Replace "unit (a / b)" with
+  # "out(line (Divide t u) (a / b)) * λ().unit (a / b)"
+#+end_example
+
+** Monadic Parsers
+
+#+begin_example
+  # === list monad ===
+
+  unit :: a -> [a]
+  unit a = [a]
+
+  (*) :: [a] -> (a -> [b]) -> [b]
+  [] * k     = []
+  (x:xs) * k = k x ++ (xs * k)
+
+  # === list comprehension notation ===
+
+  [t | x <- u]         = u * λx.unit t
+  [t | x <- u, y <- v] = u * λx.v * λy.unit t
+
+  # === parsers ===
+
+  M a   == State -> [(a, State)]
+  State == String
+
+  item :: M Char
+  item [] = []
+  item (x:xs) = [(x, xs)]
+
+  # === empty and sequence ===
+
+  unit :: a -> M a
+  unit a xs = [(a, xs)]
+
+  (*) :: M a -> (a -> M b) -> M b
+  (m * k) x = [(b, z) | (a, y) <- m x, (b, z) <- k a y]
+
+  # === failure and choice ===
+
+  zero :: M a
+  zero x = []
+
+  (⊕) :: M a -> M a -> M a
+  (m ⊕ n) x = m x ++ m n
+
+  # === biased choice ===
+
+  (⊘) :: M a -> M a -> M a
+  (m ⊘ n) x = if m x ≠ [] then m x else n x
+
+  # === filter ===
+
+  (▷) :: M a -> (a -> Bool) -> M a
+  m ▷ p = m * λa.if p a then unit a else zero
+
+  # === repetition ===
+
+  # Yields all possible parses with the longest parse first.
+
+  iterate :: M a -> M [a]
+  iterate m = (m * λa.iterate m * λx.unit (a : x)) ⊕ unit []
+
+  # Biased choice yields only the longest possible parse.
+
+  reiterate :: M a -> M [a]
+  reiterate m = (m * λa.reiterate m * λx.unit (a : x)) ⊘ unit []
+#+end_example
