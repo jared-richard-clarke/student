@@ -39,6 +39,7 @@
   instance Functor ((->) env) where
       fmap = (.)
 
+  -- (<*>) :: (Applicative f) => f (a -> b) -> f a -> f b
   instance Applicative ((->) env) where
       pure x = (\_ -> x)
       f <*> g = \x -> f x (g x)
