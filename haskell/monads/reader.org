@@ -54,6 +54,6 @@
 
      instance Monad ((->) r) where  
          return  = const
-         f >>= k = \ r -> k (f r) r
+         f >>= k = \r -> k (f r) r
   -}
 #+end_src
