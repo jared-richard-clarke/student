@@ -39,6 +39,7 @@
   instance Functor ((->) env) where
       fmap = (.)
 
+  -- const :: a -> b -> a
   instance Monad ((->) env) where
     return = const
     f >>= g = \x -> g (f x) x
