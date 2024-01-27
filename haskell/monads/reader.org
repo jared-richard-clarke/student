@@ -33,6 +33,7 @@
   -- === or ===
 
   -- fmap :: (a -> b) -> f a -> f b
+  -- fmap :: (a -> b) -> (f a -> f b)
   -- fmap :: (a -> b) -> (env -> a) -> (env -> b)
   instance Functor ((->) env) where
     fmap = (.)
