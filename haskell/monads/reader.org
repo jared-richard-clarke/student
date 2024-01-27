@@ -38,4 +38,12 @@
   instance Monad ((->) env) where
     return = const
     f >>= g = \x -> g (f x) x
+
+  {- 
+     === Haskell Prelude ===
+
+     instance Monad ((->) r) where  
+         return = const
+         f >>= k = \ r -> k (f r) r
+  -}
 #+end_src
