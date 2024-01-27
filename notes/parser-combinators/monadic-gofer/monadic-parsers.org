@@ -383,7 +383,7 @@ and ~s~ is the state. ~State~ automates the threading of state between functions
   instance Monad m => Monad (ReaderT m s) where
     -- result :: a -> Reader m s a
     result v = \s -> result v
-    -- bind   :: ReaderT m s a -> (a -> ReaderT m s b) -> ReaderT m s b
+    -- bind :: ReaderT m s a -> (a -> ReaderT m s b) -> ReaderT m s b
     srm `bind` f = \s -> srm s `bind` \v -> f v s
 
   instance MonadOPlus m => MonadOPlus (ReaderT m s) where
