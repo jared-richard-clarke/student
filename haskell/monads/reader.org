@@ -39,10 +39,14 @@
   instance Functor ((->) env) where
       fmap = (.)
 
+  instance Applicative ((->) env) where
+      pure x = (\_ -> x)
+      f <*> g = \x -> f x (g x)
+
   -- const :: a -> b -> a
   instance Monad ((->) env) where
-    return = const
-    f >>= g = \x -> g (f x) x
+      return = const
+      f >>= g = \x -> g (f x) x
 
   {- 
      === Haskell Prelude ===
