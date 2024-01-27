@@ -34,7 +34,7 @@
 
   -- fmap :: (a->b) -> f a -> f b
   -- fmap :: (a->b) -> (f a -> f b)
-  -- fmap :: (a->b) -> (env->a) -> (env->b)
+  -- fmap :: (a->b) -> ((env->a) -> (env->b))
   -- (.)  :: (b->c) -> (a->b) -> (a->c)
   instance Functor ((->) env) where
       fmap = (.)
