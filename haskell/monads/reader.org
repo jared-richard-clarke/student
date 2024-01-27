@@ -20,11 +20,11 @@
   newtype Reader env a = Reader { runReader :: env -> a }
 
   instance Functor (Reader env) where
-     fmap f (Reader g) = Reader $ f . g
+      fmap f (Reader g) = Reader $ f . g
 
   instance Monad (Reader env) where
-     return x = Reader (\_ -> x)
-     (Reader f) >>= g = Reader $ \x -> runReader (g (f x)) x
+      return x = Reader (\_ -> x)
+      (Reader f) >>= g = Reader $ \x -> runReader (g (f x)) x
 
   ask = Reader $ \x -> x
 
@@ -34,9 +34,10 @@
 
   -- fmap :: (a -> b) -> f a -> f b
   -- fmap :: (a -> b) -> (f a -> f b)
-  -- fmap :: (a -> b) -> (env -> a) -> (env -> b)
+  -- fmap :: (a -> b) -> (env->a) -> (env->b)
+  -- (.)  :: (b->c) -> (a->b) -> (a->c)
   instance Functor ((->) env) where
-    fmap = (.)
+      fmap = (.)
 
   instance Monad ((->) env) where
     return = const
