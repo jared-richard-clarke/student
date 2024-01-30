@@ -295,7 +295,7 @@
   -- Always succeeds, producing an empty list in the degenerate case.
 
   many :: Derivations d => Parser d v -> Parser d [v]
-  many p = (do { v <- p; vs <- many p; return (v : vs) } )
+  many p = (do { v <- p; vs <- many p; return (v : vs) })
            </> return []
 
   -- One or more repetition combinator:
@@ -517,7 +517,6 @@
 
   string :: Derivations d => String -> Parser d String
   string str = p str <?> show str
-
           where p [] = return str
                 p (ch:chs) = do { char ch; p chs }
 
