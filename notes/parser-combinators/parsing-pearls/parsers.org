@@ -1,0 +1,195 @@
+* Functional Pearls: Parser Combinators
+
+** Sources
+
+| source              | author                        |
+|---------------------+-------------------------------|
+| *Functional Pearls* | Graham Hutton and Erik Meijer |
+
+** Parser Combinators
+
+#+begin_src haskell
+  {-
+    Parser wraps a function that inputs a string and outputs a list of results — pairs of type "a",
+    the parsed and processed prefix of the argument string, and type "String", the unparsed suffix
+    of the argument string. An empty list denotes failure.
+  -}
+
+  newtype Parser a = Parser (String -> [(a, String)])
+
+  -- Unconditionally consumes the first character of a non-empty string. Fails otherwise.
+
+  item :: Parser Char
+  item = Parser (\cs -> case cs of
+                      ""     -> []
+                      (c:cs) -> [(c, cs)])
+
+  -- Utility function pulls parser function out of Parser type.
+
+  parse (Parser p) = p
+
+  -- class Monad m where
+  --    return :: a -> m a
+  --    (>>=)  :: m a -> (a -> m b) -> m b
+
+  instance Monad Parser where
+     -- identity of the sequencing operation
+     return a = Parser (\cs -> [(a, cs)])
+     -- sequencing operation
+     p >>= f  = Parser (\cs -> concat [parse (f a) cs'  (a, cs') <- parse p cs])
+
+  {-
+    === do notation ===
+
+    px >>= \x ->
+    py >>= \y ->
+    ...
+    pz >>= \z ->
+    f x y ... z
+
+    do x <- px
+       y <- py
+       ...
+       z <- pz
+       f x y ... z
+
+    do { x <- px; y <- py; ...; z <- pz; f x y ... z }
+
+    === discarded values ===
+
+    between = px >>= \_ ->
+          py >>= \y ->
+          pz >>= \_ ->
+          return y
+
+    between = do { px; y <- py; pz; return y }
+  -}
+
+  -- class Monad m => MonadZero m where
+  --    zero :: m a
+
+  instance MonadZero Parser where
+     zero = Parser (\cs -> [])
+
+  -- class MonadZero m => MonadPlus m where
+  --    (++) :: m a -> m a -> m a
+
+  -- non-deterministic "choice"
+
+  instance MonadPlus Parser where
+     p ++ q = Parser (\cs -> parse p cs ++ parse q cs)
+
+  -- deterministic "choice"
+  -- Pattern matching drives evaluation.
+
+  (+++) :: Parser a -> Parser a -> Parser a
+  p +++ q = Parser (\cs -> case parse (p ++ q) cs of
+                          []     -> []
+                          (x:xs) -> [x])
+
+  -- Creates a parser that consumes characters conditionally.
+
+  sat :: (Char -> Bool) -> Parser Char
+  sat p = do { c <- item; if p c then return c else zero }
+
+  char :: Char -> Parser Char
+  char c = sat (c ==)
+
+  -- Parse a specific string
+
+  string :: String -> Parser String
+  string "" = return ""
+  string (c:cs) = do { char c; string cs; return (c:cs) }
+
+  -- Parse repeated applications of a parser.
+
+  many :: Parser a -> Parser [a]
+  many p = many1 p +++ return []
+
+  many1 :: Parser a -> Parser [a]
+  many1 p = do { a <- p; as <- many p; return (a:as) }
+
+  -- Parse repeated applications of parser separated by parser
+  -- "sep" whose results are thrown away.
+
+  sepby :: Parser a -> Parser b -> Parser [a]
+  p `sepby` sep = (p `sepby1` sep) +++ return []
+
+  sepby1 :: Parser a -> Parser b -> Parser [a]
+  p `sepby1` sep = do a <- p
+                  as <- many (do {sep; p})
+                  return (a:as)
+
+  {-
+    Parse meaningful separators — usually infix operators. Associates left.
+  -}
+
+  chainl :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
+  chainl p op a = (p `chainl1` op) +++ return a
+
+  chainl1 :: Parser a -> Parser (a -> a -> a) -> Parser a
+  p `chainl1` op = do {a <- p; rest a}
+               where
+                  rest a = (do f <- op
+                               b <- p
+                               rest (f a b))
+                           +++ return a
+
+  -- Lexical combinators
+
+  space :: Parser String
+  space = many (sat isSpace)
+
+  -- Parse token using parser "p", throwing away any trailing whitespace.
+
+  token :: Parser a -> Parser a
+  token p = do { a <- p; space; return a }
+
+  symbol :: String -> Parser String
+  symbol cs = token (string cs)
+
+  -- Apply parser "p", throwing away any leading whitespace.
+
+  apply :: Parser a -> String -> [(a,String)]
+  apply p = parse (do { space; p })
+#+end_src
+
+** Laws
+
+#+begin_example
+  === Monad Laws ===
+
+  === left unit ===
+  return a >>= f = f a
+
+  === right unit ===
+  p >>= return = p
+
+  === associative ===
+  p >>= (\a -> (f a >>= g)) = (p >>= (\a -> f a)) >>= g
+
+  === MonadZero and MonadPlus Laws ===
+
+  === left unit ===
+  zero ++ p = p
+
+  === right unit ===
+  p ++ zero = p
+
+  === associative ===
+  p ++ (q ++ r) = (p ++ q) ++ r
+
+  === Special Case: Parsers ===
+
+  === left unit ===
+  zero >>= f = zero
+
+  === right unit ===
+  p >>= const zero = zero
+
+  === right distributive ===
+  (p ++ q) >>= f = (p >>= f) ++ (q >>= f)
+
+  === associative ===
+  p >>= (\a -> f a ++ g a) = (p >>= f) ++ (p >>= g)
+#+end_example
