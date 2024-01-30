@@ -36,7 +36,7 @@
      -- identity of the sequencing operation
      return a = Parser (\cs -> [(a, cs)])
      -- sequencing operation
-     p >>= f  = Parser (\cs -> concat [parse (f a) cs'  (a, cs') <- parse p cs])
+     p >>= f  = Parser (\cs -> concat [parse (f a) cs' | (a, cs') <- parse p cs])
 
   {-
     === do notation ===
@@ -58,9 +58,9 @@
     === discarded values ===
 
     between = px >>= \_ ->
-          py >>= \y ->
-          pz >>= \_ ->
-          return y
+              py >>= \y ->
+              pz >>= \_ ->
+              return y
 
     between = do { px; y <- py; pz; return y }
   -}
@@ -84,8 +84,8 @@
 
   (+++) :: Parser a -> Parser a -> Parser a
   p +++ q = Parser (\cs -> case parse (p ++ q) cs of
-                          []     -> []
-                          (x:xs) -> [x])
+                             []     -> []
+                             (x:xs) -> [x])
 
   -- Creates a parser that consumes characters conditionally.
 
@@ -116,9 +116,9 @@
   p `sepby` sep = (p `sepby1` sep) +++ return []
 
   sepby1 :: Parser a -> Parser b -> Parser [a]
-  p `sepby1` sep = do a <- p
-                  as <- many (do {sep; p})
-                  return (a:as)
+  p `sepby1` sep = do a  <- p
+                      as <- many (do {sep; p})
+                      return (a:as)
 
   {-
     Parse meaningful separators — usually infix operators. Associates left.
