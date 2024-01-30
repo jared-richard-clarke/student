@@ -21,8 +21,8 @@
 
   item :: Parser Char
   item = Parser (\cs -> case cs of
-                      ""     -> []
-                      (c:cs) -> [(c, cs)])
+                          ""     -> []
+                          (c:cs) -> [(c, cs)])
 
   -- Utility function pulls parser function out of Parser type.
 
