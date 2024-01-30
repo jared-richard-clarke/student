@@ -253,8 +253,8 @@
                   where parse dvs = check dvs (p dvs)
 
                         check dvs (result @ (Parsed val rem err)) = if test val
-                                                                    then result
-                                                                    else NoParse (nullError dvs)
+                                                                      then result
+                                                                      else NoParse (nullError dvs)
                         check dvs none                            = none
 
   -- Syntactic predicate: 'followedBy <parser>' acts like <parser>
@@ -410,8 +410,8 @@
                                 munge dvs (NoParse err)      = NoParse (fix dvs err)
 
                                 fix dvs (err @ (ParseError p ms)) = if p > dvPos dvs
-                                                                    then err
-                                                                    else expError (dvPos dvs) desc
+                                                                      then err
+                                                                      else expError (dvPos dvs) desc
 
   -- Stronger version of the <?> error annotation operator above,
   -- which unconditionally overrides any existing error information.
