@@ -1,0 +1,201 @@
+* Floating Point Numbers
+
+** Components
+
+A floating point number has four parts:
+
+- sign :: *0* for positive, *1* for negative.
+
+- mantissa :: Always a positive number, holds the significant digits.
+
+- radix :: The base number, *2*.
+
+- exponent :: The positive or negative power of the radix.
+
+#+begin_example
+  sign × mantissa × radix ^ exponent
+
+  sign × (1 + fraction) × 2 ^ (exponent - bias)
+          ^
+          implied
+
+  Single: S|EEEEEEE E|FFFFFFF FFFFFFFF FFFFFFFF
+  Double: S|EEEEEEE EEEE|FFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF
+#+end_example
+
+1. The sign bit is *0* for positive, *1* for negative.
+
+2. The exponent is base two.
+
+3. The exponent field contains *127* plus the true exponent for single-precision, or
+   *1023* plus the true exponent for double.
+
+4. The first bit of the mantissa is typically assumed to be *1*, yielding a full mantissa
+   of *1.f*, where *f* is the field of fraction bits.
+
+*** Forms of *-5*
+
+| sign | mantissa | radix ^ exponent |
+|------+----------+------------------|
+|   -1 |       50 | 10 ^ -1          |
+|   -1 |        5 | 10 ^  0          |
+|   -1 |      0.5 | 10 ^  1          |
+|   -1 |     0.05 | 10 ^  2          |
+
+** Conversion: Decimal to Single Precision Floating Point
+
+#+begin_example
+           1+   8    +         23            = 32 bits
+           | |------| |---------------------|
+  85.125 = 0 10000101 01010100100000000000000
+           ^ ^------^ ^---------------------^
+        sign exponent mantissa
+#+end_example
+
+*** Step 1: Decimal to Binary
+
+*85 = 1010101*
+
+| Whole Number Division | Result | Remainder |
+|-----------------------+--------+-----------|
+| 85/2                  |     42 |         1 |
+| 42/2                  |     21 |         0 |
+| 21/2                  |     10 |         1 |
+| 10/2                  |      5 |         0 |
+| 5/2                   |      2 |         1 |
+| 2/2                   |      1 |         0 |
+| 1/2                   |      0 |         1 |
+
+*0.125 = 001 or 0.001*
+
+| Decimal Number Multiplication | Result | Number in Front of Decimal |
+|-------------------------------+--------+----------------------------|
+| 0.125 x 2                     |   0.25 |                          0 |
+| 0.25  x 2                     |    0.5 |                          0 |
+| 0.5   x 2                     |    1.0 |                          1 |
+| 0.0   x 2                     |    0.0 |                          0 |
+
+*85 + 0.125 = 1010101 + 0.001 = 1010101.001*
+
+*** Step 2: Base-2 Scientific Notation
+
+These numbers are normalized, meaning the leading bit will always be 1.
+
+#+begin_example
+  1 010101.001
+   ^------+
+  move six decimal places
+
+  1.010101001 × 2⁶
+#+end_example
+
+*** Step 3: Determine Sign
+
+*0* for positive. *1* for negative.
+
+*** Step 4: Get Exponent Based on Precision
+
+Exponent bias for single precision is *127* because its signed range is *-126* to *127*.
+Add base *2* exponent to bias then calculate its binary equivalent.
+
+#+begin_example
+  1.010101001 × 2⁶
+        +--------^
+  127 + 6 = 133 = 10000101
+   ^
+  bias
+#+end_example
+
+| Whole Number Division | Result | Remainder |
+|-----------------------+--------+-----------|
+| 133/2                 |     66 |         1 |
+| 66 /2                 |     33 |         0 |
+| 33 /2                 |     16 |         1 |
+| 16 /2                 |      8 |         0 |
+| 8  /2                 |      4 |         0 |
+| 4  /2                 |      2 |         0 |
+| 2  /2                 |      1 |         0 |
+| 1  /2                 |      0 |         1 |
+
+*** Step 5: Determine Mantissa
+
+#+begin_example
+  1.010101001 × 2⁶
+    ^-------^
+    mantissa |
+            +-------+
+            |       |
+
+  0 1000101 010101001 00000000000000
+  ^ ^-----^ ^----------------------^
+#+end_example
+
+** Normalization
+
+*50* can be represented in a number of exponential forms. In order to maximize the quantity
+of representable numbers, floating point numbers are typically stored in normalized form.
+This puts the radix point directly after the first non-zero digit. Since binary has only one
+possible non-zero digit, we can assume a leading digit of one without storing it.
+
+- *denormalized*: 0.050 × 10 ^ 3
+
+- *denormalized*: 0.500 × 10 ^ 2
+
+- *normalized*:   5.000 × 10 ^ 1
+
+- *denormalized*: 50.00 × 10 ^ 0
+
+A floating-point number is normalized if its mantissa is within the range 
+*1 / radix <= mantissa < 1*. A normalized radix 10 floating-point number has its
+decimal point immediately to the left of the first non-zero digit in the mantissa.
+
+Sometimes, in the actual bits representing the floating point number, the exponent is
+biased by adding a constant to it, to make it always be represented as an unsigned quantity.
+This is important if you have reason to pick apart the bit fields making up the floating
+point number.
+
+If the number is not normalized, then you can subtract *1* from the exponent while 
+multiplying the mantissa by the base, and get another floating point number with the 
+same value. Normalization consists of doing this repeatedly until the number is normalized.
+
+Exception: if the mantissa is *0*, it is considered normalized.
+
+** Types of Rounding
+
+- round-up :: away from zero
+
+- round-down :: towards zero
+
+- round-ceil :: towards +Infinity
+
+- round-floor :: towards -Infinity
+
+- round-half-up :: towards nearest neighbor. If equidistant, up. (default for decimal.js)
+
+- round-half-down :: towards nearest neighbor. If equidistant, down.
+
+- round-half-even :: towards nearest neighbor. If equidistant, towards even neighbor.
+
+- round-half-ceil :: towards nearest neighbor. If equidistant, towards +Infinity.
+
+- round-half-floor :: towards nearest neighbor. If equidistant, towards -Infinity.
+
+** Go Decimal
+
+#+begin_src go
+  // Most significant mantissa digit is at index 0.
+  type decimal struct {
+      mant []byte // mantissa ASCII digits, big-endian
+      exp  int    // exponent
+  }
+#+end_src
+
+** Regular Expression for JavaScript Number
+
+#+begin_src js
+  /^(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i
+
+  // === or ===
+
+  /^(-?\d+)(?:\.(\d*))?(?:e(-?\d+))?$/
+#+end_src
