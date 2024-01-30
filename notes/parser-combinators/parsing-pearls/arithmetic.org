@@ -30,9 +30,9 @@
 
   digit = do { x <- token (sat isDigit); return (ord x - ord '0') }
 
-  addop = do { symbol "+"; return (+)} +++ do {symbol "-"; return (-) }
+  addop = do { symbol "+"; return (+) } +++ do { symbol "-"; return (-) }
 
-  mulop = do { symbol "*"; return (*)} +++ do {symbol "/"; return (div) }
+  mulop = do { symbol "*"; return (*) } +++ do { symbol "/"; return (div) }
 
   -- apply expr "1 - 2 * 3 + 4" -> [(-1, "")]
 #+end_src
