@@ -2,20 +2,10 @@
 
 ** Sources
 
-*** Overview
-
 | source                                       | author                         |
 |----------------------------------------------+--------------------------------|
 | *Packrat Parsing*                            | Bryan Ford                     |
 | *Packrat Parsers Can Support Left Recursion* | Warth, Douglass, and Millstein |
-
-*** Details
-
-- B. Ford, "Packrat Parsing: Simple, Powerful, Lazy, Linear Time Functional Pearl," 2002.
-  Available: https://bford.info/pub/lang/packrat-icfp02.pdf
-
-- A. Warth, J. Douglass, and T. Millstein, "Packrat Parsers Can Support Left Recursion."
-  Available: https://web.cs.ucla.edu/~todd/research/pepm08.pdf
 
 ** Keywords
 
