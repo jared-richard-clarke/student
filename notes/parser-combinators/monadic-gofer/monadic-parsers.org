@@ -454,16 +454,24 @@ and ~s~ is the state. ~State~ automates the threading of state between functions
 
 ** Aside: Maybe Monad
 
-#+begin_src
+#+begin_src haskell
   data Maybe a = Just a | Nothing
 
   instance Monad Maybe where
     -- result :: a -> Maybe a
     result x = Just x
 
-    -- bind :: Maybe a -> (a -> Maybe a) -> Maybe b
+    -- bind :: Maybe a -> (a -> Maybe b) -> Maybe b
     (Just x) `bind` f = f x
     Nothing  `bind` f = Nothing
+
+  instance MonadOPlus Maybe where
+    -- zero :: Maybe a
+    zero = Nothing
+
+    -- (++) :: Maybe a -> Maybe a -> Maybe a
+     Just x ++ y = Just x
+    Nothing ++ y = y
 #+end_src
 
 ** Aside: List Monad
@@ -474,6 +482,7 @@ Old-school Haskell implementation of a list monad. Pattern matching drives list 
   instance Monad [] where
     -- result :: a -> [a]
     result x = [x]
+
     -- bind :: [a] -> (a -> [b]) -> [b]
         [] `bind` f = []
     (x:xs) `bind` f = f x ++ (xs `bind` f)
@@ -481,6 +490,7 @@ Old-school Haskell implementation of a list monad. Pattern matching drives list 
   instance MonadOPlus [] where
     -- zero :: [a]
     zero = []
+
     -- (++) :: [a] -> [a] -> [a]
         [] ++ ys = ys
     (x:xs) ++ ys = x : (xs ++ ys)
