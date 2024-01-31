@@ -397,7 +397,7 @@ and ~s~ is the state. ~State~ automates the threading of state between functions
     setenv :: s -> m a -> m a
 
   instance Monad m => ReaderMonad (ReaderT m s) s where
-    --env :: ReaderT m s s
+    -- env :: ReaderT m s s
     env = \s -> result s
     -- setenv :: s -> ReaderT m s a -> ReaderT m s a
     setenv s srm = \_ -> srm s
