@@ -452,6 +452,20 @@ and ~s~ is the state. ~State~ automates the threading of state between functions
              , v           <- setenv (l, dc) p]
 #+end_src
 
+** Aside: Maybe Monad
+
+#+begin_src
+  data Maybe a = Just a | Nothing
+
+  instance Monad Maybe where
+    -- result :: a -> Maybe a
+    result x = Just x
+
+    -- bind :: Maybe a -> (a -> Maybe a) -> Maybe b
+    (Just x) `bind` f = f x
+    Nothing  `bind` f = Nothing
+#+end_src
+
 ** Aside: List Monad
 
 Old-school Haskell implementation of a list monad. Pattern matching drives list evaluation.
