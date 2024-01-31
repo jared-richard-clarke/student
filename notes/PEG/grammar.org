@@ -2,19 +2,10 @@
 
 ** Sources
 
-*** Overview
-
 | source                                                                  | author                |
 |-------------------------------------------------------------------------+-----------------------|
 | *Parsing Expression Grammars: A Recognition-Based Syntactic Foundation* | Bryan Ford            |
 | *A Text Pattern-Matching Tool Based on Parsing Expression Grammars*     | Roberto Ierusalimschy |
-
-*** Details
-
-- B. Ford, "Parsing Expression Grammars: A Recognition-Based Syntactic Foundation." Available: https://bford.info/pub/lang/peg.pdf
-
-- R. Ierusalimschy, "A text pattern-matching tool based on Parsing Expression Grammars,"
-  Software: Practice and Experience, vol. 39, no. 3, pp. 221–258, Mar. 2009, doi: https://doi.org/10.1002/spe.892.
 
 ** Keywords
 
