@@ -68,8 +68,8 @@ provide a means to structure the building of such computations.
 
   item :: Parser Char
   item = \inp -> case inp of
-                     []     -> []
-                     (x:xs) -> [(x,xs)]
+                   []     -> []
+                   (x:xs) -> [(x,xs)]
 
   {-
     For "bind", the parser "p" is applied to the input string, yielding
