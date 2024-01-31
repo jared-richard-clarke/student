@@ -1,6 +1,6 @@
 * Packrat Parsers
 
-** Source
+** Sources
 
 *** Overview
 
