@@ -1,13 +1,17 @@
 * Scanning
 
-*Introduction to Compilers and Language Design* by Douglas Thain
+** Sources
+
+| source                                          | author        |
+|-------------------------------------------------+---------------|
+| *Introduction to Compilers and Language Design* | Douglas Thain |
 
 ** Regular Expressions
 
 - *s* = string
 - *L(s)* = language of *s*, a set of strings drawn from alphabet *Σ*.
 
-*** Definition
+*** Inductive Definition
 
 - If *a ∈ Σ* then *a* is a regular expression and *L(a) = {a}*.
 
@@ -22,10 +26,9 @@ Then for regular expressions *s* and *t*:
 
 3. *s\star{}* is a *RE* such that *L(s\star{}) = L(s)* concatenated zero or more times.
 
-Rule #3 is known as the *Kleene closure* and has the highest precedence. Rule #2
-is known as *concatenation*. Rule #1 has the lowest precedence and is known as
-*alternation*. Parentheses can be added to adjust the order of operations in
-the usual way.
+*Rule #3* is known as the *Kleene closure* and has the highest precedence. *Rule #2*
+is known as *concatenation*. Rule #1 has the lowest precedence and is known as *alternation*.
+Parentheses can be added to adjust the order of operations in the usual way.
 
 *** Examples
 
@@ -37,14 +40,14 @@ the usual way.
 | (moo)*              | { ε, moo, moomoo, ... }     |
 | a(b\vert{}a)*a      | { aa, aaa, aba, aaaa, ... } |
 
-*** Optional Syntax
+*** Derived Syntax
 
-| syntax | definition  | alternate                     |
-|--------+-------------+-------------------------------|
-| s?     | optional    | (s\vert{}ε)                   |
-| s+     | one or more | ss*                           |
-| [a-z]  | one of      | (a\vert{}b\vert{}...\vert{}z) |
-| [^x]   | any except  | Σ - x                         |
+| derivation | semantics   | base syntax                   |
+|------------+-------------+-------------------------------|
+| s?         | optional    | (s\vert{}ε)                   |
+| s+         | one or more | ss*                           |
+| [a-z]      | one of      | (a\vert{}b\vert{}...\vert{}z) |
+| [^x]       | any except  | Σ - x                         |
 
 *** Algebraic Properties
 
@@ -67,7 +70,7 @@ has no more than one outgoing edge for a given symbol. A *DFA* has no ambiguity.
 For every combination of state and input symbol, there is exactly one choice of what
 to do next.
 
-The transitions between states are represented by a matrix *M[s, i]*, which
+The transitions between states can be represented by a matrix *M[s, i]*, which
 encodes the next state, given the current state and input symbol. If the transition
 is not allowed, we mark it with *E* to indicate an error. For each symbol, we
 compute *c = M[s, i]* where *c* represents the current state until all the input is
@@ -108,17 +111,19 @@ FA:   --⓪
 
 *** Nondeterministic Finite Automata
 
-An *NFA* presents a variety of ambiguous choices. There are two common ways to interpret ambiguity.
+An *NFA* presents a variety of ambiguous choices. There are two common ways to interpret
+ambiguity.
 
 1. *Crystal Ball Interpretation*: the *NFA* somehow knows what the best choice is by some
    means external to itself. Impossible in a real implementation.
+
 2. *Many Worlds Interpretation*: the *NFA* exists in all allowable states simultaneously.
 
 **** Ambiguity
 
-State 0 allows for two different transitions on symbol *i*. There is no simple rule
-by which we can pick one path over another. One is to stay in state 0 matching *[a-z]*
-and the other is to move to state 1 matching *i*.
+*State 0* allows for two different transitions on symbol *i*. There is no simple rule
+by which we can pick one path over another. One is to stay in *state 0* matching *[a-z]*
+and the other is to move to *state 1* matching *i*.
 
 #+begin_example
 RE: [a-z]*ing
@@ -151,4 +156,60 @@ RE: a*(ab|ac)
 FA: -⓪
       \-ε
        ④-a->⑤-c->(⑥)
+#+end_example
+
+** REs to NFAs
+
+#+begin_example
+  === characters and epsilon ===
+
+     a        ε
+  >○-a->◎  >○-ε->◎
+
+  === concatenation ===
+
+  AB or A•B
+
+  >○-A->○-ε->○-B->◎
+
+  === alternation ===
+
+  A|B
+
+     ○-A->○
+    /-ε    \-ε
+  >○        ◎
+    \-ε    /-ε
+     ○-B->○
+
+  === Kleene closure ===
+
+  A*
+
+     ○-A->○
+    /-ε    \-ε
+  >○---ε--->◎
+   ^       /
+    \__ε__/
+#+end_example
+
+** NFA to DFA Conversion
+
+- epsilon closure :: The set of *NFA* states reachable from *NFA* state *n* by zero or more
+  *ε* transitions.
+
+*** Subset Construction Algorithm
+
+#+begin_example
+  Given an NFA with states N and start state N0, create an equivalent DFA with states D and
+  start state D0.
+  Let D0 = ε-closure(N0).
+  Add D0 to a list.
+  While items remain on the list:
+    Let d be the next DFA state removed from the list.
+    For each character c in Σ:
+      Let T contain all NFA states Nk such that:
+        Nj ∈ d and Nj → Nk
+      Create new DFA state Di = ε-closure(T)
+      If Di is not already in the list, add it to the end.
 #+end_example
