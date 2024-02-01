@@ -200,16 +200,22 @@ FA: -⓪
 
 *** Subset Construction Algorithm
 
-#+begin_example
-  Given an NFA with states N and start state N0, create an equivalent DFA with states D and
-  start state D0.
-  Let D0 = ε-closure(N0).
-  Add D0 to a list.
-  While items remain on the list:
-    Let d be the next DFA state removed from the list.
-    For each character c in Σ:
-      Let T contain all NFA states Nk such that:
-        Nj ∈ d and Nj → Nk
-      Create new DFA state Di = ε-closure(T)
-      If Di is not already in the list, add it to the end.
-#+end_example
+- Given an *NFA* with states *N* and start state *N_{0}*, create an equivalent *DFA* with states
+  *D* and start state *D_{0}*.
+
+- Let *D_{0}* = *ε-closure(N_{0})*
+
+- Add *D_{0}* to a list.
+
+- While items remain on the list:
+
+  - Let *d* be the next *DFA* state removed from the list.
+
+  - For each character *c* in *Σ*:
+
+    - Let *T* contain all *NFA* states *N_{k}* such that:
+      *N_{j} ∈ d* and *N_{j} → N_{k}*
+
+    - Create new *DFA* state *D_{i}* = *ε-closure(T)*
+
+    - If *D_{i}* is not already in the list, add it to the end.
