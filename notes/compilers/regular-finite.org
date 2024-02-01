@@ -189,8 +189,8 @@ FA: -⓪
      ○-A->○
     /-ε    \-ε
   >○---ε--->◎
-   ^       /
-    \__ε__/
+    \      /
+     <--ε--
 #+end_example
 
 ** NFA to DFA Conversion
