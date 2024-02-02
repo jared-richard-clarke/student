@@ -190,7 +190,7 @@ FA: -⓪
     /-ε    \-ε
   >○---ε--->◎
     \      /
-     <--ε--
+     <-ε--
 #+end_example
 
 ** NFA to DFA Conversion
