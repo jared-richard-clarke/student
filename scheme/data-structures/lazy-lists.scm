@@ -1,3 +1,5 @@
+;; === Primitives ===
+
 ;; (head <promise>) -> value
 ;; Returns the head of a lazy cons list.
 (define head
@@ -9,6 +11,8 @@
 (define tail
   (lambda (xs)
     (cdr (force xs))))
+
+;; === Generators ===
 
 ;; (range start) | (range start stop) | (range start stop step) -> <promise>
 ;;     where start, stop, step = number
@@ -31,15 +35,32 @@
                '()
                (delay (cons x (next (+ x step)))))))]))
 
-;; (repeat any number) -> <promise>
-;; Returns a promise to build a repeated list of values for a specified length.
-;; (take 3 (repeat "repeat" 100)) -> '("repeat" "repeat" "repeat")
+;; (repeat any) -> <promise>
+;; Returns a promise to build an infinite list of a repeated value.
+;; (take 4 (repeat 'x)) -> '(x x x x)
 (define repeat
-  (lambda (x n)
-    (let next ([counter n])
-      (if (< counter 1)
-          '()
-          (delay (cons x (next (- counter 1))))))))
+  (lambda (x)
+    (delay (cons x (repeat x)))))
+
+;; (iterate function any) -> <promise>
+;; Returns a promise to build an infinite list of a value repeatedly
+;; iterated over by the provided function.
+;; (take 5 (iterate add1 5)) -> '(5 6 7 8 9)
+(define iterate
+  (lambda (f x)
+    (delay (cons x (iterate f (f x))))))
+
+;; (cycle list) -> <promise>
+;; Returns a promise to build a circular list from a finite one.
+;; (take 7 (cycle '(1 2 3))) -> '(1 2 3 1 2 3 1)
+(define cycle
+  (lambda (xs)
+    (let next ([ys xs])
+      (delay (if (null? ys)
+                 (cons (car xs) (next (cdr xs)))
+                 (cons (car ys) (next (cdr ys))))))))
+
+;; === Consumers ===
 
 ;; (take number (range number)) -> (list number)
 ;; Takes the first "n" elements of range. Takes the
