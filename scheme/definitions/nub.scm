@@ -1,8 +1,8 @@
-;; (de-duplicate list) -> list
+;; (nub list) -> list
 ;; Removes duplicate elements from a list.
-;; (de-duplicate '(1 2 2 3 4 4 1)) -> '(1 2 3 4)
+;; (nub '(1 2 2 3 4 4 1)) -> '(1 2 3 4)
 
-(define de-duplicate
+(define nub
   (let ([not-eq? (lambda (x)
                    (lambda (y)
                      (not (equal? x y))))])
@@ -11,4 +11,4 @@
           '()
           (let ([x  (car xs)]
                 [xs (cdr xs)])
-            (cons x (de-duplicate (filter (not-eq? x) xs))))))))
+            (cons x (nub (filter (not-eq? x) xs))))))))
