@@ -83,30 +83,30 @@ Every *RE* can be written as an *FA* and vice versa.
 **** *FA*: "for"
 
 #+begin_example
-->⓪-f->①-o->②-r->(③)
+  ->⓪-f->①-o->②-r->⓷
 #+end_example
 
 **** *RE* to *FA*: identifier
 
 #+begin_example
-RE: [a-z][a-z0-9]+
-                              -[a-z][0-9]->
-                              <------------
-FA: ->⓪-[a-z]->①-[a-z][0-9]->(②)
+  RE: [a-z][a-z0-9]+
+                                 -[a-z][0-9]->
+                                 <------------
+  FA: ->⓪-[a-z]->①-[a-z][0-9]->⓶
 #+end_example
 
 **** *FA*: number
 
 #+begin_example
-RE: ([1-9][0-9]*)|0
+  RE: ([1-9][0-9]*)|0
 
-                    -[0-9]->
-                    <-------
-         (①)-[0-9]->(②)
-   [1-9]-/
-FA:   --⓪
-       0-\
-         (③)
+                      -[0-9]->
+                      <-------
+            ⓵-[0-9]->⓶
+     [1-9]-/
+  FA:   --⓪
+         0-\
+            ⓷
 #+end_example
 
 *** Nondeterministic Finite Automata
@@ -126,12 +126,12 @@ by which we can pick one path over another. One is to stay in *state 0* matching
 and the other is to move to *state 1* matching *i*.
 
 #+begin_example
-RE: [a-z]*ing
+  RE: [a-z]*ing
 
-     -[a-z]->
-     <-------
-     |
-FA: -⓪-i-①-n-②-g-(③)
+       -[a-z]->
+       <-------
+       |
+  FA: -⓪-i->①-n->②-g->⓷
 #+end_example
 
 **** Many Worlds Interpretation
@@ -149,13 +149,13 @@ Consume string *aaac*.
 #+begin_example
 RE: a*(ab|ac)
 
-     -a->
-     <---
-     |  ①-a->②-b->-(③)
-     |/-ε
-FA: -⓪
-      \-ε
-       ④-a->⑤-c->(⑥)
+       -a->
+       <---
+       |  ①-a->②-b->⓷
+       |/-ε
+  FA: -⓪
+        \-ε
+         ④-a->⑤-c->⓺
 #+end_example
 
 ** REs to NFAs
@@ -190,7 +190,7 @@ FA: -⓪
     /-ε    \-ε
   >○---ε--->◎
     \      /
-     <-ε--
+     <-ε--+
 #+end_example
 
 ** NFA to DFA Conversion
@@ -219,3 +219,22 @@ FA: -⓪
     - Create new *DFA* state *D_{i}* = *ε-closure(T)*
 
     - If *D_{i}* is not already in the list, add it to the end.
+
+
+*** Example: *abab|abbb*
+
+#+begin_example
+   === NFA ===
+
+   +->②-a->④-b->⑥-a->⑧-b-+
+   |                      |
+  >①                      ⓾
+   |                      |
+   +->③-a->⑤-b->⑦-b->⑨-b-+
+
+   === DFA ===        +-a->⑧-b-+
+                      |        |
+   >① ② ③-a->④ ⑤-b->⑥ ⑦       ⓾
+                      |        |
+                      +-b->⑨-b-+
+#+end_example
