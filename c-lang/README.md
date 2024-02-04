@@ -8,3 +8,11 @@ I explore the C programming language through code examples and documentation.
 >  It’s up to us to decide how many of those bytes to use and what they mean."
 >
 > — Robert Nystrom, **Crafting Interpreters**
+
+The operations on data in the C data model can be divided into three categories:
+
+1. Operations that create or destroy a data object.
+
+2. Operations that access and modify parts of a data object.
+
+3. Operations that combine the values of data objects to form a new value for a data object.
