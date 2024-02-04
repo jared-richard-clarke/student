@@ -68,8 +68,8 @@
                  (cons (head xs) (next (tail xs)))
                  (cons (head ys) (next (tail ys))))))))
 
-;; (map function list) -> <promise>
-;; Returns a promise to map an arbitrary function over a list.
+;; (map function <promise>) -> <promise>
+;; Returns a promise to map an arbitrary function over a lazy list.
 ;; (take 4 (map add1 (cycle '(1 2)))) -> '(2 3 2 3)
 (define map
   (lambda (f xs)
