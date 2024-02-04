@@ -12,6 +12,14 @@
   (lambda (xs)
     (cdr (force xs))))
 
+;; (lazy-list value...) -> <promise>
+;; Transforms a variable number of values into a lazy list.
+(define lazy-list
+  (lambda xs
+    (if (null? xs)
+        '()
+        (delay (cons (car xs) (apply lazy-list (cdr xs)))))))
+
 ;; === Generators ===
 
 ;; (range start) | (range start stop) | (range start stop step) -> <promise>
@@ -50,15 +58,15 @@
   (lambda (f x)
     (delay (cons x (iterate f (f x))))))
 
-;; (cycle list) -> <promise>
+;; (cycle <promise>) -> <promise>
 ;; Returns a promise to build a circular list from a finite one.
-;; (take 7 (cycle '(1 2 3))) -> '(1 2 3 1 2 3 1)
+;; (take 7 (cycle (lazy-list 1 2 3))) -> '(1 2 3 1 2 3 1)
 (define cycle
   (lambda (xs)
     (let next ([ys xs])
       (delay (if (null? ys)
-                 (cons (car xs) (next (cdr xs)))
-                 (cons (car ys) (next (cdr ys))))))))
+                 (cons (head xs) (next (tail xs)))
+                 (cons (head ys) (next (tail ys))))))))
 
 ;; (map function list) -> <promise>
 ;; Returns a promise to map an arbitrary function over a list.
