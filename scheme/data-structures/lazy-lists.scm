@@ -60,6 +60,15 @@
                  (cons (car xs) (next (cdr xs)))
                  (cons (car ys) (next (cdr ys))))))))
 
+;; (map function list) -> <promise>
+;; Returns a promise to map an arbitrary function over a list.
+;; (take 4 (map add1 (cycle '(1 2)))) -> '(2 3 2 3)
+(define map
+  (lambda (f xs)
+    (if (null? xs)
+        '()
+        (delay (cons (f (head xs)) (map f (tail xs)))))))
+
 ;; === Consumers ===
 
 ;; (take number (range number)) -> (list number)
