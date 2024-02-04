@@ -43,6 +43,15 @@
                '()
                (delay (cons x (next (+ x step)))))))]))
 
+;; (append <promise> <promise>) -> <promise>
+;; Returns a promise to append two lazy lists.
+;; (take 4 (append (lazy-list 1 2 3) (lazy-list 4 5 6))) -> '(1 2 3 4)
+(define append
+  (lambda (xs ys)
+    (if (null? xs)
+        ys
+        (delay (cons (head xs) (append (tail xs) ys))))))
+
 ;; (repeat any) -> <promise>
 ;; Returns a promise to build an infinite list of a repeated value.
 ;; (take 4 (repeat 'x)) -> '(x x x x)
