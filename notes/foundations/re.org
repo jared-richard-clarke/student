@@ -102,37 +102,65 @@ The collection of regular languages over an alphabet *Σ* is defined recursively
 
 *** Deterministic Finite-State Automaton
 
-*M* is specified by five components: *M = (Q, Σ, q₀, δ, F)* where
+*M* is specified by five components: *M = (Q, Σ, δ, q₀, F)* where
 
 - Q :: A finite set of states.
 
-- Σ :: The input alphabet.
+- Σ :: Input alphabet, a finite set.
+
+- δ : Q × Σ → Q :: The transition function.
 
 - q₀ ∈ Q :: The start state.
 
-- F :: A subset of *Q*. The states designated as *final* or *accepting* states.
+- F ⊆ Q :: A subset of *Q*. The states designated as *final* or *accepting* states.
 
-- δ :: Transition function that takes *(state, symbol)* pairs and maps each one to a state:
-  *δ : Q × Σ → Q*. The declaration *δ(q, a) = qp* means that if a machine is in state *q* and
-  the input symbol *a* is consumed, then the machine will move to state *qp*. The function *δ*
-  must be a total function, meaning that *δ(q, a)* must be defined for every state *q* and every
-  input symbol *a*. Given the current input symbol, there is only one possible move the machine
-  can make.
+*δ* is a transition function that takes *(state, symbol)* pairs and maps each one to a state:
+*δ : Q × Σ → Q*. The declaration *δ(q, a) = qp* means that if a machine is in state *q* and
+the input symbol *a* is consumed, then the machine will move to state *qp*. The function *δ*
+must be a total function, meaning that *δ(q, a)* must be defined for every state *q* and every
+input symbol *a*. Given the current input symbol, there is only one possible move the machine
+can make.
 
 The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ Σ\star{}* that are
 accepted by *M: L(M) = { w ∈ Σ\star{} | δ\star{}(q₀, w) ∈ F }*.
 
 *** Non-deterministic Finite-State Automaton
 
-*M* is specified by five components: *M = (Q, Σ, q₀, ∂, F)* where
+*M* is specified by five components: *M = (Q, Σ, δ, q₀, F)* where
 
-- *Q*, *Σ*, *q₀* and *F* are as in the definition of DFAs.
+- Q :: A finite set of states.
 
-- *∂* is a transition function that takes *(state, input symbol)* pairs and maps each one to a set
-  of states. To say *∂(q, a) = {q₁, q₂, ..., qn}* means that if the machine is in state *q* and
-  the input symbol *a* is consumed, then the machine may move directly into any one of states
-  *q₁, q₂, ..., qn*. The function *∂* must also be defined for every *(state, ε)* pair. The formal
-  description of *∂* is *∂: Q × (Σ ∪ {ε}) → P(Q)*.
+- Σ :: Input alphabet, a finite set.
+
+- δ : Q × (Σ ∪ {ε}) → P(Q) :: The transition function.
+
+- q₀ ∈ Q :: The start state.
+
+- F ⊆ Q :: A subset of *Q*. The states designated as *final* or *accepting* states.
+
+*δ* is a transition function that takes *(state, input symbol)* pairs and maps each one to a set
+of states. To say *δ(q, a) = { q₁, q₂, ..., qn }* means that if the machine is in state *q* and
+the input symbol *a* is consumed, then the machine may move directly into any one of states
+*q₁, q₂, ..., qn*. The function *δ* must also be defined for every *(state, ε)* pair. The formal
+description of *δ* is *δ: Q × (Σ ∪ {ε}) → P(Q)*.
 
 The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ Σ\star{}* that are
-accepted by *M: L(M) = { w ∈ Σ\star{} | ∂\star{}(q₀, w) ∩ F ≠ Ø }*.
+accepted by *M: L(M) = { w ∈ Σ\star{} | δ\star{}(q₀, w) ∩ F ≠ Ø }*.
+
+*** NFA to DFA Conversion
+
+The epsilon closure *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the set of all states
+that can be reached from *q* via one or more *ε* transitions.
+
+If *R* is a set of states from *Q*, the epsilon closure *E(R)* is defined as the union of the epsilon
+closures of all the states in *R*.
+
+1. The set of states of the DFA is *P(Q)*, the power set of states *Q* in the original NFA.
+
+2. The start state of the DFA is *E({q₀})*, where *q₀* is the original start state of the NFA.
+
+3. For sets *R* in *P(Q)* and input characters *c ∈ Σ*, the transition function *δn* of the DFA is defined
+   in terms of the transition function *δ* of the NFA by *δn(R,c) = U_{r ∈ R} E(δ(r,c))*.
+
+The set of accepting states *F* of the DFA is defined to be the set of all states containing at least one
+final state of the NFA.
