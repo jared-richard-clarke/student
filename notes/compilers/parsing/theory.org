@@ -81,7 +81,7 @@ two completely separate sets.
 #+begin_example
 V⁰   = {ε}
 V¹   = V
-Vⁿ⁺¹ = {wv : w ∈ Vⁿ and v ∈ V} for each n > 0
+Vⁿ⁺¹ = {wv | w ∈ Vⁿ ∧ v ∈ V} for each n > 0
 #+end_example
 
 Strings form a *monoid* with concatenation as the binary operation and *ε* the identity element.
