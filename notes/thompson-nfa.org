@@ -1,11 +1,14 @@
 * Thompson's Construction
 
+* Thompson's Construction
+
 ** Sources
 
-| source                                               | author    |
-|------------------------------------------------------+-----------|
-| *Thompson's Construction*                            | Wikipedia |
-| *Regular Expression Matching Can Be Simple and Fast* | Russ Cox  |
+| source                                               | author         |
+|------------------------------------------------------+----------------|
+| *Thompson's Construction*                            | Wikipedia      |
+| *Regular Expression Matching Can Be Simple and Fast* | Russ Cox       |
+| *Theory of Computation*                              | Michael Sipser |
 
 ** NFA Fragments
 
@@ -22,26 +25,34 @@
 
   === alternation or union (s|t) ===
 
+  S ∪ T = { w | w ∈ S ∨ w ∈ T }
+
     ----------
    | ◯ N(s) ◯ |
     / ------ \
-  >ⓠ          ⓕ
+  >ⓠ         ⓕ
     \ ------ /
    | ◯ N(t) ◯ |
     ----------
 
   === concatenation (st or s•t) ===
 
-    ----------      ----------
+  S • T = { xy | x ∈ S ∧ y ∈ T }
+
+    ----------       ----------
   >| ⓠ N(s) ◯ |--->| ◯ N(t) ⓕ |
-    ----------      ----------
+    ----------       ----------
 
   === Kleene star (s*) ===
 
-          +-------+
-          V       |
+  S⁰   = {ε}
+  S¹   = S
+  Sⁿ⁺¹ = { xy | x ∈ Sⁿ ∧ y ∈ S } for each n > 0
+
+             <-+
+            /   \
           ---------
-  >ⓠ--->| ◯ N(s) ◯ |---->ⓕ
+  >ⓠ--->| ◯ N(s) ◯ |--->ⓕ
     \     ---------     /
      +----------------->
 #+end_example
@@ -65,17 +76,17 @@
 
         // === single characters ===
 
-      default:                                        //    *p
-        s = state(*p, NULL, NULL);                    // >◯---->
+      default:                                         //    *p
+        s = state(*p, NULL, NULL);                     // >◯---->
         push(frag(s, list1(&s->out)));
         break;
 
         // === concatenation (e₁e₂) ===
 
       case: '.':
-        e2 = pop();                                   //   ----      ----
-        e1 = pop();                                   // >| e₁ |--->| e₂ |--->
-        patch(e1.out, e2.start);                      //   ----      ----
+        e2 = pop();                                    //   ----      ----
+        e1 = pop();                                    // >| e₁ |--->| e₂ |--->
+        patch(e1.out, e2.start);                       //   ----      ----
         push(frag(e1.start, e2.out));
         break;
 
