@@ -2,11 +2,12 @@
 
 ** Sources
 
-| source                                               | author         |
-|------------------------------------------------------+----------------|
-| *Thompson's Construction*                            | Wikipedia      |
-| *Regular Expression Matching Can Be Simple and Fast* | Russ Cox       |
-| *Theory of Computation*                              | Michael Sipser |
+| source                                               | author          |
+|------------------------------------------------------+-----------------|
+| *Thompson's Construction*                            | Wikipedia       |
+| *Regular Expression Matching Can Be Simple and Fast* | Russ Cox        |
+| *Theory of Computation*                              | Michael Sipser  |
+| *Visualizing Thompson's Construction*                | Gregory Cernera |
 
 ** NFA Fragments
 
@@ -15,11 +16,14 @@
 #+begin_example
   === empty ===
 
-  >ⓠ--ε-->ⓕ
+  >ⓧ--ε-->ⓨ
+   ^      ^
+   |      |
+   start  accept
 
   === symbol ===
 
-  >ⓠ--a-->ⓕ
+  >ⓧ--a-->ⓨ
 
   === alternation or union (s|t) ===
 
@@ -28,7 +32,7 @@
     ----------
    | ◯ N(s) ◯ |
     / ------ \
-  >ⓠ          ⓕ
+  >ⓧ          ⓨ
     \ ------ /
    | ◯ N(t) ◯ |
     ----------
@@ -37,9 +41,11 @@
 
   S • T = { xy | x ∈ S ∧ y ∈ T }
 
-    ----------       ----------
-  >| ⓠ N(s) ◯ |--->| ◯ N(t) ⓕ |
-    ----------       ----------
+    ----------       ---------
+  >| ⓧ N(s) ◯ |--->| ◯ N(t) ⓨ |
+    ----------       ---------
+            ^--------^
+           joined state
 
   === Kleene star (s*) ===
 
@@ -50,7 +56,7 @@
              <-+
             /   \
           ---------
-  >ⓠ--->| ◯ N(s) ◯ |---->ⓕ
+  >ⓧ--->| ◯ N(s) ◯ |---->ⓨ
     \     ---------     /
      +----------------->
 #+end_example
@@ -59,6 +65,31 @@
 ** NFA Fragments (Russ Cox)
 
 #+begin_src c
+  typedef struct State {
+    int c;
+    State *out;
+    State *out1;
+    int lastlist;
+  } State;
+
+  //                +--->out
+  //                |
+  // >◯-c->out     >◯                    ◎
+  //                |
+  //                +--->out1
+  //
+  // c < 256       c = 256 (Split)       c = 257 (Match)
+
+  typedef struct Frag {
+    State *start;
+    Ptrlist *out;
+  } Frag;
+
+  typedef union Ptrlist {
+    Ptrlist *next;
+    State *s;
+  } Ptrlist;
+
   State* post2nfa(char *postfix)
   {
     char *p;
@@ -134,3 +165,78 @@
   #undef push
   }
 #+end_src
+
+** RE to NFA Construction
+
+#+begin_example
+  === regular expression ===
+
+  infix:   a(a|b)*b
+
+  postfix: aab|*•b•
+
+  === NFA Construction ===
+
+  1. aab|*•b•
+     ^
+
+     >◯-a->◎
+
+  2. aab|*•b•
+      ^
+
+     >◯-a->◎
+
+  3. aab|*•b•
+       ^
+
+     >◯-b->◎
+
+  4. aab|*•b•
+        ^
+
+        ◯-a->◯
+       /      \
+     >◯        ◎
+       \      /
+        ◯-b->◯
+
+  5.  aab|*•b•
+          ^
+
+             <-------+
+            | ◯-a->◯ |
+            |/      \|
+       ◯--->◯        ◯--->◎
+        \    \      /    /
+         \    ◯-b->◯    /
+          +------------>
+
+  6. aab|*•b•
+          ^
+
+                 <-------+
+                | ◯-a->◯ |
+                |/      \|
+     >◯-a->◯--->◯        ◯--->◎
+            \    \      /    /
+             \    ◯-b->◯    /
+              +------------>
+
+  7. aab|*•b•
+           ^
+
+     >◯-b->◎
+
+  8. aab|*•b•
+            ^
+
+                 <-------+
+                | ◯-a->◯ |
+                |/      \|
+     >◯-a->◯--->◯        ◯--->◯-b->◎
+            \    \      /    /
+             \    ◯-b->◯    /
+              +------------>
+
+#+end_example
