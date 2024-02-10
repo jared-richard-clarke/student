@@ -175,7 +175,7 @@
 
   postfix: aab|*•b•
 
-  === NFA Construction ===
+  === NFA construction ===
 
   1. aab|*•b•
      ^
@@ -238,5 +238,48 @@
             \    \      /    /
              \    ◯-b->◯    /
               +------------>
+
+  === regular expression ===
+
+  infix:   a|b|c
+
+  postfix: abc||
+
+  === NFA construction ===
+
+  1. abc||
+     ^
+
+     >◯-a->◎
+
+  2. abc||
+      ^
+
+     >◯-b->◎
+
+  3. abc||
+       ^
+
+     >◯-c->◎
+
+  4. abc||
+        ^
+
+        ◯-b->◯
+       /      \
+     >◯        ◎
+       \      /
+        ◯-c->◯
+
+  5. abc||
+         ^
+
+        ◯---a--->◯
+       /          \
+     >◯   ◯-b->◯   ◎
+       \ /      \ /
+        ◯        ◯
+         \      /
+          ◯-c->◯
 
 #+end_example
