@@ -1,7 +1,5 @@
 * Thompson's Construction
 
-* Thompson's Construction
-
 ** Sources
 
 | source                                               | author         |
