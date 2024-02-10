@@ -159,7 +159,7 @@
     }
 
     e = pop();
-    patch(e.out, matchstate);
+    patch(e.out, matchstate);                          // >◎
     return e.start;
   #undef pop
   #undef push
