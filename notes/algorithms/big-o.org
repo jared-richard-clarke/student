@@ -13,3 +13,16 @@ and lowest terms.
 | O(n³)      | cubic         |
 | O(2ⁿ)      | exponential   |
 | O(n!)      | factorial     |
+
+
+#+begin_example
+  Y
+  ^
+  |
+  |
+  |
+  + — — — — — — > X
+
+  where X = number of elements
+        Y = number of operations
+#+end_example
