@@ -1,6 +1,6 @@
-#+title: Thompson's Construction
+* Thompson's Construction
 
-* Sources
+** Sources
 
 | source                                               | author          |
 |------------------------------------------------------+-----------------|
@@ -9,9 +9,17 @@
 | *Theory of Computation*                              | Michael Sipser  |
 | *Visualizing Thompson's Construction*                | Gregory Cernera |
 
-* NFA Fragments
+** NFA Fragments
 
 *Side Note*: The unlabeled edges are ε-transitions.
+
+#+begin_quote
+  "[E]fficiency comes from tracking the set of reachable states but not which paths were used
+   to reach them. In an *NFA* with *n* nodes, there can only be *n* reachable states at any step,
+   but there might be *2ⁿ* paths through the *NFA*."
+
+   — *Regular Expression Matching Can Be Simple and Fast*, Russ Cox
+#+end_quote
 
 #+begin_example
   === empty ===
@@ -62,7 +70,7 @@
 #+end_example
 
 
-* NFA Fragments (Russ Cox)
+** NFA Fragments (Russ Cox)
 
 #+begin_src c
   typedef struct State {
@@ -100,10 +108,10 @@
   #define pop()   *--stackp
 
     stackp = stack;
-    for(p=postfix; *p; p++){
+    for(p = postfix; *p; p++){
       switch(*p){
 
-        // === single characters ===
+        // === literal characters ===
 
       default:                                         //    *p
         s = state(*p, NULL, NULL);                     // >◯---->
@@ -159,14 +167,17 @@
     }
 
     e = pop();
-    patch(e.out, matchstate);                          // >◎
+    if(stackp != stack) {
+      return NULL;
+    }
+    patch(e.out, &matchstate);                         // >◎
     return e.start;
   #undef pop
   #undef push
   }
 #+end_src
 
-* RE to NFA Construction
+** RE to NFA Construction
 
 #+begin_example
   === regular expression ===
@@ -284,7 +295,7 @@
 
 #+end_example
 
-* RE to NFA to DFA
+** RE to NFA to DFA
 
 #+begin_example
   === regular expression ===
@@ -336,24 +347,42 @@
            +------------------->
 #+end_example
 
-| NFA States     | DFA State | a | b | c |
-|----------------+-----------+---+---+---|
-| {9,7,1,5,10}   | A         | B |   | C |
-| {2}            | B         |   | D |   |
-| {6,8,10,7,1,5} | C         | B |   | C |
-| {4,8,7,1,5,10} | D         | B |   | C |
+Each state in the *DFA* corresponds to a list of states from the *NFA*.
+
+The epsilon closure *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the set of all states
+that can be reached from *q* via one or more *ε* transitions.
+
+If *R* is a set of states from *Q*, the epsilon closure *E(R)* is defined as the union of the epsilon
+closures of all the states in *R*.
+
+1. The set of states of the *DFA* is *P(Q)*, the power set of states *Q* in the original *NFA*.
+
+2. The start state of the *DFA* is *E({q₀})*, where *q₀* is the original start state of the *NFA*.
+
+3. For sets *R* in *P(Q)* and input characters *c ∈ Σ*, the transition function *δn* of the *DFA* is defined
+   in terms of the transition function *δ* of the *NFA* by *δn(R,c) = U_{r ∈ R} E(δ(r,c))*.
+
+The set of accepting states *F* of the *DFA* is defined to be the set of all states containing at least one
+final state of the *NFA*.
+
+| NFA States            | DFA State | a | b | c |
+|-----------------------+-----------+---+---+---|
+| { 9, 7, 1, 5, 10 }    | A         | B |   | C |
+| { 2 }                 | B         |   | D |   |
+| { 6, 8, 10, 7, 1, 5 } | C         | B |   | C |
+| { 4, 8, 7, 1, 5, 10 } | D         | B |   | C |
 
 #+begin_example
   === subset construction ===
 
-  while (there is an unmarked state T in D) {
-      mark T;
-      for (each input symbol a) {
-          U = ε-closure(move(T,a));
-          D[T, a] = U;
-          if (U is not in D) {
-              add U as unmarked state to D;
+  while there is an unmarked state T in D-states {
+      mark T
+      for each input symbol a {
+          U := ε-closure(move(T, a))
+          if U is not in D-states {
+              add U as unmarked state to D
           }
+          D-transitions[T, a] := U
       }
   }
 
