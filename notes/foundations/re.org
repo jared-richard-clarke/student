@@ -173,7 +173,7 @@ final state of the NFA.
       for each input symbol a {
           U := ε-closure(move(T, a))
           if U is not in D-states {
-              add U as unmarked state to D
+              add U as unmarked state to D-states
           }
           D-transitions[T, a] := U
       }
