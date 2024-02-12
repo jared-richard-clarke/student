@@ -1,6 +1,6 @@
-* Thompson's Construction
+#+title: Thompson's Construction
 
-** Sources
+* Sources
 
 | source                                               | author          |
 |------------------------------------------------------+-----------------|
@@ -9,7 +9,7 @@
 | *Theory of Computation*                              | Michael Sipser  |
 | *Visualizing Thompson's Construction*                | Gregory Cernera |
 
-** NFA Fragments
+* NFA Fragments
 
 *Side Note*: The unlabeled edges are ε-transitions.
 
@@ -62,7 +62,7 @@
 #+end_example
 
 
-** NFA Fragments (Russ Cox)
+* NFA Fragments (Russ Cox)
 
 #+begin_src c
   typedef struct State {
@@ -166,7 +166,7 @@
   }
 #+end_src
 
-** RE to NFA Construction
+* RE to NFA Construction
 
 #+begin_example
   === regular expression ===
@@ -281,4 +281,91 @@
         ◯        ◯
          \      /
           ◯-c->◯
+
+#+end_example
+
+* RE to NFA to DFA
+
+#+begin_example
+  === regular expression ===
+
+  infix:   (ab|c)*
+  postfix: ab•c|*
+
+  === NFA Construction ===
+
+  1. ab•c|*
+     ^
+
+     >[1]-a->(2)
+
+  2. ab•c|*
+      ^
+
+     >[3]-b->(4)
+
+  3. ab•c|*
+       ^
+
+     >[1]-a->[2]-b->(4)
+
+  4. ab•c|*
+        ^
+
+     >[5]-c->[6]
+
+  5. ab•c|*
+         ^
+
+        [1]-a->[2]-b->[4]
+        /               \
+     >[7]               (8)
+        \               /
+        [5]-----c---->[6]
+
+  6. ab•c|*
+          ^
+            <-----------------+
+            |                 |
+            |[1]-a->[2]-b->[4]|
+            |/               \|
+     >[9]->[7]               [8]->(10)
+        \    \               /    /
+         \   [5]-----c---->[6]   /
+          \                     /
+           +------------------->
+#+end_example
+
+| NFA States     | DFA State | a | b | c |
+|----------------+-----------+---+---+---|
+| {9,7,1,5,10}   | A         | B |   | C |
+| {2}            | B         |   | D |   |
+| {6,8,10,7,1,5} | C         | B |   | C |
+| {4,8,7,1,5,10} | D         | B |   | C |
+
+#+begin_example
+  === subset construction ===
+
+  while (there is an unmarked state T in D) {
+      mark T;
+      for (each input symbol a) {
+          U = ε-closure(move(T,a));
+          D[T, a] = U;
+          if (U is not in D) {
+              add U as unmarked state to D;
+          }
+      }
+  }
+
+  === DFA ===
+
+        <------a
+        |      |
+    a->[B]->b  |
+    |   ^   |  |
+  >(A)  a  (D)-+
+    |   |   |
+    c->(C)<-c
+       / \
+      +-c->
 #+end_example
