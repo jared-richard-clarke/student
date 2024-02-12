@@ -201,14 +201,14 @@ RE: a*(ab|ac)
 *** Subset Construction Algorithm
 
 #+begin_example
-  while (there is an unmarked state T in D) {
-      mark T;
-      for (each input symbol a) {
-          U = ε-closure(move(T, a));
-          D[T, a] = U;
-          if (U is not in D) {
-              add U as unmarked state to D;
+  while there is an unmarked state T in D-states {
+      mark T
+      for each input symbol a {
+          U := ε-closure(move(T, a))
+          if U is not in D-states {
+              add U as unmarked state to D-states
           }
+          D-transitions[T, a] := U
       }
   }
 #+end_example
