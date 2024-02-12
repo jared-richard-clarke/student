@@ -3,16 +3,16 @@
 *f(x) = O(g(x)) as x → ∞* where the function *g(x)* typically omits constant factors
 and lowest terms.
 
-| Big-O      | Informal Name |
-|------------+---------------|
-| O(1)       | constant      |
-| O(log n)   | logarithmic   |
-| O(n)       | linear        |
-| O(n log n) | n log n       |
-| O(n²)      | quadratic     |
-| O(n³)      | cubic         |
-| O(2ⁿ)      | exponential   |
-| O(n!)      | factorial     |
+| Big-O      | Informal    |
+|------------+-------------|
+| O(1)       | constant    |
+| O(log n)   | logarithmic |
+| O(n)       | linear      |
+| O(n log n) | n log n     |
+| O(n²)      | quadratic   |
+| O(n³)      | cubic       |
+| O(2ⁿ)      | exponential |
+| O(n!)      | factorial   |
 
 
 #+begin_example
