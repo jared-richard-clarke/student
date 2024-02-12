@@ -3,7 +3,7 @@
 *f(x) = O(g(x)) as x → ∞* where the function *g(x)* typically omits constant factors
 and lowest terms.
 
-| Big-Oh     | Informal Name |
+| Big-O      | Informal Name |
 |------------+---------------|
 | O(1)       | constant      |
 | O(log n)   | logarithmic   |
