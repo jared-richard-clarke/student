@@ -1,0 +1,15 @@
+* Big O Notation
+
+*f(x) = O(g(x)) as x → ∞* where the function *g(x)* typically omits constant factors
+and lowest terms.
+
+| Big-Oh     | Informal Name |
+|------------+---------------|
+| O(1)       | constant      |
+| O(log n)   | logarithmic   |
+| O(n)       | linear        |
+| O(n log n) | n log n       |
+| O(n²)      | quadratic     |
+| O(n³)      | cubic         |
+| O(2ⁿ)      | exponential   |
+| O(n!)      | factorial     |
