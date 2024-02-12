@@ -200,26 +200,18 @@ RE: a*(ab|ac)
 
 *** Subset Construction Algorithm
 
-- Given an *NFA* with states *N* and start state *N_{0}*, create an equivalent *DFA* with states
-  *D* and start state *D_{0}*.
-
-- Let *D_{0}* = *ε-closure(N_{0})*
-
-- Add *D_{0}* to a list.
-
-- While items remain on the list:
-
-  - Let *d* be the next *DFA* state removed from the list.
-
-  - For each character *c* in *Σ*:
-
-    - Let *T* contain all *NFA* states *N_{k}* such that:
-      *N_{j} ∈ d* and *N_{j} → N_{k}*
-
-    - Create new *DFA* state *D_{i}* = *ε-closure(T)*
-
-    - If *D_{i}* is not already in the list, add it to the end.
-
+#+begin_example
+  while (there is an unmarked state T in D) {
+      mark T;
+      for (each input symbol a) {
+          U = ε-closure(move(T, a));
+          D[T, a] = U;
+          if (U is not in D) {
+              add U as unmarked state to D;
+          }
+      }
+  }
+#+end_example
 
 *** Example: *abab|abbb*
 
@@ -232,9 +224,9 @@ RE: a*(ab|ac)
    |                      |
    +->③-a->⑤-b->⑦-b->⑨-b-+
 
-   === DFA ===             +-a->{⑧}-b-+
-                           |          |
-   >{① ② ③}-a->{④ ⑤}-b->{⑥ ⑦}        ⓾
-                           |          |
-                           +-b->{⑨}-b-+
+   === DFA ===              +-a->{⑧}-b-+
+                            |          |
+   >{① ② ③}-a->{④ ⑤}-b->{⑥ ⑦}         ⓾
+                            |          |
+                            +-b->{⑨}-b-+
 #+end_example
