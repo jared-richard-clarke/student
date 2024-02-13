@@ -14,6 +14,18 @@
 *Side Note*: The unlabeled edges are ε-transitions.
 
 #+begin_quote
+  "Previous search algorithms involve backtracking when a partially successful search path fails.
+   This necessitates a lot of storage and bookkeeping, and executes slowly. In the regular expression
+   recognition technique described in this paper, each character in the text to be searched is
+   examined in sequence against a list of all possible current characters. During this examination a
+   new list of all possible next characters is built. When the end of the current list is reached,
+   the new list becomes the current list, the next character is obtained, and the process continues.
+   In the terms of Brzozowski, this algorithm continually takes the left derivative of the given
+   regular expression with respect to the text to be searched. The parallel nature of this algorithm
+   makes it extremely fast."
+
+   — *Regular Expression Search Algorithm*, Ken Thompson
+  
   "[E]fficiency comes from tracking the set of reachable states but not which paths were used
    to reach them. In an *NFA* with *n* nodes, there can only be *n* reachable states at any step,
    but there might be *2ⁿ* paths through the *NFA*."
