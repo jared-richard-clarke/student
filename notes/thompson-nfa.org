@@ -358,17 +358,15 @@
          \   [5]-----c---->[6]   /
           \                     /
            +------------------->
-#+end_example
 
-| NFA States            | DFA State | a | b | c |
-|-----------------------+-----------+---+---+---|
-| { 9, 7, 1, 5, 10 }    | A         | B |   | C |
-| { 2 }                 | B         |   | D |   |
-| { 6, 8, 10, 7, 1, 5 } | C         | B |   | C |
-| { 4, 8, 7, 1, 5, 10 } | D         | B |   | C |
-
-#+begin_example
   === subset construction ===
+
+  | NFA States            | DFA State | a | b | c |
+  |-----------------------+-----------+---+---+---|
+  | { 9, 7, 1, 5, 10 }    | A         | B |   | C |
+  | { 2 }                 | B         |   | D |   |
+  | { 6, 8, 10, 7, 1, 5 } | C         | B |   | C |
+  | { 4, 8, 7, 1, 5, 10 } | D         | B |   | C |
 
   while there is an unmarked state T in D-states {
       mark T
