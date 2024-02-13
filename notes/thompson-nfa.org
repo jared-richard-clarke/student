@@ -4,6 +4,7 @@
 
 | source                                               | author          |
 |------------------------------------------------------+-----------------|
+| *Regular Expression Search Algorithm*                | Ken Thompson    |
 | *Thompson's Construction*                            | Wikipedia       |
 | *Regular Expression Matching Can Be Simple and Fast* | Russ Cox        |
 | *Theory of Computation*                              | Michael Sipser  |
