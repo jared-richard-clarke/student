@@ -360,6 +360,13 @@
            +------------------->
 #+end_example
 
+| NFA States            | DFA State | a | b | c |
+|-----------------------+-----------+---+---+---|
+| { 9, 7, 1, 5, 10 }    | A         | B |   | C |
+| { 2 }                 | B         |   | D |   |
+| { 6, 8, 10, 7, 1, 5 } | C         | B |   | C |
+| { 4, 8, 7, 1, 5, 10 } | D         | B |   | C |
+
 Each state in the *DFA* corresponds to a list of states from the *NFA*.
 
 The epsilon closure *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the set of all states
@@ -377,13 +384,6 @@ closures of all the states in *R*.
 
 The set of accepting states *F* of the *DFA* is defined to be the set of all states containing at least one
 final state of the *NFA*.
-
-| NFA States            | DFA State | a | b | c |
-|-----------------------+-----------+---+---+---|
-| { 9, 7, 1, 5, 10 }    | A         | B |   | C |
-| { 2 }                 | B         |   | D |   |
-| { 6, 8, 10, 7, 1, 5 } | C         | B |   | C |
-| { 4, 8, 7, 1, 5, 10 } | D         | B |   | C |
 
 #+begin_example
   === subset construction ===
