@@ -2,7 +2,7 @@
 
 ** Definition
 
-*f(x) = O(g(x)) as x → ∞* if there exists positive constants *M* and *x₀* such that
+*f(x) = O(g(x))* as *x → ∞* if there exists positive constants *M* and *x₀* such that
 *|f(x)| ≤ M × g(x)* for all *x ≥ x₀*. Function *g(x)* typically omits constant factors
 and lowest terms.
 
