@@ -398,3 +398,45 @@ final state of the *NFA*.
        / \
       +-c->
 #+end_example
+
+** Regular Expression Virtual Machine
+
+- PC :: Program counter.
+
+- SP :: String pointer.
+
+- char c :: If the character *SP* points at is not *c*, stop this thread: it failed. Otherwise, advance
+  *SP* to the next character and advance *PC* to the next instruction.
+
+- match :: Stop thread. Match found.
+
+- jmp x :: Set *PC* to the instruction at *x*.
+
+- split x, y :: Split execution: continue at both *x* and *y*. Create a new thread with *SP* copied from
+  the current thread. One thread continues with *PC x*. The other continues with *PC y*.
+
+| operation   | instructions     |
+|-------------+------------------|
+| a           | char a           |
+|-------------+------------------|
+| e₁e₂        | codes for e₁     |
+|             | codes for e₂     |
+|-------------+------------------|
+| e₁\vert{}e₂ | split L1, L2     |
+|             | L1: codes for e₁ |
+|             | jmp L3           |
+|             | L2: codes for e₂ |
+|             | L3:              |
+|-------------+------------------|
+| e?          | split L1, L2     |
+|             | L1: codes for e  |
+|             | L2:              |
+|-------------+------------------|
+| e*          | L1: split L2, L3 |
+|             | L2: codes for e  |
+|             | jmp L1           |
+|             | L3:              |
+|-------------+------------------|
+| e+          | L1: codes for e  |
+|             | split L1, L3     |
+|             | L3:              |
