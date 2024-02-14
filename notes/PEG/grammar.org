@@ -2,10 +2,9 @@
 
 ** Sources
 
-| source                                                                  | author                |
-|-------------------------------------------------------------------------+-----------------------|
-| *Parsing Expression Grammars: A Recognition-Based Syntactic Foundation* | Bryan Ford            |
-| *A Text Pattern-Matching Tool Based on Parsing Expression Grammars*     | Roberto Ierusalimschy |
+| source                                                                  | author     |
+|-------------------------------------------------------------------------+------------|
+| *Parsing Expression Grammars: A Recognition-Based Syntactic Foundation* | Bryan Ford |
 
 ** Keywords
 
@@ -135,19 +134,6 @@
   Space      <- ' ' / '\t' / EndOfLine
   EndOfLine  <- '\r\n' / '\n' / '\r'
   EndOfFile  <- !.
-
-  # === Roberto Ierusalimschy ===
-
-  grammar      <- (non-terminal '<-' space pattern)+
-  pattern      <- alternative ('/' space alternative)*
-  alternative  <- ([!&]? space suffix)+
-  suffix       <- primary ([*+?] space)*
-  primary      <- '(' space pattern ')' space / '.' space / literal /
-                char-class / non-terminal !'<-'
-  literal      <- ['] (!['] .)* ['] space
-  char-class   <- '[' (!']' (. '-' . / .))* ']' space
-  non-terminal <- [a-zA-Z]+ space
-  space        <- [ \t\n]*
 #+end_example
 
 ** PEG Formal Definition
