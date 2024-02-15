@@ -24,7 +24,7 @@
 #+begin_quote
   "Unlike other PEG implementations, which aim at parsing, LPEG aims at pattern matching.
    Therefore, it turns PEG inside out: while PEGs define grammars using pattern expressions
-   as an auxiliary construction, in LPEG the main construction is the patternm and grammars
+   as an auxiliary construction, in LPEG the main construction is the pattern and grammars
    are only a particular way to create patterns."
 
    — Roberto Ierusalimschy
