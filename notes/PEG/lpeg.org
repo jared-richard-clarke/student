@@ -114,7 +114,7 @@
 ** Finite Automata to PEG
 
 Depending on the order of the terms in rule *A*, the grammar matches the longest or the
-shortest subject's prefix ending with *ana*.
+shortest subject's prefix ending with *"ana"*.
 
 #+begin_example
   === NFA ===
@@ -130,3 +130,59 @@ shortest subject's prefix ending with *ana*.
   C <- "a" D
   D <- ε
 #+end_example
+
+** The Parsing Machine
+
+- State = (N ∪ Fail, N, StackEntry*, Capture*) :: The virtual machine keeps its state in
+  four registers: (current instruction, current subject position, stack, capture list)
+
+- N ∪ Fail (current instruction) :: Keeps the index of the next instruction to be executed
+  (a natural number). It may also have a special *Fail* value, meaning that some match
+  failed and the machine must backtrack.
+
+- N (current subject position) :: keeps the current position in the subject
+  (a natural number).
+
+- StackEntry* (stack) :: A list of two kinds of entries: *N ∪ (N, N, Capture\star{})*.
+  The first kind represents return addresses (a natural number). Each nonterminal
+  translates to a call to its corresponding production; when that production finishes
+  in success it must return to the point after the call, which will be at the top of
+  the stack. The second kind of entry represents pending alternatives (backtrack entries).
+  Whenever there is a choice, the machine follows the first option and pushes on the
+  stack information on how to pursue the other option if the first one fails. Each such
+  entry comprises the instruction to follow in case of fail plus all information needed
+  to backtrack to the current state (that is, the subject position and the capture list).
+
+- Capture* (capture list) :: Keeps information about captures made by the pattern: *(N, N)*.
+  Each entry stores the subject position and the index of the instruction that created the
+  entry, wherein there is extra information about the capture.
+
+*** Basic Instructions
+
+| current state                 | instruction      | next state                 |
+|-------------------------------+------------------+----------------------------|
+| (p, i, e, c)                  | Char x, S[i] = x | (p+1, i+1, e, c)           |
+| (p, i, e, c)                  | Char x, S[i] ≠ x | (Fail, i, e, c)            |
+| (p, i, e, c)                  | Jump l           | (p+l, i, e, c)             |
+| (p, i, e, c)                  | Choice l         | (p+1, i, (p+l, i, c):e, c) |
+| (p, i, e, c)                  | Call l           | (p+l, i, (p+1):e, c)       |
+| (p₀, i, p₁:e, c)              | Return           | (p₁, i, e, c)              |
+| (p, i, h:e, c)                | Commit l         | (p+l, i, e, c)             |
+| (p, i, e, c)                  | Capture k        | (p+1, i, e, (i, p):c)      |
+| (p. i, e, c)                  | Fail             | (Fail, i, e, c)            |
+| (Fail, i, p:e, c)             | any              | (Fail, i, e, c)            |
+| (Fail, i₀, (p, i₁, c₁):e, c₀) | any              | (p, i₁, e, c₁)             |
+
+*** Extra Instructions
+
+| current state                | instruction                    | next state                   |
+|------------------------------+--------------------------------+------------------------------|
+| (p, i, e, c)                 | Charset X, S[i] ∈ X            | (p+1, i+1, e, c)             |
+| (p, i, e, c)                 | Charset X, S[i] ∉ X            | (Fail, i, e, c)              |
+| (p, i, e, c)                 | Any n, i + n ≤ \vert{}S\vert{} | (p+1, i+n, e, c)             |
+| (p, i, e, c)                 | Any n, i + n > \vert{}S\vert{} | (Fail, i, e, c)              |
+| (p₀, i₀, (p₁, i₁, c₁):e, c₀) | PartialCommit l                | (p₀+l, i₀, (p₁,i₀,c₀):e, c₀) |
+| (p, i, e, c)                 | Span X, S[i] ∈ X               | (p, i+1, e, c)               |
+| (p, i, e, c)                 | Span X, S[i] ∉ X               | (p+1, i, e, c)               |
+| (p, i, h:e, c)               | FailTwice                      | (Fail, i, e, c)              |
+| (p₀, i₀, (p₁, i₁, c₁):e, c₀) | BackCommit l                   | (p₀+l, i₁, e, c₁)            |
