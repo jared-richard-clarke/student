@@ -1,4 +1,4 @@
-* LPEG
+* LPEG Parsing Machine
 
 ** Sources
 
@@ -64,6 +64,9 @@
   # === LPEG ===
 
   # LPEG = [a-z]+ or S <- [a-z]+
+  #        ^----^    ^---------^
+  #        pattern   grammar
+  #
   # PEG  = S <- [a-z]+
 
  >
@@ -140,17 +143,16 @@ shortest subject's prefix ending with *"ana"*.
   (a natural number). It may also have a special *Fail* value, meaning that some match
   failed and the machine must backtrack.
 
-- N (current subject position) :: keeps the current position in the subject
-  (a natural number).
+- N (current subject position) :: keeps the current position in the subject (a natural number).
 
 - StackEntry* (stack) :: A list of two kinds of entries: *N ∪ (N, N, Capture\star{})*.
   The first kind represents return addresses (a natural number). Each nonterminal
-  translates to a call to its corresponding production; when that production finishes
+  translates to a call to its corresponding production. When that production finishes
   in success it must return to the point after the call, which will be at the top of
   the stack. The second kind of entry represents pending alternatives (backtrack entries).
   Whenever there is a choice, the machine follows the first option and pushes on the
   stack information on how to pursue the other option if the first one fails. Each such
-  entry comprises the instruction to follow in case of fail plus all information needed
+  entry comprises the instruction to follow in case of failure plus all information needed
   to backtrack to the current state (that is, the subject position and the capture list).
 
 - Capture* (capture list) :: Keeps information about captures made by the pattern: *(N, N)*.
@@ -173,6 +175,34 @@ shortest subject's prefix ending with *"ana"*.
 | (Fail, i, p:e, c)             | any              | (Fail, i, e, c)            |
 | (Fail, i₀, (p, i₁, c₁):e, c₀) | any              | (p, i₁, e, c₁)             |
 
+- Char char :: If the character in the current subject position is equal to *char*. the machine
+  consumes the current character and moves to the next instruction.
+
+- Fail :: Forces failure. First the machine pops any return addresses from the top of the stack.
+  If the stack is empty, the machine halts and the whole pattern fails. Otherwise, the machine
+  pops the top backtrack entry and assigns the saved values to their respective registers.
+
+- Jump label :: Jumps to instruction *label*. All instructions that need a label express the label
+  as an offset from the current instruction. Jump instructions organize grammars and implement
+  proper tail calls.
+
+- Choice label :: Pushes a backtrack entry onto the stack, saving the current machine state plus
+  the given label as the alternative instruction.
+
+- Call label :: Calls instruction *label* by saving the stack address of the next instruction
+  and then jumping to instruction *label*. *Call* implements non-terminals.
+
+- Return :: Returns from a *Call*, popping an address from the stack and jumping to it. Complete
+  patterns leave no entries on the stack.
+
+- Commit label :: Commits to a *Choice*. Discards the top entry from the stack and jumps to *label*.
+
+- Capture extra-info :: Adds an entry to the capture list with the current subject position and
+  instruction. If the complete pattern matches, a postprocessor traverses the capture list and,
+  using the pointers to the instructions that created each entry, builds the capture values.
+
+- End :: The machine returns, signalling that the match succeeds.
+
 *** Extra Instructions
 
 | current state                | instruction                    | next state                   |
@@ -186,3 +216,38 @@ shortest subject's prefix ending with *"ana"*.
 | (p, i, e, c)                 | Span X, S[i] ∉ X               | (p+1, i, e, c)               |
 | (p, i, h:e, c)               | FailTwice                      | (Fail, i, e, c)              |
 | (p₀, i₀, (p₁, i₁, c₁):e, c₀) | BackCommit l                   | (p₀+l, i₁, e, c₁)            |
+
+- Charset set :: Is the current character a member of the *set*. Sets are represented as bit sets,
+  with one bit for each possible character value.
+
+- Any n :: Checks whether there are at least *n* characters in the current subject position.
+
+*** Code for Grammars
+
+#+begin_example
+  === LPEG ==
+
+  g = lpeg.P{
+        "S",                              -- start symbol
+        S = lpeg.V"B" + (1 - lpeg.S"()"), -- S <- <B> / [^()]
+        B = '(' * lpeg.V"S" * ')'         -- B <- '(' <S> ')'
+  }
+
+  === Virtual Machine ===
+
+      Call S
+      Jump L2
+
+   S: Choice L4
+      Call B
+      Commit L5
+  L4: Charset [^()]
+  L5: Return
+
+   B: Char '('
+      Call S
+      Char ')'
+      Return
+
+  L2: End
+#+end_example
