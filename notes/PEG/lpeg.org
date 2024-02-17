@@ -117,7 +117,7 @@
 ** Finite Automata to PEG
 
 Depending on the order of the terms in rule *A*, the grammar matches the longest or the
-shortest subject's prefix ending with *"ana"*.
+shortest subject's prefix ending with *ana*.
 
 #+begin_example
   === NFA ===
