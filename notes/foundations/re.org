@@ -159,8 +159,8 @@ closures of all the states in *R*.
 
 2. The start state of the DFA is *E({q₀})*, where *q₀* is the original start state of the NFA.
 
-3. For sets *R* in *P(Q)* and input characters *c ∈ Σ*, the transition function *δn* of the DFA is defined
-   in terms of the transition function *δ* of the NFA by *δn(R,c) = U_{r ∈ R} E(δ(r,c))*.
+3. For sets *R* in *P(Q)* and input characters *c ∈ Σ*, the transition function *δ_{n}* of the DFA is defined
+   in terms of the transition function *δ* of the NFA by *δ_{n}(R,c) = U_{r ∈ R} E(δ(r,c))*.
 
 The set of accepting states *F* of the DFA is defined to be the set of all states containing at least one
 final state of the NFA.
