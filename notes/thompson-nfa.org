@@ -146,7 +146,7 @@
     }
   }
 
-  // === main loop ==
+  // === NFA Construction Loop ==
 
   // Converts postfix regular expression into NFA.
   State* post2nfa(char *postfix) {
