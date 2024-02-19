@@ -86,6 +86,8 @@
 ** NFA Fragments (Russ Cox)
 
 #+begin_src c
+  // === state fragments ===
+
   typedef struct State {
     int c;
     State *out;
@@ -106,13 +108,48 @@
     Ptrlist *out; // List of dangling arrows in the NFA fragment.
   } Frag;
 
+  // Pointers double as storage for pointer lists.
   typedef union Ptrlist {
     Ptrlist *next;
     State *s;
   } Ptrlist;
 
-  State* post2nfa(char *postfix)
-  {
+  // === pointer list construction ===
+
+  // Creates a singleton pointer list.
+  Ptrlist* list1(State **outp) {
+    Ptrlist *l;
+
+    l = (Ptrlist*)outp;
+    l->next = NULL;
+    return l;
+  }
+
+  // Join the pointer lists l1 and l2.
+  Ptrlist* append(Ptrlist *l1, Ptrlist *l2) {
+    Ptrlist *oldl1;
+
+    oldl1 = l1;
+    while(l1->next)
+      l1 = l1->next;
+    l1->next = l2;
+    return oldl1;
+  }
+
+  // Connects the dangling arrows in pointer list "l" to the state "s"
+  void patch(Ptrlist *l, State *s) {
+    Ptrlist *next;
+
+    for(; l; l=next){
+      next = l->next;
+      l->s = s;
+    }
+  }
+
+  // === main loop ==
+
+  // Converts postfix regular expression into NFA.
+  State* post2nfa(char *postfix) {
     char *p;
     Frag stack[1000], *stackp, e1, e2, e;
     State *s;
