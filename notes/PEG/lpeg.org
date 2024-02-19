@@ -197,12 +197,12 @@ shortest subject's prefix ending with *ana*.
 |-------------------------------+------------------+----------------------------|
 | (p, i, e, c)                  | Char x, S[i] = x | (p+1, i+1, e, c)           |
 | (p, i, e, c)                  | Char x, S[i] ≠ x | (Fail, i, e, c)            |
-| (p, i, e, c)                  | Jump l           | (p+l, i, e, c)             |
-| (p, i, e, c)                  | Choice l         | (p+1, i, (p+l, i, c):e, c) |
-| (p, i, e, c)                  | Call l           | (p+l, i, (p+1):e, c)       |
+| (p, i, e, c)                  | Jump L           | (p+L, i, e, c)             |
+| (p, i, e, c)                  | Choice L         | (p+1, i, (p+L, i, c):e, c) |
+| (p, i, e, c)                  | Call L           | (p+L, i, (p+1):e, c)       |
 | (p₀, i, p₁:e, c)              | Return           | (p₁, i, e, c)              |
-| (p, i, h:e, c)                | Commit l         | (p+l, i, e, c)             |
-| (p, i, e, c)                  | Capture k        | (p+1, i, e, (i, p):c)      |
+| (p, i, h:e, c)                | Commit L         | (p+L, i, e, c)             |
+| (p, i, e, c)                  | Capture K        | (p+1, i, e, (i, p):c)      |
 | (p, i, e, c)                  | Fail             | (Fail, i, e, c)            |
 | (Fail, i, p:e, c)             | any              | (Fail, i, e, c)            |
 | (Fail, i₀, (p, i₁, c₁):e, c₀) | any              | (p, i₁, e, c₁)             |
