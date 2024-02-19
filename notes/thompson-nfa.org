@@ -149,7 +149,6 @@
 
   // === NFA Construction Loop ==
 
-  // Converts postfix regular expression into NFA.
   State* post2nfa(char *postfix) {
     char *p;
     Frag stack[1000], *stackp, e1, e2, e;
