@@ -5,6 +5,7 @@
 | source                                                              | author                |
 |---------------------------------------------------------------------+-----------------------|
 | *A Text Pattern-Matching Tool Based on Parsing Expression Grammars* | Roberto Ierusalimschy |
+| *Parsing Expression Grammars for Lua*                               | Roberto Ierusalimschy |
 
 ** Introduction
 
@@ -18,6 +19,24 @@
 
   — Roberto Ierusalimschy
 #+end_quote
+
+*** Basic Operations
+
+| operator              | description                                                       |
+|-----------------------+-------------------------------------------------------------------|
+| ~lpeg.P(string)~      | Matches literal string                                            |
+| ~lpeg.P(n)~           | Matches *n* characters                                            |
+| ~lpeg.S(string)~      | Matches any character in string (Set)                             |
+| ~lpeg.R("xy")~        | Matches any character between *x* and *y* (Range)                 |
+| ~lpeg.utfR(cp1, cp2)~ | Matches UTF-8 code point between *cp1* and *cp2*                  |
+| ~pattern ^ n~         | Matches at least *n* repetitions of *pattern*                     |
+| ~pattern ^ -n~        | Matches at most *n* repetitions of *pattern*                      |
+| ~p1 * p2~             | Matches *p1* followed by *p2*                                     |
+| ~p1 + p2~             | Matches *p1* or *p2* (ordered choice)                             |
+| ~p1 - p2~             | Matches *p1* if *p2* does not match                               |
+| ~-pattern~            | Equivalent to ~("" - pattern)~                                    |
+| ~#pattern~            | Matches *pattern* but consumes no input                           |
+| ~lpeg.B(pattern)~     | Matches *pattern* behind the current position, consuming no input |
 
 ** PEG and LPEG
 
@@ -35,6 +54,19 @@
 2. Unifies the concepts of captures, semantic actions, and substitutions.
 
 3. Novel parsing machine.
+
+*** Notational Differences
+
+| peg          | lpeg     |
+|--------------+----------|
+| &pattern     | #pattern |
+| !pattern     | -pattern |
+| p1 / p2      | p1 + p2  |
+| pattern ^ 0  | pattern* |
+| pattern ^ 1  | pattern+ |
+| pattern ^ -1 | pattern? |
+
+*** Grammatical Differences
 
 #+begin_example
   # === PEG ===
@@ -228,9 +260,9 @@ shortest subject's prefix ending with *ana*.
   === LPEG ==
 
   g = lpeg.P{
-        "S",                              -- start symbol
-        S = lpeg.V"B" + (1 - lpeg.S"()"), -- S <- <B> / [^()]
-        B = '(' * lpeg.V"S" * ')'         -- B <- '(' <S> ')'
+        "S",                                  -- start symbol
+        S = lpeg.V("B") + (1 - lpeg.S("()")), -- S <- <B> / [^()]
+        B = '(' * lpeg.V("S") * ')'           -- B <- '(' <S> ')'
   }
 
   === Virtual Machine ===
