@@ -102,8 +102,8 @@
   // c < 256       c = 256 (Split)       c = 257 (Match)
 
   typedef struct Frag {
-    State *start;
-    Ptrlist *out;
+    State *start; // Pointer to the fragment's start state.
+    Ptrlist *out; // List of dangling arrows in the NFA fragment.
   } Frag;
 
   typedef union Ptrlist {
