@@ -455,6 +455,9 @@ final state of the *NFA*.
     int n;
   };
 
+  List l1, l2;
+  static int listid;
+
   // Computes initial state set.
   List* startlist(State *start, List *l) {
     l->n = 0;
