@@ -345,6 +345,84 @@
 
 #+end_example
 
+** Simulating the NFA
+
+#+begin_src c
+  typedef struct List {
+    State **s;
+    int n;
+  };
+
+  List l1, l2;
+  static int listid;
+
+  // Computes initial state set.
+  List* startlist(State *start, List *l) {
+    l->n = 0;
+    listid++;
+    addstate(l, start);
+    return l;
+  }
+
+  // Checks state set for match.
+  int ismatch(List *l) {
+    int i;
+
+    for (i=0; i<l->n; i++) {
+      if (l->s[i] == &matchstate) {
+        return 1;
+      }
+    }
+    return 0;
+  }
+
+  // Adds states to set, recursively traversing epsilon transitions.
+  void addstate(List *l, State *s) {
+    if (s == NULL || s->lastlist == listid) {
+      return;
+    }
+    s->lastlist = listid;
+    if(s->c == Split) {
+      addstate(l, s->out);
+      addstate(l, s->out1);
+      return;
+    }
+    l->s[l->n++] = s;
+  }
+
+  // Step through the states in "clist" past the character "c",
+  // to create the next state set in "nlist".
+  void step(List *clist, int c, List *nlist) {
+    int i;
+    State *s;
+
+    listid++;
+    nlist->n = 0;
+    for (i=0; i<clist->n; i++) {
+      s = clist->s[i];
+      if (s->c == c) {
+        addstate(nlist, s->out);
+      }
+    }
+  }
+
+  // Simulate the NFA on the input "s".
+  int match(State *start, char *s){
+    int i, c;
+    List *clist, *nlist, *t;
+
+    clist = startlist(start, &l1);
+    nlist = &l2;
+    for (; *s; s++) {
+      c = *s & 0xFF;
+      step(clist, c, nlist);
+      // Swap "clist" and "nlist".
+      t = clist; clist = nlist; nlist = t;
+    }
+    return ismatch(clist);
+  }
+#+end_src
+
 ** RE to NFA to DFA
 
 #+begin_example
@@ -446,81 +524,3 @@ closures of all the states in *R*.
 
 The set of accepting states *F* of the *DFA* is defined to be the set of all states containing at least one
 final state of the *NFA*.
-
-** Simulating the NFA
-
-#+begin_src c
-  typedef struct List {
-    State **s;
-    int n;
-  };
-
-  List l1, l2;
-  static int listid;
-
-  // Computes initial state set.
-  List* startlist(State *start, List *l) {
-    l->n = 0;
-    listid++;
-    addstate(l, start);
-    return l;
-  }
-
-  // Checks state set for match.
-  int ismatch(List *l) {
-    int i;
-
-    for (i=0; i<l->n; i++) {
-      if (l->s[i] == &matchstate) {
-        return 1;
-      }
-    }
-    return 0;
-  }
-
-  // Adds states to set, recursively traversing epsilon transitions.
-  void addstate(List *l, State *s) {
-    if (s == NULL || s->lastlist == listid) {
-      return;
-    }
-    s->lastlist = listid;
-    if(s->c == Split) {
-      addstate(l, s->out);
-      addstate(l, s->out1);
-      return;
-    }
-    l->s[l->n++] = s;
-  }
-
-  // Step through the states in "clist" past the character "c",
-  // to create the next state set in "nlist".
-  void step(List *clist, int c, List *nlist) {
-    int i;
-    State *s;
-
-    listid++;
-    nlist->n = 0;
-    for (i=0; i<clist->n; i++) {
-      s = clist->s[i];
-      if (s->c == c) {
-        addstate(nlist, s->out);
-      }
-    }
-  }
-
-  // Simulate the NFA on the input "s".
-  int match(State *start, char *s){
-    int i, c;
-    List *clist, *nlist, *t;
-
-    clist = startlist(start, &l1);
-    nlist = &l2;
-    for (; *s; s++) {
-      c = *s & 0xFF;
-      step(clist, c, nlist);
-      // Swap "clist" and "nlist".
-      t = clist; clist = nlist; nlist = t;
-    }
-    return ismatch(clist);
-  }
-#+end_src
