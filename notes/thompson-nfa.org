@@ -623,7 +623,7 @@ final state of the *NFA*.
   };
   Thread thread(Inst *pc);
 
-  int thompsonvm(Inst *prog, char *input) {
+  int thompson_vm(Inst *prog, char *input) {
     int len;
     ThreadList *clist, *nlist;
     Inst *pc;
