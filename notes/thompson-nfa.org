@@ -26,7 +26,7 @@
    makes it extremely fast."
 
    — *Regular Expression Search Algorithm*, Ken Thompson
-  
+
   "[E]fficiency comes from tracking the set of reachable states but not which paths were used
    to reach them. In an *NFA* with *n* nodes, there can only be *n* reachable states at any step,
    but there might be *2ⁿ* paths through the *NFA*."
@@ -130,7 +130,7 @@
     Ptrlist *oldl1;
 
     oldl1 = l1;
-    while(l1->next) {
+    while (l1->next) {
       l1 = l1->next;
     }
     l1->next = l2;
@@ -141,7 +141,7 @@
   void patch(Ptrlist *l, State *s) {
     Ptrlist *next;
 
-    for(; l; l=next){
+    for (; l; l=next) {
       next = l->next;
       l->s = s;
     }
@@ -158,7 +158,7 @@
   #define pop()   *--stackp
 
     stackp = stack;
-    for(p = postfix; *p; p++){
+    for (p = postfix; *p; p++) {
       switch(*p){
 
         // === literal characters ===
@@ -441,8 +441,8 @@ closures of all the states in *R*.
 
 2. The start state of the *DFA* is *E({q₀})*, where *q₀* is the original start state of the *NFA*.
 
-3. For sets *R* in *P(Q)* and input characters *c ∈ Σ*, the transition function *δ_{n}* of the *DFA* is defined
-   in terms of the transition function *δ* of the *NFA* by *δ_{n}(R,c) = U_{r ∈ R} E(δ(r,c))*.
+3. For sets *R* in *P(Q)* and input characters *c ∈ Σ*, the transition function *δn* of the *DFA* is defined
+   in terms of the transition function *δ* of the *NFA* by *δn(R,c) = U_{r ∈ R} E(δ(r,c))*.
 
 The set of accepting states *F* of the *DFA* is defined to be the set of all states containing at least one
 final state of the *NFA*.
@@ -470,8 +470,8 @@ final state of the *NFA*.
   int ismatch(List *l) {
     int i;
 
-    for(i=0; i<l->n; i++) {
-      if(l->s[i] == &matchstate){
+    for (i=0; i<l->n; i++) {
+      if (l->s[i] == &matchstate) {
         return 1;
       }
     }
@@ -480,7 +480,7 @@ final state of the *NFA*.
 
   // Adds states to set, recursively traversing epsilon transitions.
   void addstate(List *l, State *s) {
-    if(s == NULL || s->lastlist == listid) {
+    if (s == NULL || s->lastlist == listid) {
       return;
     }
     s->lastlist = listid;
@@ -500,9 +500,9 @@ final state of the *NFA*.
 
     listid++;
     nlist->n = 0;
-    for(i=0; i<clist->n; i++) {
+    for (i=0; i<clist->n; i++) {
       s = clist->s[i];
-      if(s->c == c) {
+      if (s->c == c) {
         addstate(nlist, s->out);
       }
     }
@@ -515,150 +515,12 @@ final state of the *NFA*.
 
     clist = startlist(start, &l1);
     nlist = &l2;
-    for(; *s; s++) {
+    for (; *s; s++) {
       c = *s & 0xFF;
       step(clist, c, nlist);
       // Swap "clist" and "nlist".
       t = clist; clist = nlist; nlist = t;
     }
     return ismatch(clist);
-  }
-#+end_src
-
-** Regular Expression Virtual Machine
-
-#+begin_quote
-  "We can view the bytecode as an encoding of the NFA graphs into machine instructions, or we can view
-   the NFA graphs as the control-flow graph of the bytecodes."
-
-   — *Regular Expression Matching: The Virtual Machine Approach*, Russ Cox
-#+end_quote
-
-- PC :: Program counter.
-
-- SP :: String pointer.
-
-- char c :: If the character *SP* points at is not *c*, stop this thread: it failed. Otherwise, advance
-  *SP* to the next character and advance *PC* to the next instruction.
-
-- match :: Stop thread. Match found.
-
-- jmp x :: Set *PC* to the instruction at *x*.
-
-- split x, y :: Split execution: continue at both *x* and *y*. Create a new thread with *SP* copied from
-  the current thread. One thread continues with *PC x*. The other continues with *PC y*.
-
-| operation   | instructions     |
-|-------------+------------------|
-| a           | char a           |
-|-------------+------------------|
-| e₁e₂        | codes for e₁     |
-|             | codes for e₂     |
-|-------------+------------------|
-| e₁\vert{}e₂ | split L1, L2     |
-|             | L1: codes for e₁ |
-|             | jmp L3           |
-|             | L2: codes for e₂ |
-|             | L3:              |
-|-------------+------------------|
-| e?          | split L1, L2     |
-|             | L1: codes for e  |
-|             | L2:              |
-|-------------+------------------|
-| e*          | L1: split L2, L3 |
-|             | L2: codes for e  |
-|             | jmp L1           |
-|             | L3:              |
-|-------------+------------------|
-| e+          | L1: codes for e  |
-|             | split L1, L3     |
-|             | L3:              |
-
-** Regular Expression: ~a+b+~
-
-*** Byte Code
-
-| PC | Instruction |
-|----+-------------|
-|  0 | char a      |
-|  1 | split 0, 2  |
-|  2 | char b      |
-|  3 | split 2, 4  |
-|  4 | match       |
-
-*** Virtual Machine
-
-| Thread | PC           | SP    | Execution                                |
-|--------+--------------+-------+------------------------------------------|
-| T1     | 0 char a     | [a]ab | character match                          |
-| T1     | 1 split 0, 2 | a[a]b | creates thread T2 at PC = 2 SP = a[a]b   |
-| T1     | 0 char a     | a[a]b | character match                          |
-| T1     | 1 split 0, 2 | a[a]b | creates thread T3 at PC = 2 SP = aa[b]   |
-| T1     | 0 char a     | aa[b] | no match, thread T1 dies                 |
-| T2     | 2 char b     | a[a]b | no match, thread T2 dies                 |
-| T3     | 2 char b     | aa[b] | character match                          |
-| T3     | 3 split 2, 4 | aab[] | creates thread T4 at PC = 4 SP = aab[]   |
-| T3     | 2 char b     | aab[] | no match (end of string), thread T3 dies |
-| T4     | 4 match      | aab[] | match                                    |
-
-** Thompson's Virtual Machine
-
-#+begin_src c
-  enum {
-    Char,
-    Match,
-    Jmp,
-    Split
-  };
-
-  struct Inst {
-    int opcode;
-    int c;
-    Inst *x;
-    Inst *y;
-  };
-
-  struct Thread {
-    Inst *pc;
-  };
-  Thread thread(Inst *pc);
-
-  int thompson_vm(Inst *prog, char *input) {
-    int len;
-    ThreadList *clist, *nlist;
-    Inst *pc;
-    char *sp;
-
-    // # of instructions
-    len = proglen(prog);
-    clist = threadlist(len);
-    nlist = threadlist(len);
-
-    addthread(clist, thread(prog));
-
-    for (sp=input; *sp; sp += 1) {
-      for (i=0; i<clist.n; i += 1) {
-	pc = clist.t[i].pc;
-	switch (pc->opcode) {
-	case Char:
-	  if (*sp != pc->c) {
-	    break;
-	  }
-	  addthread(nlist, thread(pc+1));
-	  break;
-	case Match:
-	  return 1;
-	case Jmp:
-	  addthread(clist, thread(pc->x));
-	  break;
-	case Split:
-	  addthread(clist, thread(pc->x));
-	  addthread(clist, thread(pc->y));
-	  break;
-	}
-      }
-      swap(clist, nlist);
-      clear(nlist);
-    }
   }
 #+end_src
