@@ -573,3 +573,92 @@ final state of the *NFA*.
 | e+          | L1: codes for e  |
 |             | split L1, L3     |
 |             | L3:              |
+
+** Regular Expression: ~a+b+~
+
+*** Byte Code
+
+| PC | Instruction |
+|----+-------------|
+|  0 | char a      |
+|  1 | split 0, 2  |
+|  2 | char b      |
+|  3 | split 2, 4  |
+|  4 | match       |
+
+*** Virtual Machine
+
+| Thread | PC           | SP    | Execution                                |
+|--------+--------------+-------+------------------------------------------|
+| T1     | 0 char a     | [a]ab | character match                          |
+| T1     | 1 split 0, 2 | a[a]b | creates thread T2 at PC = 2 SP = a[a]b   |
+| T1     | 0 char a     | a[a]b | character match                          |
+| T1     | 1 split 0, 2 | a[a]b | creates thread T3 at PC = 2 SP = aa[b]   |
+| T1     | 0 char a     | aa[b] | no match, thread T1 dies                 |
+| T2     | 2 char b     | a[a]b | no match, thread T2 dies                 |
+| T3     | 2 char b     | aa[b] | character match                          |
+| T3     | 3 split 2, 4 | aab[] | creates thread T4 at PC = 4 SP = aab[]   |
+| T3     | 2 char b     | aab[] | no match (end of string), thread T3 dies |
+| T4     | 4 match      | aab[] | match                                    |
+
+** Thompson's Virtual Machine
+
+#+begin_src c
+  enum {
+    Char,
+    Match,
+    Jmp,
+    Split
+  };
+
+  struct Inst {
+    int opcode;
+    int c;
+    Inst *x;
+    Inst *y;
+  };
+
+  struct Thread {
+    Inst *pc;
+  };
+  Thread thread(Inst *pc);
+
+  int thompsonvm(Inst *prog, char *input) {
+    int len;
+    ThreadList *clist, *nlist;
+    Inst *pc;
+    char *sp;
+
+    // # of instructions
+    len = proglen(prog);
+    clist = threadlist(len);
+    nlist = threadlist(len);
+
+    addthread(clist, thread(prog));
+
+    for (sp=input; *sp; sp += 1) {
+      for (i=0; i<clist.n; i += 1) {
+	pc = clist.t[i].pc;
+	switch (pc->opcode) {
+	case Char:
+	  if (*sp != pc->c) {
+	    break;
+	  }
+	  addthread(nlist, thread(pc+1));
+	  break;
+	case Match:
+	  return 1;
+	case Jmp:
+	  addthread(clist, thread(pc->x));
+	  break;
+	case Split:
+	  addthread(clist, thread(pc->x));
+	  addthread(clist, thread(pc->y));
+	  break;
+	}
+      }
+      swap(clist, nlist);
+      clear(nlist);
+    }
+  }
+#+end_src
