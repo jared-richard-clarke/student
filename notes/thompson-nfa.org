@@ -527,6 +527,13 @@ final state of the *NFA*.
 
 ** Regular Expression Virtual Machine
 
+#+begin_quote
+  "We can view the bytecode as an encoding of the NFA graphs into machine instructions, or we can view
+   the NFA graphs as the control-flow graph of the bytecodes."
+
+   — *Regular Expression Matching: The Virtual Machine Approach*, Russ Cox
+#+end_quote
+
 - PC :: Program counter.
 
 - SP :: String pointer.
