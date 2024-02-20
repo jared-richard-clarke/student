@@ -343,6 +343,51 @@
          \      /
           ◯-c->◯
 
+  === regular expression ===
+
+  infix:   aba|abb
+  postfix: ab•a•ab•b•|
+
+  === NFA construction ===
+
+  1. ab•a•ab•b•|
+     ^
+
+     >◯-a->◎
+
+  2. ab•a•ab•b•|
+      ^
+
+     >◯-b->◎
+
+  3. ab•a•ab•b•|
+       ^
+
+     >◯-a->◯--->◯-b->◎
+
+  4. ab•a•ab•b•|
+        ^
+
+     >◯-a->◎
+
+  5. ab•a•ab•b•|
+         ^
+
+     >◯-a->◯--->◯-b->◯--->◯-a->◎
+
+  6-10. ab•a•ab•b•|
+             ^---^
+
+     >◯-a->◯--->◯-b->◯--->◯-b->◎
+
+  11. ab•a•ab•b•|
+                ^
+
+        ◯-a->◯--->◯-b->◯--->◯-a->◯
+       /                          \
+     >◯                            ◎
+       \                          /
+        ◯-a->◯--->◯-b->◯--->◯-b->◯
 #+end_example
 
 ** Simulating the NFA
