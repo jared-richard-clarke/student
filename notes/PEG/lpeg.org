@@ -22,21 +22,76 @@
 
 *** Basic Operations
 
-| operator              | description                                                       |
-|-----------------------+-------------------------------------------------------------------|
-| ~lpeg.P(string)~      | Matches literal string                                            |
-| ~lpeg.P(n)~           | Matches *n* characters                                            |
-| ~lpeg.S(string)~      | Matches any character in string (Set)                             |
-| ~lpeg.R("xy")~        | Matches any character between *x* and *y* (Range)                 |
-| ~lpeg.utfR(cp1, cp2)~ | Matches UTF-8 code point between *cp1* and *cp2*                  |
-| ~pattern ^ n~         | Matches at least *n* repetitions of *pattern*                     |
-| ~pattern ^ -n~        | Matches at most *n* repetitions of *pattern*                      |
-| ~p1 * p2~             | Matches *p1* followed by *p2*                                     |
-| ~p1 + p2~             | Matches *p1* or *p2* (ordered choice)                             |
-| ~p1 - p2~             | Matches *p1* if *p2* does not match                               |
-| ~-pattern~            | Equivalent to ~("" - pattern)~                                    |
-| ~#pattern~            | Matches *pattern* but consumes no input                           |
-| ~lpeg.B(pattern)~     | Matches *pattern* behind the current position, consuming no input |
+| operation             | description                                                   |
+|-----------------------+---------------------------------------------------------------|
+| ~lpeg.P(string)~      | Matches literal string                                        |
+| ~lpeg.P(n)~           | Matches ~n~ characters                                        |
+| ~lpeg.S(string)~      | Matches any character in string (Set)                         |
+| ~lpeg.R("xy")~        | Matches any character between ~x~ and ~y~ (Range)             |
+| ~lpeg.utfR(cp1, cp2)~ | Matches UTF-8 code point between ~cp1~ and ~cp2~              |
+| ~pattern ^ n~         | Matches at least ~n~ repetitions of ~pattern~                 |
+| ~pattern ^ -n~        | Matches at most ~n~ repetitions of ~pattern~                  |
+| ~p1 * p2~             | Matches ~p1~ followed by ~p2~                                 |
+| ~p1 + p2~             | Matches ~p1~ or ~p2~ (ordered choice)                         |
+| ~p1 - p2~             | Matches ~p1~ if ~p2~ does not match                           |
+| ~-pattern~            | Equivalent to ~("" - pattern)~                                |
+| ~#pattern~            | Matches ~pattern~ but consumes no input                       |
+| ~lpeg.B(pattern)~     | Matches only if the current position is preceded by ~pattern~ |
+
+*** Captures
+
+A capture is a pattern that produces values, the semantic information, according to what
+it matches.
+
+| operation                     | result                                         |
+|-------------------------------+------------------------------------------------|
+| ~lpeg.C(pattern)~             | Match for ~pattern~ plus all its captures      |
+| ~lpeg.Carg(n)~                | nth extra argument to ~lpeg.match~             |
+| ~lpeg.Cb(key)~                | Previous group capture                         |
+| ~lpeg.Cc(values)~             | Constant capture  of the given values          |
+| ~lpeg.Cg(pattern [, key])~    | Group capture, optionally named by ~key~       |
+| ~lpeg.Cp()~                   | Position capture                               |
+| ~lpeg.Cs(pattern)~            | Substitution capture                           |
+| ~lpeg.Ct(pattern)~            | Table capture                                  |
+| ~pattern / string~            | String capture                                 |
+| ~pattern / number~            | Numbered capture                               |
+| ~pattern / table~             | ~table[c]~, where ~c~ is the ~pattern~ capture |
+| ~pattern / function~          | Maps ~function~ over ~pattern~ captures        |
+| ~pattern % function~          | Accumulates ~pattern~ captures with ~function~ |
+| ~lpeg.Cmt(pattern, function)~ | Maps ~function~ over match-time captures       |
+
+** Parsing Examples
+
+*** Adding Numbers
+
+#+begin_src lua
+  lpeg = require("lpeg")
+
+  -- Matches a numeral and captures its numerical value.
+  number = lpeg.R("09")^1 / tonumber
+
+  -- Auxiliary function to add two numbers.
+  function add(accum, value) return accum + value end
+
+  -- Matches a list of numbers, adding their values.
+  sum = number * ("," * number % add)^0
+
+  print(sum:match("1, 2, 3, 4, 5, 6, 7, 8, 9, 10")) --> 55
+#+end_src
+
+*** Split Function
+
+#+begin_src lua
+  lpeg = require("lpeg")
+
+  function split(text, sep)
+    separator = lpeg.P(separator)
+    local element = lpeg.C((1 - separator)^0)
+    -- Make table capture.
+    local pattern = lpeg.Ct(element * (separator * element)^0)
+    return lpeg.match(pattern, text)
+  end
+#+end_src
 
 ** PEG and LPEG
 
@@ -259,7 +314,9 @@ shortest subject's prefix ending with *ana*.
 #+begin_example
   === LPEG ==
 
-  g = lpeg.P{
+  lpeg = require("lpeg")
+
+  grammar = lpeg.P{
         "S",                                  -- start symbol
         S = lpeg.V("B") + (1 - lpeg.S("()")), -- S <- <B> / [^()]
         B = '(' * lpeg.V("S") * ')'           -- B <- '(' <S> ')'
