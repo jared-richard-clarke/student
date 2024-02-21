@@ -40,8 +40,8 @@
 
 *** Captures
 
-A capture is a pattern that produces values, the semantic information, according to what
-it matches.
+A capture is a pattern that produces values — the semantic information — according
+to what it matches.
 
 | operation                     | result                                         |
 |-------------------------------+------------------------------------------------|
@@ -76,7 +76,7 @@ it matches.
   -- Matches a list of numbers, adding their values.
   sum = number * ("," * number % add)^0
 
-  print(sum:match("1, 2, 3, 4, 5, 6, 7, 8, 9, 10")) --> 55
+  sum:match("1, 2, 3, 4, 5, 6, 7, 8, 9, 10") --> 55
 #+end_src
 
 *** Split Function
@@ -91,6 +91,40 @@ it matches.
     local pattern = lpeg.Ct(element * (separator * element)^0)
     return lpeg.match(pattern, text)
   end
+#+end_src
+
+*** Arithmetic Evaluator
+
+#+begin_src lua
+  lpeg = require("lpeg")
+
+  -- Lexical elements
+  Spaces = lpeg.s(" \n\t")^0
+  Number = lpeg.C(lpeg.P("-"^-1) * lpeg.R("09")^1) * Spaces
+  AddSub = lpeg.C(lpeg.S("+-")) * Spaces
+  MulDiv = lpeg.C(lpeg.S("*/")) * Spaces
+  Open   = "(" * Spaces
+  Close  = ")" * Spaces
+
+  -- Evaluator
+  function eval(v1, op, v2)
+    if (op == "+") then return v1 + v2
+    elseif (op == "-") then return v1 - v2
+    elseif (op == "*") then return v1 * v2
+    elseif (op == "/") then return v1 / v2
+    end
+  end
+
+  -- Grammar
+  Var = lpeg.V
+  Grammar = lpeg.P{
+    "Expression",
+    Expression = Var("Term") * (AddSub * Var("Term") % eval)^0;
+    Term = Var("Factor") * (MulDiv * Var("Factor" % eval))^0;
+    Factor = Number / tonumber + Open * Var("Expression") * Close;
+  }
+
+  lpeg.Match(Grammar, "3 + 5 * 9 / (1 + 1) - 11") --> 14.5
 #+end_src
 
 ** PEG and LPEG
@@ -309,21 +343,24 @@ shortest subject's prefix ending with *ana*.
 
 - Any n :: Checks whether there are at least *n* characters in the current subject position.
 
-*** Code for Grammars
+*** Grammars to Instructions
 
-#+begin_example
-  === LPEG ==
+#+begin_src lua
+  -- === LPEG ==
 
   lpeg = require("lpeg")
 
-  grammar = lpeg.P{
-        "S",                                  -- start symbol
-        S = lpeg.V("B") + (1 - lpeg.S("()")), -- S <- <B> / [^()]
-        B = '(' * lpeg.V("S") * ')'           -- B <- '(' <S> ')'
+  Var = lpeg.V
+  Set = lpeg.S
+
+  Grammar = lpeg.P{
+        "S",                            -- start symbol
+        S = Var("B") + (1 - Set("()")), -- S <- <B> / [^()]
+        B = '(' * Var("S") * ')'        -- B <- '(' <S> ')'
   }
 
-  === Virtual Machine ===
-
+  -- === Virtual Machine ===
+  --[[
       Call S
       Jump L2
 
@@ -339,4 +376,5 @@ shortest subject's prefix ending with *ana*.
       Return
 
   L2: End
-#+end_example
+  --]]
+#+end_src
