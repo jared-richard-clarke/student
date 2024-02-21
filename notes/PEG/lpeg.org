@@ -99,7 +99,7 @@ to what it matches.
   lpeg = require("lpeg")
 
   -- Lexical elements
-  Spaces = lpeg.s(" \n\t")^0
+  Spaces = lpeg.S(" \n\t")^0
   Number = lpeg.C(lpeg.P("-"^-1) * lpeg.R("09")^1) * Spaces
   AddSub = lpeg.C(lpeg.S("+-")) * Spaces
   MulDiv = lpeg.C(lpeg.S("*/")) * Spaces
