@@ -84,7 +84,7 @@ to what it matches.
 #+begin_src lua
   lpeg = require("lpeg")
 
-  function split(text, sep)
+  function split(text, separator)
     separator = lpeg.P(separator)
     local element = lpeg.C((1 - separator)^0)
     -- Make table capture.
