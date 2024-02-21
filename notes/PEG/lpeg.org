@@ -332,11 +332,11 @@ shortest subject's prefix ending with *ana*.
 | (p, i, e, c)                 | Charset X, S[i] ∉ X            | (Fail, i, e, c)              |
 | (p, i, e, c)                 | Any n, i + n ≤ \vert{}S\vert{} | (p+1, i+n, e, c)             |
 | (p, i, e, c)                 | Any n, i + n > \vert{}S\vert{} | (Fail, i, e, c)              |
-| (p₀, i₀, (p₁, i₁, c₁):e, c₀) | PartialCommit l                | (p₀+l, i₀, (p₁,i₀,c₀):e, c₀) |
+| (p₀, i₀, (p₁, i₁, c₁):e, c₀) | PartialCommit L                | (p₀+L, i₀, (p₁,i₀,c₀):e, c₀) |
 | (p, i, e, c)                 | Span X, S[i] ∈ X               | (p, i+1, e, c)               |
 | (p, i, e, c)                 | Span X, S[i] ∉ X               | (p+1, i, e, c)               |
 | (p, i, h:e, c)               | FailTwice                      | (Fail, i, e, c)              |
-| (p₀, i₀, (p₁, i₁, c₁):e, c₀) | BackCommit l                   | (p₀+l, i₁, e, c₁)            |
+| (p₀, i₀, (p₁, i₁, c₁):e, c₀) | BackCommit L                   | (p₀+L, i₁, e, c₁)            |
 
 - Charset set :: Is the current character a member of the *set*. Sets are represented as bit sets,
   with one bit for each possible character value.
