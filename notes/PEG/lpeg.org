@@ -219,15 +219,16 @@ to what it matches.
 ** Repetition
 
 - blind greedy (possessive) :: Always matches the maximum possible span, disregarding what
-  comes afterward.
+  comes afterward. Equivalent to PEG's *E\star{}* operation.
 
 - non-blind greedy :: Repeats as many times as possible so long as the rest of the pattern
-  matches.
+  matches. Common in conventional pattern-matching tools. Usually implies some form of
+  backtracking.
 
 - blind non-greedy :: Always matches *ε*. Not useful.
 
 - non-blind non-greedy (lazy or reluctant) :: Match the minimum number of *E₁* up to the
-  first *E₂*.
+  first *E₂*. Equivalent to Perl's *E\star{}?* operation.
 
 | Repetition           | PEG              |
 |----------------------+------------------|
