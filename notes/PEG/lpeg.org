@@ -496,12 +496,10 @@ jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole
   -- L2: ...
 #+end_src
 
-*** Example Grammar
+*** Calling Grammars
 
 #+begin_src lua
   -- === LPEG ===
-
-  lpeg = require("lpeg")
 
   Var = lpeg.V
   Set = lpeg.S
@@ -529,4 +527,30 @@ jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole
   --     Return           (p₀, i, p₁:e, c) -> (p₁, i, e, c)
   --
   -- L2: End
+#+end_src
+
+*** Tail Call Optimization
+
+#+begin_src lua
+  -- === LPEG ===
+
+  Var = lpeg.V
+  Pat = lpeg.P
+
+  -- X <- "abc" / . X
+  Pat{ Pat("abc") + Pat(1) * Var(1) }
+
+  -- === Virtual Machine ===
+  --
+  --     Call X                  (p+X, i, (p+1):e, c)
+  --     Jump L2                 (p+L2, i, e, c)
+  --  X: Choice L1               (p+1, i, (p+L1, i, c):e, c)
+  --     Char "a"                (p+1, i+1, e, c)
+  --     Char "b'                (p+1, i+1, e, c)
+  --     Char "c"                (p+1, i+1, e, c)
+  --     Commit L3               (p, i, h:e, c) -> (p+L3, i, e, c)
+  -- L1: Any 1                   (p+1, i+n, e, c)
+  --     Jump X <- Tail Call     (p+L2, i, e, c)
+  -- L3: Return                  (p₀, i, p₁:e, c) -> (p₁, i, e, c)
+  -- L2: ...
 #+end_src
