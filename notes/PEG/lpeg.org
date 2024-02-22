@@ -265,7 +265,7 @@ shortest subject's prefix ending with *ana*.
   (a natural number). It may also have a special *Fail* value, meaning that some match
   failed and the machine must backtrack.
 
-- N (subject position) :: keeps the current position in the subject (a natural number).
+- N (subject position) :: Keeps the current position in the subject (a natural number).
 
 - StackEntry* (stack) :: A list of two kinds of entries: *N ∪ (N, N, Capture\star{})*.
   The first kind represents return addresses (a natural number). Each nonterminal
