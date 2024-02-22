@@ -343,7 +343,142 @@ shortest subject's prefix ending with *ana*.
 
 - Any n :: Checks whether there are at least *n* characters in the current subject position.
 
-*** Grammars to Instructions
+* Grammars to Instructions
+
+** Literals
+
+A literal string translates to a sequence of ~Char~ instructions, one for each character.
+~lpeg.P(n)~ translates to ~Any n~. Both sets and ranges translate to ~Charset X~.
+
+#+begin_src lua
+  -- === LPEG ===
+  lpeg.P("ana")
+
+  -- === Virtual Machine ===
+  -- Char "a"    (p+1, i+1, e, c)
+  -- Char "n"    (p+1, i+1, e, c)
+  -- Char "a"    (p+1, i+1, e, c)
+#+end_src
+
+*** Concatenation
+
+Sequences instructions.
+
+#+begin_src lua
+  -- === LPEG ===
+  lpeg.P("a") * lpeg.P("b") * lpeg.P("c")
+
+  -- === Virtual Machine ===
+  --  Char "a"    (p+1, i+1, e, c)
+  --  Char "b"    (p+1, i+1, e, c)
+  --  Char "c"    (p+1, i+1, e, c)
+#+end_src
+
+*** Ordered Choice
+
+The machine saves the state and then runs *p1*. If *p1* successsful, executes *Commit L2*,
+which removes the saved state from the stack and jumps to the end of the pattern, *L2*.
+If *p1* fails, the machine backtracks to the initial saved state and jumps to *L1* and
+tries *p2*. If *p2* fails then choice fails.
+
+*Optimization 1*: If both *p1* and *p2* are character sets, *p1 + p2* translates to a single
+*charset* instruction with the union of both sets.
+
+*Optimization 2*: If the first alternative succeeds, associating left for *n* alternatives
+would require *n* choices plus *n* commits, whereas associating right would require only one
+choice-commit pair.
+
+#+begin_src lua
+  -- === LPEG ===
+  lpeg.P("a") + lpeg.P("b")
+
+  -- === Virtual Machine ===
+  --     Choice L1    (p+1, i, (p+L, i, c):e, c)
+  --     Char "a"     (p+1, i+1, e, c)
+  --     Commit L2    (p, i, h:e, c) -> (p+L, i, e, c)
+  -- L1: Char "b"     (p+1, i+1, e, c)
+  -- L2: ...
+
+  --- === LPEG ===
+  (lpeg.P("a") + lpeg.P("b")) + lpeg.P("c")
+
+  -- === Virtual Machine ===
+  --     Choice L1    (p+1, i, (p+L, i, c):e, c)
+  --     Choice L2    (p+1, i, (p+L, i, c):e, c)
+  --     Char "a"     (p+1, i+1, e, c)
+  --     Commit L3    (p, i, h:e, c) -> (p+L, i, e, c)
+  -- L2: Char "b"     (p+1, i+1, e, c)
+  -- L3: Commit L4    (p, i, h:e, c) -> (p+L, i, e, c)
+  -- L1: Char "c"     (p+1, i+1, e, c)
+  -- L4: ...
+
+  -- === LPEG (optimization) ===
+  lpeg.P("a") + (lpeg.P("b") + lpeg.P("c"))
+
+  -- === Virtual Machine ===
+  --     Choice L1    (p+1, i, (p+L, i, c):e, c)
+  --     Char "a"     (p+1, i+1, e, c)
+  --     Commit L2    (p, i, h:e, c) -> (p+L, i, e, c)
+  -- L1: Choice L3    (p+1, i, (p+L, i, c):e, c)
+  --     Char "b"     (p+1, i+1, e, c)
+  --     Commit L2    (p, i, h:e, c) -> (p+L, i, e, c)
+  -- L3: Char "c"     (p+1, i+1, e, c)
+  -- L2: ...
+#+end_src
+
+*** Repetition
+
+The ~Choice~ and ~PartialCommit~ operations together create a loop where only the subject
+position and the the capture list are repeatedly updated.
+
+Repeated character classes have a dedicated instruction, ~Span charset~ that consumes a maximum
+span of input characters that belong to the given character set.
+
+#+begin_src lua
+  -- === LPEG ===
+  lpeg.P("a") ^ 0
+
+  -- === Virtual Machine ===
+  -- L1: Choice L2    (p+1, i, (p+L, i, c):e, c)
+  --     Char "a"     (p+1, i+1, e, c)
+  --     Commit L1    (p, i, h:e, c) -> (p+L, i, e, c)
+  -- L2: ...
+
+  -- === Virtual Machine (optimization) ===
+  --     Choice L2           (p+1, i, (p+L, i, c):e, c)
+  -- L1: Char "a"            (p+1, i+1, e, c)
+  --     PartialCommit L1    (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L, i₀, (p₁,i₀,c₀):e, c₀)
+  -- L2: ...
+#+end_src
+
+*** Predicates
+
+The ~Choice~ and ~FailTwice~ operations together act like two consecutive fails, removing
+the top entry from the stack and then failing.
+
+The difference operator for two patterns, *p1 - p2*, is usually encoded according to *-p2 * p1*.
+In the case where *p1* and *p2* are characters sets, they are encoded as a single *Charset X*
+instruction that is the set difference between the two patterns.
+
+#+begin_src lua
+  -- === LPEG ===
+  -lpeg.P("a")
+
+  -- === Virtual Machine ===
+  --     Choice L2    (p+1, i, (p+L, i, c):e, c)
+  --     Char "a"     (p+1, i+1, e, c)
+  --     Commit L1    (p, i, h:e, c) -> (p+L, i, e, c)
+  -- L1: Fail
+  -- L2: ...
+
+  -- === Virtual Machine (optimization) ===
+  --     Choice L1    (p+1, i, (p+L, i, c):e, c)
+  --     Char "a"     (p+1, i+1, e, c)
+  --     FailTwice    (p, i, h:e, c) -> (Fail, i, e, c)
+  -- L1: ...
+#+end_src
+
+*** Grammar Example
 
 #+begin_src lua
   -- === LPEG ===
@@ -360,21 +495,20 @@ shortest subject's prefix ending with *ana*.
   }
 
   -- === Virtual Machine ===
-  --[[
-      Call S
-      Jump L2
-
-   S: Choice L4
-      Call B
-      Commit L5
-  L4: Charset [^()]
-  L5: Return
-
-   B: Char '('
-      Call S
-      Char ')'
-      Return
-
-  L2: End
-  --]]
+  --
+  --     Call S           (p+S, i, (p+1):e, c
+  --     Jump L2          (p+L, i, e, c)
+  --
+  --  S: Choice L4        (p+1, i, (p+L, i, c):e, c)
+  --     Call B           (p+B, i, (p+1):e, c
+  --     Commit L5        (p, i, h:e, c) -> (p+L, i, e, c)
+  -- L4: Charset [^()]    (p+1, i+1, e, c)
+  -- L5: Return           (p₀, i, p₁:e, c) -> (p₁, i, e, c)
+  --
+  --  B: Char '('         (p+1, i+1, e, c)
+  --     Call S           (p+S, i, (p+1):e, c
+  --     Char ')'         (p+1, i+1, e, c)
+  --     Return           (p₀, i, p₁:e, c) -> (p₁, i, e, c)
+  --
+  -- L2: End
 #+end_src
