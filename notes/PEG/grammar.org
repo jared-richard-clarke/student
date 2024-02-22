@@ -6,20 +6,6 @@
 |-------------------------------------------------------------------------+------------|
 | *Parsing Expression Grammars: A Recognition-Based Syntactic Foundation* | Bryan Ford |
 
-** Keywords
-
-- context-free grammars
-- regular expressions
-- parsing expression grammars
-- BNF (Backus-Naur Form)
-- lexical analysis
-- unified grammars
-- scannerless parsing
-- packrat parsing
-- syntactic predicates
-- TDPL (Top Down Parsing Language)
-- GTDPL (Generalized Top Down Parsing Language)
-
 ** Generative Systems
 
 *{ s ∈ a\star | s = (aa)ⁿ }*
