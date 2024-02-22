@@ -559,10 +559,10 @@ jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole
 
 | current state | instruction                        | next state                  |
 |---------------+------------------------------------+-----------------------------|
-| (p, i, e, c)  | TestChar x l, S[i] = x             | (p+1, i+1, e, c)            |
-| (p, i, e, c)  | TestChar x l, S[i] ≠ x             | (p+l, i, e, c)              |
-| (p, i, e, c)  | TestCharset X l, S[i] ∈ X          | (p+1, i+1, e, c)            |
-| (p, i, e, c)  | TestCharset X l, S[i] ∉ X          | (p+l, i, e, c)              |
-| (p, i, e, c)  | TestAny n l, i+n ≤ \vert{}S\vert{} | (p+1, i+1, e, c)            |
-| (p, i, e, c)  | TestAny n l, i+n > \vert{}S\vert{} | (p+l, i, e, c)              |
-| (p, i, e, c)  | Choice l d                         | (p+1, i (p+l, i-d, c):e, c) |
+| (p, i, e, c)  | TestChar x L, S[i] = x             | (p+1, i+1, e, c)            |
+| (p, i, e, c)  | TestChar x L, S[i] ≠ x             | (p+L, i, e, c)              |
+| (p, i, e, c)  | TestCharset X L, S[i] ∈ X          | (p+1, i+1, e, c)            |
+| (p, i, e, c)  | TestCharset X L, S[i] ∉ X          | (p+L, i, e, c)              |
+| (p, i, e, c)  | TestAny n L, i+n ≤ \vert{}S\vert{} | (p+1, i+1, e, c)            |
+| (p, i, e, c)  | TestAny n L, i+n > \vert{}S\vert{} | (p+L, i, e, c)              |
+| (p, i, e, c)  | Choice L d                         | (p+1, i (p+L, i-d, c):e, c) |
