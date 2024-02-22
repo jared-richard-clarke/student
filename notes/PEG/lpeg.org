@@ -120,7 +120,7 @@ to what it matches.
   Grammar = lpeg.P{
     "Expression",
     Expression = Var("Term") * (AddSub * Var("Term") % eval)^0;
-    Term = Var("Factor") * (MulDiv * Var("Factor" % eval))^0;
+    Term = Var("Factor") * (MulDiv * Var("Factor") % eval)^0;
     Factor = Number / tonumber + Open * Var("Expression") * Close;
   }
 
