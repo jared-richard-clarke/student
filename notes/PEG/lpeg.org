@@ -452,7 +452,7 @@ span of input characters that belong to the given character set.
   -- L2: ...
 #+end_src
 
-*** Predicates
+*** Not Predicate
 
 The ~Choice~ and ~FailTwice~ operations together act like two consecutive fails, removing
 the top entry from the stack and then failing.
@@ -477,6 +477,23 @@ instruction that is the set difference between the two patterns.
   --     Char "a"     (p+1, i+1, e, c)
   --     FailTwice    (p, i, h:e, c) -> (Fail, i, e, c)
   -- L1: ...
+#+end_src
+
+*** And Predicate
+
+If *p* fails, the *BackCommit* instruction backtracks to the initial subject position and
+jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole pattern fails.
+
+#+begin_src lua
+  -- === LPEG ===
+  #lpeg.P("a")
+
+  -- === Virtual Machine ===
+  --     Choice L1        (p+1, i, (p+L1, i, c):e, c)
+  --     Char "a"         (p+1, i+1, e, c)
+  --     BackCommit L2    (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L2, i₁, e, c₁)
+  -- L1: Fail
+  -- L2: ...
 #+end_src
 
 *** Example Grammar
