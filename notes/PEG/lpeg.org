@@ -393,9 +393,9 @@ choice-commit pair.
   lpeg.P("a") + lpeg.P("b")
 
   -- === Virtual Machine ===
-  --     Choice L1    (p+1, i, (p+L, i, c):e, c)
+  --     Choice L1    (p+1, i, (p+L1, i, c):e, c)
   --     Char "a"     (p+1, i+1, e, c)
-  --     Commit L2    (p, i, h:e, c) -> (p+L, i, e, c)
+  --     Commit L2    (p, i, h:e, c) -> (p+L2, i, e, c)
   -- L1: Char "b"     (p+1, i+1, e, c)
   -- L2: ...
 
@@ -403,12 +403,12 @@ choice-commit pair.
   (lpeg.P("a") + lpeg.P("b")) + lpeg.P("c")
 
   -- === Virtual Machine ===
-  --     Choice L1    (p+1, i, (p+L, i, c):e, c)
-  --     Choice L2    (p+1, i, (p+L, i, c):e, c)
+  --     Choice L1    (p+1, i, (p+L1, i, c):e, c)
+  --     Choice L2    (p+1, i, (p+L2, i, c):e, c)
   --     Char "a"     (p+1, i+1, e, c)
-  --     Commit L3    (p, i, h:e, c) -> (p+L, i, e, c)
+  --     Commit L3    (p, i, h:e, c) -> (p+L3, i, e, c)
   -- L2: Char "b"     (p+1, i+1, e, c)
-  -- L3: Commit L4    (p, i, h:e, c) -> (p+L, i, e, c)
+  -- L3: Commit L4    (p, i, h:e, c) -> (p+L4, i, e, c)
   -- L1: Char "c"     (p+1, i+1, e, c)
   -- L4: ...
 
@@ -416,12 +416,12 @@ choice-commit pair.
   lpeg.P("a") + (lpeg.P("b") + lpeg.P("c"))
 
   -- === Virtual Machine ===
-  --     Choice L1    (p+1, i, (p+L, i, c):e, c)
+  --     Choice L1    (p+1, i, (p+L1, i, c):e, c)
   --     Char "a"     (p+1, i+1, e, c)
-  --     Commit L2    (p, i, h:e, c) -> (p+L, i, e, c)
-  -- L1: Choice L3    (p+1, i, (p+L, i, c):e, c)
+  --     Commit L2    (p, i, h:e, c) -> (p+L2, i, e, c)
+  -- L1: Choice L3    (p+1, i, (p+L3, i, c):e, c)
   --     Char "b"     (p+1, i+1, e, c)
-  --     Commit L2    (p, i, h:e, c) -> (p+L, i, e, c)
+  --     Commit L2    (p, i, h:e, c) -> (p+L2, i, e, c)
   -- L3: Char "c"     (p+1, i+1, e, c)
   -- L2: ...
 #+end_src
@@ -439,15 +439,15 @@ span of input characters that belong to the given character set.
   lpeg.P("a") ^ 0
 
   -- === Virtual Machine ===
-  -- L1: Choice L2    (p+1, i, (p+L, i, c):e, c)
+  -- L1: Choice L2    (p+1, i, (p+L2, i, c):e, c)
   --     Char "a"     (p+1, i+1, e, c)
-  --     Commit L1    (p, i, h:e, c) -> (p+L, i, e, c)
+  --     Commit L1    (p, i, h:e, c) -> (p+L1, i, e, c)
   -- L2: ...
 
   -- === Virtual Machine (optimization) ===
-  --     Choice L2           (p+1, i, (p+L, i, c):e, c)
+  --     Choice L2           (p+1, i, (p+L2, i, c):e, c)
   -- L1: Char "a"            (p+1, i+1, e, c)
-  --     PartialCommit L1    (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L, i₀, (p₁,i₀,c₀):e, c₀)
+  --     PartialCommit L1    (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L1, i₀, (p₁,i₀,c₀):e, c₀)
   -- L2: ...
 #+end_src
 
@@ -465,20 +465,20 @@ instruction that is the set difference between the two patterns.
   -lpeg.P("a")
 
   -- === Virtual Machine ===
-  --     Choice L2    (p+1, i, (p+L, i, c):e, c)
+  --     Choice L2    (p+1, i, (p+L2, i, c):e, c)
   --     Char "a"     (p+1, i+1, e, c)
-  --     Commit L1    (p, i, h:e, c) -> (p+L, i, e, c)
+  --     Commit L1    (p, i, h:e, c) -> (p+L1, i, e, c)
   -- L1: Fail
   -- L2: ...
 
   -- === Virtual Machine (optimization) ===
-  --     Choice L1    (p+1, i, (p+L, i, c):e, c)
+  --     Choice L1    (p+1, i, (p+L1, i, c):e, c)
   --     Char "a"     (p+1, i+1, e, c)
   --     FailTwice    (p, i, h:e, c) -> (Fail, i, e, c)
   -- L1: ...
 #+end_src
 
-*** Grammar Example
+*** Example Grammar
 
 #+begin_src lua
   -- === LPEG ===
@@ -497,11 +497,11 @@ instruction that is the set difference between the two patterns.
   -- === Virtual Machine ===
   --
   --     Call S           (p+S, i, (p+1):e, c
-  --     Jump L2          (p+L, i, e, c)
+  --     Jump L2          (p+L2, i, e, c)
   --
-  --  S: Choice L4        (p+1, i, (p+L, i, c):e, c)
+  --  S: Choice L4        (p+1, i, (p+L4, i, c):e, c)
   --     Call B           (p+B, i, (p+1):e, c
-  --     Commit L5        (p, i, h:e, c) -> (p+L, i, e, c)
+  --     Commit L5        (p, i, h:e, c) -> (p+L5, i, e, c)
   -- L4: Charset [^()]    (p+1, i+1, e, c)
   -- L5: Return           (p₀, i, p₁:e, c) -> (p₁, i, e, c)
   --
