@@ -534,11 +534,11 @@ jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole
 #+begin_src lua
   -- === LPEG ===
 
-  Var = lpeg.V
-  Pat = lpeg.P
+  Variable = lpeg.V
+  Pattern = lpeg.P
 
   -- X <- "abc" / . X
-  Pat{ Pat("abc") + Pat(1) * Var(1) }
+  Patttern{ Patttern("abc") + Patttern(1) * Variable(1) }
 
   -- === Virtual Machine ===
   --
@@ -554,3 +554,15 @@ jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole
   -- L3: Return                  (p₀, i, p₁:e, c) -> (p₁, i, e, c)
   -- L2: ...
 #+end_src
+
+*** Head Fail Optimizations
+
+| current state | instruction                        | next state                  |
+|---------------+------------------------------------+-----------------------------|
+| (p, i, e, c)  | TestChar x l, S[i] = x             | (p+1, i+1, e, c)            |
+| (p, i, e, c)  | TestChar x l, S[i] ≠ x             | (p+l, i, e, c)              |
+| (p, i, e, c)  | TestCharset X l, S[i] ∈ X          | (p+1, i+1, e, c)            |
+| (p, i, e, c)  | TestCharset X l, S[i] ∉ X          | (p+l, i, e, c)              |
+| (p, i, e, c)  | TestAny n l, i+n ≤ \vert{}S\vert{} | (p+1, i+1, e, c)            |
+| (p, i, e, c)  | TestAny n l, i+n > \vert{}S\vert{} | (p+l, i, e, c)              |
+| (p, i, e, c)  | Choice l d                         | (p+1, i (p+l, i-d, c):e, c) |
