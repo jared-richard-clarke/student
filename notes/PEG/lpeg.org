@@ -158,30 +158,6 @@ to what it matches.
 *** Grammatical Differences
 
 #+begin_example
-  # === PEG ===
-
-  grammar      <- (non-terminal "<-" spaces pattern)+
-
-  pattern      <- alternative ("/" spaces alternative)*
-
-  alternative  <- ([!&]? spaces suffix)+
-
-  suffix       <- primary ([*+?] space)*
-
-  primary      <- "(" spaces pattern ")" spaces
-                  / "." spaces
-                  / literal
-                  / char-class
-                  / non-terminal !"<-"
-
-  literal      <- ["] (!["] .)* ["] spaces
-
-  char-class   <- "[" (!"]" (. "-" . / .))* "]" spaces
-
-  non-terminal <- [a-zA-Z]+ spaces
-
-  spaces       <- [ \t\n]*
-
   # === LPEG ===
 
   # LPEG = [a-z]+ or S <- [a-z]+
@@ -219,6 +195,45 @@ to what it matches.
 ** ~re~ Module
 
 LPeg provides a regex-like expression syntax via the ~re~ module.
+
+*** Syntax
+
+| syntax              | description                   |
+|---------------------+-------------------------------|
+| ( p )               | Grouping                      |
+| & p                 | and predicate                 |
+| ! p                 | not predicate                 |
+| p1 p2               | Concatenation                 |
+| p1 / p2             | Ordered choice                |
+| p ?                 | Optional math                 |
+| p *                 | Zero or more                  |
+| p +                 | One or more                   |
+| p ^ n               | Exactly *n* repetitions       |
+| p ^ +n              | At least *n* repetitions      |
+| p ^ -n              | At most *n* repetitions       |
+| (name <- p)+        | Grammar                       |
+| 'string'            | Literal string                |
+| "string"            | Literal string                |
+| [class]             | Character class               |
+| .                   | Any character                 |
+| %name               | Pattern definition            |
+| name                | Non-terminal                  |
+| <name>              | Non-terminal                  |
+| {}                  | Position capture              |
+| { p }               | Simple capture                |
+| {: p :}             | Anonymous capture             |
+| {: name : p :}      | Named capture                 |
+| {~ p ~}             | Substitution capture          |
+| {\vert{} p \vert{}} | Table capture                 |
+| =name               | Back reference                |
+| p -> 'string'       | String capture                |
+| p -> "string"       | String capture                |
+| p -> number         | Numbered capture              |
+| p -> name           | Function/query/string capture |
+| p => name           | Match-time capture            |
+| p >> name           | Accumulator capture           |
+
+*** Grammar
 
 #+begin_src lua
   grammar = [=[
