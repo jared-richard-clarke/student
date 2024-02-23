@@ -38,6 +38,18 @@
 | ~#pattern~            | Matches ~pattern~ but consumes no input                       |
 | ~lpeg.B(pattern)~     | Matches only if the current position is preceded by ~pattern~ |
 
+*** ~lpeg.P(value)~ Conversion Rules
+
+| value               | conversion                                                 |
+|---------------------+------------------------------------------------------------|
+| pattern             | Pattern                                                    |
+| string              | Pattern literal                                            |
+| non-negative number | Pattern match *n* characters                               |
+| negative number     | Pattern match less than *n* characters                     |
+| boolean             | Pattern that always succeeds or always fails               |
+| table               | Grammar                                                    |
+| function            | Pattern equivalent of match-time capture over empty string |
+
 *** Captures
 
 A capture is a pattern that produces values — the semantic information — according
