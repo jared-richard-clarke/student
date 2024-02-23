@@ -538,7 +538,7 @@ jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole
   Pattern = lpeg.P
 
   -- X <- "abc" / . X
-  Patttern{ Patttern("abc") + Patttern(1) * Variable(1) }
+  Patttern{ Pattern("abc") + Pattern(1) * Variable(1) }
 
   -- === Virtual Machine ===
   --
