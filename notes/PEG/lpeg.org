@@ -190,10 +190,10 @@ to what it matches.
   suffix         <- primary ([*+?] space)*
 
   primary        <- "(" spaces pattern ")" spaces
-                    / "." spaces
-                    / literal
-                    / char-class
-                    / non-terminal !"<-"
+                  / "." spaces
+                  / literal
+                  / char-class
+                  / non-terminal !"<-"
 
   literal        <- ["] (!["] .)* ["] spaces
 
