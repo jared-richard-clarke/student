@@ -1,17 +1,44 @@
-* Iterators, Generators, and Closures
+* Loops, Iterators, Generators, and Closures
 
-*Programming in Lua*, Roberto Ierusalimschy
+** Sources
+
+| source                     | author                                                             |
+|----------------------------+--------------------------------------------------------------------|
+| *Programming in Lua*       | Roberto Ierusalimschy                                              |
+| *Lua 5.4 Reference Manual* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, Waldemar Celes |
 
 ** Introduction
 
 #+begin_quote
-The name "iterator" is a little misleading, because our iterators do not iterate:
-What iterates is the for loop. Iterators only provide the successive values for
-the iteration. Maybe a better name would be "generator", but "iterator" is already
-well established in other languages, such as Java.
+  "The name "iterator" is a little misleading, because our iterators do not iterate:
+   What iterates is the for loop. Iterators only provide the successive values for
+   the iteration. Maybe a better name would be "generator", but "iterator" is already
+   well established in other languages, such as Java."
 
-— Roberto Ierusalimschy
+  — Roberto Ierusalimschy
 #+end_quote
+
+** Numeric ~for~ Loop
+
+The numeric ~for~ loop keeps three numbers:
+
+1. initial value
+2. limit
+3. step (If absent, defaults to 1)
+
+#+begin_src lua
+  -- for x = value, y, z do print(x) end
+  --
+  -- where x = initial value
+  --       y = limit
+  --       z = step
+
+  sum = 0
+  for x = 1, 10 do sum += x end
+  print(sum) --> 55
+#+end_src
+
+** Generic ~for~ Loop
 
 The generic ~for~ loop keeps three values:
 
@@ -20,48 +47,48 @@ The generic ~for~ loop keeps three values:
 3. control variable
 
 ~for~ first evaluates the expressions after ~in~. These expressions should result in three values:
-the *iterator function*, the *invariant state*, and the *initial control variable*. When simple iterators
-are used, the factory returns only the iterator function.
+the *iterator function*, the *invariant state*, and the *initial control variable*. When simple
+iterators are used, the factory returns only the iterator function.
 
-After initialization, ~for~ calls the iterator function with two arguments: the invariant state and
-the control variable. ~for~ assigns the values returned by the iterator function to variables
+After initialization, ~for~ calls the iterator function with two arguments: the invariant state
+and the control variable. ~for~ assigns the values returned by the iterator function to variables
 declared by its variable list. If the first value returned, the control variable, is ~nil~, the
-loop terminates. Otherwise, ~for~ executes its body and calls the iteration function again, repeating
-the process.
+loop terminates. Otherwise, ~for~ executes its body and calls the iteration function again,
+repeating the process.
 
-** Generic ~for~ Semantics
+*** Generic ~for~ Semantics
 
 #+begin_quote
-So, If the iterator function is *f*, the invariant state is *s*, and the initial value for the control
-variable is *a_{0}*, the control variable will loop over the values *a_{1} = f(s, a_{0}), a_{2} = f(s, a_{1})*,
-and so on, until *a_{i}* is *nil*. If the *for* has other variables, they simply get the extra values returned
-by each call to *f*.
+  "So, If the iterator function is *f*, the invariant state is *s*, and the initial value for
+   the control variable is *a_{0}*, the control variable will loop over the values
+   *a_{1} = f(s, a_{0}), a_{2} = f(s, a_{1})*, and so on, until *a_{i}* is *nil*. If the *for*
+   has other variables, they simply get the extra values returned by each call to *f*."
 
-— Roberto Ierusalimschy
+  — Roberto Ierusalimschy
 #+end_quote
 
 #+begin_example
-for v1, v2 ... vn in expressions do
-    block
-end
+  for v1, v2 ... vn in expressions do
+      block
+  end
 
--- equivalent ->
+  -- equivalent ->
 
-do
-    local f, s, v = expressions
-    while true do
-        local v1, v2 ... vn = f(s, v)
-	v = v1
-	if v == nil then
-            break
-        end
-	block
-    end
-end
+  do
+      local f, s, v = expressions
+      while true do
+          local v1, v2 ... vn = f(s, v)
+          v = v1
+          if v == nil then
+              break
+          end
+          block
+      end
+  end
 
-where f = iterator function
-      s = invariant state
-      v = control variable
+  where f = iterator function
+        s = invariant state
+        v = control variable
 #+end_example
 
 ** Closure as Iterator
