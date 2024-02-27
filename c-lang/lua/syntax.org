@@ -1,0 +1,116 @@
+* Lua Operators and Syntax
+
+** Sources
+
+| source                     | author                                                             |
+|----------------------------+--------------------------------------------------------------------|
+| *Lua 5.4 Reference Manual* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, Waldemar Celes |
+
+** Syntax
+
+Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
+
+#+begin_example
+  chunk               ::= block
+
+  block               ::= { statement } [ return-statement ]
+
+  statement           ::=  ";"
+                        |  variables "=" expressions
+                        |  function-call
+                        |  label
+                        |  break
+                        |  goto Name
+                        |  do block end
+                        |  while expression do block end
+                        |  repeat block until expression
+                        |  if expression then block { elseif expression then block } [ else block ] end 
+                        |  for Name "=" expression "," expression [ "," expression ] do block end
+                        |  for names in expressions do block end
+                        |  function function-name function-body
+                        |  local function Name function-body
+                        |  local attributes [ "=" expressions ]
+
+  attributes          ::=  Name attribute { "," Name attribute }
+
+  attribute           ::= [ "<" Name ">" ]
+
+  return-statement    ::= return [ expressions ] [ ";" ]
+
+  label               ::= "::" Name "::"
+
+  function-name       ::= Name { "." Name } [ ":" Name ]
+
+  variables           ::= variable { "," variable }
+
+  variable            ::= Name
+                        | prefix-expression "[" expression "]"
+                        | prefix-expression "." Name
+
+  names               ::= Name { "," Name }
+
+  expressions         ::= expression { "," expression }
+
+  expression          ::= nil
+                        | false
+                        | true
+                        | Numeral
+                        | LiteralString
+                        | "..."
+                        | function-definition
+                        | prefix-expression
+                        | table-constructor
+                        | expression binary expression
+                        | unary expression
+
+  prefix-expression   ::= varriable
+                        | function-call
+                        | "(" expression ")"
+
+  function-call       ::= prefix-expression arguments
+                        | prefix-expression ":" Name arguments
+
+  arguments           ::= "(" [ expressions ] ")"
+                        | table-constructor
+                        | LiteralString
+
+  function-definition ::= function function-body
+
+  function-body       ::= "(" [ parameters ] ")" block end
+
+  parameters          ::= names [ "," "..." ]
+                        | "..."
+
+  table-constructor   ::= "{" [ fields ] "}"
+
+  fields              ::= field { field-separator field } [ field-separator ]
+
+  field               ::= "[" expression "]" "=" expression
+                        | Name "=" expression
+                        | expression
+
+  field-separator     ::= "," | ";"
+
+  binary              ::= "+"  | "-"  | "*"  | "/"  | "//" | "^"  | "%" | "&"  | "~"
+                        | "|"  | ">>" | "<<" | ".." | "<"  | "<=" | ">" | ">=" | "=="
+                        | "~=" | and  | or
+
+  unary               ::= "-" | not | "#" | "~"
+#+end_example
+
+** Operator Precedence
+
+| precedence | operators         |
+|------------+-------------------|
+|          1 | or                |
+|          2 | and               |
+|          3 | < > <= >= ~= ==   |
+|          4 | \vert{}           |
+|          5 | ~                 |
+|          6 | &                 |
+|          7 | << >>             |
+|          8 | ..                |
+|          9 | + -               |
+|         10 | * / // %          |
+|         11 | unary (not # - ~) |
+|         12 | ^                 |
