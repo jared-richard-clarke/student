@@ -79,14 +79,16 @@ to what it matches.
 #+begin_src lua
   lpeg = require("lpeg")
 
+  Range = lpeg.R
+
   -- Matches a numeral and captures its numerical value.
-  number = lpeg.R("09")^1 / tonumber
+  number = Range("09") ^ 1 / tonumber
 
   -- Auxiliary function to add two numbers.
   function add(accum, value) return accum + value end
 
   -- Matches a list of numbers, adding their values.
-  sum = number * ("," * number % add)^0
+  sum = number * ("," * number % add) ^ 0
 
   sum:match("1, 2, 3, 4, 5, 6, 7, 8, 9, 10") --> 55
 #+end_src
@@ -98,9 +100,9 @@ to what it matches.
 
   function split(text, separator)
     separator = lpeg.P(separator)
-    local element = lpeg.C((1 - separator)^0)
+    local element = lpeg.C((1 - separator) ^ 0)
     -- Make table capture.
-    local pattern = lpeg.Ct(element * (separator * element)^0)
+    local pattern = lpeg.Ct(element * (separator * element) ^ 0)
     return lpeg.match(pattern, text)
   end
 #+end_src
@@ -110,11 +112,16 @@ to what it matches.
 #+begin_src lua
   lpeg = require("lpeg")
 
+  Pattern = lpeg.P
+  Set = lpeg.S
+  Range = lpeg.R
+  Capture = lpeg.C
+
   -- Lexical elements
-  Spaces = lpeg.S(" \n\t")^0
-  Number = lpeg.C(lpeg.P("-"^-1) * lpeg.R("09")^1) * Spaces
-  AddSub = lpeg.C(lpeg.S("+-")) * Spaces
-  MulDiv = lpeg.C(lpeg.S("*/")) * Spaces
+  Spaces = Set(" \n\t") ^ 0
+  Number = Capture(Pattern("-" ^ -1) * Range("09") ^ 1) * Spaces
+  AddSub = Capture(Set("+-")) * Spaces
+  MulDiv = Capture(Set("*/")) * Spaces
   Open   = "(" * Spaces
   Close  = ")" * Spaces
 
@@ -129,10 +136,11 @@ to what it matches.
 
   -- Grammar
   Var = lpeg.V
+
   Grammar = lpeg.P{
     "Expression",
-    Expression = Var("Term") * (AddSub * Var("Term") % eval)^0;
-    Term = Var("Factor") * (MulDiv * Var("Factor") % eval)^0;
+    Expression = Var("Term") * (AddSub * Var("Term") % eval) ^ 0;
+    Term = Var("Factor") * (MulDiv * Var("Factor") % eval) ^ 0;
     Factor = Number / tonumber + Open * Var("Expression") * Close;
   }
 
@@ -293,6 +301,19 @@ LPeg provides a regex-like expression syntax via the ~re~ module.
 #+end_src
 
 ** Repetition
+
+#+begin_quote
+  "Restricted backtracking means that a PEG does only local backtracking, that is, it only
+   backtracks while choosing an appropriate option in a rule. Once an option has been chosen,
+   it cannot be changed because of a later failure.
+
+   This difference in semantics has several important consequences. Among other things, it
+   allows the grammar to formally specify the kind of repetition it wants, without extra
+   constructions and arbitrary conventions like "the longest match rule". Repetitions in
+   PEG may be greedy or non-greedy, and blind or non-blind."
+
+   — Roberto Ierusalimschy
+#+end_quote
 
 - blind greedy (possessive) :: Always matches the maximum possible span, disregarding what
   comes afterward. Equivalent to PEG's *E\star{}* operation.
