@@ -63,7 +63,7 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
                         | expression binary expression
                         | unary expression
 
-  prefix-expression   ::= varriable
+  prefix-expression   ::= variable
                         | function-call
                         | "(" expression ")"
 
@@ -91,11 +91,11 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
 
   field-separator     ::= "," | ";"
 
-  binary              ::= "+"  | "-"  | "*"  | "/"  | "//" | "^"  | "%" | "&"  | "~"
-                        | "|"  | ">>" | "<<" | ".." | "<"  | "<=" | ">" | ">=" | "=="
-                        | "~=" | and  | or
+  binary              ::= "+"  | "-"   | "*"  | "/"  | "//" | "^"  | "%" | "&"  | "~"
+                        | "|"  | ">>"  | "<<" | ".." | "<"  | "<=" | ">" | ">=" | "=="
+                        | "~=" | "and" | "or"
 
-  unary               ::= "-" | not | "#" | "~"
+  unary               ::= "-" | "not" | "#" | "~"
 #+end_example
 
 ** Operator Precedence
