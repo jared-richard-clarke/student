@@ -652,7 +652,7 @@ jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole
   --     Char "c"                (p+1, i+1, e, c)
   --     Commit L3               (p, i, h:e, c) -> (p+L3, i, e, c)
   -- L1: Any 1                   (p+1, i+n, e, c)
-  --     Jump X <- Tail Call     (p+L2, i, e, c)
+  --     Jump X <- Tail Call     (p+X, i, e, c)
   -- L3: Return                  (p₀, i, p₁:e, c) -> (p₁, i, e, c)
   -- L2: ...
 #+end_src
