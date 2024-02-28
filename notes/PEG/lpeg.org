@@ -359,7 +359,7 @@ shortest subject's prefix ending with *ana*.
 ** The Parsing Machine
 
 - State = (N ∪ Fail, N, StackEntry*, Capture*) :: The virtual machine keeps its state in
-  four registers: (instruction, subject position, stack, capture list)
+  four registers: (*instruction*, *subject position*, *stack*, and *capture list*)
 
 - N ∪ Fail (instruction) :: Keeps the index of the next instruction to be executed
   (a natural number). It may also have a special *Fail* value, meaning that some match
