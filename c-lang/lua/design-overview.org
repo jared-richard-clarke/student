@@ -186,9 +186,9 @@ first-class functions allow exportation.
 
   -- equivalent ->
 
-  local ok, error = pcall(function() protected_code() end)
+  local ok, error = pcall(function() protected_code end)
 
   if not ok then
-    handle_acception()
+    handle_acception
   end
 #+end_src
