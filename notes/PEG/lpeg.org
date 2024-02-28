@@ -116,10 +116,11 @@ to what it matches.
 #+begin_src lua
   lpeg = require("lpeg")
 
-  Pattern = lpeg.P
-  Set     = lpeg.S
-  Range   = lpeg.R
-  Capture = lpeg.C
+  Pattern  = lpeg.P
+  Set      = lpeg.S
+  Range    = lpeg.R
+  Capture  = lpeg.C
+  Variable = lpeg.V
 
   -- Lexical elements
   Spaces = Set(" \n\t") ^ 0
@@ -139,13 +140,11 @@ to what it matches.
   end
 
   -- Grammar
-  Var = lpeg.V
-
-  Grammar = lpeg.P{
+  Grammar = Pattern{
     "Expression",
-    Expression = Var("Term") * (AddSub * Var("Term") % eval) ^ 0;
-    Term = Var("Factor") * (MulDiv * Var("Factor") % eval) ^ 0;
-    Factor = Number / tonumber + Open * Var("Expression") * Close;
+    Expression = Variable("Term") * (AddSub * Variable("Term") % eval) ^ 0;
+    Term = Variable("Factor") * (MulDiv * Variable("Factor") % eval) ^ 0;
+    Factor = Number / tonumber + Open * Variable("Expression") * Close;
   }
 
   lpeg.Match(Grammar, "3 + 5 * 9 / (1 + 1) - 11") --> 14.5
