@@ -13,12 +13,12 @@ instructions for implementing control flow.
 
 ** Notational Conventions
 
-- ~R(X)~: ~X~th register.
-- ~K(X)~: ~X~th constant.
+- ~R(X)~: ~Xth~ register.
+- ~K(X)~: ~Xth~ constant.
 - ~RK(X)~: either ~R(X)~ or ~K(X-k)~, where ~R(X)~ is for values of ~X~ smaller
    than ~k~.
 - ~G[X]~: field ~X~ in a table of globals.
-- ~U[X]~: the ~X~th upvalue.
+- ~U[X]~: the ~Xth~ upvalue.
 - ~Bx~ and ~sBx~: unsigned and signed 18-bit value.
 
 ** Op Code Instruction Set
