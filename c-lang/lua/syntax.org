@@ -19,23 +19,23 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
                         |  variables "=" expressions
                         |  function-call
                         |  label
-                        |  break
-                        |  goto Name
-                        |  do block end
-                        |  while expression do block end
-                        |  repeat block until expression
-                        |  if expression then block { elseif expression then block } [ else block ] end 
-                        |  for Name "=" expression "," expression [ "," expression ] do block end
-                        |  for names in expressions do block end
-                        |  function function-name function-body
-                        |  local function Name function-body
-                        |  local attributes [ "=" expressions ]
+                        |  "break"
+                        |  "goto" Name
+                        |  "do" block "end"
+                        |  "while" expression "do" block "end"
+                        |  "repeat" block "until" expression
+                        |  "if" expression "then" block { "elseif" expression "then" block } [ "else" block ] end 
+                        |  "for" Name "=" expression "," expression [ "," expression ] "do" block "end"
+                        |  "for" names "in" expressions "do" block "end"
+                        |  "function" function-name function-body
+                        |  "local" "function" Name function-body
+                        |  "local" attributes [ "=" expressions ]
 
   attributes          ::=  Name attribute { "," Name attribute }
 
   attribute           ::= [ "<" Name ">" ]
 
-  return-statement    ::= return [ expressions ] [ ";" ]
+  return-statement    ::= "return" [ expressions ] [ ";" ]
 
   label               ::= "::" Name "::"
 
@@ -51,9 +51,9 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
 
   expressions         ::= expression { "," expression }
 
-  expression          ::= nil
-                        | false
-                        | true
+  expression          ::= "nil"
+                        | "false"
+                        | "true"
                         | Numeral
                         | LiteralString
                         | "..."
@@ -74,9 +74,9 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
                         | table-constructor
                         | LiteralString
 
-  function-definition ::= function function-body
+  function-definition ::= "function" function-body
 
-  function-body       ::= "(" [ parameters ] ")" block end
+  function-body       ::= "(" [ parameters ] ")" block "end"
 
   parameters          ::= names [ "," "..." ]
                         | "..."
