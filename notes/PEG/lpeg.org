@@ -635,7 +635,7 @@ jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole
   -- === LPEG ===
 
   Variable = lpeg.V
-  Pattern = lpeg.P
+  Pattern  = lpeg.P
 
   -- X <- "abc" / . X
   Patttern{ Pattern("abc") + Pattern(1) * Variable(1) }
