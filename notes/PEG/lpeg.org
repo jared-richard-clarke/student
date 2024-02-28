@@ -100,7 +100,7 @@ to what it matches.
 
   Pattern = lpeg.P
   Capture = lpeg.C
-  Table = lpeg.Ct
+  Table   = lpeg.Ct
 
   function split(text, separator)
     separator = Pattern(separator)
@@ -117,8 +117,8 @@ to what it matches.
   lpeg = require("lpeg")
 
   Pattern = lpeg.P
-  Set = lpeg.S
-  Range = lpeg.R
+  Set     = lpeg.S
+  Range   = lpeg.R
   Capture = lpeg.C
 
   -- Lexical elements
