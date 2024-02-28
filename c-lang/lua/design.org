@@ -13,7 +13,74 @@ Lua is implemented not as a standalone program, but as a library with a C API.
 The standalone Lua interpreter is a tiny application written on top of the C library.
 
 #+begin_src c
-  // The main code block as implemented in the Lua stand-alone interpreter.
+  // Main body of the Lua stand-alone intepreter. Called in protected mode.
+  // Parses and handles all arguments to the main program.
+  static int pmain (lua_State *L) {
+    int argc = (int)lua_tointeger(L, 1);
+    char **argv = (char **)lua_touserdata(L, 2);
+    int script;
+    int args = collectargs(argv, &script);
+
+    // First argument is not an option.
+    int optlim = (script > 0) ? script : argc;
+    // Check that interpreter has the correct version.
+    luaL_checkversion(L);
+
+    // Bad arguments?
+    if (args == has_error) {
+      print_usage(argv[script]);
+      return 0;
+    }
+    // Option '-v'?
+    if (args & has_v) {
+      print_version();
+    }
+    // Option '-E'?
+    if (args & has_E) {
+      lua_pushboolean(L, 1);
+      // Signal for libraries to ignore environment variables.
+      lua_setfield(L, LUA_REGISTRYINDEX, "LUA_NOENV");
+    }
+    // Open standard libraries.
+    luaL_openlibs(L);
+    // Create table 'arg'
+    createargtable(L, argv, argc, script);
+    // Start GC in generational mode.
+    lua_gc(L, LUA_GCRESTART);
+    lua_gc(L, LUA_GCGEN, 0, 0);
+    // No option '-E'?
+    if (!(args & has_E)) {
+      // Run LUA_INIT
+      if (handle_luainit(L) != LUA_OK) {
+        return 0;
+      }
+    }
+    // Execute arguments '-e' and '-l'.
+    if (!runargs(L, argv, optlim))
+      return 0;
+    // Execute main script (if there is one).
+    if (script > 0) {
+      if (handle_script(L, argv + script) != LUA_OK)
+        return 0;
+    }
+    // If -i option, run read-eval-print loop.
+    if (args & has_i) {
+      doREPL(L);
+    } else if (script < 1 && !(args & (has_e | has_v))) {
+      if (lua_stdin_is_tty()) {
+        print_version();
+        doREPL(L);
+      } else {
+        // Executes stdin as a file.
+        dofile(L, NULL);
+      }
+    }
+    // Signal no errors.
+    lua_pushboolean(L, 1);
+    return 1;
+  }
+
+  // The requisite main program as implemented in the Lua stand-alone interpreter.
   int main (int argc, char *argv[]) {
     int status, result;
     // Create thread state.
