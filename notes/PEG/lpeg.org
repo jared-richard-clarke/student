@@ -98,11 +98,15 @@ to what it matches.
 #+begin_src lua
   lpeg = require("lpeg")
 
+  Pattern = lpeg.P
+  Capture = lpeg.C
+  Table = lpeg.Ct
+
   function split(text, separator)
-    separator = lpeg.P(separator)
-    local element = lpeg.C((1 - separator) ^ 0)
+    separator = Pattern(separator)
+    local element = Capture((1 - separator) ^ 0)
     -- Make table capture.
-    local pattern = lpeg.Ct(element * (separator * element) ^ 0)
+    local pattern = Table(element * (separator * element) ^ 0)
     return lpeg.match(pattern, text)
   end
 #+end_src
