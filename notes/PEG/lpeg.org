@@ -531,7 +531,8 @@ choice-commit pair.
 *** Repetition
 
 The ~Choice~ and ~PartialCommit~ operations together create a loop where only the subject
-position and the capture list are repeatedly updated.
+position and the capture list are repeatedly updated. Instead of removing an entry from the stack
+and adding a new one, the instruction simply updates the top entry.
 
 Repeated character classes have a dedicated instruction, ~Span charset~ that consumes a maximum
 span of input characters that belong to the given character set.
