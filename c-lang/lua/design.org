@@ -107,7 +107,7 @@ The standalone Lua interpreter is a tiny application written on top of the C lib
   }
 #+end_src
 
-** Lua Map
+** Lua Map Function
 
 An implementation of the map function using Lua's C API.
 
