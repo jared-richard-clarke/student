@@ -139,6 +139,34 @@ An implementation of the map function using Lua's C API.
   }
 #+end_src
 
+** Lua Uppercase Function
+
+#+begin_src c
+  static int lua_uppercase (lua_State *L) {
+    size_t l;
+    size_t i;
+    // Declare a buffer.
+    luaL_Buffer b;
+
+    // Ensure argument is a string.
+    const char *s = luaL_checklstr(L, 1, &l);
+
+    // Initialize buffer.
+    luaL_buffinit(L, &b);
+
+    // For each character in string, uppercase that character then push
+    // it into the buffer.
+    for (i = 0; i < l; i += 1) {
+      luaL_putchar(&b, toupper((unsigned char)(s[i])));
+    }
+
+    // Flush buffer. Leave resulting string on the stack.
+    luaL_pushresult(&b);
+
+    return 1;
+  }
+#+end_src
+
 ** Modules: Implementation 1
 
 Lua loads any chunk as the body of an enclosing anonymous function. A module
