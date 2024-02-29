@@ -193,7 +193,7 @@ first-class functions allow exportation.
   -- end
 #+end_src
 
-* Object-Oriented Programming: Meta Tables
+** Object-Oriented Programming: Meta Tables
 
 #+begin_src lua
   local meta = {}
