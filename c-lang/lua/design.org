@@ -154,8 +154,8 @@ An implementation of the map function using Lua's C API.
     // Initialize buffer.
     luaL_buffinit(L, &b);
 
-    // For each character in string, uppercase that character then push
-    // it into the buffer.
+    // For each character in the string, uppercase that character,
+    // and then push the result onto the buffer.
     for (i = 0; i < l; i += 1) {
       luaL_putchar(&b, toupper((unsigned char)(s[i])));
     }
