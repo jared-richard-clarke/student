@@ -445,9 +445,9 @@ shortest subject's prefix ending with *ana*.
 
 - Any n :: Checks whether there are at least *n* characters in the current subject position.
 
-* Grammars to Instructions
+** Grammars to Instructions
 
-** Literals
+*** Literals
 
 A literal string translates to a sequence of ~Char~ instructions, one for each character.
 ~lpeg.P(n)~ translates to ~Any n~. Both sets and ranges translate to ~Charset X~.
@@ -599,6 +599,12 @@ jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole
 #+end_src
 
 *** Calling Grammars
+
+Each non-terminal translates to a *Call* opcode, and each rule ends with a *Return* opcode.
+At its creation, a non-terminal is not yet part of a grammar, so *LPEG* inserts the placeholder
+instruction *OpenCall*. Then, when the grammar is complete, *LPEG* combines the rules, ending
+each with a return instruction and translating each *OpenCall* to a *Call* instruction
+with the appropriate offset.
 
 #+begin_src lua
   -- === LPEG ===
