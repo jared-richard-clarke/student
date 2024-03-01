@@ -377,9 +377,9 @@ shortest subject's prefix ending with *ana*.
   entry comprises the instruction to follow in case of failure plus all information needed
   to backtrack to the current state (that is, the subject position and the capture list).
 
-- Capture* (capture list) :: Keeps information about captures made by the pattern: *(N, N)*.
-  Each entry stores the subject position and the index of the instruction that created the
-  entry, wherein there is extra information about the capture.
+- Capture* (capture list) :: Keeps information about captures made by the pattern: *Capture = (N, N)*.
+  Each entry stores the subject position and the index of the instruction that created the entry,
+  wherein there is extra information about the capture.
 
 *** Basic Instructions
 
