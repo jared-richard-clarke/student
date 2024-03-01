@@ -22,33 +22,33 @@
 
 *** Basic Operations
 
-| operation             | description                                                   |
-|-----------------------+---------------------------------------------------------------|
-| ~lpeg.P(string)~      | Matches literal string                                        |
-| ~lpeg.P(n)~           | Matches ~n~ characters                                        |
-| ~lpeg.S(string)~      | Matches any character in string (Set)                         |
-| ~lpeg.R("xy")~        | Matches any character between ~x~ and ~y~ (Range)             |
-| ~lpeg.utfR(cp1, cp2)~ | Matches UTF-8 code point between ~cp1~ and ~cp2~              |
-| ~pattern ^ n~         | Matches at least ~n~ repetitions of ~pattern~                 |
-| ~pattern ^ -n~        | Matches at most ~n~ repetitions of ~pattern~                  |
-| ~p1 * p2~             | Matches ~p1~ followed by ~p2~                                 |
-| ~p1 + p2~             | Matches ~p1~ or ~p2~ (ordered choice)                         |
-| ~p1 - p2~             | Matches ~p1~ if ~p2~ does not match                           |
-| ~-pattern~            | Equivalent to ~("" - pattern)~                                |
-| ~#pattern~            | Matches ~pattern~ but consumes no input                       |
-| ~lpeg.B(pattern)~     | Matches only if the current position is preceded by ~pattern~ |
+| operation             | description                              |
+|-----------------------+------------------------------------------|
+| ~lpeg.P(string)~      | Literal                                  |
+| ~lpeg.P(n)~           | ~n~ characters                           |
+| ~lpeg.S(string)~      | Set                                      |
+| ~lpeg.R("xy")~        | Range                                    |
+| ~lpeg.utfR(cp1, cp2)~ | UTF-8 code point between ~cp1~ and ~cp2~ |
+| ~pattern ^ n~         | At least ~n~ repetitions                 |
+| ~pattern ^ -n~        | At most ~n~ repetitions                  |
+| ~p1 * p2~             | Concatenation                            |
+| ~p1 + p2~             | Ordered choice                           |
+| ~p1 - p2~             | ~p1~ if not ~p2~                         |
+| ~-p~                  | Not ~p~ or ~("" - p)~                    |
+| ~#p~                  | ~p~ but consumes no input                |
+| ~lpeg.B(p)~           | Current position is preceded by ~p~      |
 
 *** ~lpeg.P(value)~ Conversion Rules
 
-| value               | conversion                                                 |
-|---------------------+------------------------------------------------------------|
-| pattern             | Pattern                                                    |
-| string              | Pattern literal                                            |
-| non-negative number | Pattern match *n* characters                               |
-| negative number     | Pattern match less than *n* characters                     |
-| boolean             | Pattern that always succeeds or always fails               |
-| table               | Grammar                                                    |
-| function            | Pattern equivalent of match-time capture over empty string |
+| value               | conversion                                                      |
+|---------------------+-----------------------------------------------------------------|
+| pattern             | Pattern                                                         |
+| string              | Pattern literal                                                 |
+| non-negative number | Pattern match *n* characters                                    |
+| negative number     | Pattern match less than *n* characters                          |
+| boolean             | Pattern that always succeeds (*true*) or always fails (*false*) |
+| table               | Grammar                                                         |
+| function            | Pattern equivalent of match-time capture over empty string      |
 
 *** Captures
 
@@ -71,6 +71,39 @@ to what it matches.
 | ~pattern / function~          | Maps ~function~ over ~pattern~ captures        |
 | ~pattern % function~          | Accumulates ~pattern~ captures with ~function~ |
 | ~lpeg.Cmt(pattern, function)~ | Maps ~function~ over match-time captures       |
+
+** Repetition
+
+#+begin_quote
+  "Restricted backtracking means that a PEG does only local backtracking, that is, it only
+   backtracks while choosing an appropriate option in a rule. Once an option has been chosen,
+   it cannot be changed because of a later failure.
+
+   This difference in semantics has several important consequences. Among other things, it
+   allows the grammar to formally specify the kind of repetition it wants, without extra
+   constructions and arbitrary conventions like "the longest match rule". Repetitions in
+   PEG may be greedy or non-greedy, and blind or non-blind."
+
+   — Roberto Ierusalimschy
+#+end_quote
+
+| Repetition           | PEG              |
+|----------------------+------------------|
+| blind greedy         | *S <- E S / ε*   |
+| non-blind greedy     | *S <- E₁ S / E₂* |
+| non-blind non-greedy | *S <- E₂ / E₁ S* |
+
+- blind greedy (possessive) :: Always matches the maximum possible span, disregarding what
+  comes afterward. Equivalent to PEG's *E\star{}* operation.
+
+- non-blind greedy :: Repeats as many times as possible so long as the rest of the pattern
+  matches. Common in conventional pattern-matching tools. Usually implies some form of
+  backtracking.
+
+- blind non-greedy :: Always matches *ε*. Not useful.
+
+- non-blind non-greedy (lazy or reluctant) :: Match the minimum number of *E₁* up to the
+  first *E₂*. Equivalent to Perl's *E\star{}?* operation.
 
 ** Parsing Examples
 
@@ -217,7 +250,7 @@ to what it matches.
 
 ** ~re~ Module
 
-LPeg provides a regex-like expression syntax via the ~re~ module.
+LPEG provides a regex-like expression syntax via the ~re~ module.
 
 *** Syntax
 
@@ -248,7 +281,7 @@ LPeg provides a regex-like expression syntax via the ~re~ module.
 | {: name : p :}      | Named capture                 |
 | {~ p ~}             | Substitution capture          |
 | {\vert{} p \vert{}} | Table capture                 |
-| =name               | Back reference                |
+| \=name              | Back reference                |
 | p -> 'string'       | String capture                |
 | p -> "string"       | String capture                |
 | p -> number         | Numbered capture              |
@@ -302,39 +335,6 @@ LPeg provides a regex-like expression syntax via the ~re~ module.
 
   print(re.match(grammar, grammar))   -- A self description matches itself
 #+end_src
-
-** Repetition
-
-#+begin_quote
-  "Restricted backtracking means that a PEG does only local backtracking, that is, it only
-   backtracks while choosing an appropriate option in a rule. Once an option has been chosen,
-   it cannot be changed because of a later failure.
-
-   This difference in semantics has several important consequences. Among other things, it
-   allows the grammar to formally specify the kind of repetition it wants, without extra
-   constructions and arbitrary conventions like "the longest match rule". Repetitions in
-   PEG may be greedy or non-greedy, and blind or non-blind."
-
-   — Roberto Ierusalimschy
-#+end_quote
-
-- blind greedy (possessive) :: Always matches the maximum possible span, disregarding what
-  comes afterward. Equivalent to PEG's *E\star{}* operation.
-
-- non-blind greedy :: Repeats as many times as possible so long as the rest of the pattern
-  matches. Common in conventional pattern-matching tools. Usually implies some form of
-  backtracking.
-
-- blind non-greedy :: Always matches *ε*. Not useful.
-
-- non-blind non-greedy (lazy or reluctant) :: Match the minimum number of *E₁* up to the
-  first *E₂*. Equivalent to Perl's *E\star{}?* operation.
-
-| Repetition           | PEG              |
-|----------------------+------------------|
-| blind greedy         | *S <- E S / ε*   |
-| non-blind greedy     | *S <- E₁ S / E₂* |
-| non-blind non-greedy | *S <- E₂ / E₁ S* |
 
 ** Finite Automata to PEG
 
