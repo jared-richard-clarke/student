@@ -677,3 +677,29 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 | (p, i, e, c)  | TestAny n L, i+n ≤ \vert{}S\vert{} | (p+1, i+1, e, c)             |
 | (p, i, e, c)  | TestAny n L, i+n > \vert{}S\vert{} | (p+L, i, e, c)               |
 | (p, i, e, c)  | Choice L d                         | (p+1, i, (p+L, i-d, c):e, c) |
+
+*** Captures
+
+#+begin_src lua
+  -- === LPEG ===
+
+  Pattern = lpeg.P
+  Capture = lpeg.C
+
+  Capture(Pattern("abc"))
+
+  -- === Virtual Machine ===
+  --
+  -- Capture begin
+  -- Char "a"
+  -- Char "b"
+  -- Char "c"
+  -- Capture end
+
+  -- === Optimization ===
+  --
+  -- Char "a"
+  -- Char "b"
+  -- Char "c"
+  -- Capture full 3
+#+end_src
