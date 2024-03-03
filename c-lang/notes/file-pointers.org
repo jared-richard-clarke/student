@@ -45,6 +45,6 @@ Example implementation of file pointers in the C standard library.
   #define getc(p)    (--(p)->cnt >= 0 ? (unsigned char) *(p)->ptr++ : _fillbuf(p))
   #define putc(x, p) (--(p)->cnt >= 0 ? *(p)->ptr++ = (x) : _flushbuf((x), p))
 
-  #define getchar() getc(stdin)
+  #define getchar()  getc(stdin)
   #define putchar(x) putc((x), stdout)
 #+end_src
