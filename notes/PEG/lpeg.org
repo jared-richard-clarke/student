@@ -261,7 +261,7 @@ LPEG provides a regex-like expression syntax via the ~re~ module.
 | ! p                 | not predicate                 |
 | p1 p2               | Concatenation                 |
 | p1 / p2             | Ordered choice                |
-| p ?                 | Optional math                 |
+| p ?                 | Optional match                |
 | p *                 | Zero or more                  |
 | p +                 | One or more                   |
 | p ^ n               | Exactly *n* repetitions       |
