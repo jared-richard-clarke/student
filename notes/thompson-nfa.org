@@ -82,7 +82,6 @@
      +---------------->
 #+end_example
 
-
 ** NFA Fragments (Russ Cox)
 
 #+begin_src c
@@ -227,169 +226,6 @@
   }
 #+end_src
 
-** RE to NFA Construction
-
-#+begin_example
-  === regular expression ===
-
-  infix:   a(a|b)*b
-
-  postfix: aab|*•b•
-
-  === NFA construction ===
-
-  1. aab|*•b•
-     ^
-
-     >◯-a->◎
-
-  2. aab|*•b•
-      ^
-
-     >◯-a->◎
-
-  3. aab|*•b•
-       ^
-
-     >◯-b->◎
-
-  4. aab|*•b•
-        ^
-
-        ◯-a->◯
-       /      \
-     >◯        ◎
-       \      /
-        ◯-b->◯
-
-  5.  aab|*•b•
-          ^
-
-            <--------+
-            | ◯-a->◯ |
-            |/      \|
-       ◯--->◯        ◯--->◎
-        \    \      /    /
-         \    ◯-b->◯    /
-          +------------>
-
-  6. aab|*•b•
-          ^
-
-                <--------+
-                | ◯-a->◯ |
-                |/      \|
-     >◯-a->◯--->◯        ◯--->◎
-            \    \      /    /
-             \    ◯-b->◯    /
-              +------------>
-
-  7. aab|*•b•
-           ^
-
-     >◯-b->◎
-
-  8. aab|*•b•
-            ^
-
-                <--------+
-                | ◯-a->◯ |
-                |/      \|
-     >◯-a->◯--->◯        ◯--->◯-b->◎
-            \    \      /    /
-             \    ◯-b->◯    /
-              +------------>
-
-  === regular expression ===
-
-  infix:   a|b|c
-
-  postfix: abc||
-
-  === NFA construction ===
-
-  1. abc||
-     ^
-
-     >◯-a->◎
-
-  2. abc||
-      ^
-
-     >◯-b->◎
-
-  3. abc||
-       ^
-
-     >◯-c->◎
-
-  4. abc||
-        ^
-
-        ◯-b->◯
-       /      \
-     >◯        ◎
-       \      /
-        ◯-c->◯
-
-  5. abc||
-         ^
-
-        ◯---a--->◯
-       /          \
-     >◯   ◯-b->◯   ◎
-       \ /      \ /
-        ◯        ◯
-         \      /
-          ◯-c->◯
-
-  === regular expression ===
-
-  infix:   aba|abb
-  postfix: ab•a•ab•b•|
-
-  === NFA construction ===
-
-  1. ab•a•ab•b•|
-     ^
-
-     >◯-a->◎
-
-  2. ab•a•ab•b•|
-      ^
-
-     >◯-b->◎
-
-  3. ab•a•ab•b•|
-       ^
-
-     >◯-a->◯-b->◎
-
-  4. ab•a•ab•b•|
-        ^
-
-     >◯-a->◎
-
-  5. ab•a•ab•b•|
-         ^
-
-     >◯-a->◯-b->◯-a->◎
-
-  6-10. ab•a•ab•b•|
-             ^---^
-
-     >◯-a->◯-b->◯-b->◎
-
-  11. ab•a•ab•b•|
-                ^
-
-        ◯-a->◯-b->◯-a->◯
-       /                \
-     >◯                  ◎
-       \                /
-        ◯-a->◯-b->◯-b->◯
-#+end_example
-
 ** Simulating the NFA
 
 #+begin_src c
@@ -467,6 +303,227 @@
     return ismatch(clist);
   }
 #+end_src
+
+** RE to NFA to Op-Code Construction
+
+#+begin_example
+  === regular expression ===
+
+  infix:   a(a|b)*b
+
+  postfix: aab|*•b•
+
+  === NFA construction ===
+
+  1. aab|*•b•
+     ^
+
+     >◯-a->◎
+
+  2. aab|*•b•
+      ^
+
+     >◯-a->◎
+
+  3. aab|*•b•
+       ^
+
+     >◯-b->◎
+
+  4. aab|*•b•
+        ^
+
+        ◯-a->◯
+       /      \
+     >◯        ◎
+       \      /
+        ◯-b->◯
+
+  5.  aab|*•b•
+          ^
+
+            <--------+
+            | ◯-a->◯ |
+            |/      \|
+       ◯--->◯        ◯--->◎
+        \    \      /    /
+         \    ◯-b->◯    /
+          +------------>
+
+  6. aab|*•b•
+          ^
+
+                <--------+
+                | ◯-a->◯ |
+                |/      \|
+     >◯-a->◯--->◯        ◯--->◎
+            \    \      /    /
+             \    ◯-b->◯    /
+              +------------>
+
+  7. aab|*•b•
+           ^
+
+     >◯-b->◎
+
+  8. aab|*•b•
+            ^
+
+                <--------+
+                | ◯-a->◯ |
+                |/      \|
+     >◯-a->◯--->◯        ◯--->◯-b->◎
+            \    \      /    /
+             \    ◯-b->◯    /
+              +------------>
+
+  === op code ===
+
+  | 0 | char a     |
+  |---+------------|
+  | 1 | split 2, 7 |
+  |---+------------|
+  | 2 | split 3, 5 |
+  |---+------------|
+  | 3 | char a     |
+  |---+------------|
+  | 4 | jump 6     |
+  |---+------------|
+  | 5 | char b     |
+  |---+------------|
+  | 6 | jump 1     |
+  |---+------------|
+  | 7 | char b     |
+  |---+------------|
+  | 8 | match      |
+
+  === regular expression ===
+
+  infix:   a|b|c
+
+  postfix: abc||
+
+  === NFA construction ===
+
+  1. abc||
+     ^
+
+     >◯-a->◎
+
+  2. abc||
+      ^
+
+     >◯-b->◎
+
+  3. abc||
+       ^
+
+     >◯-c->◎
+
+  4. abc||
+        ^
+
+        ◯-b->◯
+       /      \
+     >◯        ◎
+       \      /
+        ◯-c->◯
+
+  5. abc||
+         ^
+
+        ◯---a--->◯
+       /          \
+     >◯   ◯-b->◯   ◎
+       \ /      \ /
+        ◯        ◯
+         \      /
+          ◯-c->◯
+
+  === op code ===
+
+  | 0 | split 1, 3 |
+  |---+------------|
+  | 1 | char a     |
+  |---+------------|
+  | 2 | jump 7     |
+  |---+------------|
+  | 3 | split 4, 6 |
+  |---+------------|
+  | 4 | char b     |
+  |---+------------|
+  | 5 | jump 7     |
+  |---+------------|
+  | 6 | char c     |
+  |---+------------|
+  | 7 | match      |
+
+  === regular expression ===
+
+  infix:   aba|abb
+  postfix: ab•a•ab•b•|
+
+  === NFA construction ===
+
+  1. ab•a•ab•b•|
+     ^
+
+     >◯-a->◎
+
+  2. ab•a•ab•b•|
+      ^
+
+     >◯-b->◎
+
+  3. ab•a•ab•b•|
+       ^
+
+     >◯-a->◯-b->◎
+
+  4. ab•a•ab•b•|
+        ^
+
+     >◯-a->◎
+
+  5. ab•a•ab•b•|
+         ^
+
+     >◯-a->◯-b->◯-a->◎
+
+  6-10. ab•a•ab•b•|
+             ^---^
+
+     >◯-a->◯-b->◯-b->◎
+
+  11. ab•a•ab•b•|
+                ^
+
+        ◯-a->◯-b->◯-a->◯
+       /                \
+     >◯                  ◎
+       \                /
+        ◯-a->◯-b->◯-b->◯
+
+  === op code ===
+
+  | 0 | split 1, 5 |
+  |---+------------|
+  | 1 | char a     |
+  |---+------------|
+  | 2 | char b     |
+  |---+------------|
+  | 3 | char a     |
+  |---+------------|
+  | 4 | jump 8     |
+  |---+------------|
+  | 5 | char a     |
+  |---+------------|
+  | 6 | char b     |
+  |---+------------|
+  | 7 | char b     |
+  |---+------------|
+  | 8 | match      |
+#+end_example
 
 ** RE to NFA to DFA
 
@@ -554,18 +611,116 @@
 
 Each state in the *DFA* corresponds to a list of states from the *NFA*.
 
-The epsilon closure *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the set of all states
-that can be reached from *q* via one or more *ε* transitions.
+The epsilon closure *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the set of
+all states that can be reached from *q* via one or more *ε* transitions.
 
-If *R* is a set of states from *Q*, the epsilon closure *E(R)* is defined as the union of the epsilon
-closures of all the states in *R*.
+If *R* is a set of states from *Q*, the epsilon closure *E(R)* is defined as the union of the
+epsilon closures of all the states in *R*.
 
 1. The set of states of the *DFA* is *P(Q)*, the power set of states *Q* in the original *NFA*.
 
 2. The start state of the *DFA* is *E({q₀})*, where *q₀* is the original start state of the *NFA*.
 
-3. For sets *R* in *P(Q)* and input characters *c ∈ Σ*, the transition function *δn* of the *DFA* is defined
-   in terms of the transition function *δ* of the *NFA* by *δn(R,c) = U_{r ∈ R} E(δ(r,c))*.
+3. For sets *R* in *P(Q)* and input characters *c ∈ Σ*, the transition function *δn* of the *DFA*
+   is defined in terms of the transition function *δ* of the *NFA* by *δn(R,c) = U_{r ∈ R} E(δ(r,c))*.
 
-The set of accepting states *F* of the *DFA* is defined to be the set of all states containing at least one
-final state of the *NFA*.
+The set of accepting states *F* of the *DFA* is defined to be the set of all states containing
+at least one final state of the *NFA*.
+
+** Regular Expression Virtual Machine
+
+*** Operation Codes
+
+#+begin_example
+ | Expression | Instructions     |
+ |------------+------------------|
+ | a          | char a           |
+ |------------+------------------|
+ | e₁e₂       | codes for e₁     |
+ |            | codes for e₂     |
+ |------------+------------------|
+ | e₁|e₂      |     split L1, L2 |
+ |            | L1: codes for e₁ |
+ |            |     jump L3      |
+ |            | L2: codes for e₂ |
+ |            | L3:              |
+ |------------+------------------|
+ | e?         |     split L1, L2 |
+ |            | L1: codes for e  |
+ |            | L2:              |
+ |------------+------------------|
+ | e*         | L1: split L2, L3 |
+ |            | L2: codes for e  |
+ |            |     jump L1      |
+ |            | L3:              |
+ |------------+------------------|
+ | e+         | L1: codes for e  |
+ |            |     split L1, L3 |
+ |            | L3:              |
+#+end_example
+
+*** Thompson's VM
+
+#+begin_src c
+  // Op Codes
+  enum {
+    Char,
+    Match,
+    Jump,
+    Split
+  };
+
+  // Instruction
+  struct Inst {
+    int  opcode;
+    int  c;
+    Inst *x;
+    Inst *y;
+  };
+
+  struct Thread {
+    Inst *pc;
+  };
+
+  int thompson_vm(Inst *program, char *input) {
+    // Number of instructions
+    int length;
+    // Current list and next list
+    Threadlist *clist, *nlist;
+    // Program counter
+    Inst *pc;
+    // String pointer
+    char *sp;
+
+    length = program_length(program);
+    clist  = threadlist(length);
+    nlist  = threadlist(length);
+
+    addthread(clist, thread(program));
+
+    for (sp = input; *sp, sp += 1) {
+      for (i = 0; i < clist.n; i += 1) {
+        pc = clist.t[i].pc;
+        switch (pc->opcode) {
+        case Char:
+          if (*sp != pc->c) {
+            break;
+          }
+          addthread(nlist, thread(pc + 1));
+          break;
+        case Match:
+          return 1
+        case Jump:
+          addthread(clist, thread(pc->x));
+          break;
+        case Split:
+          addthread(clist, thread(pc->x));
+          addthread(clist, thread(pc->y));
+          break;
+        }
+      }
+      swap(clist, nlist);
+      clear(nlist);
+    }
+  }
+#+end_src
