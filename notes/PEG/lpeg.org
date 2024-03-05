@@ -609,13 +609,14 @@ with the appropriate offset.
 #+begin_src lua
   -- === LPEG ===
 
-  Var = lpeg.V
-  Set = lpeg.S
+  Pattern  = lpeg.P
+  Variable = lpeg.V
+  Set      = lpeg.S
 
-  Grammar = lpeg.P{
-        "S",                            -- start symbol
-        S = Var("B") + (1 - Set("()")), -- S <- <B> / [^()]
-        B = '(' * Var("S") * ')'        -- B <- '(' <S> ')'
+  Grammar = Pattern{
+        "S",                                 -- start symbol
+        S = Variable("B") + (1 - Set("()")), -- S <- <B> / [^()]
+        B = '(' * Variable("S") * ')'        -- B <- '(' <S> ')'
   }
 
   -- === Virtual Machine ===
