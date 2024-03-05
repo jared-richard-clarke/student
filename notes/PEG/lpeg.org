@@ -272,13 +272,13 @@ LPEG provides a regex-like expression syntax via the ~re~ module.
 | "string"            | Literal string                |
 | [class]             | Character class               |
 | .                   | Any character                 |
-| %name               | Pattern definition            |
+| %name               | Predefined character class    |
 | name                | Non-terminal                  |
 | <name>              | Non-terminal                  |
 | {}                  | Position capture              |
 | { p }               | Simple capture                |
 | {: p :}             | Anonymous capture             |
-| {: name : p :}      | Named capture                 |
+| {:name: p :}        | Named capture                 |
 | {~ p ~}             | Substitution capture          |
 | {\vert{} p \vert{}} | Table capture                 |
 | =name               | Back reference                |
@@ -334,6 +334,42 @@ LPEG provides a regex-like expression syntax via the ~re~ module.
   ]=]
 
   print(re.match(grammar, grammar))   -- A self description matches itself
+#+end_src
+
+** ~re~ Parsing Examples
+
+*** String Reversal
+
+#+begin_src lua
+  reverse = re.compile[=[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]=]
+  reverse:match("1234567") --> "7654321"
+#+end_src
+
+*** CSV Decoder
+
+#+begin_src lua
+  record = re.compile[=[
+      record  <- {| field ("." field)* |} (%nl / !.)
+      field   <- escaped / content
+      content <- { [^,"%nl]* }
+      escaped <- '"' {~ ([^"] / '""' -> '"')* ~} '"'
+  ]=]
+#+end_src
+
+*** Macro Expander
+
+#+begin_src lua
+  pattern = re.compile[=[
+      text  <- {~ item* ~}
+      item  <- macro / [^()] / "(" item* ")"
+      arg   <- " "* {~ (!"," item)* ~}
+      args  <- "(" arg ("," arg)* ")"
+      macro <- ("apply" args) -> "%1(%2)"
+             / ("add" args)   -> "%1 + %2"
+             / ("mul" args)   -> "%1 * %2"
+  ]=]
+
+  pattern:match("add(mul(a, b), apply(f, x))") --> "a * b + f(x)"
 #+end_src
 
 ** Finite Automata to PEG
