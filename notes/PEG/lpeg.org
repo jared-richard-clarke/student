@@ -614,7 +614,7 @@ with the appropriate offset.
 
   Grammar = lpeg.P{
         "S",                            -- start symbol
-        S = Var("B") + -Set("()"), -- S <- <B> / [^()]
+        S = Var("B") + (1 - Set("()")), -- S <- <B> / [^()]
         B = '(' * Var("S") * ')'        -- B <- '(' <S> ')'
   }
 
