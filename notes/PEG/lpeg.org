@@ -53,7 +53,7 @@
 *** Captures
 
 A capture is a pattern that produces values — the semantic information — according
-to what it matches.
+to the matched string and the capture type.
 
 | operation                     | result                                         |
 |-------------------------------+------------------------------------------------|
