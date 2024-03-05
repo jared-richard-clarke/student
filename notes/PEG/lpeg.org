@@ -614,7 +614,7 @@ with the appropriate offset.
 
   Grammar = lpeg.P{
         "S",                            -- start symbol
-        S = Var("B") + (1 - Set("()")), -- S <- <B> / [^()]
+        S = Var("B") + -Set("()"), -- S <- <B> / [^()]
         B = '(' * Var("S") * ')'        -- B <- '(' <S> ')'
   }
 
@@ -647,9 +647,13 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 
   Variable = lpeg.V
   Pattern  = lpeg.P
+  Any      = Pattern(1)
 
   -- X <- "abc" / . X
-  Patttern{ Pattern("abc") + Pattern(1) * Variable(1) }
+  Pattern{
+      "X";
+      X = Pattern("abc") + Any * Variable("X")
+  }
 
   -- === Virtual Machine ===
   --
