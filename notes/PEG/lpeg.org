@@ -281,7 +281,7 @@ LPEG provides a regex-like expression syntax via the ~re~ module.
 | {: name : p :}      | Named capture                 |
 | {~ p ~}             | Substitution capture          |
 | {\vert{} p \vert{}} | Table capture                 |
-| \=name              | Back reference                |
+| =name               | Back reference                |
 | p -> 'string'       | String capture                |
 | p -> "string"       | String capture                |
 | p -> number         | Numbered capture              |
