@@ -250,7 +250,8 @@ to the matched string and the capture type.
 
 ** ~re~ Module
 
-LPEG provides a regex-like expression syntax via the ~re~ module.
+LPEG provides a regex-like expression syntax via the ~re~ module. Constructions are
+listed in order of decreasing precedence.
 
 *** Syntax
 
