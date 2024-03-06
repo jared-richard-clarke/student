@@ -463,7 +463,7 @@ shortest subject's prefix ending with *ana*.
 - End :: The machine returns, signalling that the match succeeds. This instruction appears only
   as the last one of a complete pattern.
 
-**** Basic Instructions: C Encoding
+*** Basic Instructions: C Encoding
 
 #+begin_src c
   // Char x, s[i] = x | (p+1, i+1, e, c)
