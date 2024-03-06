@@ -472,12 +472,14 @@ shortest subject's prefix ending with *ana*.
     else goto fail;
     continue;
   }
-  // Jump label
+  // Jump L | (p+L, i, e, c)
   case IJmp: {
     p += getoffset(p);
     continue;
   }
-  // Call label
+  // Choice L | (p+1, i, (p+L, i, c):e, c)
+
+  // Call L | (p+L, i, (p+1):e, c)
   case ICall: {
     if (stack == stacklimit) {
       stack = doublestack(L, &stacklimit, ptop);
@@ -488,20 +490,20 @@ shortest subject's prefix ending with *ana*.
     p += getoffset(p);
     continue;
   }
-  // Return
+  // Return | (p₀, i, p₁:e, c) -> (p₁, i, e, c)
   case IRet: {
     assert(stack > getstackbase(L, ptop) && (stack - 1)->s == NULL);
     p = (--stack)->p; // "stack" points to first empty slot in "Stack".
     continue;
   }
-  // Commit label
+  // Commit L | (p, i, h:e, c) -> (p+L, i, e, c)
   case ICommit: {
     assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
     stack--;
     p += getoffset(p);
     continue;
   }
-  // Capture extra-info
+  // Capture (index, instruction) | (p+1, i, e, (i, p):c)
   case ICloseCapture: {
     Capture *open = findopen(capture + captop, s - o);
     assert(captop > 0);
@@ -533,9 +535,16 @@ shortest subject's prefix ending with *ana*.
     p++;
     continue;
   }
-  // Fail
+  // FailTwice
+  case IFailTwice: {
+    assert(stack > getstackbase(L, ptop));
+    stack--;
+  }
+  // FALLTHROUGH
+  // Fail | (Fail, i, p:e, c)             -> (Fail, i, e, c)
+  //        (Fail, i₀, (p, i₁, c₁):e, c₀) -> (p, i₁, e, c₁)
   case IFail:
-  fail: { // Pattern failed: try to backtrack.
+  fail: { // Pattern failed. Try to backtrack.
     do {  // Remove pending calls.
       assert(stack > getstackbase(L, ptop));
       s = (--stack)->s;
@@ -574,6 +583,26 @@ shortest subject's prefix ending with *ana*.
   with one bit for each possible character value.
 
 - Any n :: Checks whether there are at least *n* characters in the current subject position.
+
+*** Extra Instructions: C Encoding
+
+#+begin_src c
+  // Charset X, S[i] ∈ X | (p+1, i+1, e, c)
+  case ISet: {
+    uint c = (byte)*s;
+    if (charinset(p, (p+1)->buff, c) && s < e)
+      { p += 1 + p->i.aux2.set.size; s++; }
+    else goto fail;
+    continue;
+  }
+  // Any n, i + n ≤ |S| | (p+1, i+n, e, c)
+  // Any n, i + n > |S| | (Fail, i, e, c)
+  case IAny: {
+    if (s < e) { p++; s++; }
+    else goto fail;
+    continue;
+  }
+#+end_src
 
 ** Grammars to Instructions
 
