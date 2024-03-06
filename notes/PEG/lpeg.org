@@ -466,18 +466,19 @@ shortest subject's prefix ending with *ana*.
 *** Basic Instructions: C Encoding
 
 #+begin_src c
-  // Char x, s[i] = x | (p+1, i+1, e, c)
+  // Char x, s[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
+  // Char x, S[i] ≠ x [ (p, i, e, c) -> (Fail, i, e, c) ]
   case IChar: {
     if ((byte)*s == p->i.aux1 && s < e) { p++; s++; }
     else goto fail;
     continue;
   }
-  // Jump L | (p+L, i, e, c)
+  // Jump L [ (p, i, e, c) -> (p+L, i, e, c) ]
   case IJmp: {
     p += getoffset(p);
     continue;
   }
-  // Choice L | (p+1, i, (p+L, i, c):e, c)
+  // Choice L [ (p, i, e, c) -> (p+1, i, (p+L, i, c):e, c) ]
   case IChoice: {
     if (stack == stacklimit) {
       stack = doublestack(L, &stacklimit, ptop);
@@ -490,7 +491,7 @@ shortest subject's prefix ending with *ana*.
     continue;
   }
 
-  // Call L | (p+L, i, (p+1):e, c)
+  // Call L [ (p, i, e, c) -> (p+L, i, (p+1):e, c) ]
   case ICall: {
     if (stack == stacklimit) {
       stack = doublestack(L, &stacklimit, ptop);
@@ -501,20 +502,20 @@ shortest subject's prefix ending with *ana*.
     p += getoffset(p);
     continue;
   }
-  // Return | (p₀, i, p₁:e, c) -> (p₁, i, e, c)
+  // Return [ (p₀, i, p₁:e, c) -> (p₁, i, e, c) ]
   case IRet: {
     assert(stack > getstackbase(L, ptop) && (stack - 1)->s == NULL);
     p = (--stack)->p; // "stack" points to first empty slot in "Stack".
     continue;
   }
-  // Commit L | (p, i, h:e, c) -> (p+L, i, e, c)
+  // Commit L [ (p, i, h:e, c) -> (p+L, i, e, c) ]
   case ICommit: {
     assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
     stack--;
     p += getoffset(p);
     continue;
   }
-  // Capture (index, instruction) | (p+1, i, e, (i, p):c)
+  // Capture (i, p) [ (p, i, e, c) -> (p+1, i, e, (i, p):c) ]
   case ICloseCapture: {
     Capture *open = findopen(capture + captop, s - o);
     assert(captop > 0);
@@ -546,14 +547,14 @@ shortest subject's prefix ending with *ana*.
     p++;
     continue;
   }
-  // FailTwice
+  // FailTwice [ (p, i, h:e, c) -> (Fail, i, e, c) ]
   case IFailTwice: {
     assert(stack > getstackbase(L, ptop));
     stack--;
   }
   // FALLTHROUGH
-  // Fail | (Fail, i, p:e, c)             -> (Fail, i, e, c)
-  //        (Fail, i₀, (p, i₁, c₁):e, c₀) -> (p, i₁, e, c₁)
+  // Fail [ (Fail, i, p:e, c)             -> (Fail, i, e, c) ]
+  //      [ (Fail, i₀, (p, i₁, c₁):e, c₀) -> (p, i₁, e, c₁)  ]
   case IFail:
   fail: { // Pattern failed. Try to backtrack.
     do {  // Remove pending calls.
