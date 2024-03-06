@@ -478,6 +478,17 @@ shortest subject's prefix ending with *ana*.
     continue;
   }
   // Choice L | (p+1, i, (p+L, i, c):e, c)
+  case IChoice: {
+    if (stack == stacklimit) {
+      stack = doublestack(L, &stacklimit, ptop);
+    }
+    stack->p = p + getoffset(p);
+    stack->s = s;
+    stack->caplevel = captop;
+    stack++;
+    p += 2;
+    continue;
+  }
 
   // Call L | (p+L, i, (p+1):e, c)
   case ICall: {
