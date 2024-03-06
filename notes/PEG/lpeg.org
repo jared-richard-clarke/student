@@ -463,6 +463,99 @@ shortest subject's prefix ending with *ana*.
 - End :: The machine returns, signalling that the match succeeds. This instruction appears only
   as the last one of a complete pattern.
 
+**** Basic Instructions: C Encoding
+
+#+begin_src c
+  // Char x, s[i] = x | (p+1, i+1, e, c)
+  case IChar: {
+    if ((byte)*s == p->i.aux1 && s < e) { p++; s++; }
+    else goto fail;
+    continue;
+  }
+  // Jump label
+  case IJmp: {
+    p += getoffset(p);
+    continue;
+  }
+  // Call label
+  case ICall: {
+    if (stack == stacklimit) {
+      stack = doublestack(L, &stacklimit, ptop);
+    }
+    stack->s = NULL;
+    stack->p = p + 2;  // Save return address.
+    stack++;
+    p += getoffset(p);
+    continue;
+  }
+  // Return
+  case IRet: {
+    assert(stack > getstackbase(L, ptop) && (stack - 1)->s == NULL);
+    p = (--stack)->p; // "stack" points to first empty slot in "Stack".
+    continue;
+  }
+  // Commit label
+  case ICommit: {
+    assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
+    stack--;
+    p += getoffset(p);
+    continue;
+  }
+  // Capture extra-info
+  case ICloseCapture: {
+    Capture *open = findopen(capture + captop, s - o);
+    assert(captop > 0);
+    if (open) { // If possible, turn capture into a full capture.
+      open->siz = (s - o) - open->index + 1;
+      p++;
+      continue;
+    }
+    else { // Must create a close capture.
+      capture[captop].siz = 1;  // Mark entry as closed.
+      capture[captop].index = s - o;
+      goto pushcapture;
+    }
+  }
+  case IOpenCapture: {
+    capture[captop].siz = 0; // Mark entry as open.
+    capture[captop].index = s - o;
+    goto pushcapture;
+  }
+  case IFullCapture: {
+    capture[captop].siz = getoff(p) + 1; // Save capture size.
+    capture[captop].index = s - o - getoff(p);
+  }
+  pushcapture: {
+    capture[captop].idx = p->i.aux2.key;
+    capture[captop].kind = getkind(p);
+    captop++;
+    capture = growcap(L, capture, &capsize, captop, 0, ptop);
+    p++;
+    continue;
+  }
+  // Fail
+  case IFail:
+  fail: { // Pattern failed: try to backtrack.
+    do {  // Remove pending calls.
+      assert(stack > getstackbase(L, ptop));
+      s = (--stack)->s;
+    } while (s == NULL);
+    if (ndyncap > 0) {  // Are there matchtime captures?
+      ndyncap -= removedyncap(L, capture, stack->caplevel, captop);
+    }
+    captop = stack->caplevel;
+    p = stack->p;
+    continue;
+  }
+  // End
+  case IEnd: {
+    assert(stack == getstackbase(L, ptop) + 1);
+    capture[captop].kind = Cclose;
+    capture[captop].index = MAXINDT;
+    return s;
+  }
+#+end_src
+
 *** Extra Instructions
 
 | current state                | instruction                    | next state                     |
