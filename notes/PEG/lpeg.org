@@ -497,7 +497,8 @@ shortest subject's prefix ending with *ana*.
       stack = doublestack(L, &stacklimit, ptop);
     }
     stack->s = NULL;
-    stack->p = p + 2;  // Save return address.
+    // Save return address.
+    stack->p = p + 2;
     stack++;
     p += getoffset(p);
     continue;
@@ -505,7 +506,8 @@ shortest subject's prefix ending with *ana*.
   // Return [ (p₀, i, p₁:e, c) -> (p₁, i, e, c) ]
   case IRet: {
     assert(stack > getstackbase(L, ptop) && (stack - 1)->s == NULL);
-    p = (--stack)->p; // "stack" points to first empty slot in "Stack".
+    // "stack" points to first empty slot in "Stack".
+    p = (--stack)->p;
     continue;
   }
   // Commit L [ (p, i, h:e, c) -> (p+L, i, e, c) ]
@@ -515,28 +517,33 @@ shortest subject's prefix ending with *ana*.
     p += getoffset(p);
     continue;
   }
-  // Capture (i, p) [ (p, i, e, c) -> (p+1, i, e, (i, p):c) ]
+  // Capture (index, instruction) [ (p, i, e, c) -> (p+1, i, e, (i, p):c) ]
   case ICloseCapture: {
     Capture *open = findopen(capture + captop, s - o);
     assert(captop > 0);
-    if (open) { // If possible, turn capture into a full capture.
+    // If possible, turn capture into a full capture.
+    if (open) {
       open->siz = (s - o) - open->index + 1;
       p++;
       continue;
     }
-    else { // Must create a close capture.
-      capture[captop].siz = 1;  // Mark entry as closed.
+    // Must create a close capture.
+    else {
+      // Mark entry as closed.
+      capture[captop].siz = 1;
       capture[captop].index = s - o;
       goto pushcapture;
     }
   }
   case IOpenCapture: {
-    capture[captop].siz = 0; // Mark entry as open.
+    // Mark entry as open.
+    capture[captop].siz = 0;
     capture[captop].index = s - o;
     goto pushcapture;
   }
   case IFullCapture: {
-    capture[captop].siz = getoff(p) + 1; // Save capture size.
+    // Save capture size.
+    capture[captop].siz = getoff(p) + 1;
     capture[captop].index = s - o - getoff(p);
   }
   pushcapture: {
@@ -556,12 +563,15 @@ shortest subject's prefix ending with *ana*.
   // Fail [ (Fail, i, p:e, c)             -> (Fail, i, e, c) ]
   //      [ (Fail, i₀, (p, i₁, c₁):e, c₀) -> (p, i₁, e, c₁)  ]
   case IFail:
-  fail: { // Pattern failed. Try to backtrack.
-    do {  // Remove pending calls.
+  // Pattern failed. Try to backtrack.
+  fail: {
+    // Remove pending calls.
+    do {
       assert(stack > getstackbase(L, ptop));
       s = (--stack)->s;
     } while (s == NULL);
-    if (ndyncap > 0) {  // Are there matchtime captures?
+     // Are there matchtime captures?
+    if (ndyncap > 0) {
       ndyncap -= removedyncap(L, capture, stack->caplevel, captop);
     }
     captop = stack->caplevel;
