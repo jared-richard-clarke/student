@@ -135,7 +135,7 @@ An implementation of the map function using Lua's C API.
       lua_rawseti(L, 1, i);
     }
 
-    return 0;  /* no results */
+    return 0;
   }
 #+end_src
 
