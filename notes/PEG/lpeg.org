@@ -609,7 +609,8 @@ shortest subject's prefix ending with *ana*.
 *** Extra Instructions: C Encoding
 
 #+begin_src c
-  // Charset X, S[i] ∈ X | (p+1, i+1, e, c)
+  // Charset X, S[i] ∈ X [ (p, i, e, c) -> (p+1, i+1, e, c) ]
+  // Charset X, S[i] ∉ X [ (p, i, e, c) -> (Fail, i, e, c)  ]
   case ISet: {
     uint c = (byte)*s;
     if (charinset(p, (p+1)->buff, c) && s < e)
@@ -617,11 +618,41 @@ shortest subject's prefix ending with *ana*.
     else goto fail;
     continue;
   }
-  // Any n, i + n ≤ |S| | (p+1, i+n, e, c)
-  // Any n, i + n > |S| | (Fail, i, e, c)
+  // Any n, i + n ≤ |S| [ (p, i, e, c) -> (p+1, i+n, e, c) ]
+  // Any n, i + n > |S| | (p, i, e, c) -> (Fail, i, e, c)  ]
   case IAny: {
     if (s < e) { p++; s++; }
     else goto fail;
+    continue;
+  }
+  // PartialCommit L [ (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L, i₀, (p₁, i₀, c₀):e, c₀) ]
+  case IPartialCommit: {
+    assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
+    (stack - 1)->s = s;
+    (stack - 1)->caplevel = captop;
+    p += getoffset(p);
+    continue;
+  }
+  // Span X, S[i] ∈ X [ (p, i, e, c) -> (p, i+1, e, c) ]
+  // Span X, S[i] ∉ X [ (p, i, e, c) -> (p+1, i, e, c) ]
+  case ISpan: {
+    for (; s < e; s++) {
+      uint c = (byte)*s;
+      if (!charinset(p, (p+1)->buff, c)) break;
+    }
+    p += 1 + p->i.aux2.set.size;
+    continue;
+  }
+  // BackCommit L [ (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L, i₁, e, c₁) ]
+  case IBackCommit: {
+    assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
+    s = (--stack)->s;
+    // Matchtime captures?
+    if (ndyncap > 0) {
+      ndyncap -= removedyncap(L, capture, stack->caplevel, captop);
+    }
+    captop = stack->caplevel;
+    p += getoffset(p);
     continue;
   }
 #+end_src
