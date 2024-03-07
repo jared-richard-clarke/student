@@ -620,7 +620,7 @@ shortest subject's prefix ending with *ana*.
     continue;
   }
   // Any n, i + n ≤ |S| [ (p, i, e, c) -> (p+1, i+n, e, c) ]
-  // Any n, i + n > |S| | (p, i, e, c) -> (Fail, i, e, c)  ]
+  // Any n, i + n > |S| [ (p, i, e, c) -> (Fail, i, e, c)  ]
   case IAny: {
     if (s < e) { p++; s++; }
     else goto fail;
