@@ -466,6 +466,8 @@ shortest subject's prefix ending with *ana*.
 *** Basic Instructions: C Encoding
 
 #+begin_src c
+  // Side Note: "stack" points to first empty slot in "Stack".
+
   // Char x, s[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
   // Char x, S[i] ≠ x [ (p, i, e, c) -> (Fail, i, e, c) ]
   case IChar: {
@@ -506,7 +508,6 @@ shortest subject's prefix ending with *ana*.
   // Return [ (p₀, i, p₁:e, c) -> (p₁, i, e, c) ]
   case IRet: {
     assert(stack > getstackbase(L, ptop) && (stack - 1)->s == NULL);
-    // "stack" points to first empty slot in "Stack".
     p = (--stack)->p;
     continue;
   }
