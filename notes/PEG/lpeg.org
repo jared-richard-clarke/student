@@ -434,7 +434,7 @@ shortest subject's prefix ending with *ana*.
 | (Fail, i, p:e, c)             | any              | (Fail, i, e, c)            |
 | (Fail, i₀, (p, i₁, c₁):e, c₀) | any              | (p, i₁, e, c₁)             |
 
-- Char char :: If the character in the current subject position is equal to *char*. the machine
+- Char x :: If the character in the current subject position is equal to *x*. the machine
   consumes the current character and moves to the next instruction.
 
 - Fail :: Forces failure. First the machine pops any return addresses from the top of the stack.
