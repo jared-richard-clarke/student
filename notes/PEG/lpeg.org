@@ -517,7 +517,7 @@ shortest subject's prefix ending with *ana*.
     p += getoffset(p);
     continue;
   }
-  // Capture (index, instruction) [ (p, i, e, c) -> (p+1, i, e, (i, p):c) ]
+  // Capture (i, p) [ (p, i, e, c) -> (p+1, i, e, (i, p):c) ]
   case ICloseCapture: {
     Capture *open = findopen(capture + captop, s - o);
     assert(captop > 0);
