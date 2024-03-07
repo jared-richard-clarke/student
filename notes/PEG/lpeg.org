@@ -838,7 +838,7 @@ with the appropriate offset.
   --     Jump L2          (p+L2, i, e, c)
   --
   --  S: Choice L4        (p+1, i, (p+L4, i, c):e, c)
-  --     Call B           (p+B, i, (p+1):e, c
+  --     Call B           (p+B, i, (p+1):e, c)
   --     Commit L5        (p, i, h:e, c) -> (p+L5, i, e, c)
   -- L4: Charset [^()]    (p+1, i+1, e, c)
   -- L5: Return           (p₀, i, p₁:e, c) -> (p₁, i, e, c)
