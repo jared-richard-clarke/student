@@ -469,7 +469,7 @@ shortest subject's prefix ending with *ana*.
   // Side Note: "stack" points to first empty slot in "Stack".
 
   // Char x, s[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
-  // Char x, S[i] ≠ x [ (p, i, e, c) -> (Fail, i, e, c) ]
+  // Char x, S[i] ≠ x [ (p, i, e, c) -> (Fail, i, e, c)  ]
   case IChar: {
     if ((byte)*s == p->i.aux1 && s < e) { p++; s++; }
     else goto fail;
