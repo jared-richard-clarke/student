@@ -700,8 +700,8 @@ tries *p2*. If *p2* fails then choice fails.
 *charset* instruction with the union of both sets.
 
 *Optimization 2*: If the first alternative succeeds, associating left for *n* alternatives
-would require *n* choices plus *n* commits, whereas associating right would require only one
-choice-commit pair.
+would require traversing *n* choices plus *n* commits, whereas associating right would
+require traversing only one choice-commit pair.
 
 #+begin_src lua
   -- === LPEG ===
