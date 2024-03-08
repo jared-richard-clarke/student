@@ -984,7 +984,16 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
   -- Char "c"
   -- Capture end
 
-  -- === Optimization ===
+  -- === Optimization 1 ===
+  --
+  -- Char "a"
+  -- Char "b"
+  -- Char "c"
+  -- Capture begin 3
+  -- Capture end
+
+  -- === Optimization 2 ===
+  -- If start just before corresponding close
   --
   -- Char "a"
   -- Char "b"
