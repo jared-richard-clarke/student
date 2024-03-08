@@ -472,7 +472,14 @@ shortest subject's prefix ending with *ana*.
   // Char x, S[i] ≠ x [ (p, i, e, c) -> (Fail, i, e, c)  ]
   case IChar: {
     if ((byte)*s == p->i.aux1 && s < e) { p++; s++; }
-    else goto fail;
+    else { goto fail; }
+    continue;
+  }
+  // TestChar x L, S[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
+  // TestChar x L, S[i] ≠ x [ (p, i, e, c) -> (p+L, i, e, c)   ]
+  case ITestChar: {
+    if ((byte)*s == p->i.aux1 && s < e) { p += 2; }
+    else { p += getoffset(p); }
     continue;
   }
   // Jump L [ (p, i, e, c) -> (p+L, i, e, c) ]
@@ -480,7 +487,8 @@ shortest subject's prefix ending with *ana*.
     p += getoffset(p);
     continue;
   }
-  // Choice L [ (p, i, e, c) -> (p+1, i, (p+L, i, c):e, c) ]
+  // Choice L   [ (p, i, e, c) -> (p+1, i, (p+L, i, c):e, c)   ]
+  // Choice L d [ (p, i, e, c) -> (p+1, i, (p+L, i-d, c):e, c) ]
   case IChoice: {
     if (stack == stacklimit) {
       stack = doublestack(L, &stacklimit, ptop);
@@ -492,7 +500,6 @@ shortest subject's prefix ending with *ana*.
     p += 2;
     continue;
   }
-
   // Call L [ (p, i, e, c) -> (p+L, i, (p+1):e, c) ]
   case ICall: {
     if (stack == stacklimit) {
@@ -518,7 +525,7 @@ shortest subject's prefix ending with *ana*.
     p += getoffset(p);
     continue;
   }
-  // Capture (i, p) [ (p, i, e, c) -> (p+1, i, e, (i, p):c) ]
+  // Capture (index, instruction) [ (p, i, e, c) -> (p+1, i, e, (i, p):c) ]
   case ICloseCapture: {
     Capture *open = findopen(capture + captop, s - o);
     assert(captop > 0);
@@ -571,7 +578,7 @@ shortest subject's prefix ending with *ana*.
       assert(stack > getstackbase(L, ptop));
       s = (--stack)->s;
     } while (s == NULL);
-     // Are there matchtime captures?
+    // Are there matchtime captures?
     if (ndyncap > 0) {
       ndyncap -= removedyncap(L, capture, stack->caplevel, captop);
     }
@@ -619,11 +626,28 @@ shortest subject's prefix ending with *ana*.
     else goto fail;
     continue;
   }
+  // TestCharset X L, S[i] ∈ X [ (p, i, e, c) -> (p+1, i+1, e, c) ]
+  // TestCharset X L, S[i] ∉ X [ (p, i, e, c) -> (p+L, i, e, c)   ]
+  case ITestSet: {
+    uint c = (byte)*s;
+    if (charinset(p, (p + 2)->buff, c) && s < e) {
+      p += 2 + p->i.aux2.set.size;
+    }
+    else { p += getoffset(p); }
+    continue;
+  }
   // Any n, i + n ≤ |S| [ (p, i, e, c) -> (p+1, i+n, e, c) ]
   // Any n, i + n > |S| [ (p, i, e, c) -> (Fail, i, e, c)  ]
   case IAny: {
     if (s < e) { p++; s++; }
     else goto fail;
+    continue;
+  }
+  // TestAny n L, i+n ≤ |S| [ (p, i, e, c) -> (p+1, i+1, e, c) ]
+  // TestAny n L, i+n > |S| [ (p, i, e, c) -> (Fail, i, e, c)  ]
+  case ITestAny: {
+    if (s < e) { p += 2; }
+    else { p += getoffset(p); }
     continue;
   }
   // PartialCommit L [ (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L, i₀, (p₁, i₀, c₀):e, c₀) ]
@@ -886,6 +910,16 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 
 *** Head Fail Optimizations
 
+#+begin_quote
+  "A head fail occurs when a pattern fails at its very first check. Without optimizations,
+   a head fail is somewhat costly. Typically, it involves a *Choice* operator followed by a
+   failing check operator (*Char* or *Charset*). Both operations are expensive, when compared
+   with other operations: the choice must save the entire machine’s state, and the failing
+   check must restore that state."
+
+   — Roberto Ierusalimschy
+#+end_quote
+
 | current state | instruction                        | next state                   |
 |---------------+------------------------------------+------------------------------|
 | (p, i, e, c)  | TestChar x L, S[i] = x             | (p+1, i+1, e, c)             |
@@ -895,6 +929,42 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 | (p, i, e, c)  | TestAny n L, i+n ≤ \vert{}S\vert{} | (p+1, i+1, e, c)             |
 | (p, i, e, c)  | TestAny n L, i+n > \vert{}S\vert{} | (p+L, i, e, c)               |
 | (p, i, e, c)  | Choice L d                         | (p+1, i, (p+L, i-d, c):e, c) |
+
+#+begin_src lua
+  -- === LPEG ===
+
+  Pattern  = lpeg.P
+  Variable = lpeg.V
+  Any      = Pattern(1)
+
+  -- A <- "abc" / . <A>
+  Grammar = Pattern{
+      "A";
+       A = Pattern("abc") + Any * Variable("A")
+  }
+
+  -- === Virtual Machine ===
+  --
+  -- L1: Choice L2 <- Expensive storing and restoring of state
+  --     Char "a"  <- for a repeatedly-failing pattern.
+  --     Char "b"
+  --     Char "c"
+  --     Commit L3
+  -- L2: Any 1
+  --     Jump L1
+  -- L3: End
+
+  -- === Optimization ===
+  --
+  -- L1: TestChar "a" L2
+  --     Choice L2 1
+  --     Char "b"
+  --     Char "c"
+  --     Commit L3
+  -- L2: Any 1
+  --     Jump L1
+  -- L3: End
+#+end_src
 
 *** Captures
 
