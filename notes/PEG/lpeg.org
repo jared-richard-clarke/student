@@ -157,7 +157,7 @@ to the matched string and the capture type.
 
   -- Lexical elements
   Spaces = Set(" \n\t") ^ 0
-  Number = Capture(Pattern("-" ^ -1) * Range("09") ^ 1) * Spaces
+  Number = Capture(Pattern("-") ^ -1 * Range("09") ^ 1) * Spaces
   AddSub = Capture(Set("+-")) * Spaces
   MulDiv = Capture(Set("*/")) * Spaces
   Open   = "(" * Spaces
