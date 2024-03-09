@@ -888,7 +888,7 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
   Any      = Pattern(1)
 
   -- X <- "abc" / . X
-  Pattern{
+  Grammar = Pattern{
       "X";
       X = Pattern("abc") + Any * Variable("X")
   }
