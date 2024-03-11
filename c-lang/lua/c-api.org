@@ -141,7 +141,7 @@ An implementation of the map function using Lua's C API.
 
 ** Lua Uppercase Function
 
-Implementation of an uppercasing function using Lua's C API.
+An implementation of an uppercasing function using Lua's C API.
 
 #+begin_src c
   static int lua_uppercase (lua_State *L) {
