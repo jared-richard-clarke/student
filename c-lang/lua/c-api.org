@@ -5,12 +5,79 @@
 | source                        | author                                                                       |
 |-------------------------------+------------------------------------------------------------------------------|
 | *A Look at the Design of Lua* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
-| *Programming in Lua*          | Roberto Ierusalimschy                                                                             |
+| *Programming in Lua*          | Roberto Ierusalimschy                                                        |
+
+** Introduction
+
+#+begin_quote
+  "The Lua library defines no C global variables at all. It keeps all its state in the dynamic structure
+   ~lua_State~; all functions inside Lua receive a pointer to this structure as an argument. This design makes
+   Lua reentrant and ready to be used in multithreaded code...
+
+   A major component in the communication between Lua and C is an omnipresent virtual stack. Almost
+   all API calls operate on values on this stack. All data exchange from Lua to C and from C to Lua occurs
+   through this stack. Moreover, we can use the stack to keep intermediate results, too."
+
+   — *Programming in Lua*, Roberto Ierusalimschy
+#+end_quote
+
+*** Pushing Elements
+
+The API has a dedicated push function for each Lua type with a direct representation in C.
+
+#+begin_src c
+  void lua_pushnil     (lua_State *L);
+  void lua_pushboolean (lua_State *L, int bool);
+  void lua_pushnumber  (lua_State *L, lua_Number n);
+  void lua_pushinteger (lua_State *L, lua_Integer n);
+  void lua_pushlstring (lua_State *L, const char *s, size_t len);
+  void lua_pushstring  (lua_State *L, const char *s);
+#+end_src
+
+*** Generic Stack Manipulation
+
+#+begin_src c
+  // Returns the number of elements on the stack.
+  int  lua_gettop    (lua_State *L);
+  // Sets the number of elements on the stack. lua_settop(L, 0) empties the stack.
+  void lua_settop    (lua_State *L, int index);
+  // Pushes onto the stack a copy of the element at the given index.
+  void lua_pushvalue (lua_State *L, int index);
+  // Rotates the stack elements from the given index to the top of the stack by "n" positions.
+  void lua_rotate    (lua_State *L, int index, int n);
+  // Removes element at given index, shifting elements above it to fill in the gap.
+  void lua_remove    (lua_State *L, int index);
+  // Inserts top element into given index, shifting elements above to open space.
+  void lua_insert    (lua_State *L, int index);
+  // Pops an element and sets it at the given index.
+  void lua_replace   (lua_State *L, int index);
+  // Copies the element at one index into another, leaving the original untouched.
+  void lua_copy      (lua_State *L, int fromidx, int toidx);
+
+  #define lua_pop(L, n) lua_settop(L, -(n) - 1)
+  #define lua_remove(L, index) (lua_rotate(L, (index), -1), lua_pop(L, 1))
+  #define lua_insert(L, index) lua_rotate(L, (index), 1)
+#+end_src
+
+| function                          | stack                               |
+|-----------------------------------+-------------------------------------|
+| ~lua_State *L = luaL_newstate();~ | []                                  |
+| ~lua_pushboolean(L, 1);~          | [true]                              |
+| ~lua_pushnumber(L, 10);~          | [true, 10]                          |
+| ~lua_pushnil(L);~                 | [true, 10, nil]                     |
+| ~lua_pushstring(L, "hello");~     | [true, 10, nil, "hello"]            |
+| ~lua_pushvalue(L, -4);~           | [true, 10, nil, "hello", true]      |
+| ~lua_replace(L, 3);~              | [true, 10, true, "hello"]           |
+| ~lua_settop(L, -5);~              | [true, 10, true, "hello", nil, nil] |
+| ~lua_rotate(L, 3, 1);~            | [true, 10, nil, true, "hello", nil] |
+| ~lua_remove(L, -3);~              | [true, 10, nil, "hello", nil]       |
+| ~lua_settop(L, -5);~              | [true]                              |
+| ~lua_close(L);~                   |                                     |
 
 ** Lua Standalone Interpreter
 
 Lua is implemented not as a standalone program, but as a C library. The standalone Lua interpreter
-is an application written on top of this library.
+is an interface that feeds files and strings from the user to the Lua library.
 
 #+begin_src c
   // Main body of the Lua stand-alone intepreter. Called in protected mode.
