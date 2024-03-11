@@ -9,8 +9,8 @@
 
 ** Lua Standalone Interpreter
 
-Lua is implemented not as a standalone program, but as a library with a C API.
-The standalone Lua interpreter is a tiny application written on top of the C library.
+Lua is implemented not as a standalone program, but as a C library. The standalone Lua interpreter
+is an application written on top of the C library.
 
 #+begin_src c
   // Main body of the Lua stand-alone intepreter. Called in protected mode.
