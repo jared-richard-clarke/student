@@ -820,7 +820,7 @@ instruction that is the set difference between the two patterns.
 
 *** And Predicate
 
-If *p* fails, the *BackCommit* instruction backtracks to the initial subject position and
+If *p* succeeds, the *BackCommit* instruction backtracks to the initial subject position and
 jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole pattern fails.
 
 #+begin_src lua
