@@ -344,43 +344,25 @@ listed in order of decreasing precedence.
 #+begin_src lua
   -- === LPEG ===
   
-  reverse = re.compile([[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]])
+  reverse = re.compile[[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]]
   reverse:match("1234567") --> "7654321"
-
-  -- === VM Instructions ==
-  --
-  --     Call R
-  --     Jump L1
-  --
-  --  R: Choice L2
-  --     TestAny 1 L3
-  --     Fail
-  -- L3: FullCapture string (size = 0)
-  --     Commit L4
-  -- L2: OpenCapture string
-  --     Any 1
-  --     FullCapture simple (size = 1)
-  --     Call R
-  --     CloseCapture
-  -- L4: Return
-  -- L1: End
 #+end_src
 
 *** CSV Decoder
 
 #+begin_src lua
-  record = re.compile[=[
+  record = re.compile[[
       record  <- {| field ("." field)* |} (%nl / !.)
       field   <- escaped / content
       content <- { [^,"%nl]* }
       escaped <- '"' {~ ([^"] / '""' -> '"')* ~} '"'
-  ]=]
+  ]]
 #+end_src
 
 *** Macro Expander
 
 #+begin_src lua
-  pattern = re.compile[=[
+  pattern = re.compile[[
       text  <- {~ item* ~}
       item  <- macro / [^()] / "(" item* ")"
       arg   <- " "* {~ (!"," item)* ~}
@@ -388,7 +370,7 @@ listed in order of decreasing precedence.
       macro <- ("apply" args) -> "%1(%2)"
              / ("add" args)   -> "%1 + %2"
              / ("mul" args)   -> "%1 * %2"
-  ]=]
+  ]]
 
   pattern:match("add(mul(a, b), apply(f, x))") --> "a * b + f(x)"
 #+end_src
