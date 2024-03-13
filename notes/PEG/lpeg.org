@@ -105,7 +105,7 @@ to the matched string and the capture type.
 - non-blind non-greedy (lazy or reluctant) :: Match the minimum number of *E₁* up to the
   first *E₂*. Equivalent to Perl's *E\star{}?* operation.
 
-** Parsing Examples
+** ~lpeg~ Parsing Examples
 
 *** Adding Numbers
 
@@ -342,8 +342,6 @@ listed in order of decreasing precedence.
 *** String Reversal
 
 #+begin_src lua
-  -- === LPEG ===
-  
   reverse = re.compile[[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]]
   reverse:match("1234567") --> "7654321"
 #+end_src
@@ -634,8 +632,8 @@ with the appropriate offset.
 
   Grammar = Pattern{
         "S",                                 -- start symbol
-        S = Variable("B") + (1 - Set("()")), -- S <- <B> / [^()]
-        B = '(' * Variable("S") * ')'        -- B <- '(' <S> ')'
+        S = Variable("B") + (1 - Set("()")), -- S <- B / [^()]
+        B = "(" * Variable("S") * ")"        -- B <- "(" S ")"
   }
 
   -- === Virtual Machine ===
@@ -665,21 +663,21 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 #+begin_src lua
   -- === LPEG ===
 
-  grammar = re.compile([[ X <- "abc" / . X ]])
+  grammar = re.compile[=[ X <- "abc" / . X ]=]
 
   -- === Virtual Machine ===
   --
   --     Call X                  (p+X, i, (p+1):e, c)
-  --     Jump L2                 (p+L2, i, e, c)
-  --  X: Choice L1               (p+1, i, (p+L1, i, c):e, c)
+  --     Jump L1                 (p+L1, i, e, c)
+  --  X: Choice L2               (p+1, i, (p+L2, i, c):e, c)
   --     Char "a"                (p+1, i+1, e, c)
   --     Char "b'                (p+1, i+1, e, c)
   --     Char "c"                (p+1, i+1, e, c)
   --     Commit L3               (p, i, h:e, c) -> (p+L3, i, e, c)
-  -- L1: Any 1                   (p+1, i+n, e, c)
+  -- L2: Any 1                   (p+1, i+n, e, c)
   --     Jump X <- Tail Call     (p+X, i, e, c)
   -- L3: Return                  (p₀, i, p₁:e, c) -> (p₁, i, e, c)
-  -- L2: End
+  -- L1: End
 #+end_src
 
 *** Head Fail Optimizations
@@ -702,74 +700,129 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 | (p, i, e, c)  | TestCharset X L, S[i] ∉ X          | (p+L, i, e, c)               |
 | (p, i, e, c)  | TestAny n L, i+n ≤ \vert{}S\vert{} | (p+1, i+1, e, c)             |
 | (p, i, e, c)  | TestAny n L, i+n > \vert{}S\vert{} | (p+L, i, e, c)               |
-| (p, i, e, c)  | Choice L d                         | (p+1, i, (p+L, i-d, c):e, c) |
 
 #+begin_src lua
   -- === LPEG ===
 
-  grammar = re.compile([[ X <- "abc" / . X ]])
+  grammar = re.compile[=[ X <- "abc" / . X ]=]
 
   -- === Virtual Machine ===
   --
   --     Call X
-  --     Jump L2
-  --  X: Choice L1 <- Expensive storing and restoring of state
+  --     Jump L1
+  --  X: Choice L2 <- Expensive storing and restoring of state
   --     Char "a"  <- for a repeatedly-failing pattern
   --     Char "b'
   --     Char "c"
   --     Commit L3
-  -- L1: Any 1
+  -- L2: Any 1
   --     Jump X
   -- L3: Return
-  -- L2: End
+  -- L1: End
 
   -- === Optimization ===
   --
   --     Call X            (p+X, i, (p+1):e, c)
-  --     Jump L2           (p+L2, i, e, c)
-  --  X: TestChar "a" L1   (p+1, i+1, e, c) or (p+L1, i, e, c)
-  --     Choice L1         (p+1, i, (p+L1, i, c):e, c)
+  --     Jump L1           (p+L1, i, e, c)
+  --  X: TestChar "a" L2   (p+1, i+1, e, c) or (p+L2, i, e, c)
+  --     Choice L2         (p+1, i, (p+L2, i, c):e, c)
   --     Any 1             (p+1, i+n, e, c)
   --     Char "b"          (p+1, i+1, e, c)
   --     Char "c"          (p+1, i+1, e, c)
   --     Commit L3         (p, i, h:e, c) -> (p+L3, i, e, c)
-  -- L1: Any 1             (p+1, i+n, e, c)
+  -- L2: Any 1             (p+1, i+n, e, c)
   --     Jump X            (p+X, i, e, c)
   -- L3: Return            (p₀, i, p₁:e, c) -> (p₁, i, e, c)
-  -- L2: End
+  -- L1: End
 #+end_src
 
-*** Captures
+** Extended Examples
+
+Examples as they are actually outputted in the ~lpeg~ debugger.
+
+*** Adding Numbers
 
 #+begin_src lua
-  -- === LPEG ===
+  Range = lpeg.R
 
-  Pattern = lpeg.P
-  Capture = lpeg.C
+  number = Range("09") ^ 1 / tonumber
 
-  Capture(Pattern("abc"))
+  add = function (accum, value) return accum + value end
 
-  -- === Virtual Machine ===
+  sum = number * ("," * number % add) ^ 0
+
+  -- === AST ===
   --
-  -- Capture begin
-  -- Char "a"
-  -- Char "b"
-  -- Char "c"
-  -- Capture end
-
-  -- === Optimization 1 ===
+  -- [1 = function  2 = function  3 = function]
   --
-  -- Char "a"
-  -- Char "b"
-  -- Char "c"
-  -- Capture begin 3
-  -- Capture end
+  -- sequence
+  --   capture kind: 'function'  key: 1
+  --     sequence
+  --       set(06-2) [(30-39)]
+  --       repeat
+  --         set(06-2) [(30-39)]
+  --   repeat
+  --     capture kind: 'accumulator'  key: 3
+  --       sequence
+  --         char ','
+  --         capture kind: 'function'  key: 2
+  --           sequence
+  --             set(06-2) [(30-39)]
+  --             repeat
+  --               set(06-2) [(30-39)]
 
-  -- === Optimization 2 ===
-  -- If start just before corresponding close
+  -- === VM Instructions ===
   --
-  -- Char "a"
-  -- Char "b"
-  -- Char "c"
-  -- Capture full 3
+  -- 00: opencapture function (idx = 1)
+  -- 01: set (30-1) [(30-39)]
+  -- 03: span (30-1) [(30-39)]
+  -- 05: closecapture
+  -- 06: testchar ',' (2c)-> 21
+  -- 08: choice -> 21
+  -- 10: opencapture accumulator (idx = 3)
+  -- 11: char ',' (2c)
+  -- 12: opencapture function (idx = 2)
+  -- 13: set (30-1) [(30-39)]
+  -- 15: span (30-1) [(30-39)]
+  -- 17: closecapture
+  -- 18: closecapture
+  -- 19: partial_commit -> 10
+  -- 21: end
+#+end_src
+
+*** Balanced Parentheses
+
+#+begin_src lua
+  pattern = re.compile([[ Balanced <- "(" ([^()] / Balanced)* ")" ]])
+
+  -- === AST ===
+  --
+  -- [1 = Balanced]
+  -- grammar 1
+  --   rule key: 1
+  --     xinfo n: 0
+  --       seq
+  --         char '('
+  --         seq
+  --           rep
+  --             choice
+  --               set(05-1) [(00-27)(2a-ff)]
+  --               call key: 1  (rule: 0)
+  --           char ')'
+
+  -- === VM Instructions ===
+  --
+  -- 00: call -> 4
+  -- 02: end
+  -- 03: --
+  -- 04: char '(' (28)
+  -- 05: testset (28-1) [(00-28)(2a-ff)]-> 18
+  -- 08: testset (28-1) [(00-27)(2a-ff)]-> 14
+  -- 11: any
+  -- 12: jump -> 5
+  -- 14: call -> 4
+  -- 16: jump -> 5
+  -- 18: char ')' (29)
+  -- 19: return
+  -- 20: end
 #+end_src
