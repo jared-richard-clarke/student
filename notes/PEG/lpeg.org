@@ -342,8 +342,28 @@ listed in order of decreasing precedence.
 *** String Reversal
 
 #+begin_src lua
-  reverse = re.compile[=[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]=]
+  -- === LPEG ===
+  
+  reverse = re.compile([[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]])
   reverse:match("1234567") --> "7654321"
+
+  -- === VM Instructions ==
+  --
+  --     Call R
+  --     Jump L1
+  --
+  --  R: Choice L2
+  --     TestAny 1 L3
+  --     Fail
+  -- L3: FullCapture string (size = 0)
+  --     Commit L4
+  -- L2: OpenCapture string
+  --     Any 1
+  --     FullCapture simple (size = 1)
+  --     Call R
+  --     CloseCapture
+  -- L4: Return
+  -- L1: End
 #+end_src
 
 *** CSV Decoder
@@ -372,26 +392,6 @@ listed in order of decreasing precedence.
 
   pattern:match("add(mul(a, b), apply(f, x))") --> "a * b + f(x)"
 #+end_src
-
-** Finite Automata to PEG
-
-Depending on the order of the terms in rule *A*, the grammar matches the longest or the
-shortest subject's prefix ending with *ana*.
-
-#+begin_example
-  === NFA ===
-
-  +-.->
-   \ /
-   [A]-a->[B]-n->[C]-a->(D)
-
-  === PEG ===
-
-  A <- . A / "a" B
-  B <- "n" C
-  C <- "a" D
-  D <- ε
-#+end_example
 
 ** The Parsing Machine
 
@@ -463,137 +463,6 @@ shortest subject's prefix ending with *ana*.
 - End :: The machine returns, signalling that the match succeeds. This instruction appears only
   as the last one of a complete pattern.
 
-*** Basic Instructions: C Encoding
-
-#+begin_src c
-  // Side Note: "stack" points to first empty slot in "Stack".
-
-  // Char x, s[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
-  // Char x, S[i] ≠ x [ (p, i, e, c) -> (Fail, i, e, c)  ]
-  case IChar: {
-    if ((byte)*s == p->i.aux1 && s < e) { p++; s++; }
-    else { goto fail; }
-    continue;
-  }
-  // TestChar x L, S[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
-  // TestChar x L, S[i] ≠ x [ (p, i, e, c) -> (p+L, i, e, c)   ]
-  case ITestChar: {
-    if ((byte)*s == p->i.aux1 && s < e) { p += 2; }
-    else { p += getoffset(p); }
-    continue;
-  }
-  // Jump L [ (p, i, e, c) -> (p+L, i, e, c) ]
-  case IJmp: {
-    p += getoffset(p);
-    continue;
-  }
-  // Choice L   [ (p, i, e, c) -> (p+1, i, (p+L, i, c):e, c)   ]
-  case IChoice: {
-    if (stack == stacklimit) {
-      stack = doublestack(L, &stacklimit, ptop);
-    }
-    stack->p = p + getoffset(p);
-    stack->s = s;
-    stack->caplevel = captop;
-    stack++;
-    p += 2;
-    continue;
-  }
-  // Call L [ (p, i, e, c) -> (p+L, i, (p+1):e, c) ]
-  case ICall: {
-    if (stack == stacklimit) {
-      stack = doublestack(L, &stacklimit, ptop);
-    }
-    stack->s = NULL;
-    // Save return address.
-    stack->p = p + 2;
-    stack++;
-    p += getoffset(p);
-    continue;
-  }
-  // Return [ (p₀, i, p₁:e, c) -> (p₁, i, e, c) ]
-  case IRet: {
-    assert(stack > getstackbase(L, ptop) && (stack - 1)->s == NULL);
-    p = (--stack)->p;
-    continue;
-  }
-  // Commit L [ (p, i, h:e, c) -> (p+L, i, e, c) ]
-  case ICommit: {
-    assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
-    stack--;
-    p += getoffset(p);
-    continue;
-  }
-  // Capture (index, instruction) [ (p, i, e, c) -> (p+1, i, e, (i, p):c) ]
-  case ICloseCapture: {
-    Capture *open = findopen(capture + captop, s - o);
-    assert(captop > 0);
-    // If possible, turn capture into a full capture.
-    if (open) {
-      open->siz = (s - o) - open->index + 1;
-      p++;
-      continue;
-    }
-    // Must create a close capture.
-    else {
-      // Mark entry as closed.
-      capture[captop].siz = 1;
-      capture[captop].index = s - o;
-      goto pushcapture;
-    }
-  }
-  case IOpenCapture: {
-    // Mark entry as open.
-    capture[captop].siz = 0;
-    capture[captop].index = s - o;
-    goto pushcapture;
-  }
-  case IFullCapture: {
-    // Save capture size.
-    capture[captop].siz = getoff(p) + 1;
-    capture[captop].index = s - o - getoff(p);
-  }
-  pushcapture: {
-    capture[captop].idx = p->i.aux2.key;
-    capture[captop].kind = getkind(p);
-    captop++;
-    capture = growcap(L, capture, &capsize, captop, 0, ptop);
-    p++;
-    continue;
-  }
-  // FailTwice [ (p, i, h:e, c) -> (Fail, i, e, c) ]
-  case IFailTwice: {
-    assert(stack > getstackbase(L, ptop));
-    stack--;
-  }
-  // FALLTHROUGH
-  // Fail [ (Fail, i, p:e, c)             -> (Fail, i, e, c) ]
-  //      [ (Fail, i₀, (p, i₁, c₁):e, c₀) -> (p, i₁, e, c₁)  ]
-  case IFail:
-  // Pattern failed. Try to backtrack.
-  fail: {
-    // Remove pending calls.
-    do {
-      assert(stack > getstackbase(L, ptop));
-      s = (--stack)->s;
-    } while (s == NULL);
-    // Are there matchtime captures?
-    if (ndyncap > 0) {
-      ndyncap -= removedyncap(L, capture, stack->caplevel, captop);
-    }
-    captop = stack->caplevel;
-    p = stack->p;
-    continue;
-  }
-  // End
-  case IEnd: {
-    assert(stack == getstackbase(L, ptop) + 1);
-    capture[captop].kind = Cclose;
-    capture[captop].index = MAXINDT;
-    return s;
-  }
-#+end_src
-
 *** Extra Instructions
 
 | current state                | instruction                    | next state                     |
@@ -612,74 +481,6 @@ shortest subject's prefix ending with *ana*.
   with one bit for each possible character value.
 
 - Any n :: Checks whether there are at least *n* characters in the current subject position.
-
-*** Extra Instructions: C Encoding
-
-#+begin_src c
-  // Charset X, S[i] ∈ X [ (p, i, e, c) -> (p+1, i+1, e, c) ]
-  // Charset X, S[i] ∉ X [ (p, i, e, c) -> (Fail, i, e, c)  ]
-  case ISet: {
-    uint c = (byte)*s;
-    if (charinset(p, (p+1)->buff, c) && s < e)
-      { p += 1 + p->i.aux2.set.size; s++; }
-    else goto fail;
-    continue;
-  }
-  // TestCharset X L, S[i] ∈ X [ (p, i, e, c) -> (p+1, i+1, e, c) ]
-  // TestCharset X L, S[i] ∉ X [ (p, i, e, c) -> (p+L, i, e, c)   ]
-  case ITestSet: {
-    uint c = (byte)*s;
-    if (charinset(p, (p + 2)->buff, c) && s < e) {
-      p += 2 + p->i.aux2.set.size;
-    }
-    else { p += getoffset(p); }
-    continue;
-  }
-  // Any n, i + n ≤ |S| [ (p, i, e, c) -> (p+1, i+n, e, c) ]
-  // Any n, i + n > |S| [ (p, i, e, c) -> (Fail, i, e, c)  ]
-  case IAny: {
-    if (s < e) { p++; s++; }
-    else goto fail;
-    continue;
-  }
-  // TestAny n L, i+n ≤ |S| [ (p, i, e, c) -> (p+1, i+1, e, c) ]
-  // TestAny n L, i+n > |S| [ (p, i, e, c) -> (Fail, i, e, c)  ]
-  case ITestAny: {
-    if (s < e) { p += 2; }
-    else { p += getoffset(p); }
-    continue;
-  }
-  // PartialCommit L [ (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L, i₀, (p₁, i₀, c₀):e, c₀) ]
-  case IPartialCommit: {
-    assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
-    (stack - 1)->s = s;
-    (stack - 1)->caplevel = captop;
-    p += getoffset(p);
-    continue;
-  }
-  // Span X, S[i] ∈ X [ (p, i, e, c) -> (p, i+1, e, c) ]
-  // Span X, S[i] ∉ X [ (p, i, e, c) -> (p+1, i, e, c) ]
-  case ISpan: {
-    for (; s < e; s++) {
-      uint c = (byte)*s;
-      if (!charinset(p, (p+1)->buff, c)) break;
-    }
-    p += 1 + p->i.aux2.set.size;
-    continue;
-  }
-  // BackCommit L [ (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L, i₁, e, c₁) ]
-  case IBackCommit: {
-    assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
-    s = (--stack)->s;
-    // Matchtime captures?
-    if (ndyncap > 0) {
-      ndyncap -= removedyncap(L, capture, stack->caplevel, captop);
-    }
-    captop = stack->caplevel;
-    p += getoffset(p);
-    continue;
-  }
-#+end_src
 
 ** Grammars to Instructions
 
@@ -858,20 +659,20 @@ with the appropriate offset.
   -- === Virtual Machine ===
   --
   --     Call S           (p+S, i, (p+1):e, c
-  --     Jump L2          (p+L2, i, e, c)
+  --     Jump L1          (p+L1, i, e, c)
   --
-  --  S: Choice L4        (p+1, i, (p+L4, i, c):e, c)
+  --  S: Choice L2        (p+1, i, (p+L2, i, c):e, c)
   --     Call B           (p+B, i, (p+1):e, c)
-  --     Commit L5        (p, i, h:e, c) -> (p+L5, i, e, c)
-  -- L4: Charset [^()]    (p+1, i+1, e, c)
-  -- L5: Return           (p₀, i, p₁:e, c) -> (p₁, i, e, c)
+  --     Commit L3        (p, i, h:e, c) -> (p+L3, i, e, c)
+  -- L2: Charset [^()]    (p+1, i+1, e, c)
+  -- L3: Return           (p₀, i, p₁:e, c) -> (p₁, i, e, c)
   --
   --  B: Char '('         (p+1, i+1, e, c)
   --     Call S           (p+S, i, (p+1):e, c
   --     Char ')'         (p+1, i+1, e, c)
   --     Return           (p₀, i, p₁:e, c) -> (p₁, i, e, c)
   --
-  -- L2: End
+  -- L1: End
 #+end_src
 
 *** Tail Call Optimization
