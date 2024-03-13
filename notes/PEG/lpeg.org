@@ -488,7 +488,6 @@ shortest subject's prefix ending with *ana*.
     continue;
   }
   // Choice L   [ (p, i, e, c) -> (p+1, i, (p+L, i, c):e, c)   ]
-  // Choice L d [ (p, i, e, c) -> (p+1, i, (p+L, i-d, c):e, c) ]
   case IChoice: {
     if (stack == stacklimit) {
       stack = doublestack(L, &stacklimit, ptop);
@@ -883,15 +882,7 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 #+begin_src lua
   -- === LPEG ===
 
-  Variable = lpeg.V
-  Pattern  = lpeg.P
-  Any      = Pattern(1)
-
-  -- X <- "abc" / . X
-  Grammar = Pattern{
-      "X";
-      X = Pattern("abc") + Any * Variable("X")
-  }
+  grammar = re.compile([[ X <- "abc" / . X ]])
 
   -- === Virtual Machine ===
   --
@@ -905,7 +896,7 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
   -- L1: Any 1                   (p+1, i+n, e, c)
   --     Jump X <- Tail Call     (p+X, i, e, c)
   -- L3: Return                  (p₀, i, p₁:e, c) -> (p₁, i, e, c)
-  -- L2: ...
+  -- L2: End
 #+end_src
 
 *** Head Fail Optimizations
@@ -933,37 +924,36 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 #+begin_src lua
   -- === LPEG ===
 
-  Pattern  = lpeg.P
-  Variable = lpeg.V
-  Any      = Pattern(1)
-
-  -- A <- "abc" / . <A>
-  Grammar = Pattern{
-      "A";
-       A = Pattern("abc") + Any * Variable("A")
-  }
+  grammar = re.compile([[ X <- "abc" / . X ]])
 
   -- === Virtual Machine ===
   --
-  -- L1: Choice L2 <- Expensive storing and restoring of state
-  --     Char "a"  <- for a repeatedly-failing pattern.
-  --     Char "b"
+  --     Call X
+  --     Jump L2
+  --  X: Choice L1 <- Expensive storing and restoring of state
+  --     Char "a"  <- for a repeatedly-failing pattern
+  --     Char "b'
   --     Char "c"
   --     Commit L3
-  -- L2: Any 1
-  --     Jump L1
-  -- L3: End
+  -- L1: Any 1
+  --     Jump X
+  -- L3: Return
+  -- L2: End
 
   -- === Optimization ===
   --
-  -- L1: TestChar "a" L2
-  --     Choice L2 1
-  --     Char "b"
-  --     Char "c"
-  --     Commit L3
-  -- L2: Any 1
-  --     Jump L1
-  -- L3: End
+  --     Call X            (p+X, i, (p+1):e, c)
+  --     Jump L2           (p+L2, i, e, c)
+  --  X: TestChar "a" L1   (p+1, i+1, e, c) or (p+L1, i, e, c)
+  --     Choice L1         (p+1, i, (p+L1, i, c):e, c)
+  --     Any 1             (p+1, i+n, e, c)
+  --     Char "b"          (p+1, i+1, e, c)
+  --     Char "c"          (p+1, i+1, e, c)
+  --     Commit L3         (p, i, h:e, c) -> (p+L3, i, e, c)
+  -- L1: Any 1             (p+1, i+n, e, c)
+  --     Jump X            (p+X, i, e, c)
+  -- L3: Return            (p₀, i, p₁:e, c) -> (p₁, i, e, c)
+  -- L2: End
 #+end_src
 
 *** Captures
