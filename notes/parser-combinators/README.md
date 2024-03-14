@@ -27,35 +27,35 @@
 
 ```haskell
 -- === Monad Laws ===
--- === left unit ===
+-- left unit
 return a >>= f = f a
 
--- === right unit ===
+-- right unit
 p >>= return = p
 
--- === associative ===
+-- associative
 p >>= (\a -> (f a >>= g)) = (p >>= (\a -> f a)) >>= g
 
 -- === MonadZero and MonadPlus Laws ===
--- === left unit ===
+-- left unit
 zero ++ p = p
 
--- === right unit ===
+-- right unit
 p ++ zero = p
 
--- === associative ===
+-- associative
 p ++ (q ++ r) = (p ++ q) ++ r
 
 -- === Special Case: Parsers ===
--- === left unit ===
+-- left unit
 zero >>= f = zero
 
--- === right unit ===
+-- right unit
 p >>= const zero = zero
 
--- === right distributive ===
+-- right distributive
 (p ++ q) >>= f = (p >>= f) ++ (q >>= f)
 
--- === associative ===
+-- associative
 p >>= (\a -> f a ++ g a) = (p >>= f) ++ (p >>= g)
 ```
