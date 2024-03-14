@@ -342,7 +342,7 @@ listed in order of decreasing precedence.
 *** String Reversal
 
 #+begin_src lua
-  reverse = re.compile([[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]])
+  reverse = re.compile[[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]]
   reverse:match("1234567") --> "7654321"
 #+end_src
 
