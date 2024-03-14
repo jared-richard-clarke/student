@@ -932,3 +932,204 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- 60: return
   -- 61: end
 #+end_src
+
+** Virtual Machine Internals
+
+*** Basic Instructions
+
+#+begin_src c
+  // Side Note: "stack" points to first empty slot in "Stack".
+
+  // Char x, s[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
+  // Char x, S[i] ≠ x [ (p, i, e, c) -> (Fail, i, e, c)  ]
+  case IChar: {
+    if ((byte)*s == p->i.aux1 && s < e) { p++; s++; }
+    else { goto fail; }
+    continue;
+  }
+  // TestChar x L, S[i] = x [ (p, i, e, c) -> (p+1, i, e, c) ]
+  // TestChar x L, S[i] ≠ x [ (p, i, e, c) -> (p+L, i, e, c)   ]
+  case ITestChar: {
+    if ((byte)*s == p->i.aux1 && s < e) { p += 2; }
+    else { p += getoffset(p); }
+    continue;
+  }
+  // Jump L [ (p, i, e, c) -> (p+L, i, e, c) ]
+  case IJmp: {
+    p += getoffset(p);
+    continue;
+  }
+  // Choice L   [ (p, i, e, c) -> (p+1, i, (p+L, i, c):e, c) ]
+  case IChoice: {
+    if (stack == stacklimit) {
+      stack = doublestack(L, &stacklimit, ptop);
+    }
+    stack->p = p + getoffset(p);
+    stack->s = s;
+    stack->caplevel = captop;
+    stack++;
+    p += 2;
+    continue;
+  }
+  // Call L [ (p, i, e, c) -> (p+L, i, (p+1):e, c) ]
+  case ICall: {
+    if (stack == stacklimit) {
+      stack = doublestack(L, &stacklimit, ptop);
+    }
+    stack->s = NULL;
+    // Save return address.
+    stack->p = p + 2;
+    stack++;
+    p += getoffset(p);
+    continue;
+  }
+  // Return [ (p₀, i, p₁:e, c) -> (p₁, i, e, c) ]
+  case IRet: {
+    assert(stack > getstackbase(L, ptop) && (stack - 1)->s == NULL);
+    p = (--stack)->p;
+    continue;
+  }
+  // Commit L [ (p, i, h:e, c) -> (p+L, i, e, c) ]
+  case ICommit: {
+    assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
+    stack--;
+    p += getoffset(p);
+    continue;
+  }
+  // Capture (i, p) [ (p, i, e, c) -> (p+1, i, e, (i, p):c) ]
+  case ICloseCapture: {
+    Capture *open = findopen(capture + captop, s - o);
+    assert(captop > 0);
+    // If possible, turn capture into a full capture.
+    if (open) {
+      open->siz = (s - o) - open->index + 1;
+      p++;
+      continue;
+    }
+    // Must create a close capture.
+    else {
+      // Mark entry as closed.
+      capture[captop].siz = 1;
+      capture[captop].index = s - o;
+      goto pushcapture;
+    }
+  }
+  case IOpenCapture: {
+    // Mark entry as open.
+    capture[captop].siz = 0;
+    capture[captop].index = s - o;
+    goto pushcapture;
+  }
+  case IFullCapture: {
+    // Save capture size.
+    capture[captop].siz = getoff(p) + 1;
+    capture[captop].index = s - o - getoff(p);
+  }
+  pushcapture: {
+    capture[captop].idx = p->i.aux2.key;
+    capture[captop].kind = getkind(p);
+    captop++;
+    capture = growcap(L, capture, &capsize, captop, 0, ptop);
+    p++;
+    continue;
+  }
+  // FailTwice [ (p, i, h:e, c) -> (Fail, i, e, c) ]
+  case IFailTwice: {
+    assert(stack > getstackbase(L, ptop));
+    stack--;
+  }
+  // FALLTHROUGH
+  // Fail [ (Fail, i, p:e, c)             -> (Fail, i, e, c) ]
+  //      [ (Fail, i₀, (p, i₁, c₁):e, c₀) -> (p, i₁, e, c₁)  ]
+  case IFail:
+  // Pattern failed. Try to backtrack.
+  fail: {
+    // Remove pending calls.
+    do {
+      assert(stack > getstackbase(L, ptop));
+      s = (--stack)->s;
+    } while (s == NULL);
+    // Are there matchtime captures?
+    if (ndyncap > 0) {
+      ndyncap -= removedyncap(L, capture, stack->caplevel, captop);
+    }
+    captop = stack->caplevel;
+    p = stack->p;
+    continue;
+  }
+  // End
+  case IEnd: {
+    assert(stack == getstackbase(L, ptop) + 1);
+    capture[captop].kind = Cclose;
+    capture[captop].index = MAXINDT;
+    return s;
+  }
+#+end_src
+
+*** Extra Instructions
+
+#+begin_src c
+  // Charset X, S[i] ∈ X [ (p, i, e, c) -> (p+1, i+1, e, c) ]
+  // Charset X, S[i] ∉ X [ (p, i, e, c) -> (Fail, i, e, c)  ]
+  case ISet: {
+    uint c = (byte)*s;
+    if (charinset(p, (p+1)->buff, c) && s < e)
+      { p += 1 + p->i.aux2.set.size; s++; }
+    else goto fail;
+    continue;
+  }
+  // TestCharset X L, S[i] ∈ X [ (p, i, e, c) -> (p+1, i, e, c) ]
+  // TestCharset X L, S[i] ∉ X [ (p, i, e, c) -> (p+L, i, e, c)   ]
+  case ITestSet: {
+    uint c = (byte)*s;
+    if (charinset(p, (p + 2)->buff, c) && s < e) {
+      p += 2 + p->i.aux2.set.size;
+    }
+    else { p += getoffset(p); }
+    continue;
+  }
+  // Any n, i + n ≤ |S| [ (p, i, e, c) -> (p+1, i+n, e, c) ]
+  // Any n, i + n > |S| [ (p, i, e, c) -> (Fail, i, e, c)  ]
+  case IAny: {
+    if (s < e) { p++; s++; }
+    else goto fail;
+    continue;
+  }
+  // TestAny n L, i+n ≤ |S| [ (p, i, e, c) -> (p+1, i, e, c) ]
+  // TestAny n L, i+n > |S| [ (p, i, e, c) -> (Fail, i, e, c)  ]
+  case ITestAny: {
+    if (s < e) { p += 2; }
+    else { p += getoffset(p); }
+    continue;
+  }
+  // PartialCommit L [ (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L, i₀, (p₁, i₀, c₀):e, c₀) ]
+  case IPartialCommit: {
+    assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
+    (stack - 1)->s = s;
+    (stack - 1)->caplevel = captop;
+    p += getoffset(p);
+    continue;
+  }
+  // Span X, S[i] ∈ X [ (p, i, e, c) -> (p, i+1, e, c) ]
+  // Span X, S[i] ∉ X [ (p, i, e, c) -> (p+1, i, e, c) ]
+  case ISpan: {
+    for (; s < e; s++) {
+      uint c = (byte)*s;
+      if (!charinset(p, (p+1)->buff, c)) { break; }
+    }
+    p += 1 + p->i.aux2.set.size;
+    continue;
+  }
+  // BackCommit L [ (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L, i₁, e, c₁) ]
+  case IBackCommit: {
+    assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
+    s = (--stack)->s;
+    // Matchtime captures?
+    if (ndyncap > 0) {
+      ndyncap -= removedyncap(L, capture, stack->caplevel, captop);
+    }
+    captop = stack->caplevel;
+    p += getoffset(p);
+    continue;
+  }
+#+end_src
