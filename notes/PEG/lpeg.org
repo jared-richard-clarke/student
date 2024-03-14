@@ -176,8 +176,8 @@ to the matched string and the capture type.
   Grammar = Pattern{
     "Expression",
     Expression = Var("Term") * (AddSub * Var("Term") % eval) ^ 0;
-    Term = Var("Factor") * (MulDiv * Var("Factor") % eval) ^ 0;
-    Factor = Number / tonumber + Open * Var("Expression") * Close;
+    Term       = Var("Factor") * (MulDiv * Var("Factor") % eval) ^ 0;
+    Factor     = Number / tonumber + Open * Var("Expression") * Close;
   }
 
   lpeg.Match(Grammar, "3 + 5 * 9 / (1 + 1) - 11") --> 14.5
@@ -738,7 +738,7 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 
 ** Extended Examples
 
-Examples as they are actually outputted in the ~lpeg~ debugger.
+Examples as they are actually output in the ~lpeg~ debugger.
 
 *** Adding Numbers
 
