@@ -22,3 +22,41 @@
 >  that implement grammar constructions such as sequencing, choice, and repetition."
 >
 >  — Graham Hutton and Erik Meijer, **Monadic Parser Combinators**
+
+## Monad Laws
+
+```haskell
+-- === Monad Laws ===
+-- === left unit ===
+return a >>= f = f a
+
+-- === right unit ===
+p >>= return = p
+
+-- === associative ===
+p >>= (\a -> (f a >>= g)) = (p >>= (\a -> f a)) >>= g
+
+-- === MonadZero and MonadPlus Laws ===
+
+-- === left unit ===
+zero ++ p = p
+
+-- === right unit ===
+p ++ zero = p
+
+-- === associative ===
+p ++ (q ++ r) = (p ++ q) ++ r
+
+-- === Special Case: Parsers ===
+-- === left unit ===
+zero >>= f = zero
+
+-- === right unit ===
+p >>= const zero = zero
+
+-- === right distributive ===
+(p ++ q) >>= f = (p >>= f) ++ (q >>= f)
+
+-- === associative ===
+p >>= (\a -> f a ++ g a) = (p >>= f) ++ (p >>= g)
+```
