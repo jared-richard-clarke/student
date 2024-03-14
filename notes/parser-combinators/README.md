@@ -37,7 +37,6 @@ p >>= return = p
 p >>= (\a -> (f a >>= g)) = (p >>= (\a -> f a)) >>= g
 
 -- === MonadZero and MonadPlus Laws ===
-
 -- === left unit ===
 zero ++ p = p
 
