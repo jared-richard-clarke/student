@@ -1,6 +1,10 @@
 # Parser Combinator in Haskell
 
-**Functional Parsing** by Professor Graham Hutton
+## Sources
+
+| source                 | author        |
+|------------------------|---------------|
+| **Functional Parsing** | Graham Hutton |
 
 ## Parser Application
 
@@ -26,11 +30,11 @@ factor = do char '('
             return x
          <|> int
 {-
-Application
-parse expr "2+3*4"
-[(14,"")]
-parse expr "2+3*"
-[(5, "*")]
+   Application
+   parse expr "2+3*4"
+   [(14,"")]
+   parse expr "2+3*"
+   [(5, "*")]
 -} 
 ```
 
