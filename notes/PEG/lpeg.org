@@ -948,7 +948,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
     continue;
   }
   // TestChar x L, S[i] = x [ (p, i, e, c) -> (p+1, i, e, c) ]
-  // TestChar x L, S[i] ≠ x [ (p, i, e, c) -> (p+L, i, e, c)   ]
+  // TestChar x L, S[i] ≠ x [ (p, i, e, c) -> (p+L, i, e, c) ]
   case ITestChar: {
     if ((byte)*s == p->i.aux1 && s < e) { p += 2; }
     else { p += getoffset(p); }
