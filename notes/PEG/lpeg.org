@@ -801,10 +801,10 @@ Examples as they are actually outputted in the ~lpeg~ debugger.
   -- grammar 1
   --   rule key: 1
   --     xinfo n: 0
-  --       seq
+  --       sequence
   --         char '('
-  --         seq
-  --           rep
+  --         sequence
+  --           repeat
   --             choice
   --               set(05-1) [(00-27)(2a-ff)]
   --               call key: 1  (rule: 0)
