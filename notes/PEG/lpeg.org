@@ -663,7 +663,7 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 #+begin_src lua
   -- === LPEG ===
 
-  grammar = re.compile([[ X <- "abc" / . X ]])
+  grammar = re.compile[[ X <- "abc" / . X ]]
 
   -- === Virtual Machine ===
   --
@@ -704,7 +704,7 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 #+begin_src lua
   -- === LPEG ===
 
-  grammar = re.compile([[ X <- "abc" / . X ]])
+  grammar = re.compile[[ X <- "abc" / . X ]]
 
   -- === Virtual Machine ===
   --
