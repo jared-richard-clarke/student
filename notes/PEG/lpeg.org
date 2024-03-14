@@ -743,6 +743,8 @@ Examples as they are actually outputted in the ~lpeg~ debugger.
 *** Adding Numbers
 
 #+begin_src lua
+  -- === LPEG ===
+
   Range = lpeg.R
 
   number = Range("09") ^ 1 / tonumber
@@ -793,7 +795,9 @@ Examples as they are actually outputted in the ~lpeg~ debugger.
 *** Balanced Parentheses
 
 #+begin_src lua
-  pattern = re.compile([[ Balanced <- "(" ([^()] / Balanced)* ")" ]])
+  -- === LPEG ===
+
+  pattern = re.compile[[ Balanced <- "(" ([^()] / Balanced)* ")" ]]
 
   -- === AST ===
   --
@@ -825,4 +829,106 @@ Examples as they are actually outputted in the ~lpeg~ debugger.
   -- 18: char ')' (29)
   -- 19: return
   -- 20: end
+#+end_src
+
+*** CSV Record
+
+#+begin_src lua
+  -- === LPEG ===
+
+  record = re.compile[[
+    record  <- {| field ("." field)* |} (%nl / !.)
+    field   <- escaped / content
+    content <- { [^,"%nl]* }
+    escaped <- '"' {~ ([^"] / '""' -> '"')* ~} '"'
+  ]]
+
+  -- === AST ===
+  --
+  -- [1 = field  2 = field  3 = "  4 = escaped  5 = content  6 = record]
+  --
+  -- grammar 4
+  --   rule key: 6
+  --     xinfo n: 0
+  --       sequence
+  --         capture kind: 'table'  key: 0
+  --           sequence
+  --             call key: 1  (rule: 3)
+  --             repeat
+  --               sequence
+  --                 char '.'
+  --                 call key: 2  (rule: 3)
+  --         choice
+  --           char (0A)
+  --           not
+  --             any
+  --   rule key: 5
+  --     xinfo n: 1
+  --       capture kind: 'simple'  key: 0
+  --         repeat
+  --           set(01-5) [(00-09)(0b-21)(23-2b)(2d-ff)]
+  --   rule key: 4
+  --     xinfo n: 2
+  --       sequence
+  --         char '"'
+  --         sequence
+  --           capture kind: 'substitution'  key: 0
+  --             repeat
+  --               choice
+  --                 set(04-1) [(00-21)(23-ff)]
+  --                 capture kind: 'string'  key: 3
+  --                   sequence
+  --                     char '"'
+  --                     char '"'
+  --           char '"'
+  --   rule key: 2
+  --     xinfo n: 3
+  --       choice
+  --         call key: 4  (rule: 2)
+  --         call key: 5  (rule: 1)
+
+  -- === VM Instructions ===
+  --
+  -- 00: call -> 4
+  -- 02: end
+  -- 03: --
+  -- 04: opencapture table (idx = 0)
+  -- 05: call -> 50
+  -- 07: testchar '.' (2e)-> 14
+  -- 09: any
+  -- 10: call -> 50
+  -- 12: jump -> 7
+  -- 14: closecapture
+  -- 15: testchar '' (0a)-> 20
+  -- 17: any
+  -- 18: return
+  -- 19: --
+  -- 20: testany -> 23
+  -- 22: fail
+  -- 23: return
+  -- 24: opencapture simple (idx = 0)
+  -- 25: span (08-2) [(00-09)(0b-21)(23-2b)(2d-ff)]
+  -- 28: closecapture
+  -- 29: return
+  -- 30: char '"' (22)
+  -- 31: opencapture substitution (idx = 0)
+  -- 32: testany -> 47
+  -- 34: choice -> 47
+  -- 36: testset (20-1) [(00-21)(23-ff)]-> 42
+  -- 39: any
+  -- 40: partial_commit -> 36
+  -- 42: char '"' (22)
+  -- 43: char '"' (22)
+  -- 44: fullcapture string (size = 2)  (idx = 3)
+  -- 45: partial_commit -> 36
+  -- 47: closecapture
+  -- 48: char '"' (22)
+  -- 49: return
+  -- 50: testchar '"' (22)-> 24
+  -- 52: choice -> 24
+  -- 54: call -> 30
+  -- 56: commit -> 60
+  -- 58: jump -> 24
+  -- 60: return
+  -- 61: end
 #+end_src
