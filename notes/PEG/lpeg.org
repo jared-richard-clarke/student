@@ -935,6 +935,13 @@ Examples as they are actually output in the ~lpeg~ debugger.
 
 ** Virtual Machine Internals
 
+Samples of the C source code from LPEG's ~match~ function, a function that runs
+the opcode interpreter — otherwise known as the virtual machine.
+
+*Side Note:* Some of the actual opcode instructions are subtly different from the examples
+explicated by Ierusalimschy in his paper *A Text Pattern-Matching Tool Based on Parsing Expression Grammars*.
+I have, to the best of my knowledge, updated my notes accordingly.
+
 *** Basic Instructions
 
 #+begin_src c
