@@ -180,7 +180,7 @@ to the matched string and the capture type.
     Factor     = Number / tonumber + Open * Var("Expression") * Close;
   }
 
-  lpeg.Match(Grammar, "3 + 5 * 9 / (1 + 1) - 11") --> 14.5
+  sum = lpeg.match(Grammar, "3 + 5 * 9 / (1 + 1) - 11") --> 14.5
 #+end_src
 
 ** PEG and LPEG
