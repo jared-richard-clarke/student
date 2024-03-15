@@ -343,7 +343,7 @@ listed in order of decreasing precedence.
 
 #+begin_src lua
   reverse = re.compile[[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]]
-  reverse:match("1234567") --> "7654321"
+  text = reverse:match("1234567") --> "7654321"
 #+end_src
 
 *** CSV Decoder
@@ -370,7 +370,7 @@ listed in order of decreasing precedence.
              / ("mul" args)   -> "%1 * %2"
   ]]
 
-  pattern:match("add(mul(a, b), apply(f, x))") --> "a * b + f(x)"
+  text = pattern:match("add(mul(a, b), apply(f, x))") --> "a * b + f(x)"
 #+end_src
 
 ** The Parsing Machine
