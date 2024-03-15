@@ -783,11 +783,11 @@ Examples as they are actually output in the ~lpeg~ debugger.
 #+begin_src lua
   -- === LPEG ===
 
-  names = re.compile[=[
+  names = re.compile[[
     list   <- {| (name spaces)* |}
     name   <- { [a-z][a-z]* }
     spaces <- %s*
-  ]=]
+  ]]
 
   -- === Match ===
 
