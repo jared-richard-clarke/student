@@ -740,6 +740,44 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 
 Examples as they are actually output in the ~lpeg~ debugger.
 
+*** Integer String
+
+#+begin_src lua
+  -- === LPEG ===
+
+  Pattern = lpeg.P
+  Range   = lpeg.R
+  Capture = lpeg.C
+
+  Integer = Capture(Pattern("-") ^ -1 * Range("09") ^ 1)
+
+  -- === Match ===
+
+  seven = Integer:match("-7") --> "-7"
+
+  -- === AST ===
+  --
+  -- capture kind: 'simple'  key: 0
+  --   sequence
+  --     choice
+  --       char '-'
+  --       true
+  --     sequence
+  --       set(06-2) [(30-39)]
+  --       repeat
+  --         set(06-2) [(30-39)]
+
+  -- === VM Instructions ===
+  --
+  -- 00: opencapture simple (idx = 0)
+  -- 01: testchar '-' (2d)-> 4
+  -- 03: any
+  -- 04: set (30-1) [(30-39)]
+  -- 06: span (30-1) [(30-39)]
+  -- 08: closecapture
+  -- 09: end
+#+end_src
+
 *** Names List
 
 #+begin_src lua
