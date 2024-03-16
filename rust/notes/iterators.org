@@ -9,7 +9,7 @@
 
 ** Iterator Core
 
-- iterator :: A stateful cursor into a collection.
+- iterator :: A stateful cursor into a collection, built via a series of combinators.
 
 #+begin_quote
   "External iterators integrated perfectly with Rust's ownership and borrowing
@@ -22,8 +22,8 @@
    because you need to define the state machine that will be used for iteration...
 
    This pattern of building single-object state machines out of smaller components,
-   whether applied to iterators or futures, is a key part of how Rust works. It falls
-   out of the language almost naturally."
+   whether applied to iterators or futures, is a key part of how Rust works.
+   It falls out of the language almost naturally."
 
    — *Why Async Rust*, srrrs
 #+end_quote
