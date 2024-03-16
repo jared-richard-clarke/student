@@ -5,10 +5,28 @@
 | source                      | author        |
 |-----------------------------+---------------|
 | *The Rust Standard Library* | rust-lang.org |
+| *Why Async Rust?*           | srrrse        |
 
 ** Iterator Core
 
 - iterator :: A stateful cursor into a collection.
+
+#+begin_quote
+  "External iterators integrated perfectly with Rust's ownership and borrowing
+   system because they essentially compile to a struct which holds the state of
+   iteration inside of itself, and which can therefore contain references to
+   data structures being iterated over just like any other struct. And thanks
+   to monomorphization, a complex iterator built by assembling multiple
+   combinators also compiled into a single struct, making it transparent to the
+   optimizer. The only problem was that they were harder to write by hand,
+   because you need to define the state machine that will be used for iteration...
+
+   This pattern of building single-object state machines out of smaller components,
+   whether applied to iterators or futures, is a key part of how Rust works. It falls
+   out of the language almost naturally."
+
+   — *Why Async Rust*, srrrs
+#+end_quote
 
 #+begin_src rust
   trait Iterator {
