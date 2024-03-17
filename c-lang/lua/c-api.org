@@ -208,8 +208,6 @@ An implementation of the map function using Lua's C API.
 
 ** Lua Uppercase Function
 
-An implementation of an uppercasing function using Lua's C API.
-
 #+begin_src c
   static int lua_uppercase (lua_State *L) {
     size_t l;
@@ -226,7 +224,7 @@ An implementation of an uppercasing function using Lua's C API.
     // For each character in the string, uppercase that character,
     // and then push the result onto the buffer.
     for (i = 0; i < l; i += 1) {
-      luaL_putchar(&b, toupper((unsigned char)(s[i])));
+      luaL_addchar(&b, toupper((unsigned char)(s[i])));
     }
 
     // Flush buffer. Leave resulting string on the stack.
@@ -234,4 +232,19 @@ An implementation of an uppercasing function using Lua's C API.
 
     return 1;
   }
+#+end_src
+
+Lua's generic buffer implementation.
+
+#+begin_src c
+  struct luaL_Buffer {
+    char *b;      // Buffer address
+    size_t size;  // Buffer size
+    size_t n;     // Number of characters in buffer
+    lua_State *L;
+    union {
+      LUAI_MAXALIGN;            // Ensure maximum alignment for buffer
+      char b[LUAL_BUFFERSIZE];  // Initial buffer
+    } init;
+  };
 #+end_src
