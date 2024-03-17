@@ -16,7 +16,11 @@
 
    A major component in the communication between Lua and C is an omnipresent virtual stack. Almost
    all API calls operate on values on this stack. All data exchange from Lua to C and from C to Lua occurs
-   through this stack. Moreover, we can use the stack to keep intermediate results, too."
+   through this stack. Moreover, we can use the stack to keep intermediate results, too...
+
+   Lua manipulates this stack in a strict LIFO discipline (Last In, First Out). When we call Lua, it
+   changes only the top part of the stack. Our C code has more freedom; specifically, it can inspect
+   any element in the stack and even insert and delete elements at any position."
 
    — *Programming in Lua*, Roberto Ierusalimschy
 #+end_quote
