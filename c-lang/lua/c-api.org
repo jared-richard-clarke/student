@@ -49,26 +49,26 @@ The API has a dedicated push function for each Lua type with a direct representa
     for (i = 1; i <= top; i += 1) {
       int t = lua_type(L, i);
       switch (t) {
-      case LUA_TSTRING: {
-        printf("'%s'", lua_tostring(L, i));
-        break;
-      }
-      case LUA_TBOOLEAN: {
-        printf(lua_toboolean(L, i) ? "true" : "false");
-        break;
-      }
-      case LUA_TNUMBER: {
-        if (lua_isinteger(L, i)) {
-          printf("%lld", lua_tointeger(L, i));
-        } else {
-          printf("%g", lua_tonumber(L, i));
+        case LUA_TSTRING: {
+          printf("'%s'", lua_tostring(L, i));
+          break;
         }
-        break;
-      }
-      default: {
-        printf("%s", lua_typename(L, t));
-        break;
-      }
+        case LUA_TBOOLEAN: {
+          printf(lua_toboolean(L, i) ? "true" : "false");
+          break;
+        }
+        case LUA_TNUMBER: {
+          if (lua_isinteger(L, i)) {
+            printf("%lld", lua_tointeger(L, i));
+          } else {
+            printf("%g", lua_tonumber(L, i));
+          }
+          break;
+        }
+        default: {
+          printf("%s", lua_typename(L, t));
+          break;
+        }
       }
       // Separator
       printf(" ");
