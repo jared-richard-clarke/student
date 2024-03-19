@@ -464,8 +464,6 @@
     Upvalue upvalues[UINT8_COUNT];
     int scopeDepth;
   } Compiler;
-  //< Local Variables compiler-struct
-  //> Methods and Initializers class-compiler-struct
 
   typedef struct ClassCompiler {
     struct ClassCompiler* enclosing;
@@ -481,8 +479,6 @@
   static Chunk* currentChunk() {
     return compilingChunk;
   }
-  ,*/
-  //> Calls and Functions current-chunk
 
   static Chunk* currentChunk() {
     return &current->function->chunk;
