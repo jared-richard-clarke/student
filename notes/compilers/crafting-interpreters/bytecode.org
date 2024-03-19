@@ -1347,12 +1347,6 @@
       declaration();
     }
 
-    //  Compiling Expressions finish-compile < Calls and Functions call-end-compiler
-    //  endCompiler();
-    //
-    // Compiling Expressions return-had-error < Calls and Functions call-end-compiler
-    // return !parser.hadError;
-
     ObjFunction* function = endCompiler();
     return parser.hadError ? NULL : function;
   }
