@@ -40,6 +40,14 @@ The API has a dedicated push function for each Lua type with a direct representa
 
 *** Querying Elements
 
+#+begin_quote
+  "To refer to elements on the stack, the API uses indices. The first element pushed on the stack
+   has index 1, the next one has index 2, and so on. We can also access elements using the top of
+   the stack as our reference, with negative indices."
+
+   — *Programming in Lua*, Roberto Ierusalimschy
+#+end_quote
+
 #+begin_src c
   static void dump_stack (lua_State *L) {
     int i;
@@ -81,7 +89,7 @@ The API has a dedicated push function for each Lua type with a direct representa
 *** Generic Stack Manipulation
 
 #+begin_src c
-  // Returns the number of elements on the stack.
+  // Returns the number of elements on the stack, which is also the top element's index.
   int  lua_gettop    (lua_State *L);
   // Sets the number of elements on the stack. lua_settop(L, 0) empties the stack.
   void lua_settop    (lua_State *L, int index);
@@ -117,6 +125,42 @@ The API has a dedicated push function for each Lua type with a direct representa
 | ~lua_remove(L, -3);~              | [true, 10, nil, "hello", nil]       |
 | ~lua_settop(L, -5);~              | [true]                              |
 | ~lua_close(L);~                   |                                     |
+
+** Calling a Lua Function from C
+
+#+begin_src c
+  // === Lua Function ===
+
+  // function f (x, y)
+  //   return (x^2 * math.sin(y)) / (1 - x)
+  // end
+
+  // === Call from C ===
+
+  double f (lua_State *L, double x, double y) {
+    int isnum;
+    double z;
+
+    // Push function and arguments.
+    lua_getglobal(L, "f");
+    lua_pushnumber(L, x);
+    lua_pushnumber(L, y);
+
+    // Call the function (2 arguments, 1 result).
+    if (lua_pcall(L, 2, 1, 0) != LUA_OK) {
+      error(L, "error running function 'f': %s", lua_tostring(L, -1));
+    }
+
+    // Retrieve result.
+    z = lua_tonumber(L, -1, &isnum);
+    if (!isnum) {
+      error(L, "function 'f' should return a number");
+    }
+    // Drop returned value.
+    lua_pop(L, 1);
+    return z;
+  }
+#+end_src
 
 ** Lua Standalone Interpreter
 
@@ -220,8 +264,6 @@ is an interface that feeds files and strings from the user to the Lua library.
 
 ** Lua Map Function
 
-An implementation of the map function using Lua's C API.
-
 #+begin_src c
   int lua_map (lua_State *L) {
     int i, n;
@@ -233,26 +275,55 @@ An implementation of the map function using Lua's C API.
     luaL_checktype(L, 2, LUA_TFUNCTION);
 
     // Get size of table
-    n = luaL_getn(L, 1);
+    n = luaL_len(L, 1);
 
     for (i = 1; i <= n; i += 1) {
       // Push f
       lua_pushvalue(L, 2);
       // Push t[i]
-      lua_rawgeti(L, 1, i);
+      lua_geti(L, 1, i);
       // Call f(t[i])
       lua_call(L, 1, 1);
       // t[i] = result
-      lua_rawseti(L, 1, i);
+      lua_seti(L, 1, i);
     }
 
     return 0;
   }
 #+end_src
 
-** Lua Uppercase Function
+** Lua String Functions
 
 #+begin_src c
+  // Split string.
+  static int lua_split (lua_State *L) {
+    // subject
+    const char *s = luaL_checkstring(L, 1);
+    // separator
+    const char *sep = luaL_checkstring(L, 2);
+    const char *e;
+    int i = 1;
+
+    // Result table
+    lua_newtable(L);
+
+    // Repeat for each separator.
+    while ((e = strchr(s, *sep)) != NULL) {
+      // Push substring.
+      lua_pushlstring(L, s, e - s);
+      // Insert string in table.
+      lua_rawseti(L, -2, i++);
+      // Skip separator
+      s = e + 1;
+    }
+    // Insert last substring.
+    lua_pushstring(L, s);
+    lua_rawseti(L, -2, i);
+
+    return 1;
+  }
+
+  // Uppercase a string, using a buffer.
   static int lua_uppercase (lua_State *L) {
     size_t l;
     size_t i;
@@ -260,19 +331,18 @@ An implementation of the map function using Lua's C API.
     luaL_Buffer b;
 
     // Ensure argument is a string.
-    const char *s = luaL_checklstr(L, 1, &l);
+    const char *s = luaL_checklstring(L, 1, &l);
 
     // Initialize buffer.
-    luaL_buffinit(L, &b);
+    char *p = luaL_buffinitsize(L, &b, l);
 
-    // For each character in the string, uppercase that character,
-    // and then push the result onto the buffer.
+    // For each character in the buffer, uppercase that character.
     for (i = 0; i < l; i += 1) {
-      luaL_addchar(&b, toupper((unsigned char)(s[i])));
+      p[i] = toupper(uchar(s[i]));
     }
 
     // Flush buffer. Leave resulting string on the stack.
-    luaL_pushresult(&b);
+    luaL_pushresultsize(&b, l);
 
     return 1;
   }
