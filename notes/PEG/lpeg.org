@@ -107,25 +107,6 @@ to the matched string and the capture type.
 
 ** ~lpeg~ Parsing Examples
 
-*** Adding Numbers
-
-#+begin_src lua
-  lpeg = require("lpeg")
-
-  Range = lpeg.R
-
-  -- Matches a numeral and captures its numerical value.
-  number = Range("09") ^ 1 / tonumber
-
-  -- Auxiliary function to add two numbers.
-  function add(accum, value) return accum + value end
-
-  -- Matches a list of numbers, adding their values.
-  sum = number * ("," * number % add) ^ 0
-
-  total = sum:match("1, 2, 3, 4, 5, 6, 7, 8, 9, 10") --> 55
-#+end_src
-
 *** Split Function
 
 #+begin_src lua
