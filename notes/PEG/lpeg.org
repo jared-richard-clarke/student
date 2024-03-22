@@ -350,7 +350,7 @@ listed in order of decreasing precedence.
 
 #+begin_src lua
   record = re.compile[[
-      record  <- {| field ("." field)* |} (%nl / !.)
+      record  <- {| field ("," field)* |} (%nl / !.)
       field   <- escaped / content
       content <- { [^,"%nl]* }
       escaped <- '"' {~ ([^"] / '""' -> '"')* ~} '"'
