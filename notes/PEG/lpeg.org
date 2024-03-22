@@ -740,159 +740,207 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 
 Examples as they are actually output in the ~lpeg~ debugger.
 
-*** Integer String
+*** String to Number
 
 #+begin_src lua
   -- === LPEG ===
 
-  Pattern = lpeg.P
-  Range   = lpeg.R
-  Capture = lpeg.C
-
-  Integer = Capture(Pattern("-") ^ -1 * Range("09") ^ 1)
-
-  -- === Match ===
-
-  seven = Integer:match("-7") --> "-7"
-
-  -- === AST ===
-  --
-  -- capture kind: 'simple'  key: 0
-  --   sequence
-  --     choice
-  --       char '-'
-  --       true
-  --     sequence
-  --       set(06-2) [(30-39)]
-  --       repeat
-  --         set(06-2) [(30-39)]
-
-  -- === VM Instructions ===
-  --
-  -- 00: opencapture simple (idx = 0)
-  -- 01: testchar '-' (2d)-> 4
-  -- 03: any
-  -- 04: set (30-1) [(30-39)]
-  -- 06: span (30-1) [(30-39)]
-  -- 08: closecapture
-  -- 09: end
-#+end_src
-
-*** Names List
-
-#+begin_src lua
-  -- === LPEG ===
-
-  names = re.compile[[
-    list   <- {| (name spaces)* |}
-    name   <- { [a-z][a-z]* }
-    spaces <- %s*
-  ]]
+  number = re.compile([[
+      Real       <- (Integer Fractional Exponent) -> convert !.
+      Integer    <- Sign Whole
+      Whole      <- "0" / ([1-9] [0-9]*)
+      Fractional <- ("." [0-9]+)?
+      Exponent   <- ([eE] Sign [0-9]+)?
+      Sign       <- ("+" / "-")?
+  ]], { convert = tonumber })
 
   -- === Match ===
 
-  list = names:match("bob spike joe") --> { "bob", "spike", "joe" }
+  n = number:match("-1.2e3") + 1 --> -1199
 
   -- === AST ===
   --
-  -- [1 = name  2 = spaces  3 = list]
+  -- [
+  --   1 = Integer  2 = Fractional  3 = Exponent  4 = function
+  --   5 = Sign     6 = Whole       7 = Sign      8 = Real
+  -- ]
   --
-  -- grammar 3
-  --   rule key: 3
+  -- grammar 6
+  --   rule key: 8
   --     xinfo n: 0
-  --       capture kind: 'table'  key: 0
-  --         repeat
+  --       sequence
+  --         capture kind: 'function'  key: 4
   --           sequence
-  --             call key: 1  (rule: 2)
-  --             call key: 2  (rule: 1)
-  --   rule key: 2
+  --              call key: 1  (rule: 2)
+  --              sequence
+  --               call key: 2  (rule: 3)
+  --               call key: 3  (rule: 4)
+  --         not
+  --           any
+  --   rule key: 7
   --     xinfo n: 1
-  --       repeat
-  --         set(01-4) [(09-0d)(20)]
+  --       choice
+  --         set(05-1) [(2b)(2d)]
+  --         true
   --   rule key: 1
   --     xinfo n: 2
-  --       capture kind: 'simple'  key: 0
-  --         sequence
-  --           set(0c-4) [(61-7a)]
-  --           repeat
-  --             set(0c-4) [(61-7a)]
-
-  -- === VM Instructions ===
-  --
-  -- 00: call -> 4                    <- rule: list
-  -- 02: end
-  -- 03: --
-  -- 04: opencapture table (idx = 0)
-  -- 05: testset (60-1) [(61-7a)]-> 14
-  -- 08: call -> 19                   <- rule: name
-  -- 10: call -> 16                   <- rule: spaces
-  -- 12: jump -> 5
-  -- 14: closecapture
-  -- 15: return
-  -- 16: span (08-1) [(09-0d)(20)]
-  -- 18: return
-  -- 19: opencapture simple (idx = 0)
-  -- 20: set (60-1) [(61-7a)]
-  -- 22: span (60-1) [(61-7a)]
-  -- 24: closecapture
-  -- 25: return
-  -- 26: end
-#+end_src
-
-*** Adding Numbers
-
-#+begin_src lua
-  -- === LPEG ===
-
-  Range = lpeg.R
-
-  number = Range("09") ^ 1 / tonumber
-
-  add = function (accum, value) return accum + value end
-
-  sum = number * ("," * number % add) ^ 0
-
-  -- === Match ===
-
-  total = sum:match("1,2,3,4,5,6,7,8,9,10") --> 55
-
-  -- === AST ===
-  --
-  -- [1 = function  2 = function  3 = function]
-  --
-  -- sequence
-  --   capture kind: 'function'  key: 1
-  --     sequence
-  --       set(06-2) [(30-39)]
-  --       repeat
-  --         set(06-2) [(30-39)]
-  --   repeat
-  --     capture kind: 'accumulator'  key: 3
   --       sequence
-  --         char ','
-  --         capture kind: 'function'  key: 2
+  --         call key: 5  (rule: 1)
+  --         call key: 6  (rule: 5)
+  --   rule key: 2
+  --     xinfo n: 3
+  --       choice
+  --         sequence
+  --           char '.'
   --           sequence
   --             set(06-2) [(30-39)]
   --             repeat
   --               set(06-2) [(30-39)]
+  --         true
+  --   rule key: 3
+  --     xinfo n: 4
+  --       choice
+  --         seqence
+  --           set(08-5) [(45)(65)]
+  --           sequence
+  --             call key: 7  (rule: 1)
+  --             sequence
+  --               set(06-2) [(30-39)]
+  --               repeat
+  --                 set(06-2) [(30-39)]
+  --         true
+  --   rule key: 6
+  --     xinfo n: 5
+  --       choice
+  --         char '0'
+  --         sequence
+  --           set(06-2) [(31-39)]
+  --           repeat
+  --             set(06-2) [(30-39)]
 
   -- === VM Instructions ===
   --
-  -- 00: opencapture function (idx = 1)
-  -- 01: set (30-1) [(30-39)]
-  -- 03: span (30-1) [(30-39)]
-  -- 05: closecapture
-  -- 06: testchar ',' (2c)-> 21
-  -- 08: choice -> 21
-  -- 10: opencapture accumulator (idx = 3)
-  -- 11: char ',' (2c)
-  -- 12: opencapture function (idx = 2)
-  -- 13: set (30-1) [(30-39)]
-  -- 15: span (30-1) [(30-39)]
-  -- 17: closecapture
-  -- 18: closecapture
-  -- 19: partial_commit -> 10
-  -- 21: end
+  -- 00: call -> 4
+  -- 02: end
+  -- 03: --
+  -- 04: opencapture function (idx = 4)
+  -- 05: call -> 21
+  -- 07: call -> 26
+  -- 09: call -> 38
+  -- 11: closecapture
+  -- 12: testany -> 15
+  -- 14: fail
+  -- 15: return
+  -- 16: testset (28-1) [(2b)(2d)]-> 20
+  -- 19: any
+  -- 20: return
+  -- 21: call -> 16
+  -- 23: jump -> 54
+  -- 25: return
+  -- 26: testchar '.' (2e)-> 37
+  -- 28: choice -> 37
+  -- 30: any
+  -- 31: set (30-1) [(30-39)]
+  -- 33: span (30-1) [(30-39)]
+  -- 35: commit -> 37
+  -- 37: return
+  -- 38: testset (40-2) [(45)(65)]-> 53
+  -- 42: choice -> 53
+  -- 44: any
+  -- 45: call -> 16
+  -- 47: set (30-1) [(30-39)]
+  -- 49: span (30-1) [(30-39)]
+  -- 51: commit -> 53
+  -- 53: return
+  -- 54: testchar '0' (30)-> 59
+  -- 56: any
+  -- 57: return
+  -- 58: --
+  -- 59: set (30-1) [(31-39)]
+  -- 61: span (30-1) [(30-39)]
+  -- 63: return
+  -- 64: end
+#+end_src
+
+*** Add Numbers List
+
+#+begin_src lua
+  -- === LPEG ===
+
+  Set      = lpeg.S
+  Range    = lpeg.R
+
+  spaces = Set(" \t\r\n") ^ 0
+  trim   = function (x) return spaces * x * spaces end
+
+  number = trim(Range("09") ^ 1) / tonumber
+
+  add = function (accum, value) return accum + value end
+
+  sum = "[" * number * ("," * number % add) ^ 0 * "]"
+
+  -- === Match ===
+
+  total = sum:match("[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]") --> 55
+
+  -- === AST ===
+  --
+  -- [ 1 = function  2 = function  3 = function ]
+  --
+  -- sequence
+  --   sequence
+  --     sequence
+  --       char '['
+  --       capture kind: 'function'  key: 1
+  --         sequence
+  --           sequence
+  --             repeat
+  --               set(01-4) [(09-0a)(0d)(20)]
+  --             sequence
+  --               set(06-2) [(30-39)]
+  --               repeat
+  --                 set(06-2) [(30-39)]
+  --           repeat
+  --             set(01-4) [(09-0a)(0d)(20)]
+  --     repeat
+  --       capture kind: 'accumulator'  key: 3
+  --         sequence
+  --           char ','
+  --          capture kind: 'function'  key: 2
+  --            sequence
+  --               sequence
+  --                 repeat
+  --                   set(01-4) [(09-0a)(0d)(20)]
+  --                 sequence
+  --                   set(06-2) [(30-39)]
+  --                   repeat
+  --                     set(06-2) [(30-39)]
+  --               repeat
+  --                 set(01-4) [(09-0a)(0d)(20)]
+  --   char ']'
+
+  -- === VM Instructions ===
+  --
+  -- 00: char '[' (5b)
+  -- 01: opencapture function (idx = 1)
+  -- 02: span (08-1) [(09-0a)(0d)(20)]
+  -- 04: set (30-1) [(30-39)]
+  -- 06: span (30-1) [(30-39)]
+  -- 08: span (08-1) [(09-0a)(0d)(20)]
+  -- 10: closecapture
+  -- 11: testchar ',' (2c)-> 28
+  -- 13: opencapture accumulator (idx = 3)
+  -- 14: any
+  -- 15: opencapture function (idx = 2)
+  -- 16: span (08-1) [(09-0a)(0d)(20)]
+  -- 18: set (30-1) [(30-39)]
+  -- 20: span (30-1) [(30-39)]
+  -- 22: span (08-1) [(09-0a)(0d)(20)]
+  -- 24: closecapture
+  -- 25: closecapture
+  -- 26: jump -> 11
+  -- 28: char ']' (5d)
+  -- 29: end
 #+end_src
 
 *** Balanced Parentheses
