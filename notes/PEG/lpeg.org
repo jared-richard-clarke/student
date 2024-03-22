@@ -518,7 +518,7 @@ require traversing only one choice-commit pair.
   -- L1: Char "b"     (p+1, i+1, e, c)
   -- L2: ...
 
-  --- === LPEG ===
+  -- === LPEG ===
   (lpeg.P("a") + lpeg.P("b")) + lpeg.P("c")
 
   -- === Virtual Machine ===
