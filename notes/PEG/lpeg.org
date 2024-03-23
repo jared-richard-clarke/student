@@ -716,7 +716,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
 
 *** String to Number
 
-#+begin_src lua
+#+begin_src
   -- === LPEG ===
 
   number = re.compile([[
@@ -740,28 +740,28 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- ]
   --
   -- grammar 6
-  --   rule key: 8
+  --   rule key: 8 -- Real: body
   --     xinfo n: 0
   --       sequence
-  --         capture kind: 'function'  key: 4
+  --         capture kind: 'function'  key: 4 -- convert
   --           sequence
-  --              call key: 1  (rule: 2)
+  --              call key: 1  (rule: 2) -- Integer: call
   --              sequence
-  --               call key: 2  (rule: 3)
-  --               call key: 3  (rule: 4)
+  --               call key: 2  (rule: 3) -- Fractional: call
+  --               call key: 3  (rule: 4) -- Exponent: call
   --         not
   --           any
-  --   rule key: 7
+  --   rule key: 7 -- Sign: body
   --     xinfo n: 1
   --       choice
   --         set(05-1) [(2b)(2d)]
   --         true
-  --   rule key: 1
+  --   rule key: 1 -- Integer: body
   --     xinfo n: 2
   --       sequence
-  --         call key: 5  (rule: 1)
-  --         call key: 6  (rule: 5)
-  --   rule key: 2
+  --         call key: 5  (rule: 1) -- Sign: call
+  --         call key: 6  (rule: 5) -- Whole: call
+  --   rule key: 2 -- Fractional
   --     xinfo n: 3
   --       choice
   --         sequence
@@ -771,19 +771,19 @@ Examples as they are actually output in the ~lpeg~ debugger.
   --             repeat
   --               set(06-2) [(30-39)]
   --         true
-  --   rule key: 3
+  --   rule key: 3 -- Exponent: body
   --     xinfo n: 4
   --       choice
   --         seqence
   --           set(08-5) [(45)(65)]
   --           sequence
-  --             call key: 7  (rule: 1)
+  --             call key: 7  (rule: 1) -- Sign: call
   --             sequence
   --               set(06-2) [(30-39)]
   --               repeat
   --                 set(06-2) [(30-39)]
   --         true
-  --   rule key: 6
+  --   rule key: 6 -- Whole: body
   --     xinfo n: 5
   --       choice
   --         char '0'
@@ -794,39 +794,39 @@ Examples as they are actually output in the ~lpeg~ debugger.
 
   -- === VM Instructions ===
   --
-  -- 00: call -> 4
+  -- 00: call -> 4 -- Real: call
   -- 02: end
   -- 03: --
-  -- 04: opencapture function (idx = 4)
-  -- 05: call -> 21
-  -- 07: call -> 26
-  -- 09: call -> 38
+  -- 04: opencapture function (idx = 4) -- Real: body
+  -- 05: call -> 21 -- Integer: call
+  -- 07: call -> 26 -- Exponent: call
+  -- 09: call -> 38 -- Fractional: call
   -- 11: closecapture
   -- 12: testany -> 15
   -- 14: fail
   -- 15: return
-  -- 16: testset (28-1) [(2b)(2d)]-> 20
+  -- 16: testset (28-1) [(2b)(2d)]-> 20 -- Sign: body
   -- 19: any
   -- 20: return
-  -- 21: call -> 16
+  -- 21: call -> 16 -- Integer: body, Sign: call
   -- 23: jump -> 54
   -- 25: return
-  -- 26: testchar '.' (2e)-> 37
+  -- 26: testchar '.' (2e)-> 37 -- Exponent: body
   -- 28: choice -> 37
   -- 30: any
   -- 31: set (30-1) [(30-39)]
   -- 33: span (30-1) [(30-39)]
   -- 35: commit -> 37
   -- 37: return
-  -- 38: testset (40-2) [(45)(65)]-> 53
+  -- 38: testset (40-2) [(45)(65)]-> 53 -- Fractional: body
   -- 42: choice -> 53
   -- 44: any
-  -- 45: call -> 16
+  -- 45: call -> 16 -- Sign: call
   -- 47: set (30-1) [(30-39)]
   -- 49: span (30-1) [(30-39)]
   -- 51: commit -> 53
   -- 53: return
-  -- 54: testchar '0' (30)-> 59
+  -- 54: testchar '0' (30)-> 59 -- Whole: body
   -- 56: any
   -- 57: return
   -- 58: --
@@ -930,10 +930,10 @@ Examples as they are actually output in the ~lpeg~ debugger.
 
   -- === AST ===
   --
-  -- [1 = Balanced]
+  -- [ 1 = Balanced ]
   --
   -- grammar 1
-  --   rule key: 1
+  --   rule key: 1 -- Balanced: body
   --     xinfo n: 0
   --       sequence
   --         char '('
@@ -941,20 +941,20 @@ Examples as they are actually output in the ~lpeg~ debugger.
   --           repeat
   --             choice
   --               set(05-1) [(00-27)(2a-ff)]
-  --               call key: 1  (rule: 0)
+  --               call key: 1  (rule: 0) -- Balanced: call
   --           char ')'
 
   -- === VM Instructions ===
   --
-  -- 00: call -> 4
+  -- 00: call -> 4 -- Balanced: call
   -- 02: end
   -- 03: --
-  -- 04: char '(' (28)
+  -- 04: char '(' (28) -- Balanced: body
   -- 05: testset (28-1) [(00-28)(2a-ff)]-> 18
   -- 08: testset (28-1) [(00-27)(2a-ff)]-> 14
   -- 11: any
   -- 12: jump -> 5
-  -- 14: call -> 4
+  -- 14: call -> 4 -- Balanced: call
   -- 16: jump -> 5
   -- 18: char ')' (29)
   -- 19: return
@@ -977,7 +977,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- [ 1 = ""  2 = R  3 = "%2%1" ]
   --
   -- grammar 1
-  --   rule key: 2
+  --   rule key: 2 -- R: body
   --     xinfo n: 0
   --       choice
   --         capture kind: 'string'  key: 1
@@ -987,14 +987,14 @@ Examples as they are actually output in the ~lpeg~ debugger.
   --           sequence
   --             capture kind: 'simple'  key: 0
   --               any
-  --             call key: 2  (rule: 0)
+  --             call key: 2  (rule: 0) -- R: call
 
   -- === VM Instructions ===
   --
-  -- 00: call -> 4
+  -- 00: call -> 4 -- R: call
   -- 02: end
   -- 03: --
-  -- 04: choice -> 12
+  -- 04: choice -> 12 -- R: body
   -- 06: testany -> 9
   -- 08: fail
   -- 09: fullcapture string (size = 0)  (idx = 1)
@@ -1002,7 +1002,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- 12: opencapture string (idx = 3)
   -- 13: any
   -- 14: fullcapture simple (size = 1)  (idx = 0)
-  -- 15: call -> 4
+  -- 15: call -> 4 -- R: call
   -- 17: closecapture
   -- 18: return
   -- 19: end
