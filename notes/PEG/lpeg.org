@@ -966,7 +966,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
 #+begin_src lua
   -- === LPEG ===
 
-  reverse = re.compile[=[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]=]
+  reverse = re.compile[[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]]
 
   -- === Match ===
 
