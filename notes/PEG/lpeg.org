@@ -716,7 +716,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
 
 *** String to Number
 
-#+begin_src
+#+begin_src lua
   -- === LPEG ===
 
   number = re.compile([[
