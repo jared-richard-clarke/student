@@ -30,7 +30,7 @@ first-class functions allow exportation.
        end
 
        function Module.magnitude (v)
-         math.sqrt(v.x ^ 2 + v.y ^ 2)
+         return math.sqrt(v.x ^ 2 + v.y ^ 2)
        end
 
        return Module
@@ -65,7 +65,7 @@ called with different environments.
 
        -- _ENV.magnitude
        function magnitude (v)
-         return sqrt(v.x ^ 2 + v.y ^ 2)
+         return math.sqrt(v.x ^ 2 + v.y ^ 2)
        end
 
        return _ENV
