@@ -55,7 +55,7 @@ called with different environments.
 
        -- _ENV.new
        function new (x, y)
-         return {x = x, y = y}
+         return { x = x, y = y }
        end
 
        -- _ENV.add
