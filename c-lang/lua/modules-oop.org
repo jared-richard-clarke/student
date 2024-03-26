@@ -65,7 +65,7 @@ called with different environments.
 
        -- _ENV.magnitude
        function magnitude (v)
-         return math.sqrt(v.x ^ 2 + v.y ^ 2)
+         return sqrt(v.x ^ 2 + v.y ^ 2)
        end
 
        return _ENV
