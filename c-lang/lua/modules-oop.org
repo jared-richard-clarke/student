@@ -45,7 +45,7 @@ first-class functions allow exportation.
 
 The anonymous function of each chunk is compiled in the scope of the local variable
 ~_ENV~, so that ~add~ compiles to ~_ENV.add~. By default, ~_ENV~ is loaded with a
-fixed table called the global environment. Changine ~_ENV~ allows functions to be
+fixed table called the global environment. Changing ~_ENV~ allows functions to be
 called with different environments.
 
 #+begin_src lua
