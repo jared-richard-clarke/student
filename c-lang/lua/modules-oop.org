@@ -41,7 +41,7 @@ first-class functions allow exportation.
   -- five = vec.magnitude(vec.new(3, 4))
 #+end_src
 
-*** ~_ENV~ Table
+*** The ~_ENV~ Table
 
 The anonymous function of each chunk is compiled in the scope of the local variable
 ~_ENV~, so that ~add~ compiles to ~_ENV.add~. By default, ~_ENV~ is loaded with a
