@@ -1,0 +1,159 @@
+* Modules and Object-Oriented Programming
+
+** Sources
+
+| source                        | author                                                                 |
+|-------------------------------+------------------------------------------------------------------------|
+| *A Look at the Design of Lua* | Roberto Ierusalimschy, Luiz Henrique De Figueiredo, and Waldemar Celes |
+
+** Implementing Modules
+
+Lua loads any chunk as the body of an enclosing anonymous function. A module
+is a chunk — an anonymous function — that creates and returns a table.
+The table provides the namespace, lexical scoping provides encapsulation, and
+first-class functions allow exportation.
+
+*** Tables
+
+#+begin_src lua
+  -- === File: "chunk.lua" ===
+
+  -- function ()
+       local Module = {}
+
+       function Module.new (x, y)
+         return { x = x, y = y }
+       end
+
+       function Module.add (v1, v2)
+         return Module.new(v1.x + v2.x, v1.y + v2.y)
+       end
+
+       function Module.magnitude (v)
+         math.sqrt(v.x ^ 2 + v.y ^ 2)
+       end
+
+       return Module
+  -- end
+
+  -- local vec = require("chunk")
+  --
+  -- five = vec.magnitude(vec.new(3, 4))
+#+end_src
+
+*** ~_ENV~ Table
+
+The anonymous function of each chunk is compiled in the scope of the local variable
+~_ENV~, so that ~add~ compiles to ~_ENV.add~. By default, ~_ENV~ is loaded with a
+fixed table called the global environment. Changine ~_ENV~ allows functions to be
+called with different environments.
+
+#+begin_src lua
+  -- function ()
+       local sqrt = math.sqrt
+       local _ENV = {}
+
+       -- _ENV.new
+       function new (x, y)
+         return {x = x, y = y}
+       end
+
+       -- _ENV.add
+       function add (v1, v2)
+         return new(v1.x + v2.x, v1.y + v2.y)
+       end
+
+       -- _ENV.magnitude
+       function magnitude (v)
+         return sqrt(v.x ^ 2 + v.y ^ 2)
+       end
+
+       return _ENV
+  -- end
+#+end_src
+
+** Implementing Object-Oriented Programming
+
+*** Meta Tables
+
+#+begin_src lua
+  local meta = {}
+
+  function vector (x, y)
+    local v = { x = x, y = y }
+    setmetatable(v, meta)
+    return v
+  end
+
+  -- Operator overloading through metamethods.
+  function meta.__add (v1, v2)
+    return vector(v1.x + v2.x, v1.y + v2.y)
+  end
+
+  A = vector(1, 2)
+  B = vector(2, 2)
+  C = A + B --> { x = 3, y = 4 }
+#+end_src
+
+*** Protoypes
+
+#+begin_src lua
+  -- Prototype
+  local Account = { balance = 0 }
+
+  -- Delegating the indexing operator "[]"
+  local meta = { __index = Account }
+
+  function Account:new ()
+    local object = {}
+    setmetatable(object, meta)
+    return object
+  end
+
+  -- Translates: object:deposit(amount) -> object:deposit(self, amount)
+  --             where self = object
+  function Account:deposit (amount)
+    self.balance = self.balance + amount
+  end
+
+  function Account:balance ()
+    return self.balance
+  end
+
+  return Account
+
+  -- Account = require("Account")
+  --
+  -- account = Account:new()
+  -- account:deposit(100)
+  -- balance = account:balance()
+#+end_src
+
+*** Privacy
+
+#+begin_src lua
+  local balance = {}
+
+  -- Set keys to weak for garbage collection.
+  setmetatable(balance, { __mode = "k" })
+
+  local Account = {}
+  local meta = { __index = Account }
+
+  function Account:new ()
+    local object = {}
+    setmetatable(object, meta)
+    balance[object] = 0
+    return object
+  end
+
+  function Account:deposit (amount)
+    balance[self] = balance[self] + amount
+  end
+
+  function Account:balance ()
+    return balance[self]
+  end
+
+  return Account
+#+end_src
