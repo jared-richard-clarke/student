@@ -199,7 +199,7 @@ function factorial (x)
     if x < 2 then
         return 1
     else
-        return n * factorial(x - 1)
+        return x * factorial(x - 1)
     end
 end
 
