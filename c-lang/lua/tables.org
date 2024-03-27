@@ -92,6 +92,15 @@ called with different environments.
   A = vector(1, 2)
   B = vector(2, 2)
   C = A + B --> { x = 3, y = 4 }
+
+  -- === Alternative Constructor ===
+  --
+  -- function vector (v)
+  --     setmetatable(v, meta)
+  --     return v
+  -- end
+  --
+  -- A = vector{ x = 1, y = 2 }
 #+end_src
 
 *** Protoypes
