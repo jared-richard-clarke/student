@@ -109,7 +109,7 @@ called with different environments.
     return object
   end
 
-  -- Translates: object:deposit(amount) -> object:deposit(self, amount)
+  -- Translates: object:deposit(amount) -> deposit(self, amount)
   --             where self = object
   function Account:deposit (amount)
     self.balance = self.balance + amount
