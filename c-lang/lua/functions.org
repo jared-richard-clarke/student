@@ -1,0 +1,127 @@
+* Functions
+
+** Sources
+
+| source               | author                |
+|----------------------+-----------------------|
+| *Programming in Lua* | Roberto Ierusalimschy |
+
+** Function Syntax
+
+| syntax                            | translation                         |
+|-----------------------------------+-------------------------------------|
+| ~function f () body end~          | ~f = function () body end~          |
+| ~function a.b.c () body end~      | ~a.b.c = function () body end~      |
+| ~local function f () body end~    | ~local f; f = function () body end~ |
+| ~function object:f (xs) body end~ | ~f = function (self, xs) body end~  |
+
+** Local Functions
+
+When Lua compiles the call ~factorial(n - 1)~ in the function body, the local
+variable ~factorial~ is not yet defined. The call expression looks for the
+~factorial~ definition in the outer environment instead.
+
+#+begin_src lua
+  local function factorial (n)
+      if n < 2 then
+          return 1
+      else
+          return n * factorial(n - 1)
+      end
+  end
+
+  -- expands ->
+
+  local factorial -- The local variable must be defined before it is called.
+  factorial = function (x)
+      if n < 2 then
+          return 1
+      else
+          return x * factorial(x - 1)
+      end
+  end
+#+end_src
+
+** Lexical Scope and Closures
+
+The loop below creates ten anonymous functions within a table, each of them
+closing over a different ~y~ variable while sharing the same ~x~.
+
+#+begin_src lua
+  table = {}
+
+  local x = 7
+
+  for i = 1, 10 do
+      local y = 0
+      table[i] = function () y = y + 1; return x + y end
+  end
+
+  table[1]() --> 8
+  table[1]() --> 9
+  table[2]() --> 8
+#+end_src
+
+** Functions in Tables
+
+#+begin_src lua
+  Library = {}
+
+  Library.add = function (x, y) return x + y end
+  Library.sub = function (x, y) return x - y end
+  Library.mul = function (x, y) return x * y end
+  Library.div = function (x, y) return x / y end
+
+  -- equivalent ->
+
+  Library = {}
+
+  function Library.add (x, y)
+      return x + y
+  end
+  function Library.sub (x, y)
+      return x - y
+  end
+  function Library.mul (x, y)
+      return x * y
+  end
+  function Library.div (x, y)
+      return x / y
+  end
+
+  -- equivalent ->
+
+  Library = {
+      add = function (x, y) return x + y end
+      sub = function (x, y) return x - y end
+      mul = function (x, y) return x * y end
+      div = function (x, y) return x / y end
+  }
+
+  -- Every chunk is compiled within the scope of a local variable
+  -- named "_ENV". Any table used as the value of "_ENV" is called
+  -- an environment.
+
+  local _ENV = {}
+
+  -- _ENV["add"]
+  function add (x, y) return x + y end
+
+  -- _ENV["sub"]
+  function sub (x, y) return x - y end
+#+end_src
+
+** Tail Calls
+
+#+begin_src lua
+  function factorial(x)
+      local function loop(iter, product)
+          if iter < 2 then
+              return product
+          else
+              return loop(iter - 1, iter * product)
+          end
+      end
+      return loop(x, 1)
+  end
+#+end_src
