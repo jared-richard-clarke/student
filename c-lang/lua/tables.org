@@ -53,17 +53,16 @@ called with different environments.
        local sqrt = math.sqrt
        local _ENV = {}
 
-       -- _ENV.new
+       -- _ENV["new"]
        function new (x, y)
          return { x = x, y = y }
        end
-
-       -- _ENV.add
+       -- _ENV["add"]
        function add (v1, v2)
          return new(v1.x + v2.x, v1.y + v2.y)
        end
 
-       -- _ENV.magnitude
+       -- _ENV["magnitude"]
        function magnitude (v)
          return sqrt(v.x ^ 2 + v.y ^ 2)
        end
