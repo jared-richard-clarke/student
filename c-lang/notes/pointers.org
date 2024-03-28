@@ -81,7 +81,7 @@ the code that called them.
 
 ** Pointer Arithmetic
 
-*** Increment/Decrement
+*** Increment / Decrement
 
 #+begin_example
    === Decrement ===
