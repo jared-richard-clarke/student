@@ -132,11 +132,11 @@ Only possible when two pointers have the same data type. Calculates the offset
 between two addresses.
 
 #+begin_example
-  pointer 8 - pointer 4 -> 4 bytes
+  pointer 8 - pointer 4 = 4 bytes
 
   sizeof(integer) = 4 bytes
 
-  4 / sizeof(integer) -> offset 1
+  4 / sizeof(integer) = offset 1
 #+end_example
 
 ** Arrays and Pointers
