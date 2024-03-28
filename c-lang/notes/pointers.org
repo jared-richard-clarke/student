@@ -4,8 +4,9 @@
 
 | source                       | author                             |
 |------------------------------+------------------------------------|
-| libcello.org                 | Daniel Holden                      |
 | *The C Programming Language* | Brian Kernighan and Dennis Ritchie |
+| *libcello.org*               | Daniel Holden                      |
+| *geeksforgeeks.org*          | vishalraina                        |
 
 ** Pointer Examples
 
@@ -19,8 +20,8 @@
       x = (int *)malloc(sizeof(int));
       y = x;
 
-      ,*x = 7;
-      ,*y = 11;
+      *x = 7;
+      *y = 11;
   }
 
   // 1. x  y | 2. x  y | 3. x  y | 4. x  y | 5. x  y
@@ -38,10 +39,10 @@
       x = (int *)malloc(sizeof(int));
       y = (int *)malloc(sizeof(int));
 
-      ,*x = 7;
-      ,*y = 11;
+      *x = 7;
+      *y = 11;
 
-      ,*x = *y;
+      *x = *y;
   }
 
   // 1. x  y | 2. x  y | 3. x  y | 4. x  y | 5. x  y  | 6. x  y
@@ -51,7 +52,8 @@
 
 *** Example #3
 
-C is a *call-by-value* language. Pointers allow functions to change variables within the code that called them.
+C is a *call-by-value* language. Pointers allow functions to change variables within
+the code that called them.
 
 #+begin_src c
   void swap(int *px, int *py)
@@ -59,8 +61,8 @@ C is a *call-by-value* language. Pointers allow functions to change variables wi
     int temp;
 
       temp = *px;
-      ,*px = *py;
-      ,*py = temp;
+      *px = *py;
+      *py = temp;
   }
 
   void main()
@@ -77,16 +79,77 @@ C is a *call-by-value* language. Pointers allow functions to change variables wi
   // py *--+
 #+end_src
 
+** Pointer Arithmetic
+
+*** Increment/Decrement
+
+#+begin_example
+   === Decrement ===
+   pointer-- -> pointer - 1 * sizeof(type)
+
+   === Increment ===
+   pointer++ -> pointer + 1 * sizeof(type)
+
+   === Memory ===
+   -----------------------------------
+  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+   -----------------------------------
+    <---------------^--------------->
+   ptr--           ptr             ptr++
+
+   where sizeof(type) = 4 bytes
+#+end_example
+
+*** Integer Addition and Subtraction
+
+#+begin_example
+   === Add Integer ===
+   pointer + 2 -> pointer + 2 * sizeof(type)
+
+   === Memory ===
+    -----------------------------------
+   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+    -----------------------------------
+     +------------------------------->
+    ptr                          ptr + 2
+
+   === Subtract Integer ===
+   pointer - 2 -> pointer - 2 * sizeof(type)
+
+   === Memory ===
+    -----------------------------------
+   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+    -----------------------------------
+     <-------------------------------+
+    ptr - 2                         ptr
+
+   where sizeof(type) = 4 bytes
+#+end_example
+
+*** Pointer Subtraction
+
+Only possible when two pointers have the same data type. Calculates the offset
+between two addresses.
+
+#+begin_example
+  pointer 4 - pointer 8 -> 4 bytes
+
+  sizeof(integer) = 4 bytes
+
+  4 / sizeof(integer) -> offset 1
+#+end_example
+
 ** Arrays and Pointers
 
-The value of a pointer is not adjusted by the integer amount, but is adjusted by the amount multiplied by the size of
-the type to which the pointer refers in bytes. ~pointer + x~ is equivalent to ~pointer + (x * sizeof(*type))~
+The value of a pointer is not adjusted by the integer amount, but is adjusted by the amount
+multiplied by the size of the type to which the pointer refers in bytes. ~pointer + x~
+is equivalent to ~pointer + x * sizeof(type)~.
 
 #+begin_src c
   // array indexing
   array[i]
   // pointer arithmetic
-  *(array+i)
+  *(array + i)
 #+end_src
 
 ** Strings and Pointers
@@ -111,7 +174,7 @@ the type to which the pointer refers in bytes. ~pointer + x~ is equivalent to ~p
 
 Function pointers can be used to implement a form of polymorphic code.
 
-*** Non-Polymorphic
+*** Non-Polymorphic Code
 
 #+begin_src c
   #include <stdio.h>
@@ -141,7 +204,7 @@ Function pointers can be used to implement a form of polymorphic code.
 
       printf("Enter the value between 0 and 3 : ");
       scanf("%d",&i);
- 
+
       switch(i)
       {
           case 0:  result = add(x, y); break;
@@ -152,7 +215,7 @@ Function pointers can be used to implement a form of polymorphic code.
   }
 #+end_src
 
-*** Polymorphic
+*** Polymorphic Code
 
 #+begin_src c
   #include <stdio.h>
@@ -175,7 +238,7 @@ Function pointers can be used to implement a form of polymorphic code.
   }
 
   // compute is an array of function pointers
-  int (*compute[4])(int x, int y) = {add, sub, mul, div};
+  int (*compute[4])(int x, int y) = { add, sub, mul, div };
 
   int main()
   {
@@ -193,14 +256,14 @@ Function pointers can be used to implement a form of polymorphic code.
 ** Pointer Decay
 
 #+begin_quote
-"In C when you pass an array to a function it decays to a pointer — meaning what you
-actually pass is just a pointer to the first element in the array. This means there
-is no way to know how many elements are in the Array you've been passed.
+  "In C when you pass an array to a function it decays to a pointer — meaning what you
+   actually pass is just a pointer to the first element in the array. This means there
+   is no way to know how many elements are in the Array you've been passed.
 
-The conventional way to deal with this is to also pass in the array size separately
-— or — as is done by C strings, use some special value to represent the end of the array.
-But both of these methods are famously prone to abuse. It is simply too unreliable
-to get programmers (or malicious users) to provide this extra information accurately."
+   The conventional way to deal with this is to also pass in the array size separately
+   — or — as is done by C strings, use some special value to represent the end of the array.
+   But both of these methods are famously prone to abuse. It is simply too unreliable
+   to get programmers (or malicious users) to provide this extra information accurately."
 
-— Daniel Holden
+  — Daniel Holden
 #+end_quote
