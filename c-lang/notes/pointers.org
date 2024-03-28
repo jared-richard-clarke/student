@@ -132,7 +132,7 @@ Only possible when two pointers have the same data type. Calculates the offset
 between two addresses.
 
 #+begin_example
-  pointer 4 - pointer 8 -> 4 bytes
+  pointer 8 - pointer 4 -> 4 bytes
 
   sizeof(integer) = 4 bytes
 
