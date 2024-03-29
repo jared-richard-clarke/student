@@ -154,7 +154,7 @@ to the matched string and the capture type.
   end
 
   -- Grammar
-  Grammar = Pattern{
+  Grammar = Pattern {
     "Expression",
     Expression = Var("Term") * (AddSub * Var("Term") % eval) ^ 0,
     Term       = Var("Factor") * (MulDiv * Var("Factor") % eval) ^ 0,
