@@ -156,9 +156,9 @@ to the matched string and the capture type.
   -- Grammar
   Grammar = Pattern{
     "Expression",
-    Expression = Var("Term") * (AddSub * Var("Term") % eval) ^ 0;
-    Term       = Var("Factor") * (MulDiv * Var("Factor") % eval) ^ 0;
-    Factor     = Number / tonumber + Open * Var("Expression") * Close;
+    Expression = Var("Term") * (AddSub * Var("Term") % eval) ^ 0,
+    Term       = Var("Factor") * (MulDiv * Var("Factor") % eval) ^ 0,
+    Factor     = Number / tonumber + Open * Var("Expression") * Close
   }
 
   total = lpeg.match(Grammar, "3 + 5 * 9 / (1 + 1) - 11") --> 14.5
