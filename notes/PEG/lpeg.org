@@ -774,7 +774,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
   --   rule key: 3 -- Exponent: body
   --     xinfo n: 4
   --       choice
-  --         seqence
+  --         sequence
   --           set(08-5) [(45)(65)]
   --           sequence
   --             call key: 7  (rule: 1) -- Sign: call
