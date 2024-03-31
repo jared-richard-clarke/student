@@ -86,7 +86,7 @@ The API has a dedicated push function for each Lua type with a direct representa
   }
 #+end_src
 
-*** Generic Stack Manipulation
+*** Basic Stack Manipulation
 
 #+begin_src c
   // Returns the number of elements on the stack, which is also the top element's index.
