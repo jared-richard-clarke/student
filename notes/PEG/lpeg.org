@@ -445,12 +445,12 @@ A literal string translates to a sequence of ~Char~ instructions, one for each c
 
 #+begin_src lua
   -- === LPEG ===
-  lpeg.P("ana")
+  lpeg.P("abc")
 
   -- === Virtual Machine ===
   -- Char "a"    (p+1, i+1, e, c)
-  -- Char "n"    (p+1, i+1, e, c)
-  -- Char "a"    (p+1, i+1, e, c)
+  -- Char "b"    (p+1, i+1, e, c)
+  -- Char "c"    (p+1, i+1, e, c)
 #+end_src
 
 *** Concatenation
