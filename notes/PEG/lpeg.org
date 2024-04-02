@@ -1040,8 +1040,8 @@ I have, to the best of my knowledge, updated my notes accordingly.
 
   // Entry stack
   typedef struct Stack {
-    const char *s;  // saved position (NULL for calls)
-    const Instruction *p;  // next instruction
+    const char *s;        // Saved position (NULL for calls)
+    const Instruction *p; // Next instruction
     int caplevel;
   } Stack;
 
