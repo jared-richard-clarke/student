@@ -1020,6 +1020,31 @@ I have, to the best of my knowledge, updated my notes accordingly.
 *** Basic Instructions
 
 #+begin_src c
+  // Bytecode instruction
+  typedef union Instruction {
+    struct Inst {
+      byte code;
+      byte aux1;
+      union {
+        short key;
+        struct {
+          byte offset;
+          byte size;
+        } set;
+      } aux2;
+    } i;
+    int offset;
+    uint codesize;
+    byte buff[1];
+  } Instruction;
+
+  // Entry stack
+  typedef struct Stack {
+    const char *s;  // saved position (NULL for calls)
+    const Instruction *p;  // next instruction
+    int caplevel;
+  } Stack;
+
   // Side Note: "stack" points to first empty slot in "Stack".
 
   // Char x, s[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
