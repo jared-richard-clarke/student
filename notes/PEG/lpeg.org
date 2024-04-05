@@ -963,53 +963,6 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- 20: end
 #+end_src
 
-*** Reverse String
-
-#+begin_src lua
-  -- === LPEG ===
-
-  reverse = re.compile[[ R <- (!.) -> "" / ({.} R) -> "%2%1" ]]
-
-  -- === Match ===
-
-  text = reverse:match("1234567") --> "7654321"
-
-  -- === AST ===
-
-  -- [ 1 = ""  2 = R  3 = "%2%1" ]
-  --
-  -- grammar 1
-  --   rule key: 2 -- R: body
-  --     xinfo n: 0
-  --       choice
-  --         capture kind: 'string'  key: 1
-  --           not
-  --             any
-  --         capture kind: 'string'  key: 3
-  --           sequence
-  --             capture kind: 'simple'  key: 0
-  --               any
-  --             call key: 2  (rule: 0) -- R: call
-
-  -- === VM Instructions ===
-  --
-  -- 00: call -> 4 -- R: call
-  -- 02: end
-  -- 03: --
-  -- 04: choice -> 12 -- R: body
-  -- 06: testany -> 9
-  -- 08: fail
-  -- 09: fullcapture string (size = 0)  (idx = 1)
-  -- 10: commit -> 18
-  -- 12: opencapture string (idx = 3)
-  -- 13: any
-  -- 14: fullcapture simple (size = 1)  (idx = 0)
-  -- 15: call -> 4 -- R: call
-  -- 17: closecapture
-  -- 18: return
-  -- 19: end
-#+end_src
-
 ** Virtual Machine Internals
 
 Samples of C source code from LPEG's ~match~ function, a function that runs
