@@ -423,8 +423,8 @@ listed in order of decreasing precedence.
 |------------------------------+--------------------------------+--------------------------------|
 | (p, i, e, c)                 | Charset X, S[i] ∈ X            | (p+1, i+1, e, c)               |
 | (p, i, e, c)                 | Charset X, S[i] ∉ X            | (Fail, i, e, c)                |
-| (p, i, e, c)                 | Any n, i + n ≤ \vert{}S\vert{} | (p+1, i+n, e, c)               |
-| (p, i, e, c)                 | Any n, i + n > \vert{}S\vert{} | (Fail, i, e, c)                |
+| (p, i, e, c)                 | Any, i + 1 ≤ \vert{}S\vert{}   | (p+1, i+1, e, c)               |
+| (p, i, e, c)                 | Any, i + 1 > \vert{}S\vert{}   | (Fail, i, e, c)                |
 | (p₀, i₀, (p₁, i₁, c₁):e, c₀) | PartialCommit L                | (p₀+L, i₀, (p₁, i₀, c₀):e, c₀) |
 | (p, i, e, c)                 | Span X, S[i] ∈ X               | (p, i+1, e, c)                 |
 | (p, i, e, c)                 | Span X, S[i] ∉ X               | (p+1, i, e, c)                 |
@@ -435,8 +435,8 @@ listed in order of decreasing precedence.
   and moves forward one instruction. Fails otherwise. Sets are represented as bit sets, with one
   bit for each possible character value.
 
-- Any n :: Advances *n* positions if the current position plus *n* is not greater than the
-  length of the input. Fails otherwise.
+- Any :: Advances one position if the current position plus one is less than or equal to the length
+  of the input. Fails otherwise.
 
 ** Grammars to Instructions
 
