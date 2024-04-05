@@ -2,10 +2,11 @@
 
 ** Sources
 
-| source                                                              | author                |
-|---------------------------------------------------------------------+-----------------------|
-| *A Text Pattern-Matching Tool Based on Parsing Expression Grammars* | Roberto Ierusalimschy |
-| *Parsing Expression Grammars for Lua*                               | Roberto Ierusalimschy |
+| source                                                              | author                                    |
+|---------------------------------------------------------------------+-------------------------------------------|
+| *A Text Pattern-Matching Tool Based on Parsing Expression Grammars* | Roberto Ierusalimschy                     |
+| *Parsing Expression Grammars for Lua*                               | Roberto Ierusalimschy                     |
+| *A Parsing Machine for PEGs*                                        | Sérgio Medeiros and Roberto Ierusalimschy |
 
 ** Introduction
 
@@ -711,6 +712,47 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
   -- L3: Return            (p₀, i, p₁:e, c) -> (p₁, i, e, c)
   -- L1: End
 #+end_src
+
+** Patterns to Programs (Formal Transformation)
+
+*Side Note*: Captures are excluded from these examples.
+
+The transformation function *Π* operates on the domain *Grammar × N × Pattern*,
+where *Π(g,i,p)* is the translation of pattern *p* in the context of grammar *g*
+and with position *i* relative to the beginning of the closed grammar that
+contains it.
+
+#+begin_example
+  === Character Match ===
+  Π(g, i, 'c') ≡ Char c
+
+  === Concatenation ===
+  Π(g, i, p₁p₂) ≡ Π(g, i, p₁) Π(g, i + |Π(g,x,p₁)|, p₂)
+
+  === Ordered Choice ===
+  Π(g, i, p₁/p₂) ≡ Choice |Π(g, x, p₁)| + 2
+                   Π(g, i + 1, p₁)
+                   Commit |Π(g, x, p₂)| + 1
+                   Π(g, i + |Π(g,x,p₁)| + 1, p₂)
+
+  === Not Predicate ===
+  Π(g, i, !p) ≡ Choice |Π(g, x, p)| + 2
+                Π(g, i + 1, p)
+                FailTwice
+
+  === Repetition ===
+  Π(g, i, p*) ≡ Choice |Π(g, x, p)| + 2
+                Π(g, i + 1, p)
+                PartialCommit − |Π(g, x, p)|
+
+  === Variables ===
+  Π(g, i, Ak) ≡ Call o(g, Ak) − i
+
+  === Closed Grammars ===
+  Π(g', i, (g, Ak)) ≡ Call o(g, Ak)
+                      Jump |Π'(g, x)| + 1
+                      Π'(g, 2)
+#+end_example
 
 ** Extended Examples
 
