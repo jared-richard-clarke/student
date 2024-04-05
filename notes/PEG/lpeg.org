@@ -388,7 +388,7 @@ listed in order of decreasing precedence.
 | (Fail, i, p:e, c)             | any              | (Fail, i, e, c)            |
 | (Fail, i₀, (p, i₁, c₁):e, c₀) | any              | (p, i₁, e, c₁)             |
 
-- Char x :: If the character in the current subject position is equal to *x*. the machine
+- Char x :: If the character in the current subject position is equal to *x*, the machine
   consumes the current character and moves to the next instruction.
 
 - Fail :: Forces failure. First the machine pops any return addresses from the top of the stack.
@@ -431,10 +431,12 @@ listed in order of decreasing precedence.
 | (p, i, h:e, c)               | FailTwice                      | (Fail, i, e, c)                |
 | (p₀, i₀, (p₁, i₁, c₁):e, c₀) | BackCommit L                   | (p₀+L, i₁, e, c₁)              |
 
-- Charset set :: Is the current character a member of the *set*. Sets are represented as bit sets,
-  with one bit for each possible character value.
+- Charset set :: If the current character is a member of *set*, instruction consumes the character
+  and moves forward one instruction. Fails otherwise. Sets are represented as bit sets, with one
+  bit for each possible character value.
 
-- Any n :: Checks whether there are at least *n* characters in the current subject position.
+- Any n :: Advances *n* positions if the current position plus *n* is not greater than the
+  length of the input. Fails otherwise.
 
 ** Grammars to Instructions
 
