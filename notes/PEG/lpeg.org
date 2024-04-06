@@ -719,8 +719,9 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
 
 The transformation function *Π* operates on the domain *Grammar × N × Pattern*,
 where *Π(g, i, p)* is the translation of pattern *p* in the context of grammar *g*
-and with position *i* relative to the beginning of the closed grammar that
-contains it.
+with position *i* relative to the beginning of the closed grammar that contains *p*.
+
+*|Π(g, i, p)|* is the number of instructions in *(g, i, p)*.
 
 #+begin_example
   === Character Match ===
