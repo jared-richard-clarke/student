@@ -5,6 +5,7 @@
 | source                        | author                                                                 |
 |-------------------------------+------------------------------------------------------------------------|
 | *A Look at the Design of Lua* | Roberto Ierusalimschy, Luiz Henrique De Figueiredo, and Waldemar Celes |
+| *Programming in Lua*          | Roberto Ierusalimschy                                                  |
 
 ** Implementing Modules
 
@@ -74,6 +75,14 @@ called with different environments.
 ** Implementing Object-Oriented Programming
 
 *** Meta Tables
+
+#+begin_quote
+  "Each value in Lua can have a metatable. Tables and userdata have individual metatables;
+   values of other types share one single metatable for all values of that type.
+   Lua always creates new tables without metatables"
+
+  — Roberto Ierusalimschy
+#+end_quote
 
 #+begin_src lua
   local meta = {}
