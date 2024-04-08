@@ -74,12 +74,27 @@ called with different environments.
 
 ** Implementing Object-Oriented Programming
 
+#+begin_quote
+  "A table in Lua is an object in more than one sense. Like objects, tables have a state.
+   Like objects, tables have an identity (a *self*) that is independent of their values;
+   specifically, two objects (*tables*) with the same value are different objects, whereas
+   an object can have different values at different times. Like objects, tables have a
+   life cycle that is independent of who created them or where they were created."
+
+  — Roberto Ierusalimschy
+#+end_quote
+
 *** Meta Tables
 
 #+begin_quote
   "Each value in Lua can have a metatable. Tables and userdata have individual metatables;
    values of other types share one single metatable for all values of that type.
-   Lua always creates new tables without metatables"
+   Lua always creates new tables without metatables.
+
+   When looking for a metamethod, Lua performs the following steps: if the first value has
+   a metatable with the required metamethod, Lua uses this metamethod, independently of
+   the second value; otherwise, if the second value has a metatable with the required
+   metamethod, Lua uses it; otherwise, Lua raises an error."
 
   — Roberto Ierusalimschy
 #+end_quote
@@ -105,8 +120,8 @@ called with different environments.
   -- === Alternative Constructor ===
   --
   -- function vector (v)
-  --     setmetatable(v, meta)
-  --     return v
+  --   setmetatable(v, meta)
+  --   return v
   -- end
   --
   -- A = vector{ x = 1, y = 2 }
@@ -118,21 +133,30 @@ called with different environments.
   -- Prototype
   local Account = { balance = 0 }
 
-  -- Delegating the indexing operator "[]"
+  -- Delegating the indexing operator "[]".
+  -- If we access an absent field, Lua will look for a
+  -- corresponding field in the table's metatable.
   local meta = { __index = Account }
+  --    meta = { __index = function (_, key) return Account[key] end }
 
-  function Account:new ()
+  function Account.new ()
     local object = {}
     setmetatable(object, meta)
     return object
   end
 
-  -- Translates: function object:deposit(amount) -> deposit = function (self, amount)
-  --             where self = object
+  --       Account.deposit = function (self, amount)
   function Account:deposit (amount)
     self.balance = self.balance + amount
   end
 
+  --       Account.withdraw = function (self, amount)
+  function Account:withdraw (amount)
+    if amount > self.balance then error("insufficient funds") end
+    self.balance = self.balance - amount
+  end
+
+  --       Account.balance = function (self)
   function Account:balance ()
     return self.balance
   end
@@ -147,6 +171,24 @@ called with different environments.
 #+end_src
 
 *** Privacy
+
+**** Read-Only Tables
+
+#+begin_src lua
+  function read_only (t)
+    local proxy = {}
+    local meta = {
+      __index = t,
+      __newindex = function (t, k, v)
+        error("attempt to update a read-only table")
+      end
+    }
+    setmetatable(proxy, meta)
+    return proxy
+  end
+#+end_src
+
+**** Account Revisited
 
 #+begin_src lua
   local balance = {}
@@ -166,6 +208,11 @@ called with different environments.
 
   function Account:deposit (amount)
     balance[self] = balance[self] + amount
+  end
+
+  function Account:withdraw (amount)
+    if amount > self.balance then error("insufficient funds") end
+    balance[self] = balance[self] - amount
   end
 
   function Account:balance ()
