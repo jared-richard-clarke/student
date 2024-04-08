@@ -34,7 +34,7 @@ The numeric ~for~ loop keeps three numbers:
   --       z = step
 
   sum = 0
-  for x = 1, 10 do sum += x end
+  for x = 1, 10 do sum = sum + x end
   print(sum) --> 55
 #+end_src
 
@@ -69,21 +69,19 @@ repeating the process.
 
 #+begin_example
   for v1, v2 ... vn in expressions do
-      block
+    block
   end
 
   -- equivalent ->
 
   do
-      local f, s, v = expressions
-      while true do
-          local v1, v2 ... vn = f(s, v)
-          v = v1
-          if v == nil then
-              break
-          end
-          block
-      end
+    local f, s, v = expressions
+    while true do
+      local v1, v2 ... vn = f(s, v)
+      v = v1
+      if v == nil then break end
+      block
+    end
   end
 
   where f = iterator function
@@ -91,65 +89,77 @@ repeating the process.
         v = control variable
 #+end_example
 
-** Closure as Iterator
+** Closures as Iterators
 
 #+begin_src lua
   function iter(xs)
-      local x = 0
-      local size = table.getn(xs)
-      return function()
-                 x = x + 1
-                 if x <= size then return xs[x] end
-             end
+    local x = 0
+    local size = table.getn(xs)
+    return function()
+             x = x + 1
+             if x <= size then return xs[x] end
+           end
   end
 
-  list = {1, 2, 3}
+  list = { 1, 2, 3 }
+
+  -- === Generic "for" Loop ===
 
   for element in iter(list) do
-      print(element)
+    print(element)
+  end
+
+  -- === "while" Loop ===
+
+  iterator = iter(list)
+  while true do
+    local element = iterator()
+    if element == nil then break end
+    print(element)
   end
 #+end_src
 
 ** Stateless Iterators: ~ipairs~ and ~pairs~
 
-Iterators that keep all their state in the ~for~ variables.
+Stateless iterators keep no internal state. All state is kept externally in the variables
+of the generic ~for~ loop.
 
 #+begin_src lua
   function iter (xs, i)
-     i = i + 1
-     local x = xs[i]
-     if x then
-         return i, x
-     end
+    i = i + 1
+    local x = xs[i]
+    if x then
+      return i, x
+    end
   end
 
   -- iter = iterator function
   -- xs   = invariant state
   -- 0    = control variable
   function ipairs (xs)
-      return iter, xs, 0
+    return iter, xs, 0
   end
 
-  xs = {"one", "two", "three"}
+  xs = { "one", "two", "three" }
 
   for i, x in ipairs(xs) do
-      print(i, x)
+    print(i, x)
   end
 
   -- pairs iterator
   function pairs (t)
-      return next, t, nil
+    return next, t, nil
   end
 
   -- Calls "next(t, k)", where "k" is a key of the table "t",
   -- and returns the next key in "t".
   for k, v in pairs(t) do
-     print(k, v)
+    print(k, v)
   end
 
   -- equivalent ->
 
   for k, v in next, t do
-      print(k, v)
+    print(k, v)
   end
 #+end_src
