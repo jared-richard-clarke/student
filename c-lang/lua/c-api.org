@@ -10,17 +10,18 @@
 ** Introduction
 
 #+begin_quote
-  "The Lua library defines no C global variables at all. It keeps all its state in the dynamic structure
-   ~lua_State~; all functions inside Lua receive a pointer to this structure as an argument. This design makes
-   Lua reentrant and ready to be used in multithreaded code...
+  "The Lua library defines no C global variables at all. It keeps all its state in the dynamic
+   structure ~lua_State~; all functions inside Lua receive a pointer to this structure as an
+   argument. This design makes Lua reentrant and ready to be used in multithreaded code...
 
-   A major component in the communication between Lua and C is an omnipresent virtual stack. Almost
-   all API calls operate on values on this stack. All data exchange from Lua to C and from C to Lua occurs
-   through this stack. Moreover, we can use the stack to keep intermediate results, too...
+   A major component in the communication between Lua and C is an omnipresent virtual stack.
+   Almost all API calls operate on values on this stack. All data exchange from Lua to C and
+   from C to Lua occurs through this stack. Moreover, we can use the stack to keep intermediate
+   results, too...
 
-   Lua manipulates this stack in a strict LIFO discipline (Last In, First Out). When we call Lua, it
-   changes only the top part of the stack. Our C code has more freedom; specifically, it can inspect
-   any element in the stack and even insert and delete elements at any position."
+   Lua manipulates this stack in a strict LIFO discipline (Last In, First Out). When we call Lua,
+   it changes only the top part of the stack. Our C code has more freedom; specifically, it can
+   inspect any element in the stack and even insert and delete elements at any position."
 
    — *Programming in Lua*, Roberto Ierusalimschy
 #+end_quote
@@ -36,9 +37,17 @@ The API has a dedicated push function for each Lua type with a direct representa
   void lua_pushinteger (lua_State *L, lua_Integer n);
   void lua_pushlstring (lua_State *L, const char *s, size_t len);
   void lua_pushstring  (lua_State *L, const char *s);
+
+  // If possible, grows stack to accomodate "sz" number of slots.
+  // Otherwise returns zero.
+  int lua_checkstack (lua_State *L, int sz);
+
+  // Similar to "lua_checkstack" but raises an error with the given message
+  // if unable to complete operation.
+  void luaL_checkstack (lua_State *L, int sz, const char *msg);
 #+end_src
 
-*** Querying Elements
+*** Indexing Elements
 
 #+begin_quote
   "To refer to elements on the stack, the API uses indices. The first element pushed on the stack
@@ -126,41 +135,9 @@ The API has a dedicated push function for each Lua type with a direct representa
 | ~lua_settop(L, -5);~              | [true]                              |
 | ~lua_close(L);~                   |                                     |
 
-** Calling a Lua Function from C
+** Defining and Calling Functions from C
 
 #+begin_src c
-  // === Lua Function Call ===
-  //
-  // function f (x, y)
-  //   return (x^2 * math.sin(y)) / (1 - x)
-  // end
-
-  // === C Function Call ===
-
-  double f (lua_State *L, double x, double y) {
-    int isnum;
-    double z;
-
-    // Push function and arguments.
-    lua_getglobal(L, "f");
-    lua_pushnumber(L, x);
-    lua_pushnumber(L, y);
-
-    // Call the function (2 arguments, 1 result).
-    if (lua_pcall(L, 2, 1, 0) != LUA_OK) {
-      error(L, "error running function 'f': %s", lua_tostring(L, -1));
-    }
-
-    // Retrieve result.
-    z = lua_tonumber(L, -1, &isnum);
-    if (!isnum) {
-      error(L, "function 'f' should return a number");
-    }
-    // Drop returned value.
-    lua_pop(L, 1);
-    return z;
-  }
-
   // === Lua Function Call ===
   //
   // a = f("how", t.x, 14)
@@ -371,6 +348,7 @@ is an interface that feeds files and strings from the user to the Lua library.
   }
 #+end_src
 
+
 Lua's generic buffer implementation.
 
 #+begin_src c
@@ -449,7 +427,7 @@ Lua's generic buffer implementation.
     lua_setmetatable(L, -2);
 
     // Try to open the given directory.
-    ,*d = opendir(path);
+    *d = opendir(path);
     // Error opening the directory?
     if (*d == NULL) {
       luaL_error(L, "cannot open %s: %s", path, strerror(errno));
