@@ -135,7 +135,7 @@ The API has a dedicated push function for each Lua type with a direct representa
 | ~lua_settop(L, -5);~              | [true]                              |
 | ~lua_close(L);~                   |                                     |
 
-** Defining and Calling Functions from C
+** Calling Functions from C
 
 #+begin_src c
   // === Lua Function Call ===
