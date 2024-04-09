@@ -262,7 +262,7 @@ is an interface that feeds files and strings from the user to the Lua library.
   }
 #+end_src
 
-** Lua Map Function
+** Lua C Map Function
 
 #+begin_src c
   int lua_map (lua_State *L) {
@@ -292,7 +292,7 @@ is an interface that feeds files and strings from the user to the Lua library.
   }
 #+end_src
 
-** Lua String Functions
+** Lua C String Functions
 
 #+begin_src c
   // Split string.
@@ -348,7 +348,6 @@ is an interface that feeds files and strings from the user to the Lua library.
   }
 #+end_src
 
-
 Lua's generic buffer implementation.
 
 #+begin_src c
@@ -364,11 +363,9 @@ Lua's generic buffer implementation.
   };
 #+end_src
 
-** C Function Protocol in Lua
+** Lua C Average Sum Function
 
 #+begin_src c
-  typedef int (*lua_CFunction) (lua_State *L);
-
   static int average_sum(lua_State *L) {
     // Number of arguments.
     int n = lua_gettop(L);
@@ -392,7 +389,7 @@ Lua's generic buffer implementation.
   }
 #+end_src
 
-** Lua Directory Iterator
+** Lua C Directory Iterator
 
 #+begin_src c
   // === Lua Iterator ==
