@@ -139,7 +139,8 @@ called with different environments.
   local meta = { __index = Account }
   --    meta = { __index = function (_, key) return Account[key] end }
 
-  function Account.new ()
+  --       Account.new = function (self)
+  function Account:new ()
     local object = {}
     setmetatable(object, meta)
     return object
