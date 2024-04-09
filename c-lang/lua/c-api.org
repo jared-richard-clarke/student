@@ -120,20 +120,20 @@ The API has a dedicated push function for each Lua type with a direct representa
   #define lua_insert(L, index) lua_rotate(L, (index), 1)
 #+end_src
 
-| function                          | stack                               |
-|-----------------------------------+-------------------------------------|
-| ~lua_State *L = luaL_newstate();~ | []                                  |
-| ~lua_pushboolean(L, 1);~          | [true]                              |
-| ~lua_pushnumber(L, 10);~          | [true, 10]                          |
-| ~lua_pushnil(L);~                 | [true, 10, nil]                     |
-| ~lua_pushstring(L, "hello");~     | [true, 10, nil, "hello"]            |
-| ~lua_pushvalue(L, -4);~           | [true, 10, nil, "hello", true]      |
-| ~lua_replace(L, 3);~              | [true, 10, true, "hello"]           |
-| ~lua_settop(L, -5);~              | [true, 10, true, "hello", nil, nil] |
-| ~lua_rotate(L, 3, 1);~            | [true, 10, nil, true, "hello", nil] |
-| ~lua_remove(L, -3);~              | [true, 10, nil, "hello", nil]       |
-| ~lua_settop(L, -5);~              | [true]                              |
-| ~lua_close(L);~                   |                                     |
+| function                          | stack                                 |
+|-----------------------------------+---------------------------------------|
+| ~lua_State *L = luaL_newstate();~ | []                                    |
+| ~lua_pushboolean(L, 1);~          | [ true ]                              |
+| ~lua_pushnumber(L, 10);~          | [ true, 10 ]                          |
+| ~lua_pushnil(L);~                 | [ true, 10, nil ]                     |
+| ~lua_pushstring(L, "hello");~     | [ true, 10, nil, "hello" ]            |
+| ~lua_pushvalue(L, -4);~           | [ true, 10, nil, "hello", true ]      |
+| ~lua_replace(L, 3);~              | [ true, 10, true, "hello" ]           |
+| ~lua_settop(L, -5);~              | [ true, 10, true, "hello", nil, nil ] |
+| ~lua_rotate(L, 3, 1);~            | [ true, 10, nil, true, "hello", nil ] |
+| ~lua_remove(L, -3);~              | [ true, 10, nil, "hello", nil ]       |
+| ~lua_settop(L, -5);~              | [ true ]                              |
+| ~lua_close(L);~                   |                                       |
 
 ** Calling Functions from C
 
