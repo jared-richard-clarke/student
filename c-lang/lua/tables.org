@@ -19,7 +19,7 @@ first-class functions allow exportation.
 #+begin_src lua
   -- === File: "chunk.lua" ===
 
-  -- return function ()
+  -- return function (...)
        local Module = {}
 
        function Module.new (x, y)
@@ -51,7 +51,7 @@ called with different environments.
 
 #+begin_src lua
   -- local _ENV = the global environment
-  -- return function ()
+  -- return function (...)
        local sqrt = math.sqrt
        local _ENV = {}
 
