@@ -565,7 +565,7 @@ Lua's generic buffer implementation.
   // Add function to registry.
   static const struct luaL_Reg dirlib [] = {
     { "open", lua_dir },
-    { NULL, NULL }
+    { NULL,   NULL }
   };
 
   // Open one-function library.
