@@ -116,15 +116,6 @@ called with different environments.
   A = vector(1, 2)
   B = vector(2, 2)
   C = A + B --> { x = 3, y = 4 }
-
-  -- === Alternative Constructor ===
-  --
-  -- function vector (v)
-  --   setmetatable(v, meta)
-  --   return v
-  -- end
-  --
-  -- A = vector{ x = 1, y = 2 }
 #+end_src
 
 *** Protoypes
@@ -146,15 +137,22 @@ called with different environments.
     return object
   end
 
-  --       Account.deposit = function (self, amount)
-  function Account:deposit (amount)
-    self.balance = self.balance + amount
+  -- function Account:new ()
+  --   local object = {}
+  --   self.__index = self
+  --   setmetatable(object, self)
+  --   return object
+  -- end
+
+  --       Account.deposit = function (self, v)
+  function Account:deposit (v)
+    self.balance = self.balance + v
   end
 
-  --       Account.withdraw = function (self, amount)
-  function Account:withdraw (amount)
+  --       Account.withdraw = function (self, v)
+  function Account:withdraw (v)
     if amount > self.balance then error("insufficient funds") end
-    self.balance = self.balance - amount
+    self.balance = self.balance - v
   end
 
   --       Account.balance = function (self)
@@ -192,28 +190,53 @@ called with different environments.
 **** Account Revisited
 
 #+begin_src lua
+  -- === Implementation 1 ===
+
+  function new_account (x)
+    local self = { balance = x }
+
+    local deposit = function (v)
+                      self.balance = self.balance + v
+                    end
+
+    local withdraw = function (v)
+                       if amount > self.balance then error("insufficient funds") end
+                       self.balance = self.balance - v
+                     end
+
+    local get_balance = function () return self.balance end
+
+    return {
+      withdraw    = withdraw,
+      deposit     = deposit,
+      get_balance = get_balance
+    }
+  end
+
+  -- === Implementation 2 ===
+
   local balance = {}
 
   -- Set keys to weak for garbage collection.
   setmetatable(balance, { __mode = "k" })
 
   local Account = {}
-  local meta = { __index = Account }
 
   function Account:new ()
     local object = {}
-    setmetatable(object, meta)
+    self.__index = self
+    setmetatable(object, self)
     balance[object] = 0
     return object
   end
 
-  function Account:deposit (amount)
-    balance[self] = balance[self] + amount
+  function Account:deposit (v)
+    balance[self] = balance[self] + v
   end
 
-  function Account:withdraw (amount)
+  function Account:withdraw (v)
     if amount > self.balance then error("insufficient funds") end
-    balance[self] = balance[self] - amount
+    balance[self] = balance[self] - v
   end
 
   function Account:balance ()
