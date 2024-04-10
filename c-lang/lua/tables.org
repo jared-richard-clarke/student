@@ -50,6 +50,7 @@ fixed table called the global environment. Changing ~_ENV~ allows functions to b
 called with different environments.
 
 #+begin_src lua
+  -- local _ENV = the "global" environment
   -- return function ()
        local sqrt = math.sqrt
        local _ENV = {}
