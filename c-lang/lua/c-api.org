@@ -316,7 +316,7 @@ is an interface that feeds files and strings from the user to the Lua library.
 ** Lua C String Function
 
 #+begin_src c
-  -- === C API ===
+  // === C API ===
 
   lua_State *L = luaL_newstate();
   luaL_openlibs(L);
