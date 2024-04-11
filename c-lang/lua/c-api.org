@@ -2,10 +2,11 @@
 
 ** Sources
 
-| source                        | author                                                                       |
-|-------------------------------+------------------------------------------------------------------------------|
-| *A Look at the Design of Lua* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
-| *Programming in Lua*          | Roberto Ierusalimschy                                                        |
+| source                                           | author                                                                       |
+|--------------------------------------------------+------------------------------------------------------------------------------|
+| *A Look at the Design of Lua*                    | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
+| *Passing a Language through the Eye of a Needle* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
+| *Programming in Lua*                             | Roberto Ierusalimschy                                                        |
 
 ** Introduction
 
@@ -55,6 +56,12 @@ The API has a dedicated push function for each Lua type with a direct representa
    the stack as our reference, with negative indices."
 
    — *Programming in Lua*, Roberto Ierusalimschy
+
+   "...the stack allows the programmer to control the lifetime of any object in a safe way. While an
+    object is in the stack, it cannot be collected; once out of the stack, it cannot be manipulated.
+    Moreover, the stack offers a natural way to pass parameters and results."
+
+   — *Passing a Language through the Eye of a Needle*, Ierusalimschy, Henrique de Figueiredo, and Celes
 #+end_quote
 
 #+begin_src c
@@ -265,7 +272,12 @@ is an interface that feeds files and strings from the user to the Lua library.
 ** Lua C Map Function
 
 #+begin_src c
-  int lua_map (lua_State *L) {
+  // === C API ===
+
+  lua_State *L = luaL_newstate();
+  luaL_openlibs(L);
+
+  int f_map (lua_State *L) {
     int i, n;
 
     // 1st argument must be a table (t).
@@ -287,44 +299,30 @@ is an interface that feeds files and strings from the user to the Lua library.
       // t[i] = result
       lua_seti(L, 1, i);
     }
-
+    // Number of results left on the stack.
     return 0;
   }
+
+  lua_pushfunction(L, f_map);
+  lua_setglobal(L, "map");
+
+  // === Lua ===
+  //
+  // array = { 1, 2, 3, 4 }
+  // map(array, function (x) return x * x end)
+  // array --> { 1, 4, 9, 16 }
 #+end_src
 
-** Lua C String Functions
+** Lua C String Function
 
 #+begin_src c
-  // Split string.
-  static int lua_split (lua_State *L) {
-    // subject
-    const char *s = luaL_checkstring(L, 1);
-    // separator
-    const char *sep = luaL_checkstring(L, 2);
-    const char *e;
-    int i = 1;
+  -- === C API ===
 
-    // Result table
-    lua_newtable(L);
-
-    // Repeat for each separator.
-    while ((e = strchr(s, *sep)) != NULL) {
-      // Push substring.
-      lua_pushlstring(L, s, e - s);
-      // Insert string in table.
-      lua_rawseti(L, -2, i++);
-      // Skip separator
-      s = e + 1;
-    }
-    // Insert last substring.
-    lua_pushstring(L, s);
-    lua_rawseti(L, -2, i);
-
-    return 1;
-  }
+  lua_State *L = luaL_newstate();
+  luaL_openlibs(L);
 
   // Uppercase a string, using a buffer.
-  static int lua_uppercase (lua_State *L) {
+  static int f_uppercase (lua_State *L) {
     size_t l;
     size_t i;
     // Declare a buffer.
@@ -344,8 +342,16 @@ is an interface that feeds files and strings from the user to the Lua library.
     // Flush buffer. Leave resulting string on the stack.
     luaL_pushresultsize(&b, l);
 
+    // Number of results left on the stack.
     return 1;
   }
+
+  lua_pushfunction(L, f_uppercase);
+  lua_setglobal(L, "uppercase");
+
+  // === Lua ===
+  //
+  // uppercase("abc") -->  "ABC"
 #+end_src
 
 Lua's generic buffer implementation.
@@ -361,32 +367,6 @@ Lua's generic buffer implementation.
       char b[LUAL_BUFFERSIZE];  // Initial buffer
     } init;
   };
-#+end_src
-
-** Lua C Average Sum Function
-
-#+begin_src c
-  static int average_sum(lua_State *L) {
-    // Number of arguments.
-    int n = lua_gettop(L);
-    // Base sum.
-    lua_Number sum = 0.0;
-    // Index.
-    int i;
-    for (i = 1; i <= n; i += 1) {
-      if (!lua_isnumber(L, i)) {
-        lua_pushliteral(L, "incorrect argument");
-        lua_error(L);
-      }
-      sum += lua_tonumber(L, i);
-    }
-    // First result.
-    lua_pushnumber(L, sum / n);
-    // Second result.
-    lua_pushnumber(L, sum);
-    // Number of results.
-    return 2;
-  }
 #+end_src
 
 ** Lua C Bit Array
