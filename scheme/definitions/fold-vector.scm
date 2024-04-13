@@ -11,3 +11,12 @@
       (if (>= index size)
           accum
           (loop size (+ index 1) (f accum (vector-ref xs index)))))))
+
+;; === Alternative ===
+;;
+;; (define (fold-vector f base xs)
+;;   (define (loop size index accum)
+;;     (if (>= index size)
+;;         accum
+;;         (loop size (+ index 1) (f accum (vector-ref xs index)))))
+;;   (loop (vector-length xs) 0 base))
