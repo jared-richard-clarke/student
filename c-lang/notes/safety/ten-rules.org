@@ -1,0 +1,189 @@
+* The Power of 10: Rules for Developing Safety-Critical Code
+
+** Sources
+
+| source            | author            |
+|-------------------+-------------------|
+| *The Power of 10* | Gerard J. Holzman |
+
+** 1. Simple Control Flow
+
+Restrict all code to very simple control flow constructs — do not use ~goto~ statements,
+~setjmp~ or ~longjmp~ constructs, or direct or indirect recursion.
+
+#+begin_quote
+  "Simpler control flow translates into stronger capabilities for analysis and often results
+   in improved code clarity. Banishing recursion is perhaps the biggest surprise here.
+   Avoiding recursion results in having an acyclic function call graph, which code analyzers
+   can exploit to prove limits on stack use and boundedness of executions. Note that this rule
+   does not require that all functions have a single point of return, although this often also
+   simplifies control flow. In some cases, though, an early error return is the simpler solution."
+
+   — Gerard J. Holzman
+#+end_quote
+
+** 2. Limit All Loops
+
+Give all loops a fixed upper bound. It must be possible to prove that a loop cannot exceed
+a set number of iterations.
+
+#+begin_quote
+  "The absence of recursion and the presence of loop bounds prevents runaway code. This rule does
+   not, of course, apply to iterations that are meant to be nonterminating—for example, in a process
+   scheduler. In those special cases, the reverse rule is applied: It should be possible for a
+   checking tool to prove statically that the iteration cannot terminate.
+
+   One way to comply with this rule is to add an explicit upper bound to all loops that have a
+   variable number of iterations — for example, code that traverses a linked list. When the loop
+   exceeds the upper bound, it must trigger an assertion failure, and the function containing the
+   failing iteration should return an error"
+
+   — Gerard J. Holzman
+#+end_quote
+
+** 3. Don't Use the Heap
+
+Don't use dynamic memory allocation after initialization.
+
+#+begin_quote
+  "This rule appears in most coding guidelines for safety-critical software. The reason is simple:
+   Memory allocators, such as ~malloc~, and garbage collectors often have unpredictable behavior that
+   can significantly impact performance.
+
+   A notable class of coding errors also stems from the mishandling of memory allocation and free
+   routines: forgetting to free memory or continuing to use memory after it was freed, attempting
+   to allocate more memory than physically available, overstepping boundaries on allocated memory,
+   and so on. Forcing all applications to live within a fixed, preallocated area of memory can
+   eliminate many of these problems and make it easier to verify memory use.
+
+   Note that the only way to dynamically claim memory in the absence of memory allocation from the
+   heap is to use stack memory. In the absence of recursion, an upper bound on the use of stack
+   memory can be derived statically, thus making it possible to prove that an application will
+   always live within its resource bounds."
+
+   — Gerard J. Holzman
+#+end_quote
+
+** 4. Limit Function Size
+
+No function should be longer than 60 lines or no more than what can be printed on a single sheet
+of paper in a standard format.
+
+#+begin_quote
+  "Each function should be a logical unit in the code that is understandable and verifiable as a
+   unit. It is much harder to understand a logical unit that spans multiple pages. Excessively
+   long functions are often a sign of poorly structured code."
+
+   — Gerard J. Holzman
+#+end_quote
+
+** 5. Two-Assertion Minimum
+
+An average of two assertions should be applied per function.
+
+#+begin_quote
+  "Using assertions is often recommended as part of a strong defensive coding strategy. Developers
+  can use assertions to verify pre- and post-conditions of functions, parameter values, return
+  values of functions, and loop invariants. Because the proposed assertions are side-effect free,
+  they can be selectively disabled after testing in performance-critical code."
+
+  — Gerard J. Holzman
+#+end_quote
+
+** 6. Hide Data
+
+Declare all data objects at the smallest possible level of scope. Avoid global variables.
+
+#+begin_quote
+  "This rule supports a basic principle of data hiding. Clearly, if an object is not in scope,
+   othermodules cannot reference or corrupt its value. Similarly, if a tester must diagnose an
+   object's erroneous value, the fewer the number of statements where the value could have been
+   assigned, the easier it is to diagnose the problem. The rule also discourages the reuse of
+   variables for multiple, incompatible purposes, which can complicate fault diagnosis."
+
+   — Gerard J. Holzman
+#+end_quote
+
+** 7. Functions Must Check Inputs and Outputs
+
+Each calling function must check the return value of non-void functions. Each called function must
+check the validity of its parameters.
+
+#+begin_quote
+  "This is possibly the most frequently violated rule, and therefore it is somewhat more suspect
+   for inclusion as a general rule. In its strictest form, this rule means that even the return
+   value of printf statements and file close statements must be checked. Yet, if the response to
+   an error would be no different than the response to success, there is little point in explicitly
+   checking a return value. This is often the case with calls to printf and close. In cases like
+   these, explicitly casting the function return value to (void) can be acceptable, thereby
+   indicating that the programmer explicitly and not accidentally decided to ignore a return value.
+
+   In more dubious cases, a comment should be offered to explain why a return value can be considered
+   irrelevant. In most cases, though, a function's return value should not be ignored, especially if
+   the function should propagate an error return value up the function call chain."
+
+   — Gerard J. Holzman
+#+end_quote
+
+** 8. Limit Preprocessor Use
+
+Limit the use of the C preprocessor to file inclusions and simple macros. Don't use conditional
+compilation.
+
+#+begin_quote
+  "The C preprocessor is a powerful obfuscation tool that can destroy code clarity and befuddle
+   many text-based checkers. The effect of constructs in unrestricted preprocessor code can be
+   extremely hard to decipher, even with a formal language definition. In a new implementation
+   of the C preprocessor, developers often must resort to using earlier implementations to
+   interpret complex defining language in the C standard.
+
+   The rationale for the caution against conditional compilation is equally important. With just
+   10 conditional compilation directives, there could be up to 2^10 possible versions of the code,
+   each of which would have to be tested—causing a huge increase in the required test effort.
+   The use of conditional compilation cannot always be avoided, but even in large software development
+   efforts there is rarely justification for more than one or two such directives, beyond the standard
+   boilerplate that avoids multiple inclusions of the same header file. A tool-based checker should
+   flag each use and each use should be justified in the code."
+
+   — Gerard J. Holzman
+#+end_quote
+
+** 9. Limit Pointer Use
+
+No more than one level of dereferencing should be used. Pointer dereference operations may not
+be hidden in macro definitions or inside ~typedef~ declarations. Function pointers are not permitted.
+
+#+begin_quote
+  "Pointers are easily misused, even by experienced programmers. They can make it hard to follow or
+   analyze the flow of data in a program, especially by tool-based analyzers. Similarly, function
+   pointers should be used only if there is a very strong justification for doing so because they
+   can seriously restrict the types of automated checks that code checkers can perform. For example,
+   if function pointers are used, it can become impossible for a tool to prove the absence of
+   recursion, requiring alternate guarantees to make up for this loss in checking power"
+
+   — Gerard J. Holzman
+#+end_quote
+
+** 10. Be Pedantic
+
+All code must be compiled, from day one, with all compiler warnings enabled at the most pedantic
+setting available. All code must compile without warnings. All code must be checked daily with
+one or more strong, static source code analyzers and should pass all analyses with zero warnings.
+
+#+begin_quote
+  "There are several extremely effective static source code analyzers on the market today, and
+   quite a few freeware tools as well. There simply is no excuse for any software development
+   effort not to use this readily available technology. It should be considered routine practice,
+   even for non-critical code development.
+
+   The rule of zero warnings applies even when the compiler or the static analyzer gives an
+   erroneous warning: If the compiler or analyzer gets confused, the code causing the confusion
+   should be rewritten. Many developers have been caught in the assumption that a warning was
+   surely invalid, only to realize much later that the message was in fact valid for less obvious
+   reasons. Static analyzers have a somewhat bad reputation due to early versions that produced
+   mostly invalid messages, but this is no longer the case. The best static analyzers today are
+   fast, and they produce accurate messages. Their use should not be negotiable on any serious
+   software project."
+
+   — Gerard J. Holzman
+#+end_quote
