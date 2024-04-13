@@ -29,7 +29,7 @@ a set number of iterations.
 
 #+begin_quote
   "The absence of recursion and the presence of loop bounds prevents runaway code. This rule does
-   not, of course, apply to iterations that are meant to be nonterminating—for example, in a process
+   not, of course, apply to iterations that are meant to be non-terminating — for example, in a process
    scheduler. In those special cases, the reverse rule is applied: It should be possible for a
    checking tool to prove statically that the iteration cannot terminate.
 
