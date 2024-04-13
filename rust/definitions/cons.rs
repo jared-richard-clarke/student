@@ -1,38 +1,38 @@
-// Linked List pulled from Rust By Example
-// https://doc.rust-lang.org/rust-by-example/custom_types/enum/testcase_linked_list.html?highlight=link#testcase-linked-list
+// Allows variants of enum to exist without prefix.
+use List::*;
 
-use crate::List::*;
-
-enum List {
-    Cons(u32, Box<List>),
+enum List<T> {
+    Cons(T, Box<List<T>>),
     Nil,
 }
 
-impl List {
-    fn new() -> List {
+impl<T> List<T> {
+    fn new() -> List<T> {
         Nil
     }
 
-    fn prepend(self, elem: u32) -> List {
-        Cons(elem, Box::new(self))
+    fn prepend(self, element: T) -> List<T> {
+        Cons(element, Box::new(self))
     }
 
     fn length(&self) -> u32 {
         match *self {
             // "ref" annotates pattern bindings to make them borrow rather than move.
             Cons(_, ref tail) => 1 + tail.length(),
-            Nil => 0
+            Nil => 0,
         }
     }
+}
 
+impl<T: std::fmt::Display> List<T> {
     fn stringify(&self) -> String {
         match *self {
-            Cons(head, ref tail) => {
+            Cons(ref head, ref tail) => {
                 format!("{}, {}", head, tail.stringify())
-            },
+            }
             Nil => {
                 format!("Nil")
-            },
+            }
         }
     }
 }
