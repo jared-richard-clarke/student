@@ -728,13 +728,13 @@ with position *i* relative to the beginning of the closed grammar that contains 
   Π(g, i, 'c') ≡ Char c
 
   === Concatenation ===
-  Π(g, i, p₁p₂) ≡ Π(g, i, p₁) Π(g, i + |Π(g,x,p₁)|, p₂)
+  Π(g, i, p₁p₂) ≡ Π(g, i, p₁) Π(g, i + |Π(g, x, p₁)|, p₂)
 
   === Ordered Choice ===
   Π(g, i, p₁/p₂) ≡ Choice |Π(g, x, p₁)| + 2
                    Π(g, i + 1, p₁)
                    Commit |Π(g, x, p₂)| + 1
-                   Π(g, i + |Π(g,x,p₁)| + 1, p₂)
+                   Π(g, i + |Π(g, x, p₁)| + 1, p₂)
 
   === Not Predicate ===
   Π(g, i, !p) ≡ Choice |Π(g, x, p)| + 2
