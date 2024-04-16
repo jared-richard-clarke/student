@@ -701,9 +701,9 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
   --
   --     Call X            (p+X, i, (p+1):e, c)
   --     Jump L1           (p+L1, i, e, c)
-  --  X: TestChar "a" L2   (p+1, i+1, e, c) or (p+L2, i, e, c)
+  --  X: TestChar "a" L2   (p+1, i, e, c) or (p+L2, i, e, c)
   --     Choice L2         (p+1, i, (p+L2, i, c):e, c)
-  --     Any 1             (p+1, i+n, e, c)
+  --     Any 1             (p+1, i+1, e, c)
   --     Char "b"          (p+1, i+1, e, c)
   --     Char "c"          (p+1, i+1, e, c)
   --     Commit L3         (p, i, h:e, c) -> (p+L3, i, e, c)
