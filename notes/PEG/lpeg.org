@@ -723,12 +723,6 @@ The transformation function *Π* operates on the domain *Grammar × N × Pattern
 
 *|Π(g, i, p)|* is the number of instructions in *(g, i, p)*.
 
-A grammar is defined as a partial function from a set of variables to a set of patterns,
-such that *g(A_{k})* represents the pattern associated with non-terminal *A_{k}* of grammar *g*.
-
-Function *o* takes a grammar *g* and a variable *A_{k}* defined in *g*, and gives the
-position of the program derived from *A_{k}* in *Π'(g, i)* relative to *i*.
-
 #+begin_example
   === Character Match ===
   Π(g, i, 'c') ≡ Char c
