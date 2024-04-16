@@ -713,7 +713,7 @@ An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instr
   -- L1: End
 #+end_src
 
-** Patterns to Programs (Formal Transformation)
+** Patterns to Programs: Formal Transformation
 
 *Side Note*: Captures are excluded from these examples.
 
@@ -721,7 +721,11 @@ The transformation function *Π* operates on the domain *Grammar × N × Pattern
 *Π(g, i, p)* is the translation of pattern *p* in the context of grammar *g* with position
 *i* relative to the beginning of the closed grammar that contains *p*.
 
-*|Π(g, i, p)|* is the number of instructions in *(g, i, p)*.
+*|Π(g, i, p)|* = the number of instructions in *(g, i, p)*.
+
+*V* = the countably infinite set of variables or non-terminals: *A_{1}, A_{2}, ... A_{k}*.
+
+*g(A_{k})* = the pattern associated with non-terminal *A_{k}* of grammar *g*.
 
 #+begin_example
   === Character Match ===
@@ -752,7 +756,21 @@ The transformation function *Π* operates on the domain *Grammar × N × Pattern
   === Closed Grammars ===
   Π(g', i, (g, Ak)) ≡ Call o(g, Ak)
                       Jump |Π'(g, x)| + 1
-                      Π'(g, 2)
+                      Π'(g, 2) <--------- Keeps the invariant that all positions are relative
+                                          to the first instruction of the closed grammar.
+
+  where Π'(g, x) = Π(g, i, g(A1))
+                   Return
+                   ...
+                           k-1
+                   Π(g, i + Σ |Π(g, x, Aj)| + 1, g(Ak))
+                           j=1
+                   Return
+                   ...
+                           n-1
+                   Π(g, i + Σ |Π(g, x, Aj)| + 1, g(An))
+                           j=1
+                   Return
 
   === Linking Function ===
 
