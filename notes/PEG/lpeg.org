@@ -284,10 +284,10 @@ listed in order of decreasing precedence.
   sequence        <- prefix*
   prefix          <- '&' S prefix / '!' S prefix / suffix
   suffix          <- primary S (([+*?]
-                   / '^' [+-]? number
-                   / '->' S (string / '{}' / name)
-                   / '>>' S name
-                   / '=>' S name) S)*
+                              / '^' [+-]? number
+                              / '->' S (string / '{}' / name)
+                              / '>>' S name
+                              / '=>' S name) S)*
 
   primary         <- '(' expression ')' / string / class / defined
                    / '{:' (name ':')? expression ':}'
@@ -298,7 +298,7 @@ listed in order of decreasing precedence.
                    / '{' expression '}'
                    / '.'
                    / name S !arrow
-                   / '<' name '>'
+                   / '<' name '>'     -- Old-style non-terminals.
 
   grammar         <- definition+
   definition      <- name S arrow expression
@@ -316,7 +316,7 @@ listed in order of decreasing precedence.
 
   ]=]
 
-  print(re.match(grammar, grammar))   -- A self description matches itself
+  print(re.match(grammar, grammar))   -- A self description matches itself.
 #+end_src
 
 ** ~re~ Parsing Examples
