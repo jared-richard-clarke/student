@@ -1088,7 +1088,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
     p += getoffset(p);
     continue;
   }
-  // Choice L   [ (p, i, e, c) -> (p+1, i, (p+L, i, c):e, c) ]
+  // Choice L [ (p, i, e, c) -> (p+1, i, (p+L, i, c):e, c) ]
   case IChoice: {
     if (stack == stacklimit) {
       stack = doublestack(L, &stacklimit, ptop);
