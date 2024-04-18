@@ -781,7 +781,7 @@ The transformation function *Π* operates on the domain *Grammar × N × Pattern
 
                       k-1
   o: Grammar × V → N = Σ (|Π(g, x, Aj)| + 1)
-                      j=1
+                      j=1                 ^ The "Return" instruction.
 #+end_example
 
 ** Extended Examples
