@@ -777,7 +777,7 @@ The transformation function *Π* operates on the domain *Grammar × N × Pattern
                            j=1
                    Return
 
-  === Linking Function ===
+  === Offset Function ===
 
                       k-1
   o: Grammar × V → N = Σ (|Π(g, x, Aj)| + 1)
