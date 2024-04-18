@@ -458,7 +458,7 @@ A literal string translates to a sequence of ~Char~ instructions, one for each c
 
 *** Concatenation
 
-Sequences instructions.
+Sequences instructions. Instruction ~p1~ is followed by instruction ~p2~.
 
 #+begin_src lua
   -- === LPEG ===
@@ -472,13 +472,13 @@ Sequences instructions.
 
 *** Ordered Choice
 
-The machine saves the state and then runs *p1*. If *p1* successsful, executes *Commit L2*,
-which removes the saved state from the stack and jumps to the end of the pattern, *L2*.
-If *p1* fails, the machine backtracks to the initial saved state and jumps to *L1* and
-tries *p2*. If *p2* fails then choice fails.
+The machine saves the state and then runs ~p1~. If ~p1~ successsful, executes ~Commit L2~,
+which removes the saved state from the stack and jumps to the end of the pattern, ~L2~.
+If ~p1~ fails, the machine backtracks to the initial saved state and jumps to ~L1~ and
+tries ~p2~. If ~p2~ fails then choice fails.
 
-*Optimization 1*: If both *p1* and *p2* are character sets, *p1 + p2* translates to a single
-*charset* instruction with the union of both sets.
+*Optimization 1*: If both ~p1~ and ~p2~ are character sets, ~p1 + p2~ translates to a single
+*Charset* instruction with the union of both sets.
 
 *Optimization 2*: If the first alternative succeeds, associating left for *n* alternatives
 would require traversing *n* choices plus *n* commits, whereas associating right would
@@ -524,9 +524,10 @@ require traversing only one choice-commit pair.
 
 *** Repetition
 
-The ~Choice~ and ~PartialCommit~ operations together create a loop where only the subject
-position and the capture list are repeatedly updated. Instead of removing an entry from the stack
-and adding a new one, the instruction simply updates the top entry.
+The ~Choice~ and ~PartialCommit~ instructions together create a loop where only the subject
+position and the capture list are repeatedly updated. Instead of ~Choice~ repeatedly adding
+and removing whole entries on the stack, ~PartialCommit~ simply updates the top entry.
+~Choice~ need execute only once.
 
 Repeated character classes have a dedicated instruction, ~Span charset~ that consumes a maximum
 span of input characters that belong to the given character set.
@@ -550,11 +551,12 @@ span of input characters that belong to the given character set.
 
 *** Not Predicate
 
-The ~Choice~ and ~FailTwice~ operations together act like two consecutive fails, removing
-the top entry from the stack and then failing.
+If the first pattern to ~Choice~ succeeds, the subsequent instruction, ~FailTwice~, discards the top
+entry of the stack — the entry pushed by the most recent ~Choice~ instruction — and then fails
+similarly to the ~Fail~ instruction.
 
-The difference operator for two patterns, *p1 - p2*, is usually encoded according to *-p2 * p1*.
-In the case where *p1* and *p2* are characters sets, they are encoded as a single *Charset X*
+The difference operator for two patterns, ~p1 - p2~, is usually encoded according to ~-p2 * p1~.
+In the case where ~p1~ and ~p2~ are characters sets, they are encoded as a single ~Charset X~
 instruction that is the set difference between the two patterns.
 
 #+begin_src lua
@@ -577,8 +579,9 @@ instruction that is the set difference between the two patterns.
 
 *** And Predicate
 
-If *p* succeeds, the *BackCommit* instruction backtracks to the initial subject position and
-jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole pattern fails.
+If first pattern to ~Choice~ succeeds, the ~BackCommit~ instruction backtracks to the initial subject
+position and jumps to the end of the instruction set. If the first pattern fails, control goes to ~L1~
+wherein the whole instruction set fails.
 
 #+begin_src lua
   -- === LPEG ===
@@ -594,11 +597,11 @@ jumps to the pattern's end. If *p* fails, control goes to *L1* wherein the whole
 
 *** Calling Grammars
 
-Each non-terminal translates to a *Call* opcode, and each rule ends with a *Return* opcode.
+Each non-terminal translates to a ~Call~ opcode, and each rule ends with a ~Return~ opcode.
 At its creation, a non-terminal is not yet part of a grammar, so *LPEG* inserts the placeholder
-instruction *OpenCall*. Then, when the grammar is complete, *LPEG* combines the rules, ending
-each with a *Return* instruction and translating each *OpenCall* to a *Call* instruction
-with the appropriate offset.
+instruction ~OpenCall~. Then, when the grammar is complete, *LPEG* combines the rules, ending
+each with a ~Return~ instruction and translating each ~OpenCall~ to a ~Call~ instruction
+with the appropriate offset to the enclosing grammar.
 
 #+begin_src lua
   -- === LPEG ===
@@ -634,7 +637,7 @@ with the appropriate offset.
 
 *** Tail Call Optimization
 
-An *OpenCall* followed by a *Return* instruction is translated to a *Jump* instruction
+An ~OpenCall~ followed by a ~Return~ instruction is translated to a ~Jump~ instruction
 — otherwise known as a tail call.
 
 #+begin_src lua
