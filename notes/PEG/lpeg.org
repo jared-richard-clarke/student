@@ -730,6 +730,8 @@ The transformation function *Π* operates on the domain *Grammar × N × Pattern
 
 *g(A_{k})* = the pattern associated with non-terminal *A_{k}* of grammar *g*.
 
+*(g, A_{k})* = a closed grammar, where all variables of *g(A_{k})* are resolved in *g*.
+
 #+begin_example
   === Character Match ===
   Π(g, i, 'c') ≡ Char c
