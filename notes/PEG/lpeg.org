@@ -1035,6 +1035,55 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- 20: end
 #+end_src
 
+*** C Comment Block
+
+#+begin_src lua
+  -- === LPEG ===
+
+  Pattern = lpeg.P
+  Any     = lpeg.P(1)
+
+  open  = Pattern("/*")
+  close = Pattern("*/")
+
+  comment_block = open * (-close * Any) ^ 0 * close
+
+  -- === AST ===
+  --
+  -- sequence
+  --   sequence
+  --     sequence
+  --       char '/'
+  --       char '*'
+  --     repeat
+  --       sequence
+  --         not
+  --           sequence
+  --             char '*'
+  --             char '/'
+  --         any
+  --    sequence
+  --      char '*'
+  --      char '/'
+
+  -- === VM Instructions ===
+  --
+  -- 00: char '/' (2f)
+  -- 01: char '*' (2a)
+  -- 02: testany -> 16
+  -- 04: choice -> 16
+  -- 06: testchar '*' (2a) -> 13
+  -- 08: choice -> 13
+  -- 10: char '*' (2a)
+  -- 11: char '/' (2f)
+  -- 12: failtwice
+  -- 13: any
+  -- 14: partial_commit -> 6
+  -- 16: char '*' (2a)
+  -- 17: char '/' (2f)
+  -- 18: end
+#+end_src
+
 ** Virtual Machine Internals
 
 Samples of C source code from LPEG's ~match~ function, a function that runs
