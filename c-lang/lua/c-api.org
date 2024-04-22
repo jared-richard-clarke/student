@@ -25,6 +25,12 @@
    inspect any element in the stack and even insert and delete elements at any position."
 
    — *Programming in Lua*, Roberto Ierusalimschy
+
+  "...the stack allows the programmer to control the lifetime of any object in a safe way. While an
+   object is in the stack, it cannot be collected; once out of the stack, it cannot be manipulated.
+   Moreover, the stack offers a natural way to pass parameters and results."
+
+   — *Passing a Language through the Eye of a Needle*, Ierusalimschy, Henrique de Figueiredo, and Celes
 #+end_quote
 
 *** Pushing Elements
@@ -56,12 +62,6 @@ The API has a dedicated push function for each Lua type with a direct representa
    the stack as our reference, with negative indices."
 
    — *Programming in Lua*, Roberto Ierusalimschy
-
-   "...the stack allows the programmer to control the lifetime of any object in a safe way. While an
-    object is in the stack, it cannot be collected; once out of the stack, it cannot be manipulated.
-    Moreover, the stack offers a natural way to pass parameters and results."
-
-   — *Passing a Language through the Eye of a Needle*, Ierusalimschy, Henrique de Figueiredo, and Celes
 #+end_quote
 
 #+begin_src c
