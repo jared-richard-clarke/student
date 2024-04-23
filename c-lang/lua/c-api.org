@@ -372,21 +372,32 @@ Lua's generic buffer implementation.
 ** Lua C Bit Array
 
 #+begin_src c
+  #include <stddef.h>
   #include <limits.h>
 
+  #include "lua.h"
+  #include "lauxlib.h"
+
+  // Boolean arrays where each entry is stored in a single bit.
+
+  // Number of bits in an unsigned integer.
   #define BITS_PER_WORD (CHAR_BIT * sizeof(unsigned int))
+  // Word that stores the bit that corresponds to a given index.
   #define I_WORD(i) ((unsigned int)(i) / BITS_PER_WORD)
+  // Mask to access the correct bit inside the word.
   #define I_BIT(i) (1 << ((unsigned int)(i) % BITS_PER_WORD))
 
   #define checkarray(L) (BitArray *)luaL_checkudata(L, 1, "LuaBook.array")
 
   typedef struct BitArray {
     int size;
-    // Variable part.
+    // Variable part. "values[1]" is a placeholder. This is the C89 idiom
+    // for declaring variable-sized arrays inside structs. C99 would declare
+    // "values[]" instead. This syntax is called the "flexible array member".
     unsigned int values[1];
   } BitArray;
 
-  static int newarray (lua_State *L) {
+  static int newarray(lua_State *L) {
     int i;
     size_t nbytes;
     BitArray *a;
@@ -394,13 +405,16 @@ Lua's generic buffer implementation.
     // Number of bits
     int n = (int)luaL_checkinteger(L, 1);
     luaL_argcheck(L, n >= 1, 1, "invalid size");
+    // The size of an array with "n" elements. Subtracts one from "n"
+    // because the original structure already includes space for one
+    // element.
     nbytes = sizeof(BitArray) + I_WORD(n - 1) * sizeof(unsigned int);
     a = (BitArray *)lua_newuserdata(L, nbytes);
 
     a->size = n;
     for (i = 0; i <= I_WORD(n - 1); i++) {
-      // Initialize array.
-      a->values[i] = 0;
+        // Initialize array.
+        a->values[i] = 0;
     }
 
     luaL_getmetatable(L, "LuaBook.array");
@@ -410,13 +424,13 @@ Lua's generic buffer implementation.
     return 1;
   }
 
-  static int getsize (lua_State *L) {
+  static int getsize(lua_State *L) {
     BitArray *a = checkarray(L);
     lua_pushinteger(L, a->size);
     return 1;
   }
 
-  static unsigned int *getparams (lua_State *L, unsigned int *mask) {
+  static unsigned int *getparams(lua_State *L, unsigned int *mask) {
     BitArray *a = checkarray(L);
     int index = (int)luaL_checkinteger(L, 2) - 1;
 
@@ -428,7 +442,7 @@ Lua's generic buffer implementation.
     return &a->values[I_WORD(index)];
   }
 
-  static int setarray (lua_State *L) {
+  static int setarray(lua_State *L) {
     unsigned int mask;
     unsigned int *entry = getparams(L, &mask);
     luaL_checkany(L, 3);
@@ -440,33 +454,31 @@ Lua's generic buffer implementation.
     return 0;
   }
 
-  static int getarray (lua_State *L) {
+  static int getarray(lua_State *L) {
     unsigned int mask;
     unsigned int *entry = getparams(L, &mask);
     lua_pushboolean(L, *entry & mask);
     return 1;
   }
 
-  int array2string (lua_State *L) {
+  int array2string(lua_State *L) {
     BitArray *a = checkarray(L);
     lua_pushfstring(L, "array(%d)", a->size);
     return 1;
   }
 
-  static const struct luaL_Reg arraylib_f [] = {
+  static const struct luaL_Reg arraylib_f[] = {
     { "new", newarray },
-    { NULL,  NULL }
-  };
+    { NULL,  NULL }};
 
-  static const struct luaL_Reg arraylib_m [] = {
+  static const struct luaL_Reg arraylib_m[] = {
     { "__newindex", setarray },
     { "__index",    getarray },
     { "__len",      getsize },
     { "__tostring", array2string },
-    { NULL,         NULL }
-  };
+    { NULL,         NULL }};
 
-  int luaopen_array (lua_State *L) {
+  int luaopen_array(lua_State *L) {
     luaL_newmetatable(L, "LuaBook.array");
     luaL_setfuncs(L, arraylib_m, 0);
     luaL_newlib(L, arraylib_f);
