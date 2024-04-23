@@ -382,7 +382,7 @@ Lua's generic buffer implementation.
 
   // Number of bits in an unsigned integer.
   #define BITS_PER_WORD (CHAR_BIT * sizeof(unsigned int))
-  // Word that stores the bit that corresponds to a given index.
+  // Word that stores bit that corresponds to a given index.
   #define I_WORD(i) ((unsigned int)(i) / BITS_PER_WORD)
   // Mask to access the correct bit inside the word.
   #define I_BIT(i) (1 << ((unsigned int)(i) % BITS_PER_WORD))
