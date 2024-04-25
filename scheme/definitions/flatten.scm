@@ -1,4 +1,4 @@
-;; (flatten list) -> list
+;; (flatten (list any)) -> (list any)
 ;; Flattens a nested list to its base elements.
 ;; (flatten '(((1 2) 3) 4)) -> '(1 2 3 4)
 (define flatten
