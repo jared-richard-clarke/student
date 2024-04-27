@@ -16,9 +16,8 @@ impl<T> List<T> {
     }
 
     fn length(&self) -> u32 {
-        match *self {
-            // "ref" annotates pattern bindings to make them borrow rather than move.
-            Cons(_, ref tail) => 1 + tail.length(),
+        match self {
+            Cons(_, tail) => 1 + tail.length(),
             Nil => 0,
         }
     }
@@ -26,13 +25,11 @@ impl<T> List<T> {
 
 impl<T: std::fmt::Display> List<T> {
     fn stringify(&self) -> String {
-        match *self {
-            Cons(ref head, ref tail) => {
+        match self {
+            Cons(head, tail) => {
                 format!("{}, {}", head, tail.stringify())
             }
-            Nil => {
-                format!("Nil")
-            }
+            Nil => "Nil".to_string(),
         }
     }
 }
