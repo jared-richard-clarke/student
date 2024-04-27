@@ -1,3 +1,4 @@
+use std::fmt;
 // Allows variants of enum to exist without prefix.
 use List::*;
 
@@ -23,13 +24,11 @@ impl<T> List<T> {
     }
 }
 
-impl<T: std::fmt::Display> List<T> {
-    fn stringify(&self) -> String {
+impl<T: fmt::Display> fmt::Display for List<T> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Cons(head, tail) => {
-                format!("{}, {}", head, tail.stringify())
-            }
-            Nil => "Nil".to_string(),
+            Cons(head, tail) => write!(f, "({} {})", head, tail),
+            Nil => write!(f, "Nil"),
         }
     }
 }
