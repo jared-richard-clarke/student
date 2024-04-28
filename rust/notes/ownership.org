@@ -44,7 +44,7 @@ The core idea behind the borrow checker is that variables have three kinds of pe
 By default a variable has *RO* permissions. *RWO* if prefaced by ~let mut~.
 References can temporarily remove these permissions to prevent undefined behavior.
 
-** Reference Types
+** Reference Types and Rules
 
 - *immutable references ( shared references )*: Permit aliasing but disallow mutation.
 
