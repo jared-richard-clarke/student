@@ -7,7 +7,7 @@
 | *The Rust Programming Language* | Steve Klabnik and Carol Nichols |
 | *The Rustonomicon*              | rust-lang.org                   |
 
-** Ownership Rules
+* Ownership Rules
 
 - Each value in Rust has a variable that's called its *owner*.
 
@@ -44,6 +44,13 @@ The core idea behind the borrow checker is that variables have three kinds of pe
 By default a variable has *RO* permissions. *RWO* if prefaced by ~let mut~.
 References can temporarily remove these permissions to prevent undefined behavior.
 
+** Reference Types
+
+- *immutable references ( shared references )*: Permit aliasing but disallow mutation.
+
+- *mutable references ( unique references )*: Temporarily provide mutable access to data without moving
+  it — one alias at a time.
+
 ** Paths
 
 Permissions are defined on paths and not just variables. A path is anything you
@@ -59,17 +66,11 @@ can put on the left-hand side of an assignment. Paths include:
 
 - Any combination of the above, like ~*((*a)[0].1)~.
 
-** Reference Types
-
-- *immutable references ( shared references )*: Permit aliasing but disallow mutation.
-
-- *mutable references ( unique references )*: Temporarily provide mutable access to data without moving
-  it — one alias at a time.
-
 ** Lifetimes
 
 Rust enforces permissions through lifetimes — regions of code through which a reference must remain
-valid. Scope dictates lifetime.
+valid. Permissions are restored to the referent at the end of a reference's lifetime.
+Scope dictates lifetime.
 
 #+begin_src rust
   let x = 7;
