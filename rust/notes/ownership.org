@@ -1,16 +1,19 @@
-* Rust Ownership and Borrowing
+* Rust's Ownership and Borrowing
 
 ** Sources
 
 | source                          | author                          |
 |---------------------------------+---------------------------------|
 | *The Rust Programming Language* | Steve Klabnik and Carol Nichols |
+| *The Rustonomicon*              | rust-lang.org                   |
 
 ** Ownership Rules
 
 - Each value in Rust has a variable that's called its *owner*.
 
 - There can only be one owner at a time.
+
+- Ownership can be transferred by moves, which happen on assignment and function calls.
 
 - When the owner goes out of scope, the value will be dropped.
 
@@ -60,5 +63,47 @@ can put on the left-hand side of an assignment. Paths include:
 
 - *immutable references ( shared references )*: Permit aliasing but disallow mutation.
 
-- *mutable references ( unique references )*: Temporarily provide mutable access to data without moving it —
-  one alias at a time.
+- *mutable references ( unique references )*: Temporarily provide mutable access to data without moving
+  it — one alias at a time.
+
+** Lifetimes
+
+Rust enforces permissions through lifetimes — regions of code through which a reference must remain
+valid. Scope dictates lifetime.
+
+#+begin_src rust
+  let x = 7;
+  let y = &x;
+  let z = &y;
+
+  // === Lifetimes as Dictated by Scope ===
+
+  'a: {
+      let x: i32 = 7;
+      'b: {
+          let y: &'b i32 = &'b x;
+          'c: {
+              let z: &'c &'b i32 = &'c y;
+          }
+      }
+  }
+
+  // === Reference that Outlives Referent ===
+
+  fn as_str(data: &u32) -> &str {
+      let s = format!("{}", data);
+      &s
+  }
+
+  // - Desugars ->
+
+  fn as_str<'a>(data: &'a u32) -> &'a str {
+      'b: {
+          let s = format!("{}", data);
+          return &'a s;
+      }
+  }
+
+  // Reference "&s" must outlive scope 'a, but its referent "s" is within scope 'b.
+  // The reference outlives its referent, creating potentially undefined behavior.
+#+end_src
