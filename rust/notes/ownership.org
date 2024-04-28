@@ -7,7 +7,7 @@
 | *The Rust Programming Language* | Steve Klabnik and Carol Nichols |
 | *The Rustonomicon*              | rust-lang.org                   |
 
-* Ownership Rules
+** Ownership Rules
 
 - Each value in Rust has a variable that's called its *owner*.
 
