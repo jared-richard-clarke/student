@@ -1,0 +1,79 @@
+* C Basic Types
+
+** Sources
+
+| source         | author    |
+|----------------+-----------|
+| *C Data Types* | Wikipedia |
+
+** Primary Types
+
+The C language provides the four basic arithmetic type specifiers ~char~, ~int~, ~float~,
+and ~double~, and the modifiers ~signed~, ~unsigned~, ~short~, and ~long~.
+
+#+begin_example
+  | type                   | description                               | minimum size | format specifier | range                  |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | char                   | Smallest addressable unit of the machine  | 8 bits       | %c               | [CHAR_MIN, CHAR_MAX]   |
+  |                        | that can contain basic character set.     |              |                  |                        |
+  |                        | It is an integer type. Actual type can be |              |                  |                        |
+  |                        | either signed or unsigned. It contains    |              |                  |                        |
+  |                        | CHAR_BITS.                                |              |                  |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | signed char            | Same size as char, but guaranteed         | 8 bits       | %c               | [SCHAR_MIN, SCHAR_MAX] |
+  |                        | to be signed. Capable of containing       |              |                  |                        |
+  |                        | at least the [-128, +127] range.          |              |                  |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | unsigned char          | Same size as char, but guaranteed to be   | 8 bits       | %c               | [UCHAR_MIN, UCHAR_MAX] |
+  |                        | unsigned. Contains at least the           |              |                  |                        |
+  |                        | [0, 255] range.                           |              |                  |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | short                  | Short signed integer type. Capable of     | 16 bits      | %hi or %hd       | [SHRT_MIN, SHRT_MAX]   |
+  | short int              | containing at least the                   |              |                  |                        |
+  | signed short           | [-32_768, +32_767] range.                 |              |                  |                        |
+  | signed short int       |                                           |              |                  |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | unsigned short         | Short unsigned integer type. Contains at  | 16 bits      | %hu              | [0, USHRT_MAX]         |
+  | unsigned short int     | least the [0, 65_535] range.              |              |                  |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | int                    | Basic signed integer type. Contains at    | 16 bits      | %i or $d         | [INT_MIN, INT_MAX]     |
+  | signed                 | least the [-32_768, +32_767] range.       |              |                  |                        |
+  | signed int             |                                           |              |                  |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | unsigned               | Basic unsigned integer type. Contains at  | 16 bits      | %u               | [0, UINT_MAX]          |
+  | unsigned int           | least the [0, 65_535] range.              |              |                  |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | long                   | Long signed integer type. Contains at     | 32 bits      | %li or %ld       | [LONG_MIN, LONG_MAX]   |
+  | long int               | least the                                 |              |                  |                        |
+  | signed long            | [-2_147_483_648, +2_147_483_647] range.   |              |                  |                        |
+  | signed long int        |                                           |              |                  |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | unsigned long          | Long unsigned integer type. Contains at   | 32 bits      | %lu              | [0, ULONG_MAX]         |
+  | unsigned long int      | least the [0, 4_294_967_295] range.       |              |                  |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | long long              | Long long signed integer type. Contains   | 64 bits      | %lli or %lld     | [LLONG_MIN, LLONG_MAX] |
+  | long long int          | at least the                              |              |                  |                        |
+  | signed long long       | [-9_223_372_036_854_775_808,              |              |                  |                        |
+  | signed long long int   |  +9_223_372_036_854_775_807] range.       |              |                  |                        |
+  |                        | Specified since the C99 standard.         |              |                  |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | unsigned long long     | Long long unsigned integer type. Contains | 64 bits      | %llu             | [0, ULLONG_MAX]        |
+  | unsigned long long int | at least the range                        |              |                  |                        |
+  |                        | [0, 18_446_744_073_709_551_615].          |              |                  |                        |
+  |                        | Specified since the C99 standard.         |              |                  |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | float                  | Single-precision floating point type.     |              | %f %F            |                        |
+  |                        | On most systems, specified by the         |              | %g %G            |                        |
+  |                        | IEEE 754 single-precision binary floating |              | %e %E            |                        |
+  |                        | point format (32 bits).                   |              | %a %A            |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | double                 | Double-precision floating point type.     |              | %lf %lF          |                        |
+  |                        | On most systems, specified by the         |              | %lg %lG          |                        |
+  |                        | IEEE 754 double-precision binary floating |              | %le %lE          |                        |
+  |                        | point format (64 bits).                   |              | %la %lA          |                        |
+  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
+  | long double            | Extended precision floating point type.   |              | %lf %lF          |                        |
+  |                        | Can be the IEEE 754 quadruple-precision   |              | %lg %lG          |                        |
+  |                        | floating point format. Implementations    |              | %le %lE          |                        |
+  |                        | vary.                                     |              | %la %lA          |                        |
+#+end_example
