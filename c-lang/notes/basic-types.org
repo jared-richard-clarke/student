@@ -1,15 +1,20 @@
-* C Basic Types
+* C Basic Types and Operations
 
 ** Sources
 
-| source         | author    |
-|----------------+-----------|
-| *C Data Types* | Wikipedia |
+| source         | author       |
+|----------------+--------------|
+| *C Data Types* | Wikipedia    |
+| *Modern C*     | Jens Gustedt |
 
 ** Primary Types
 
 The C language provides the four basic arithmetic type specifiers ~char~, ~int~, ~float~,
 and ~double~, and the modifiers ~signed~, ~unsigned~, ~short~, and ~long~.
+
+The type ~size_t~ represents values in range ~[0, SIZE_MAX]~. Depending on the platform ~SIZE_MAX~
+is equal to ~2^16 - 1~, ~2^32 - 1~, or ~2^64 - 1~. ~SIZE_MAX~ is contained in ~stdint.h~. ~size_t~
+is an unsigned integer type.
 
 #+begin_example
   | type                   | description                               | minimum size | format specifier | range                  |
@@ -77,3 +82,53 @@ and ~double~, and the modifiers ~signed~, ~unsigned~, ~short~, and ~long~.
   |                        | floating point format. Implementations    |              | %le %lE          |                        |
   |                        | vary.                                     |              | %la %lA          |                        |
 #+end_example
+
+** Operators
+
+| operator          | alt-name  | form    | type a           | type b     | type result | operation      |
+|-------------------+-----------+---------+------------------+------------+-------------+----------------|
+|                   |           | a       | narrow           |            | Wide        | promotion      |
+| + -               |           | a@b     | pointer          | integer    | pointer     | arithmetic     |
+| + - * /           |           | a@b     | arithmetic       | arithmetic | arithmetic  | arithmetic     |
+| + -               |           | @a      | arithmetic       |            | arithmetic  | arithmetic     |
+| %                 |           | a@b     | integer          | integer    | integer     | arithmetic     |
+| ~                 | compl     | @a      | integer          |            | integer     | bitwise        |
+| &                 | bitand    | a@b     | integer          | integer    | integer     | bitwise        |
+| \vert{}           | bitor     | a@b     | integer          | integer    | integer     | bitwise        |
+| ^                 | xor       | a@b     | integer          | integer    | integer     | bitwise        |
+| << >>             |           | a@b     | integer          | positive   | integer     | bitwise        |
+| == < > <= >=      |           | a@b     | scalar           | scalar     | 0, 1        | comparison     |
+| !=                | not_eq    | a@b     | scalar           | scalar     | 0, 1        | comparsion     |
+|                   | !!a       | a       | scalar           |            | 0, 1        | logic          |
+| !a                | not       | @a      | scalar           |            | 0, 1        | logic          |
+| && \vert{}\vert{} | and or    | a@b     | scalar           | scalar     | 0, 1        | logic          |
+| .                 |           | a@m     | struct           |            | value       | member         |
+| \star{}           |           | @a      | pointer          |            | object      | reference      |
+| []                |           | a[b]    | pointer          | integer    | object      | member         |
+| ->                |           | a@m     | struct pointer   |            | object      | member         |
+| ()                |           | a(b...) | function pointer |            | value       | call           |
+| sizeof            |           | @ a     | none             |            | size_t      | size, ICE      |
+| _Alignof          | alignof   | @(a)    | none             |            | size_t      | alignment, ICE |
+
+** Object Operators
+
+| operator    | alt-name | form  | type                  | result  | operation      |
+|-------------+----------+-------+-----------------------+---------+----------------|
+|             |          | o     | array*                | pointer | array decay    |
+|             |          | o     | function              | pointer | function decay |
+|             |          | o     | other                 | value   | evaluation     |
+| =           |          | o@a   | non-array             | value   | assignment     |
+| += -= *= /= |          | o@a   | arithmetic            | value   | arithmetic     |
+| += -=       |          | o@a   | pointer               | value   | arithmetic     |
+| %=          |          | o@a   | integer               | value   | arithmetic     |
+| ++ --       |          | @o o@ | arithmetic or pointer | value   | arithmetic     |
+| &=          | and_eq   | o@a   | integer               | value   | bitwise        |
+| \vert{}=    | or_eq    | o@a   | integer               | value   | bitwise        |
+| ^=          | xor_eq   | o@a   | integer               | value   | bitwise        |
+| <<= >>=     |          | o@a   | integer               | value   | bitwise        |
+| .           |          | o@m   | struct                | object  | member         |
+| []          |          | o[a]  | array*                | object  | member         |
+| &           |          | @o    | any*                  | pointer | address        |
+| sizeof      |          | @ o   | data object, non-VLA  | size_t  | size, ICE      |
+| sizeof      |          | @ o   | VLA                   | size_t  | size           |
+| _Alignof    | alignof  | @(o)  | non-function          | size_t  | alignment, ICE |
