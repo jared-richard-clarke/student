@@ -36,7 +36,7 @@ If the count is at or exceeds capacity, seven steps are taken:
 
 ** Code Example
 
-Below is a consolidated, simplified, and earlier version of Nystrom's ~Chunk~ implementation.
+Below is a consolidated, simplified, and early version of Nystrom's ~Chunk~ implementation.
 
 #+begin_src c
   #include <stddef.h>
