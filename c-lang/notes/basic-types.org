@@ -4,8 +4,27 @@
 
 | source         | author       |
 |----------------+--------------|
-| *C Data Types* | Wikipedia    |
 | *Modern C*     | Jens Gustedt |
+
+** Summary
+
+- C programs run in an abstract state machine that is mostly independent of the specific
+  computer where it is launched.
+
+- All basic C types are kinds of numbers, but not all of them can be used directly for
+  arithmetic.
+
+- Values have a type and a binary representation.
+
+- When necessary, types of values are implicitly converted to fit the needs of particular
+  places where they are used.
+
+- Variables must be explicitly initialized before their first use.
+
+- Integer computations give exact values as long as there is no overflow.
+
+- Floating-point computations only give approximated results that are cut off after a
+  certain number of binary digits.
 
 ** Primary Types
 
@@ -16,99 +35,92 @@ The type ~size_t~ represents values in range ~[0, SIZE_MAX]~. Depending on the p
 is equal to ~2^16 - 1~, ~2^32 - 1~, or ~2^64 - 1~. ~SIZE_MAX~ is contained in ~stdint.h~. ~size_t~
 is an unsigned integer type.
 
+Narrow types must be promoted to a wider type — usually a ~signed int~ — before they are used
+in an arithmetic expression.
+
+- Use ~size_t~ for sizes, cardinalities, or ordinals.
+
+- Use ~unsigned~ for small, non-negative quantities.
+
+- Use ~signed~ for small quantities that bear a sign.
+
+- Use ~ptrdiff_t~ for large differences that bear a sign.
+
+- Use ~double~ for floating-point calculations.
+
+- Use ~double complex~ for complex calculations.
+
 #+begin_example
-  | type                   | description                               | minimum size | format specifier | range                  |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | char                   | Smallest addressable unit of the machine  | 8 bits       | %c               | [CHAR_MIN, CHAR_MAX]   |
-  |                        | that can contain basic character set.     |              |                  |                        |
-  |                        | It is an integer type. Actual type can be |              |                  |                        |
-  |                        | either signed or unsigned. It contains    |              |                  |                        |
-  |                        | CHAR_BITS.                                |              |                  |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | signed char            | Same size as char, but guaranteed         | 8 bits       | %c               | [SCHAR_MIN, SCHAR_MAX] |
-  |                        | to be signed. Capable of containing       |              |                  |                        |
-  |                        | at least the [-128, +127] range.          |              |                  |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | unsigned char          | Same size as char, but guaranteed to be   | 8 bits       | %c               | [UCHAR_MIN, UCHAR_MAX] |
-  |                        | unsigned. Contains at least the           |              |                  |                        |
-  |                        | [0, 255] range.                           |              |                  |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | short                  | Short signed integer type. Capable of     | 16 bits      | %hi or %hd       | [SHRT_MIN, SHRT_MAX]   |
-  | short int              | containing at least the                   |              |                  |                        |
-  | signed short           | [-32_768, +32_767] range.                 |              |                  |                        |
-  | signed short int       |                                           |              |                  |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | unsigned short         | Short unsigned integer type. Contains at  | 16 bits      | %hu              | [0, USHRT_MAX]         |
-  | unsigned short int     | least the [0, 65_535] range.              |              |                  |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | int                    | Basic signed integer type. Contains at    | 16 bits      | %i or $d         | [INT_MIN, INT_MAX]     |
-  | signed                 | least the [-32_768, +32_767] range.       |              |                  |                        |
-  | signed int             |                                           |              |                  |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | unsigned               | Basic unsigned integer type. Contains at  | 16 bits      | %u               | [0, UINT_MAX]          |
-  | unsigned int           | least the [0, 65_535] range.              |              |                  |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | long                   | Long signed integer type. Contains at     | 32 bits      | %li or %ld       | [LONG_MIN, LONG_MAX]   |
-  | long int               | least the                                 |              |                  |                        |
-  | signed long            | [-2_147_483_648, +2_147_483_647] range.   |              |                  |                        |
-  | signed long int        |                                           |              |                  |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | unsigned long          | Long unsigned integer type. Contains at   | 32 bits      | %lu              | [0, ULONG_MAX]         |
-  | unsigned long int      | least the [0, 4_294_967_295] range.       |              |                  |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | long long              | Long long signed integer type. Contains   | 64 bits      | %lli or %lld     | [LLONG_MIN, LLONG_MAX] |
-  | long long int          | at least the                              |              |                  |                        |
-  | signed long long       | [-9_223_372_036_854_775_808,              |              |                  |                        |
-  | signed long long int   |  +9_223_372_036_854_775_807] range.       |              |                  |                        |
-  |                        | Specified since the C99 standard.         |              |                  |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | unsigned long long     | Long long unsigned integer type. Contains | 64 bits      | %llu             | [0, ULLONG_MAX]        |
-  | unsigned long long int | at least the range                        |              |                  |                        |
-  |                        | [0, 18_446_744_073_709_551_615].          |              |                  |                        |
-  |                        | Specified since the C99 standard.         |              |                  |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | float                  | Single-precision floating point type.     |              | %f %F            |                        |
-  |                        | On most systems, specified by the         |              | %g %G            |                        |
-  |                        | IEEE 754 single-precision binary floating |              | %e %E            |                        |
-  |                        | point format (32 bits).                   |              | %a %A            |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | double                 | Double-precision floating point type.     |              | %lf %lF          |                        |
-  |                        | On most systems, specified by the         |              | %lg %lG          |                        |
-  |                        | IEEE 754 double-precision binary floating |              | %le %lE          |                        |
-  |                        | point format (64 bits).                   |              | %la %lA          |                        |
-  |------------------------+-------------------------------------------+--------------+------------------+------------------------|
-  | long double            | Extended precision floating point type.   |              | %lf %lF          |                        |
-  |                        | Can be the IEEE 754 quadruple-precision   |              | %lg %lG          |                        |
-  |                        | floating point format. Implementations    |              | %le %lE          |                        |
-  |                        | vary.                                     |              | %la %lA          |                        |
+  | class                     | systematic name      | other name          | rank |
+  |---------------------------+----------------------+---------------------+------|<
+  |                           | _Bool                | bool                | 0    | |
+  |                           | unsigned char        |                     | 1    | +-+
+  |                unsigned   | unsigned short       |                     | 2    | | |
+  |                           |----------------------+---------------------+------|<  |
+  |                           | unsigned int         | unsigned            | 3    |   |
+  |                           | unsigned long        |                     | 4    |   +- narrow types
+  |                           | unsigned long long   |                     | 5    |   |
+  |                -----------+----------------------+---------------------+------|<  |
+  | integers       [un]signed | char                 |                     | 1    | | |
+  |                -----------+----------------------+---------------------+------| +-+
+  |                           | signed char          |                     | 1    | |
+  |                           | signed short         | short               | 2    | |
+  |                           |----------------------+---------------------+------|<
+  |                signed     | signed int           | signed or int       | 3    |
+  |                           | signed long          | long                | 4    |
+  |                           | signed long long     | long long           | 5    |
+  |---------------------------+----------------------+---------------------+------|
+  |                           | float                |                     |      |
+  |                real       | double               |                     |      |
+  |                           | long double          |                     |      |
+  | floating point            |----------------------+---------------------+------|
+  |                           | float _Complex       | float complex       |      |
+  |                complex    | double _Complex      | double complex      |      |
+  |                           | long double _Complex | long double complex |      |
 #+end_example
 
-** Operators
+** Semantic Arithmetic Types
 
-| operator          | alt-name  | form    | type a           | type b     | type result | operation      |
-|-------------------+-----------+---------+------------------+------------+-------------+----------------|
-|                   |           | a       | narrow           |            | Wide        | promotion      |
-| + -               |           | a@b     | pointer          | integer    | pointer     | arithmetic     |
-| + - * /           |           | a@b     | arithmetic       | arithmetic | arithmetic  | arithmetic     |
-| + -               |           | @a      | arithmetic       |            | arithmetic  | arithmetic     |
-| %                 |           | a@b     | integer          | integer    | integer     | arithmetic     |
-| ~                 | compl     | @a      | integer          |            | integer     | bitwise        |
-| &                 | bitand    | a@b     | integer          | integer    | integer     | bitwise        |
-| \vert{}           | bitor     | a@b     | integer          | integer    | integer     | bitwise        |
-| ^                 | xor       | a@b     | integer          | integer    | integer     | bitwise        |
-| << >>             |           | a@b     | integer          | positive   | integer     | bitwise        |
-| == < > <= >=      |           | a@b     | scalar           | scalar     | 0, 1        | comparison     |
-| !=                | not_eq    | a@b     | scalar           | scalar     | 0, 1        | comparsion     |
-|                   | !!a       | a       | scalar           |            | 0, 1        | logic          |
-| !a                | not       | @a      | scalar           |            | 0, 1        | logic          |
-| && \vert{}\vert{} | and or    | a@b     | scalar           | scalar     | 0, 1        | logic          |
-| .                 |           | a@m     | struct           |            | value       | member         |
-| \star{}           |           | @a      | pointer          |            | object      | reference      |
-| []                |           | a[b]    | pointer          | integer    | object      | member         |
-| ->                |           | a@m     | struct pointer   |            | object      | member         |
-| ()                |           | a(b...) | function pointer |            | value       | call           |
-| sizeof            |           | @ a     | none             |            | size_t      | size, ICE      |
-| _Alignof          | alignof   | @(a)    | none             |            | size_t      | alignment, ICE |
+| type      | header   | context                   | meaning                              |
+|-----------+----------+---------------------------+--------------------------------------|
+| size_t    | stddef.h |                           | type for "sizes" and cardinalities   |
+|-----------+----------+---------------------------+--------------------------------------|
+| ptrdiff_t | stddef.h |                           | type for size differences            |
+|-----------+----------+---------------------------+--------------------------------------|
+| uintmax_t | stdint.h |                           | maximum width unsigned integer       |
+|-----------+----------+---------------------------+--------------------------------------|
+| intmax_t  | stdint.h |                           | maximum width signed integer         |
+|-----------+----------+---------------------------+--------------------------------------|
+| time_t    | time.h   | time(0), difftime(t2, t1) | calendar time in seconds since epoch |
+|-----------+----------+---------------------------+--------------------------------------|
+| clock_t   | time.h   | clock()                   | processor time                       |
+
+** Value Operators
+
+| operator          | alt-name | form    | type a           | type b     | type result | operation      |
+|-------------------+----------+---------+------------------+------------+-------------+----------------|
+|                   |          | a       | narrow           |            | Wide        | promotion      |
+| + -               |          | a@b     | pointer          | integer    | pointer     | arithmetic     |
+| + - * /           |          | a@b     | arithmetic       | arithmetic | arithmetic  | arithmetic     |
+| + -               |          | @a      | arithmetic       |            | arithmetic  | arithmetic     |
+| %                 |          | a@b     | integer          | integer    | integer     | arithmetic     |
+| ~                 | compl    | @a      | integer          |            | integer     | bitwise        |
+| &                 | bitand   | a@b     | integer          | integer    | integer     | bitwise        |
+| \vert{}           | bitor    | a@b     | integer          | integer    | integer     | bitwise        |
+| ^                 | xor      | a@b     | integer          | integer    | integer     | bitwise        |
+| << >>             |          | a@b     | integer          | positive   | integer     | bitwise        |
+| == < > <= >=      |          | a@b     | scalar           | scalar     | 0, 1        | comparison     |
+| !=                | not_eq   | a@b     | scalar           | scalar     | 0, 1        | comparsion     |
+|                   | !!a      | a       | scalar           |            | 0, 1        | logic          |
+| !a                | not      | @a      | scalar           |            | 0, 1        | logic          |
+| && \vert{}\vert{} | and or   | a@b     | scalar           | scalar     | 0, 1        | logic          |
+| .                 |          | a@m     | struct           |            | value       | member         |
+| \star{}           |          | @a      | pointer          |            | object      | reference      |
+| []                |          | a[b]    | pointer          | integer    | object      | member         |
+| ->                |          | a@m     | struct pointer   |            | object      | member         |
+| ()                |          | a(b...) | function pointer |            | value       | call           |
+| sizeof            |          | @ a     | none             |            | size_t      | size, ICE      |
+| _Alignof          | alignof  | @(a)    | none             |            | size_t      | alignment, ICE |
 
 ** Object Operators
 
@@ -132,3 +144,11 @@ is an unsigned integer type.
 | sizeof      |          | @ o   | data object, non-VLA  | size_t  | size, ICE      |
 | sizeof      |          | @ o   | VLA                   | size_t  | size           |
 | _Alignof    | alignof  | @(o)  | non-function          | size_t  | alignment, ICE |
+
+** Type Operators
+
+| operator | alt-name | form           | type T | operation     |
+|----------+----------+----------------+--------+---------------|
+| sizeof   |          | sizeof(T)      | any    | size          |
+| _Alignof | alignof  | _Alignof(T)    | any    | alignment     |
+|          | offsetof | offsetof(T, m) | struct | member offset |
