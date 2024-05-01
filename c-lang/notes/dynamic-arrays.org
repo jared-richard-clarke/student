@@ -53,39 +53,34 @@ Below is a consolidated, simplified, and early version of Nystrom's ~Chunk~ impl
   #define FREE_ARRAY(type, pointer, oldCount) \
       reallocate(pointer, sizeof(type) * (oldCount), 0)
 
-  void *reallocate(void *pointer, size_t oldSize, size_t newSize)
-  {
-      if (newSize == 0)
-      {
+  void *reallocate(void *pointer, size_t oldSize, size_t newSize) {
+      if (newSize == 0) {
           free(pointer);
           return NULL;
       }
 
       void *result = realloc(pointer, newSize);
-      if (result == NULL)
+      if (result == NULL) {
           exit(1);
+      }
       return result;
   }
 
   // Chunk: a dynamic array
-  typedef struct
-  {
+  typedef struct {
       int count;
       int capacity;
       uint8_t *code;
   } Chunk;
 
-  void initChunk(Chunk *chunk)
-  {
+  void initChunk(Chunk *chunk) {
       chunk->count = 0;
       chunk->capacity = 0;
       chunk->code = NULL;
   }
 
-  void writeChunk(Chunk *chunk, uint8_t byte)
-  {
-      if (chunk->capacity < chunk->count + 1)
-      {
+  void writeChunk(Chunk *chunk, uint8_t byte) {
+      if (chunk->capacity < chunk->count + 1) {
           int oldCapacity = chunk->capacity;
           chunk->capacity = GROW_CAPACITY(oldCapacity);
           chunk->code = GROW_ARRAY(uint8_t, chunk->code,
@@ -96,8 +91,7 @@ Below is a consolidated, simplified, and early version of Nystrom's ~Chunk~ impl
       chunk->count++;
   }
 
-  void freeChunk(Chunk *chunk)
-  {
+  void freeChunk(Chunk *chunk) {
       FREE_ARRAY(uint8_t, chunk->code, chunk->capacity);
       initChunk(chunk);
   }
