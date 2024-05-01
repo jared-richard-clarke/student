@@ -1,4 +1,4 @@
-* C Basic Types and Operations
+* C Data Types and Operations
 
 ** Sources
 
@@ -152,3 +152,224 @@ in an arithmetic expression.
 | sizeof   |          | sizeof(T)      | any    | size          |
 | _Alignof | alignof  | _Alignof(T)    | any    | alignment     |
 |          | offsetof | offsetof(T, m) | struct | member offset |
+
+** Derived Data Types
+
+- Arrays :: Combine items that all have the same base type.
+
+  - fixed-length arrays (FLA)
+
+  - variable-length arrays (VLA)
+
+- Structures :: Combine items that may have different base types.
+
+- Pointers :: Entities that refer to an object in memory, are null, or are indeterminate.
+
+- Unions :: Overlay items of different base types in the same memory location.
+
+- typedef :: Creates a new name for an existing type.
+
+*** Arrays
+
+- Arrays are not pointers, although the two are closely related.
+
+- An array in a condition evaluates ~true~. The truth comes from the array decay operation.
+
+- There are array objects but no array values.
+
+- Arrays can't be compared.
+
+- Arrays can't be assigned to.
+
+- *VLAs* can't have initializers.
+
+- *VLAs* can't be declared outside functions.
+
+- The length of an *FLA* is determined by an integer constant expression (*ICE*) or
+  by an initializer.
+
+- An array-length specification must be strictly positive.
+
+- An array with a length that is not an integer constant expression is a *VLA*.
+
+- The length of array ~A~ is ~(sizeof A)/(sizeof A[0])~.
+
+- The innermost dimension of an array parameter to a function is lost.
+
+- Don't use the ~sizeof~ operator on array parameters to functions.
+
+- Array parameters behave as if the array is *passed by reference*.
+
+- A string is a 0-terminated array of *char*. An array of *char* without a 0-terminator
+  is not a string.
+
+#+begin_src c
+  // Equivalent declarations.
+  char ted1    = "ted";
+  char ted2    = { "ted" };
+  char ted3    = { 't', 'e', 'd', 0 };
+  char ted4[4] = { 't', 'e', 'd' };
+
+  // Not a string.
+  char ted5[3] = { 't', 'e', 'd' };
+#+end_src
+
+- Using a string function with a non-string has undefined behavior.
+
+*** Pointers
+
+The term *pointer* stands for a special derived type construct that "points" or "refers" to
+something. Pointers are considered scalar values: arithmetic operations are defined for them,
+such as offset addition and subtraction. They have state, including a dedicated null state.
+
+- Pointers are opaque objects.
+
+- Pointers are valid, null, or indeterminate.
+
+- Initialization or assignment with 0 makes a pointer null.
+
+- In logical expressions, pointers evaluate to ~false~ if they are null.
+
+- Indeterminate pointers lead to undefined behavior. If we can't ensure that a pointer
+  is valid, we must at least ensure that it is set to null.
+
+- Always initialize pointers.
+
+- Using the *object-of* operator, (*\star{}*), with an indeterminate or null pointer has
+  undefined behavior. An indeterminate pointer might access a random object in memory,
+  whereas a null pointer will crash a program. This null pointer behavior is considered
+  a feature.
+
+- A valid pointer referes to the first element of an array of the reference type.
+
+#+begin_src c
+  void swap(double* p1, double* p2) {
+    double temp = *p1;
+    *p1 = *p2;
+    *p2 = temp;
+  }
+
+  // - equivalent ->
+
+  void swap(double p1[static 1], double p2[static 1]) {
+    double temp = p1[0];
+    p1[0] = p2[0];
+    p2[0] = temp;
+  }
+#+end_src
+
+**** Pointer Addition
+
+#+begin_src c
+  // === Sum 1 ===
+  //
+  //      0              i              length - 1
+  //       --------       --------       --------
+  // a -> | double | ... | double | ... | double |
+  //       --------       --------       --------
+  //                          ^
+  //                          |
+  //                        a + i
+  //
+  double sum1(size_t length, double const* a) {
+    double sum = 0.0;
+    for (size_t i = 0; i < length; i += 1) {
+      sum += *(a + i);
+    }
+    return sum;
+  }
+
+  // === Sum 2 ===
+  //
+  //      0              i              length - 1
+  //       --------       --------       --------
+  // a -> | double | ... | double | ... | double | ...
+  //       --------       --------       --------
+  //                     ^                             ^
+  //                     |                             |
+  //                     p                           a + length
+  //
+  double sum2(size_t length, double const* a) {
+    double sum = 0.0;
+    for (double const* p = a; p < a+length; p += 1) {
+      sum += *p;
+    }
+    return sum;
+  }
+
+  // === Sum 3 ===
+  //
+  //      0              i              length - 1
+  //       --------       --------       --------
+  // a -> | double | ... | double | ... | double | ...
+  //       --------       --------       --------
+  //                     ^                             ^
+  //                     |                             |
+  //                     a                            end
+  //
+  double sum3(size_t length, double const* a) {
+    double sum = 0.0;
+    for (double const*const end = a + length; a < end; a += 1) {
+      sum += *a;
+    }
+    return sum;
+  }
+#+end_src
+
+- The length of an array object cannot be reconstructed from a pointer.
+
+- Pointers are not arrays.
+
+- Only subtract pointers from elements of an array object.
+
+*** Structures
+
+#+begin_src c
+  // Declare type.
+  struct birds {
+    char const* jay;
+    char const* magpie;
+    char const* raven;
+    char const* chough;
+  };
+
+  // Instantiate a "birds" struct and assign to "names".
+  struct birds names = {
+    .jay    = "Joe",
+    .magpie = "Frau",
+    .raven  = "Lissy",
+    .chough = "Henry",
+  };
+
+  // - Equivalent ->
+
+  struct birds names;
+
+  names.jay    = "Joe";
+  names.magpie = "Frau";
+  names.raven  = "Lissy";
+  names.chough = "Henry";
+#+end_src
+
+- Omitted structure initializers force the corresponding member to 0.
+
+- A structure's initializer must initialize at least one member.
+
+- Structure parameters are passed by value.
+
+- Structures can be assigned with ~=~ but not compared with ~==~ or ~!=~.
+
+- All struct declarations in a nested declaration have the same scope of visibility.
+
+*** Type Aliases
+
+- Forward-declare a ~struct~ within a ~typedef~ using the same identifier as the tag name.
+
+#+begin_src c
+  typedef struct birds birds;
+  struct birds { ... };
+#+end_src
+
+- A ~typedef~ only creates an alias for a type, but never a new type.
+
+- Identifier names terminating with ~_t~ for ~typdef~ are reserved by convention.
