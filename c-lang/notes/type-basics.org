@@ -153,6 +153,40 @@ in an arithmetic expression.
 | _Alignof | alignof  | _Alignof(T)    | any    | alignment     |
 |          | offsetof | offsetof(T, m) | struct | member offset |
 
+** The C Libraries
+
+| name              | description                                  |
+|-------------------+----------------------------------------------|
+| ~<assert.h>~      | Runtime condition assertion                  |
+| ~<complex.h>~     | Complex numbers                              |
+| ~<ctype.h>~       | Character classification and conversion      |
+| ~<errno.h>~       | Error codes                                  |
+| ~<fenv.h>~        | Floating-point environment                   |
+| ~<float.h>~       | Properties of floating-point types           |
+| ~<inttypes.h>~    | Formatting conversion of integer types       |
+| ~<iso646.h>~      | Alternative spellings for operators          |
+| ~<limits.h>~      | Properties of integer types                  |
+| ~<locale.h>~      | Internationalization                         |
+| ~<math.h>~        | Type-specific mathematical functions         |
+| ~<setjmp.h>~      | Non-local jumps                              |
+| ~<signal.h>~      | Signal-handling functions                    |
+| ~<stdalign.h>~    | Alignment of objects                         |
+| ~<stdarg.h>~      | Functions with varying numbers of arguments  |
+| ~<stdatomic.h>~   | Atomic operations                            |
+| ~<stdbool.h>~     | Booleans                                     |
+| ~<stddef.h>~      | Basic types and macros                       |
+| ~<stdint.h>~      | Exact-width integer types                    |
+| ~<stdio.h>~       | Input and output                             |
+| ~<stdlib.h>~      | Basic functions                              |
+| ~<stdnoreturn.h>~ | Non-returning functions                      |
+| ~<string.h>~      | String handling                              |
+| ~<tgmath.h>~      | Type-generic mathematical functions          |
+| ~<threads.h>~     | Threads and control structures               |
+| ~<time.h>~        | Handling time                                |
+| ~<uchar.h>~       | Unicode characters                           |
+| ~<wchar.h>~       | Wide strings                                 |
+| ~<wctype.h>~      | Wide character classification and conversion |
+
 ** Derived Data Types
 
 - Arrays :: Combine items that all have the same base type.
