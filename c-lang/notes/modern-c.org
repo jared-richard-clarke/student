@@ -203,7 +203,7 @@ in an arithmetic expression.
 
 - typedef :: Creates a new name for an existing type.
 
-*** Arrays
+** Arrays
 
 - Arrays are not pointers, although the two are closely related.
 
@@ -256,8 +256,6 @@ The term *pointer* stands for a special derived type construct that "points" or 
 something. Pointers are considered scalar values: arithmetic operations are defined for them,
 such as offset addition and subtraction. They have state, including a dedicated null state.
 
-- Pointers are opaque objects.
-
 - Pointers are valid, null, or indeterminate.
 
 - Initialization or assignment with 0 makes a pointer null.
@@ -274,7 +272,7 @@ such as offset addition and subtraction. They have state, including a dedicated 
   whereas a null pointer will crash a program. This null pointer behavior is considered
   a feature.
 
-- A valid pointer referes to the first element of an array of the reference type.
+- A valid pointer points to the first element of an array of the reference type.
 
 #+begin_src c
   void swap(double* p1, double* p2) {
@@ -352,9 +350,46 @@ such as offset addition and subtraction. They have state, including a dedicated 
 
 - The length of an array object cannot be reconstructed from a pointer.
 
-- Pointers are not arrays.
+- Pointers are not arrays but can refer to arrays.
 
-- Only subtract pointers from elements of an array object.
+- Only subtract pointers from elements of an array object — the same array object.
+
+- All pointer differences have type ~ptrdiff_t~.
+
+- Use ~ptrdiff_t~ to encode signed differences of positions or sizes.
+
+- For printing, cast pointer values to ~void*~, and use the format ~%p~ specifier.
+
+- Accessing an object that has a *trap representation* of its type is undefined behavior.
+
+- trap representation :: A nonsense bit pattern that is unintentionally interpreted as
+  a specific type.
+
+- When dereferenced, a pointed-to object must be of the designated type.
+
+- A pointer must point to a valid object or one position beyond a valid object or be null.
+
+- Don't use ~NULL~. It hides more than it clarifies. Use ~0~. Use the sequence
+  ~(void*)0~ for pointers.
+
+- Don't hide pointers in a ~typedef~.
+
+- Array and pointer access are the same. ~A[i]~ is equivalent to ~*(A + 1)~
+
+- array-to-pointer decay :: Evaluation of an array ~A~ returns ~&A[0]~.
+
+- In a function declaration, any array parameter rewrites to a pointer.
+
+- Only the innermost dimension of an array parameter is rewritten. ~A[x][y]~ becomes ~(*A)[y]~.
+
+- Declare length parameters before array parameters.
+
+- The validity of array arguments to functions must be guaranteed by the programmer.
+
+- function decay :: A function ~f~ without a following opening ~(~ decays to a pointer to
+  its start.
+
+- Function pointers must be used with their exact type.
 
 *** Structures
 
@@ -407,3 +442,18 @@ such as offset addition and subtraction. They have state, including a dedicated 
 - A ~typedef~ only creates an alias for a type, but never a new type.
 
 - Identifier names terminating with ~_t~ for ~typdef~ are reserved by convention.
+
+** The C Memory Model
+
+- Each pointer type is derived from another type, it base type. Each derived type is a distinct
+  new type.
+
+- Uniform memory model :: All objects are an assemblage of *bytes*. The ~sizeof~ operator
+  measures the size of an object in terms of bytes that it uses. There are three distinct
+  types that by definition use exactly one byte of memory: the character type ~char~,
+  ~unsigned char~, and ~signed char~.
+
+
+- Every object ~A~ can be viewed as ~unsigned char[sizeof A]~.
+
+- Pointers to character types are special.
