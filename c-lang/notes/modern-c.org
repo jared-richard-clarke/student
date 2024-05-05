@@ -456,7 +456,7 @@ such as offset addition and subtraction. They have state, including a dedicated 
                                          +------------------------------+
                                                         |
                                                         |
-                                                sign representation
+                                              sign representation
                                                         |
                                   [3]           [2]     |     [1]         [0]
                             +-------------+-------------+------------+-----------+
