@@ -6,26 +6,6 @@
 |----------------+--------------|
 | *Modern C*     | Jens Gustedt |
 
-** Summary
-
-- C programs run in an abstract state machine that is mostly independent of the specific
-  computer where it is launched.
-
-- All basic C types are kinds of numbers, but not all of them can be used directly for
-  arithmetic.
-
-- Values have a type and a binary representation.
-
-- When necessary, types of values are implicitly converted to fit the needs of particular
-  places where they are used.
-
-- Variables must be explicitly initialized before their first use.
-
-- Integer computations give exact values as long as there is no overflow.
-
-- Floating-point computations only give approximated results that are cut off after a
-  certain number of binary digits.
-
 ** Primary Types
 
 The C language provides the four basic arithmetic type specifiers ~char~, ~int~, ~float~,
@@ -81,19 +61,19 @@ in an arithmetic expression.
 
 ** Semantic Arithmetic Types
 
-| type      | header   | context                   | meaning                              |
-|-----------+----------+---------------------------+--------------------------------------|
-| size_t    | stddef.h |                           | type for "sizes" and cardinalities   |
-|-----------+----------+---------------------------+--------------------------------------|
-| ptrdiff_t | stddef.h |                           | type for size differences            |
-|-----------+----------+---------------------------+--------------------------------------|
-| uintmax_t | stdint.h |                           | maximum width unsigned integer       |
-|-----------+----------+---------------------------+--------------------------------------|
-| intmax_t  | stdint.h |                           | maximum width signed integer         |
-|-----------+----------+---------------------------+--------------------------------------|
-| time_t    | time.h   | time(0), difftime(t2, t1) | calendar time in seconds since epoch |
-|-----------+----------+---------------------------+--------------------------------------|
-| clock_t   | time.h   | clock()                   | processor time                       |
+| type        | header     | context                       | meaning                              |
+|-------------+------------+-------------------------------+--------------------------------------|
+| ~size_t~    | ~stddef.h~ |                               | type for "sizes" and cardinalities   |
+|-------------+------------+-------------------------------+--------------------------------------|
+| ~ptrdiff_t~ | ~stddef.h~ |                               | type for size differences            |
+|-------------+------------+-------------------------------+--------------------------------------|
+| ~uintmax_t~ | ~stdint.h~ |                               | maximum width unsigned integer       |
+|-------------+------------+-------------------------------+--------------------------------------|
+| ~intmax_t~  | ~stdint.h~ |                               | maximum width signed integer         |
+|-------------+------------+-------------------------------+--------------------------------------|
+| ~time_t~    | ~time.h~   | ~time(0)~, ~difftime(t2, t1)~ | calendar time in seconds since epoch |
+|-------------+------------+-------------------------------+--------------------------------------|
+| ~clock_t~   | ~time.h~   | ~clock()~                     | processor time                       |
 
 ** Value Operators
 
@@ -147,11 +127,11 @@ in an arithmetic expression.
 
 ** Type Operators
 
-| operator | alt-name | form           | type T | operation     |
-|----------+----------+----------------+--------+---------------|
-| sizeof   |          | sizeof(T)      | any    | size          |
-| _Alignof | alignof  | _Alignof(T)    | any    | alignment     |
-|          | offsetof | offsetof(T, m) | struct | member offset |
+| operator   | alt-name   | form             | type T | operation     |
+|------------+------------+------------------+--------+---------------|
+| ~sizeof~   |            | ~sizeof(T)~      | any    | size          |
+| ~_Alignof~ | ~alignof~  | ~_Alignof(T)~    | any    | alignment     |
+|            | ~offsetof~ | ~offsetof(T, m)~ | struct | member offset |
 
 ** The C Libraries
 
@@ -203,7 +183,7 @@ in an arithmetic expression.
 
 - typedef :: Creates a new name for an existing type.
 
-** Arrays
+*** Arrays
 
 - Arrays are not pointers, although the two are closely related.
 
@@ -502,6 +482,10 @@ such as offset addition and subtraction. They have state, including a dedicated 
 
 - Use the type ~unsigned char~ as the atom of all object types.
 
+- The ~sizeof~ operator can be applied to objects and object types.
+
+- The size of all objects of type ~T~ is ~sizeof(T)~.
+
 #+begin_quote
   "Unfortunately, the types that are used to compose all other object types are derived
    from *char*, the type we looked at for the characters of strings. This is merely a
@@ -510,3 +494,38 @@ such as offset addition and subtraction. They have state, including a dedicated 
 
   — Jens Gustedt
 #+end_quote
+
+- With the exclusion of character types, only pointers of the same base type may alias.
+
+*** Pointers to Unspecific Objects
+
+The object representation ~unsigned char[sizeof A]~ of object ~A~ provides access to
+memory that is stripped of its original type information. C has a tool to handle such
+pointers more generically. These are pointers to non-type ~void~.
+
+- Any object pointer converts to and from ~void*~. Object pointers are considered separate
+  from function pointers.
+
+- An object has storage, type, and value.
+
+- Converting an object pointer to ~void*~ and then back to the same type is the identity
+  operation. Converting to ~void*~ loses the type information, but the value remains intact.
+
+#+begin_quote
+  "In addition to the implicit conversions that we have seen until now, C also allows us to
+   convert explicitly using casts. With a cast, you are telling the compiler that you know
+   better than it does, that the type of the object behind the pointer is not what it thinks,
+   and that it should shut up. In most use cases that I have come across in real life, the
+   compiler was right and the programmer was wrong: even experienced programmers tend to abuse
+   casts to hide poor design decisions concerning types."
+
+  — Jens Gustedt
+#+end_quote
+
+- Objects must be accessed through their effective type or through a pointer to a character type.
+
+- The effective type of a variable or compound literal is the type of its declaration.
+
+- Variables and compound literals must be accessed through their declared type or through a
+  pointer to a character type. Any object can be seen as being composed of ~unsigned char~,
+  but no array of unsigned chars can be used through another type.
