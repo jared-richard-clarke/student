@@ -529,3 +529,72 @@ pointers more generically. These are pointers to non-type ~void~.
 - Variables and compound literals must be accessed through their declared type or through a
   pointer to a character type. Any object can be seen as being composed of ~unsigned char~,
   but no array of unsigned chars can be used through another type.
+
+- Memory can be aligned differently according to the need for a specific data type. In particular,
+  not all arrays of ~unsigned char~ can be used to represent any object type.
+
+** Storage
+
+*Dynamic allocation* creates storage instances that are only seen as byte arrays and do not have
+interpretation as objects. They only acquire a type after something is stored inside them.
+
+#+begin_src c
+  #include <stdlib.h>
+
+  void* malloc(size_t size);
+  void* free(void* ptr);
+  // calloc (clear allocate) sets all bits of new storage to 0.
+  void* calloc(size_t nmemb, size_t size);
+  void* realloc(void* ptr, size_t size);
+  void* aligned_alloc(size_t alignment, size_t size);
+#+end_src
+
+- Don't cast the return of ~malloc~ and friends. Not only is the cast superfluous, but doing an
+  explicit conversion can even be counterproductive when ~stdlib.h~ is not included. Older C
+  compilers then suppose a return of ~int~ and trigger wrong conversion from ~int~ to a pointer type.
+  Instead assignment provides an effective type and value.
+
+- Storage that is allocated through ~malloc~ is uninitialized and has no type.
+
+- ~malloc~ indicates failure by a returning a null pointer value.
+
+- For every allocation, there must be a ~free~. Only call ~free~ with pointers as they are returned by
+  ~malloc~, ~calloc~, ~aligned_alloc~, or ~realloc~.
+
+- Identifiers only have visibility inside their scope, starting at their declaration. The visibility
+  of an identifier can be shadowed by an identifier of the same name in a subordinate scope.
+
+- Every declaration of a variable creates a new, distinct object.
+
+- Read-only object literals may overlap.
+
+- Objects have a lifetime outside of which they can't be accessed. Referring to an object outside
+  of its lifetime has undefined behavior.
+
+| storage duration | determination                          |
+|------------------+----------------------------------------|
+| *static*         | Compile time                           |
+| *automatic*      | Runtime                                |
+| *allocated*      | Function calls to ~malloc~ and friends |
+| *thread*         | Thread of execution                    |
+
+- Objects with static storage duration are always initialized.
+
+- Unless they are VLA or temporary objects, automatic objects have a lifetime corresponding to the
+  execution of their block of definition.
+
+- For an object that is not VLA, lifetime starts when the scope of the definition is entered, and
+  it ends when that scope is left.
+
+- Initializers of automatic variables and compound literals are evaluated each time the definition
+  is met.
+
+- For a VLA, lifetime starts when the definition is encountered and ends when the visibility scope
+  is left. The size of a VLA is a runtime property. The space for it can't be allocated when the
+  block of a definition is entered.
+
+- Objects of static or thread-storage duration are initialized by default.
+
+- Objects of automatic or allocated storage duration must be initialized explicitly.
+
+- Systematically provide an initialization function for each of your data types.
