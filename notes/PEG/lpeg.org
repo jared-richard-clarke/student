@@ -1046,6 +1046,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
   open  = Pattern("/*")
   close = Pattern("*/")
 
+  -- comment_block = [[ "/*" (!"*/" .)* "*/" ]]
   comment_block = open * (-close * Any) ^ 0 * close
 
   -- === AST ===
