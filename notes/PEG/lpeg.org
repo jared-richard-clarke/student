@@ -439,7 +439,7 @@ listed in order of decreasing precedence.
 - Any :: Advances one position if the current position plus one is less than or equal to the length
   of the input. Fails otherwise.
 
-** Grammars to Instructions
+** Patterns to Instructions
 
 *** Literals
 
