@@ -276,44 +276,42 @@ listed in order of decreasing precedence.
 
 #+begin_src lua
   grammar = [=[
+    pattern     <- expression !.
+    expression  <- S (grammar / alternative)
 
-  pattern         <- expression !.
-  expression      <- S (grammar / alternative)
-
-  alternative     <- sequence ('/' S sequence)*
-  sequence        <- prefix*
-  prefix          <- '&' S prefix / '!' S prefix / suffix
-  suffix          <- primary S (([+*?]
+    alternative <- sequence ('/' S sequence)*
+    sequence    <- prefix*
+    prefix      <- '&' S prefix / '!' S prefix / suffix
+    suffix      <- primary S (([+*?]
                               / '^' [+-]? number
                               / '->' S (string / '{}' / name)
                               / '>>' S name
                               / '=>' S name) S)*
 
-  primary         <- '(' expression ')' / string / class / defined
-                   / '{:' (name ':')? expression ':}'
-                   / '=' name
-                   / '{}'
-                   / '{~' expression '~}'
-                   / '{|' expression '|}'
-                   / '{' expression '}'
-                   / '.'
-                   / name S !arrow
-                   / '<' name '>'
+    primary     <- '(' expression ')' / string / class / defined
+                 / '{:' (name ':')? expression ':}'
+                 / '=' name
+                 / '{}'
+                 / '{~' expression '~}'
+                 / '{|' expression '|}'
+                 / '{' expression '}'
+                 / '.'
+                 / name S !arrow
+                 / '<' name '>'
 
-  grammar         <- definition+
-  definition      <- name S arrow expression
+    grammar     <- definition+
+    definition  <- name S arrow expression
 
-  class           <- '[' '^'? item (!']' item)* ']'
-  item            <- defined / range / .
-  range           <- . '-' [^]]
+    class       <- '[' '^'? item (!']' item)* ']'
+    item        <- defined / range / .
+    range       <- . '-' [^]]
 
-  S               <- (%s / '--' [^%nl]*)*
-  name            <- [A-Za-z_][A-Za-z0-9_]*
-  arrow           <- '<-'
-  number          <- [0-9]+
-  string          <- '"' [^"]* '"' / "'" [^']* "'"
-  defined         <- '%' name
-
+    S           <- (%s / '--' [^%nl]*)*
+    name        <- [A-Za-z_][A-Za-z0-9_]*
+    arrow       <- '<-'
+    number      <- [0-9]+
+    string      <- '"' [^"]* '"' / "'" [^']* "'"
+    defined     <- '%' name
   ]=]
 
   print(re.match(grammar, grammar))   -- A self description matches itself.
