@@ -314,7 +314,7 @@ listed in order of decreasing precedence.
     defined     <- '%' name
   ]=]
 
-  print(re.match(grammar, grammar))   -- A self description matches itself.
+  print(re.match(grammar, grammar)) -- A self description matches itself.
 #+end_src
 
 ** ~re~ Parsing Examples
