@@ -618,15 +618,8 @@ instruction ~OpenCall~. Then, when the grammar is complete, *LPEG* combines the 
 each with a ~Return~ instruction and translating each ~OpenCall~ to a ~Call~ instruction
 with the appropriate offset to the enclosing grammar.
 
-#+begin_quote
-  "It may seem that we could put the *End* instruction after the initial Call, without the jump.
-   However, an important characteristic of LPEG is that grammars result in regular patterns.
-   We can get the result of a grammar and use it like any other pattern, even inside other
-   grammars. To allow this composability, grammars follow the rule that a pattern ends with
-   its only *End* instruction."
-
-  — Roberto Ierusalimschy
-#+end_quote
+Grammars, like patterns, contain a single *End* instruction. This allows grammars to be composed
+with other patterns, including other grammars.
 
 #+begin_src lua
   -- === LPEG ===
