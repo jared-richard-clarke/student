@@ -1092,9 +1092,9 @@ Examples as they are actually output in the ~lpeg~ debugger.
 
   -- int = Pattern("int")
   -- float = Pattern("float")
-  -- ident = Range("az")
+  -- letter = Range("az")
   --
-  -- identifier = -((int + float) * -ident) * ident ^ 1
+  -- identifier = -((int + float) * -letter) * letter ^ 1
   identifier = re.compile[[ !(("int" / "float") ![a-z]) [a-z]+ ]]
 
   -- === AST ===
