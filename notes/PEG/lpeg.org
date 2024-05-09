@@ -1046,7 +1046,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
   open  = Pattern("/*")
   close = Pattern("*/")
 
-  -- comment_block = [[ "/*" (!"*/" .)* "*/" ]]
+  -- comment_block = re.compile[[ "/*" (!"*/" .)* "*/" ]]
   comment_block = open * (-close * Any) ^ 0 * close
 
   -- === AST ===
@@ -1083,6 +1083,67 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- 16: char '*' (2a)
   -- 17: char '/' (2f)
   -- 18: end
+#+end_src
+
+*** Identifier - "int" or "float"
+
+#+begin_src lua
+  -- === LPEG ===
+
+  -- int = Pattern("int")
+  -- float = Pattern("float")
+  -- atoz = Range("az")
+  --
+  -- identifier = -((int + float) * -atoz) * atoz ^ 1
+  identifier = re.compile[[ !(("int" / "float") ![a-z]) [a-z]+ ]]
+
+  -- === AST ===
+  --
+  -- sequence
+  --   not
+  --     sequence
+  --       choice
+  --         sequence
+  --           char 'i'
+  --           sequence
+  --             char 'n'
+  --             char 't'
+  --         sequence
+  --           char 'f'
+  --           sequence
+  --             char 'l'
+  --             sequence
+  --               char 'o'
+  --               sequence
+  --                 char 'a'
+  --                 char 't'
+  --       not
+  --         set(0c-4) [(61-7a)]
+  --   sequence
+  --     set(0c-4) [(61-7a)]
+  --     repeat
+  --       set(0c-4) [(61-7a)]
+
+  -- === VM Instructions ===
+  --
+  -- 00: testset (60-1) [(66)(69)]-> 22
+  -- 03: choice -> 22
+  -- 05: testchar 'i' (69)-> 12
+  -- 07: any
+  -- 08: char 'n' (6e)
+  -- 09: char 't' (74)
+  -- 10: jmp -> 17
+  -- 12: char 'f' (66)
+  -- 13: char 'l' (6c)
+  -- 14: char 'o' (6f)
+  -- 15: char 'a' (61)
+  -- 16: char 't' (74)
+  -- 17: testset (60-1) [(61-7a)]-> 21
+  -- 20: fail
+  -- 21: failtwice
+  -- 22: set (60-1) [(61-7a)]
+  -- 24: span (60-1) [(61-7a)]
+  -- 26: end
 #+end_src
 
 ** Virtual Machine Internals
