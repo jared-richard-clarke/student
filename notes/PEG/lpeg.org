@@ -586,7 +586,23 @@ wherein the whole instruction set fails.
   -- === LPEG ===
   #lpeg.P("a")
 
-  -- === Virtual Machine ===
+  -- === Virtual Machine (double negation)
+  --     Choice L1
+  --     Choice L2
+  --     Char "a"
+  --     FailTwice
+  -- L2: FailTwice
+  -- L1: ...
+
+  -- === Virtual Machine (dedicated instruction) ===
+  --     Choice L1
+  --     Choice L2
+  --     Char "a"
+  -- L2: Commit L3
+  -- L3: Fail
+  -- L1: ...
+
+  -- === Virtual Machine (optimization) ===
   --     Choice L1        (p+1, i, (p+L1, i, c):e, c)
   --     Char "a"         (p+1, i+1, e, c)
   --     BackCommit L2    (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L2, i₁, e, c₁)
