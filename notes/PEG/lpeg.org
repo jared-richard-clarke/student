@@ -397,7 +397,7 @@ listed in order of decreasing precedence.
 - Jump label :: Jumps to the instruction at offset *label*.
 
 - Choice label :: Pushes a backtrack entry onto the stack, saving the current machine state plus
-  the given label as the offset to the alternative instruction.
+  the given label as an offset to the alternative instruction.
 
 - Call label :: Pushes the address of the next instruction onto the stack and then jumps to the
   instruction at offset *label*.
