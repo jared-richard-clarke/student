@@ -402,8 +402,7 @@ listed in order of decreasing precedence.
 - Call label :: Pushes the address of the next instruction onto the stack and then jumps to the
   instruction at offset *label*.
 
-- Return :: Pops an address from the stack and jumps to it. Complete patterns leave no entries on
-  the stack.
+- Return :: Pops an address from the stack and jumps to it.
 
 - Commit label :: Commits to a *Choice*. Discards the top entry from the stack and jumps to the
   instruction at offset *label*.
