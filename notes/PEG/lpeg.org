@@ -411,7 +411,7 @@ listed in order of decreasing precedence.
   instruction. If the complete pattern matches, a post-processor traverses the capture list and,
   using the pointers to the instructions that created each entry, builds the capture values.
 
-- End :: The machine returns, signaling that the match succeeds. This instruction appears only
+- End :: The machine returns, signaling a successful match. This instruction appears only
   as the last instruction of a complete pattern.
 
 *** Extra Instructions
