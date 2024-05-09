@@ -1085,7 +1085,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- 18: end
 #+end_src
 
-*** Identifier - "int" or "float"
+*** Identifier Minus "int" or "float"
 
 #+begin_src lua
   -- === LPEG ===
