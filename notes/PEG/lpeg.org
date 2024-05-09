@@ -387,34 +387,33 @@ listed in order of decreasing precedence.
 | (Fail, i, p:e, c)             | any              | (Fail, i, e, c)            |
 | (Fail, i₀, (p, i₁, c₁):e, c₀) | any              | (p, i₁, e, c₁)             |
 
-- Char x :: If the character in the current subject position is equal to *x*, the machine
-  consumes the current character and moves to the next instruction.
+- Char x :: Tries to match the character *x* against the current subject position, advancing
+  one position if successful.
 
 - Fail :: Forces failure. First the machine pops any return addresses from the top of the stack.
   If the stack is empty, the machine halts and the whole pattern fails. Otherwise, the machine
   pops the top backtrack entry and assigns the saved values to their respective registers.
 
-- Jump label :: Jumps to instruction *label*. All instructions that need a label express the label
-  as an offset from the current instruction. Jump instructions organize grammars and implement
-  proper tail calls.
+- Jump label :: Jumps to the instruction at offset *label*.
 
 - Choice label :: Pushes a backtrack entry onto the stack, saving the current machine state plus
-  the given label as the alternative instruction.
+  the given label as the offset to the alternative instruction.
 
-- Call label :: Calls instruction *label* by saving the stack address of the next instruction
-  and then jumping to instruction *label*. *Call* implements non-terminals.
+- Call label :: Pushes the address of the next instruction onto the stack and then jumps to the
+  instruction at offset *label*.
 
-- Return :: Returns from a *Call*, popping an address from the stack and jumping to it. Complete
-  patterns leave no entries on the stack.
+- Return :: Pops an address from the stack and jumps to it. Complete patterns leave no entries on
+  the stack.
 
-- Commit label :: Commits to a *Choice*. Discards the top entry from the stack and jumps to *label*.
+- Commit label :: Commits to a *Choice*. Discards the top entry from the stack and jumps to the
+  instruction at offset *label*.
 
 - Capture extra-info :: Adds an entry to the capture list with the current subject position and
   instruction. If the complete pattern matches, a post-processor traverses the capture list and,
   using the pointers to the instructions that created each entry, builds the capture values.
 
-- End :: The machine returns, signalling that the match succeeds. This instruction appears only
-  as the last one of a complete pattern.
+- End :: The machine returns, signaling that the match succeeds. This instruction appears only
+  as the last instruction of a complete pattern.
 
 *** Extra Instructions
 
