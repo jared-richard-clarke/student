@@ -991,50 +991,6 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- 29: end
 #+end_src
 
-*** Balanced Parentheses
-
-#+begin_src lua
-  -- === LPEG ===
-
-  pattern = re.compile[[ Balanced <- "(" ([^()] / Balanced)* ")" ]]
-
-  -- === Match ===
-
-  index = pattern:match("((1 + 2) * 3)") --> 14
-
-  -- === AST ===
-  --
-  -- [ 1 = Balanced ]
-  --
-  -- grammar 1
-  --   rule key: 1 -- Balanced: body
-  --     xinfo n: 0
-  --       sequence
-  --         char '('
-  --         sequence
-  --           repeat
-  --             choice
-  --               set(05-1) [(00-27)(2a-ff)]
-  --               call key: 1  (rule: 0) -- Balanced: call
-  --           char ')'
-
-  -- === VM Instructions ===
-  --
-  -- 00: call -> 4 -- Balanced: call
-  -- 02: end
-  -- 03: --
-  -- 04: char '(' (28) -- Balanced: body
-  -- 05: testset (28-1) [(00-28)(2a-ff)]-> 18
-  -- 08: testset (28-1) [(00-27)(2a-ff)]-> 14
-  -- 11: any
-  -- 12: jump -> 5
-  -- 14: call -> 4 -- Balanced: call
-  -- 16: jump -> 5
-  -- 18: char ')' (29)
-  -- 19: return
-  -- 20: end
-#+end_src
-
 *** C Comment Block
 
 #+begin_src lua
@@ -1085,7 +1041,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- 18: end
 #+end_src
 
-*** Identifier Minus "int" or "float"
+*** Identifier
 
 #+begin_src lua
   -- === LPEG ===
