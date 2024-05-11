@@ -17,6 +17,8 @@ synonym so ~struct point~ doesn't need to be typed for every variable declaratio
   } point;
 
   point coordinate = { 3, 4 };
+  // As of C99, struct fields can be set by name.
+  point coordinate = { .x = 3, .y = 4 };
 #+end_src
 
 ** Flexible Array Members
