@@ -7,7 +7,7 @@ synonym so ~struct point~ doesn't need to be typed for every variable declaratio
   struct point {
     double x;
     double y;
-  } coordinate;
+  } point;
 
   // === or ===
 
