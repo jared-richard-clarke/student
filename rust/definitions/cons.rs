@@ -24,7 +24,10 @@ impl<T> List<T> {
     }
 }
 
-impl<T: fmt::Display> fmt::Display for List<T> {
+impl<T> fmt::Display for List<T>
+where
+    T: fmt::Display,
+{
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Cons(head, tail) => write!(f, "({} {})", head, tail),
