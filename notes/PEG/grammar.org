@@ -158,7 +158,7 @@ A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
 - V_{N} ∩ V_{T} = Ø :: The intersection of the non-terminals and terminal sets are the empty set,
   meaning they share no members. They are disjoint.
 
-- r ∈ R :: A pair *(A, e)*, written as *A ← e*, where *A ∈ V_N* and *e* is a parsing expression.
+- r ∈ R :: A pair *(A, e)*, written as *A ← e*, where *A ∈ V_{N}* and *e* is a parsing expression.
   For any non-terminal *A*, there is exactly one *e* such that *A ← e ∈ R*. *R* is therefore
   a function mapping non-terminals to expressions.
 
