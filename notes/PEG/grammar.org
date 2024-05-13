@@ -159,8 +159,8 @@ A 4-tuple *G = (V_{N}, V_{T}, R, e_{S})* where
   meaning they share no members. They are disjoint.
 
 - r ∈ R :: A pair *(A, e)*, written as *A ← e*, where *A ∈ V_{N}* and *e* is a parsing expression.
-  For any non-terminal *A*, there is exactly one *e* such that *A ← e ∈ R*. *R* is therefore
-  a function mapping non-terminals to expressions.
+  For any non-terminal *A*, there is exactly one *e* such that *A ← e ∈ R*. *R* is a function
+  mapping non-terminals to expressions.
 
 - R(A) :: Denotes the unique expression *e* such that *A ← e ∈ R*.
 
