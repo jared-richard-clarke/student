@@ -198,6 +198,15 @@ The output *o* of a successful match is the portion of the input string recogniz
 while *f ∉ V_{T}* indicates failure. *((e, x), (n, o)) ∈ ⇒G* is equivalent to *(e, x) ⇒ (n, o)* where
 the reference to *G* is implied.
 
+1. If *(e, x) ⇒ (n, y)*, then *y* is a prefix of *x: ∃z(x = yz)*.
+
+2. If *(e, x) ⇒ (n_{1}, o_{1})* and *(e, x) ⇒ (n_{2}, o_{2})*, then *n_{1} = n_{2}* and *o_{1} = o_{2}*.
+   That is, the relation *⇒ G* is a function.
+
+3. The repetition expression *e\star{}* does not handle any input string *x* on which *e*
+   succeeds without consuming input. For any *x ∈ V_{T}\star{}*, if *(e, x) ⇒ (n_{1}, ε)*, then
+   *(e\star{}, x) ⇏ (n_{2}, o_{2})*.
+
 - Empty :: *(ε, x) ⇒ (1, ε)* for any *x ∈ V_{T}\star*.
 
 - Terminal ( success case ) :: *(a, ax) ⇒ (1, a)* if *a ∈ V_{T}, x ∈ V_{T}\star*.
@@ -234,14 +243,3 @@ the reference to *G* is implied.
 
 - Not-predicate ( case 2 ) :: If *(e, x) ⇒ (n, f)*, then *(!e, x) ⇒ (n + 1, ε)*. If *e* fails,
   then *!e* succeeds but consumes nothing.
-
-*** Theorems
-
-1. If *(e, x) ⇒ (n, y)*, then *y* is a prefix of *x: ∃z(x = yz)*.
-
-2. If *(e, x) ⇒ (n_{1}, o_{1})* and *(e, x) ⇒ (n_{2}, o_{2})*, then *n_{1} = n_{2}* and *o_{1} = o_{2}*.
-   That is, the relation *⇒ G* is a function.
-
-3. The repetition expression *e\star{}* does not handle any input string *x* on which *e*
-   succeeds without consuming input. For any *x ∈ V_{T}\star{}*, if *(e, x) ⇒ (n_{1}, ε)*, then
-   *(e\star{}, x) ⇏ (n_{2}, o_{2})* for any *n_{2}*, *o_{2}*.
