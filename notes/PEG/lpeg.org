@@ -1296,7 +1296,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
     continue;
   }
   // TestCharset X L, S[i] ∈ X [ (p, i, e, c) -> (p+1, i, e, c) ]
-  // TestCharset X L, S[i] ∉ X [ (p, i, e, c) -> (p+L, i, e, c)   ]
+  // TestCharset X L, S[i] ∉ X [ (p, i, e, c) -> (p+L, i, e, c) ]
   case ITestSet: {
     uint c = (byte)*s;
     if (charinset(p, (p + 2)->buff, c) && s < e) {
@@ -1312,8 +1312,8 @@ I have, to the best of my knowledge, updated my notes accordingly.
     else goto fail;
     continue;
   }
-  // TestAny n L, i+n ≤ |S| [ (p, i, e, c) -> (p+1, i, e, c) ]
-  // TestAny n L, i+n > |S| [ (p, i, e, c) -> (Fail, i, e, c)  ]
+  // TestAny n L, i+n ≤ |S| [ (p, i, e, c) -> (p+1, i, e, c)  ]
+  // TestAny n L, i+n > |S| [ (p, i, e, c) -> (Fail, i, e, c) ]
   case ITestAny: {
     if (s < e) { p += 2; }
     else { p += getoffset(p); }
