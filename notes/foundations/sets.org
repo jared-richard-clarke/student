@@ -150,7 +150,7 @@ add: integer × integer → integer
   counting are the rules of one-to-one correspondence: make sure that each object corresponds to one
   and only one number.
 
-A set *A* is said to be *finite* if there is a one-to-one correspondence between *A* and *N_n* for
+A set *A* is said to be *finite* if there is a one-to-one correspondence between *A* and *N_{n}* for
 some natural number *n*. We then say that *n* is the *cardinality* of *A*. The notation *|A|* is
 used to indicate the cardinality of *A*. That is, if *A* is a finite set, then *|A|* is the natural
 number *n* such that there is a one-to-one correspondence between *A* and *N_{n}*. A set *B* is
