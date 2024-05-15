@@ -46,7 +46,7 @@ and *Y*      = *{ x | W(x) }*
 |------------------------------------+------------------------------------|
 | X ∪ Y = { x \vert{} L(x) ∨  W(x) } | People who are lucky or wise.      |
 | X ∩ Y = { x \vert{} L(x) ∧  W(x) } | People who are lucky and wise.     |
-| X \ Y = { x \vert{} L(x) ∧ ¬W(x) } | People who are not lucky and wise. |
+| X \ Y = { x \vert{} L(x) ∧ ¬W(x) } | People who are lucky but not wise. |
 | Y \ X = { x \vert{} W(x) ∧ ¬L(x) } | People who are wise but not lucky. |
 
 ** The Boolean Algebra of Sets
