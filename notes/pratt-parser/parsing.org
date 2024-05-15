@@ -114,3 +114,75 @@ semantic code of each lexeme in turn from left to right.
 
    — Bob Nystrom, *Crafting Interpreters*
 #+end_quote
+
+** Example Transformations
+
+#+begin_src javascript
+  // === expression ===
+
+  let a = b + c;
+
+  // === abstract syntax tree ===
+
+  let ast = {
+      id: "=",
+      arity: "binary",
+      first: {id: "a", arity: "word"},
+      second: {
+          id: "+",
+          arity: "binary",
+          first: {id: "b", arity: "word"},
+          second: {id: "c", arity: "word"}
+      }
+  };
+
+  // === stack trace ===
+  //
+  // statements()
+  //     statement()
+  //         expression(0)
+  //             a.nud()
+  //             while 0 < =.lbp
+  //             =.led(a)
+  //                 expression(10)
+  //                     b.nud()
+  //                     while 10 < +.lbp
+  //                     +.led(b)
+  //                         expression(60)
+  //                         c.nud()
+
+  // === expression ===
+
+  a.b = c;
+
+  // === abstract syntax tree ===
+
+  let ast = {
+      id: "=",
+      arity: "binary",
+      first: {
+          id: ".",
+          arity: "binary",
+          first: {id: "a", arity: "word"},
+          second: {id: "b", arity: "word"}
+      },
+      second: {id: "c", arity: "word"}
+
+  };
+
+  // === stack trace ===
+  //
+  // statements()
+  //     statement()
+  //         expression(0)
+  //             a.nud()
+  //             while 0 < ..lbp
+  //             ..led(a)
+  //                 expression(90)
+  //                     b.nud()
+  //                     while 90 < =.lbp
+  //             while 0 < =.lbp
+  //             =.led(a.b)
+  //                 expression(60)
+  //                 c.nud()
+#+end_src
