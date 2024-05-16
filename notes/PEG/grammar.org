@@ -263,3 +263,31 @@ the reference to *G* is implied.
 6. *WF(e\star{})* if *WF(e)* and *¬N(e)*
 
 7. *WF(!e)* if *WF(e)*
+
+** PEG to TDPL
+
+A *TDPL (Top-Down Parsing Language)* is a *PEG G = (V_{N}, V_{T}, R, S)*, where *S* is a non-terminal
+in *V_{N}* and all definitions of *R* have one of the following forms:
+
+1. *A ← ε*
+
+2. *A ← a*, where *a ∈ V_{T}*.
+
+3. *A ← f*, where *f ≡ !ε*.
+
+4. *A ← B C / D*, where *B, C, D ∈ V_{N}*.
+
+| PEG                 | TDPL          |
+|---------------------+---------------|
+| *A ← B*             | *A ← B ε / f* |
+|---------------------+---------------|
+| *A ← e_{1} e_{2}*   | *A ← B C / f* |
+|                     | *B ← e_{1}*   |
+|                     | *C ← e_{2}*   |
+|---------------------+---------------|
+| *A ← e_{1} / e_{2}* | *A ← B ε / f* |
+|                     | *B ← e_{1}*   |
+|                     | *C ← e_{2}*   |
+|---------------------+---------------|
+| *A ← e\star{}*      | *A ← B A / ε* |
+|                     | *B ← e*       |
