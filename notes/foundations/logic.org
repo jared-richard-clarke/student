@@ -60,7 +60,7 @@
   values are assigned to the propositional variables that they contain. *P ≡ Q* reads
   "*P* is logically equivalent to *Q*".
 
-- implication :: *p → q* reads "*p* implies *q*". Equivalent to *¬p ∨ q*.
+- implication :: *p → q* reads "*p* implies *q*" or "If *p* is true then *q* must also be true". Equivalent to *¬p ∨ q*.
 
 - contrapositive :: *(¬q) → (¬p)* is equivalent to *p → q*.
 
