@@ -260,7 +260,7 @@ represents an abstract simulation over the relation *⇒G*. *e ⇀ o* implies *(
 | *e ⇀ 0*  | *e* might succeed on some string while consuming no input. |
 | *e ⇀ 1*  | *e* might succeed while consuming at least one terminal.   |
 | *e ⇀ f*  | *e* might fail on some input.                              |
-| *s*      | Either outcome *0* or *1*.                                 |
+| *s*      | Either *0* or *1*.                                         |
 
 1. *ε ⇀ 0*
 
