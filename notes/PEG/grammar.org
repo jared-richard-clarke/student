@@ -267,7 +267,7 @@ the reference to *G* is implied.
 ** PEG to TDPL
 
 A *TDPL (Top-Down Parsing Language)* is a *PEG G = (V_{N}, V_{T}, R, S)*, where *S* is a non-terminal
-in *V_{N}* and all definitions of *R* have one of the following forms:
+in *V_{N}* and all definitions in *R* have one of the following forms:
 
 1. *A ← ε*
 
