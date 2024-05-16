@@ -24,7 +24,7 @@
 
   - *¬p* is true when *p* is false, and in no other case.
 
-  - *p → q* reads "*p* implies *q*". Equivalent to *¬p ∨ q*
+  - *p → q* reads "*p* implies *q*" or "If *p* is true then *q* must also be true". Equivalent to *¬p ∨ q*
 
   - *p ↔ q* reads "*p* if and only if *q*". Equivalent to *(p → q) ∧ (q → p)*.
 
