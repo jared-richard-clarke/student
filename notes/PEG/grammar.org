@@ -270,7 +270,7 @@ represents an abstract simulation over the relation *⇒G*. *e ⇀ o* implies *(
 
 4. *A ⇀ o* if *R_{G}(A) ⇀ o*
 
-5. *e_{1} e_{2} ⇀ 0* if *e_{1} ⇀ 0* and *e_{2} ⇀ 0* || *e_{1} e_{2} ⇀ 1* if *e_{1} ⇀ 1* and *e_{2} ⇀ s* || *e_{1} e_{2} ⇀ 1* if *e_{1} ⇀ s* and *e_{2} ⇀ 1*
+5. *e_{1} e_{2} ⇀ 0* if *e_{1} ⇀ 0* and *e_{2} ⇀ 0*. Any other combination of *0* and *1* is *1*.
 
 6. *e_{1} e_{2} ⇀ f* if *e_{1} ⇀ f*
 
