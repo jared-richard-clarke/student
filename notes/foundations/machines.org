@@ -24,7 +24,7 @@ A pushdown automaton *M* is specified by six components *M = (Q, Σ, Λ, q_{0}, 
 - *∂* is the set of transitions in *M*. *∂* can be taken to be a finite subset of the set
   *(Q × (Σ ∪ {ε}) × Λ\star{}) × (Q × Λ\star{})*. An element *((q_{1}, σ, x), (q_{2}, y))*
   represents a transition from state *q_{1}* to state *q_{2}* in which *M* reads *σ* from its
-  of *∂* input string, pops *x* from the stack, and pushes *y* onto the stack.
+  *∂* input string, pops *x* from the stack, and pushes *y* onto the stack.
 
 ** Turing Machine
 
