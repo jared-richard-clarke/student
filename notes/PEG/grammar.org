@@ -216,22 +216,22 @@ the reference to *G* is implied.
 - Non-Terminal :: *(A, x) ⇒ (n + 1, o)* if *A ← e ∈ R* and *(e, x) ⇒ (n, o)*.
 
 - Sequence ( success case ) :: If *(e_{1}, x_{1}x_{2}y) ⇒ (n_{1}, x_{1})* and *(e_{2}, x_{2}y) ⇒ (n_{2}, x_{2})*,
-  then *(e_{1}e_{2}, x_{1}x_{2}y) ⇒ (n_{1} + n_{2} + 1, x_{1}x_{2})*. Expressions *e_{1}* and *e_{2}* are matched
+  then *(e_{1} e_{2}, x_{1}x_{2}y) ⇒ (n_{1} + n_{2} + 1, x_{1}x_{2})*. Expressions *e_{1}* and *e_{2}* are matched
   in sequence, and if each succeeds and consumes input portions *x_{1}* and *x_{2}* respectively,
   then the sequence succeeds and consumes the string *x_{1}x_{2}*.
 
-- Sequence ( failure case 1 ) :: If *(e_{1}, x) ⇒ (n_{1}, f)*, then *(e_{1}e_{2}, x) ⇒ (n_{1} + 1, f)*.
-  If *e_{1}* is tested and fails, then the sequence *e_{1}e_{2}* fails without attempting *e_{2}*.
+- Sequence ( failure case 1 ) :: If *(e_{1}, x) ⇒ (n_{1}, f)*, then *(e_{1} e_{2}, x) ⇒ (n_{1} + 1, f)*.
+  If *e_{1}* is tested and fails, then the sequence *e_{1} e_{2}* fails without attempting *e_{2}*.
 
 - Sequence ( failure case 2 ) :: If *(e_{1}, x_{1}y) ⇒ (n_{1}, x_{1})* and *(e_{2}, y) ⇒ (n_{2}, f)*, then
-  *(e_{1}e_{2}, x_{1}y) ⇒ (n_{1} + n_{2} + 1, f)*. If *e_{1}* succeeds but *e_{2}* fails, then the expression fails.
+  *(e_{1} e_{2}, x_{1}y) ⇒ (n_{1} + n_{2} + 1, f)*. If *e_{1}* succeeds but *e_{2}* fails, then the expression fails.
 
-- Alternation ( case 1 ) :: If *(e_{1}, xy) ⇒ (n_{1}, x)*, then *(e_{1}/e_{2}, xy) ⇒ (n_{1} + 1, x)*.
-  Alternative *e_{1}* is first tested, and if it succeeds, the expression *e_{1}/e_{2}* succeeds
+- Alternation ( case 1 ) :: If *(e_{1}, xy) ⇒ (n_{1}, x)*, then *(e_{1} / e_{2}, xy) ⇒ (n_{1} + 1, x)*.
+  Alternative *e_{1}* is first tested, and if it succeeds, the expression *e_{1} / e_{2}* succeeds
   without testing *e_{2}*.
 
 - Alternation ( case 2 ) :: If *(e_{1}, x) ⇒ (n_{1}, f)* and *(e_{2}, x) ⇒ (n_{2}, o)*, then
-  *(e_{1}/e_{2}, x) ⇒ (n_{1} + n_{2} + 1, o)*. If *e_{1}* fails, then *e_{2}* is tested and its result is used instead.
+  *(e_{1} / e_{2}, x) ⇒ (n_{1} + n_{2} + 1, o)*. If *e_{1}* fails, then *e_{2}* is tested and its result is used instead.
 
 - Zero-or-more repetitions ( repetition case ) :: If *(e, x_{1}x_{2}y) ⇒ (n_{1}, x_{1})* and
   *(e\star{}, x_{2}y) ⇒ (n_{2}, x_{2})*, then *(e\star, x_{1}x_{2}y) ⇒ (n_{1} + n_{2} + 1, x_{1}x_{2})*
