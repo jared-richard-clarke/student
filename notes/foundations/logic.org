@@ -54,7 +54,7 @@
 
 - truth table :: Shows the value of one or more compound propositions for each possible combination
   of values of the propositional variables that they contain. In general, if there are *n* variables,
-  then there are *2_n* different ways to assign truth values to variables.
+  then there are *2_{n}* different ways to assign truth values to variables.
 
 - logically equivalent :: If two compound expressions have the same value, no matter what truth
   values are assigned to the propositional variables that they contain. *P ≡ Q* reads
