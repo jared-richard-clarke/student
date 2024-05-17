@@ -1,6 +1,8 @@
 * Top Down Operator Precedence
 
-*Top Down Operator Precedence*, Vaughan R. Pratt 
+| source                         | author           |
+|--------------------------------+------------------|
+| *Top Down Operator Precedence* | Vaughan R. Pratt |
 
 ** Lexical Semantics vs. Syntactic Semantics
 
@@ -69,7 +71,7 @@ nud |
 — Vaughan R. Pratt
 #+end_quote
 
-* Definition
+** Definition
 
 A string *S* such that there exists a token *t* and an environment *E* in which if the
 parser is started with the input at the beginning of *St*, it will stop with the input
