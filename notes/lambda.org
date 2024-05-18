@@ -249,6 +249,15 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
 
   (define Y
     (lambda (f)
+      ((lambda (g)
+         (f (lambda (x) ((g g) x))))
+       (lambda (g)
+         (f (lambda (x) ((g g) x)))))))
+
+  ;; -- or more succinctly ->
+
+  (define Y
+    (lambda (f)
       ((lambda (g) (g g))
        (lambda (g)
          (f (lambda (x) ((g g) x)))))))
