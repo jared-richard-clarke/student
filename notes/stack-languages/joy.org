@@ -123,7 +123,7 @@ In the example below, ~square @ 2~ sets up an environment where ~x~ is given the
 
 *** Definitions
 
-~==~ means defines the atom on the left to cause the execution of the program on the right.
+~==~ defines the atom on the left to cause the execution of the program on the right.
 
 #+begin_example
   ATOM == PROGRAM
