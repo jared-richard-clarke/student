@@ -541,7 +541,7 @@ span of input characters that belong to the given character set.
   -- === Virtual Machine (optimization) ===
   --     Choice L2           (p+1, i, (p+L2, i, c):e, c)
   -- L1: Char "a"            (p+1, i+1, e, c)
-  --     PartialCommit L1    (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L1, i₀, (p₁, i₀, c₀):e, c₀)
+  --     PartialCommit L1    (p₂, i₂, (p₁, i₁, c₁):e, c₂) -> (p₂+L1, i₂, (p₁, i₂, c₂):e, c₂)
   -- L2: ...
 #+end_src
 
@@ -602,7 +602,7 @@ wherein the whole instruction set fails.
   -- === Virtual Machine (optimization) ===
   --     Choice L1        (p+1, i, (p+L1, i, c):e, c)
   --     Char "a"         (p+1, i+1, e, c)
-  --     BackCommit L2    (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L2, i₁, e, c₁)
+  --     BackCommit L2    p₂, i₂, (p₁, i₁, c₁):e, c₂) -> (p₂+L2, i₁, e, c₁)
   -- L1: Fail
   -- L2: ...
 #+end_src
@@ -640,12 +640,12 @@ with other patterns, including other grammars.
   --     Call B           (p+B, i, (p+1):e, c)
   --     Commit L3        (p, i, h:e, c) -> (p+L3, i, e, c)
   -- L2: Charset [^()]    (p+1, i+1, e, c)
-  -- L3: Return           (p₀, i, p₁:e, c) -> (p₁, i, e, c)
+  -- L3: Return           (p₂, i, p₁:e, c) -> (p₁, i, e, c)
   --
   --  B: Char '('         (p+1, i+1, e, c)
   --     Call S           (p+S, i, (p+1):e, c
   --     Char ')'         (p+1, i+1, e, c)
-  --     Return           (p₀, i, p₁:e, c) -> (p₁, i, e, c)
+  --     Return           (p₂, i, p₁:e, c) -> (p₁, i, e, c)
   --
   -- L1: End
 #+end_src
@@ -671,7 +671,7 @@ An ~OpenCall~ followed by a ~Return~ instruction is translated to a ~Jump~ instr
   --     Commit L3               (p, i, h:e, c) -> (p+L3, i, e, c)
   -- L2: Any 1                   (p+1, i+n, e, c)
   --     Jump X <- Tail Call     (p+X, i, e, c)
-  -- L3: Return                  (p₀, i, p₁:e, c) -> (p₁, i, e, c)
+  -- L3: Return                  (p₂, i, p₁:e, c) -> (p₁, i, e, c)
   -- L1: End
 #+end_src
 
@@ -727,7 +727,7 @@ An ~OpenCall~ followed by a ~Return~ instruction is translated to a ~Jump~ instr
   --     Commit L3         (p, i, h:e, c) -> (p+L3, i, e, c)
   -- L2: Any 1             (p+1, i+n, e, c)
   --     Jump X            (p+X, i, e, c)
-  -- L3: Return            (p₀, i, p₁:e, c) -> (p₁, i, e, c)
+  -- L3: Return            (p₂, i, p₁:e, c) -> (p₁, i, e, c)
   -- L1: End
 #+end_src
 
