@@ -798,7 +798,7 @@ The transformation function *Π* operates on the domain *Grammar × N × Pattern
   o: Grammar × V → N = Σ (|Π(g, x, Aj)| + 1)
                       j=1       ^         ^ The size of the "Return" instruction.
                                 |
-                                  Position relative to the size of the subprogram.
+                                  Position withing the subprogram.
 #+end_example
 
 ** Extended Examples
