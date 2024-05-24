@@ -1126,7 +1126,7 @@ the opcode interpreter — otherwise known as the virtual machine.
 explicated by Ierusalimschy in his paper *A Text Pattern-Matching Tool Based on Parsing Expression Grammars*.
 I have, to the best of my knowledge, updated my notes accordingly.
 
-*** Basic Instructions
+*** VM Interpreter
 
 #+begin_src c
   // Bytecode instruction
@@ -1147,14 +1147,26 @@ I have, to the best of my knowledge, updated my notes accordingly.
     byte buff[1];
   } Instruction;
 
+  // An unsigned integer large enough to index any subject.
+  // "size_t" would double the size of the captures array on a 64-bit machine.
+  // "uint" = "unsigned int"
+  typedef uint Index_t;
+
   // Entry stack
+  // Side Note: "stack" points to first empty slot in "Stack".
   typedef struct Stack {
     const char *s;        // Saved position (NULL for calls)
     const Instruction *p; // Next instruction
     int caplevel;
   } Stack;
 
-  // Side Note: "stack" points to first empty slot in "Stack".
+  // Captures array
+  typedef struct Capture {
+    Index_t index;       // Subject position
+    unsigned short idx;  // Extra info (group name, argument index, etc.)
+    byte kind;           // Kind of capture
+    byte siz;            // Size of full capture + 1 (0 = not a full capture)
+  } Capture;
 
   // Char x, S[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
   // Char x, S[i] ≠ x [ (p, i, e, c) -> (Fail, i, e, c)  ]
