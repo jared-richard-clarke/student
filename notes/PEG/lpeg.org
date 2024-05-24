@@ -1199,7 +1199,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
     p += getoffset(p);
     continue;
   }
-  // Return [ (p₀, i, p₁:e, c) -> (p₁, i, e, c) ]
+  // Return [ (p₂, i, p₁:e, c) -> (p₁, i, e, c) ]
   case IRet: {
     assert(stack > getstackbase(L, ptop) && (stack - 1)->s == NULL);
     p = (--stack)->p;
@@ -1256,7 +1256,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
   }
   // FALLTHROUGH
   // Fail [ (Fail, i, p:e, c)             -> (Fail, i, e, c) ]
-  //      [ (Fail, i₀, (p, i₁, c₁):e, c₀) -> (p, i₁, e, c₁)  ]
+  //      [ (Fail, i₂, (p, i₁, c₁):e, c₂) -> (p, i₁, e, c₁)  ]
   case IFail:
   // Pattern failed. Try to backtrack.
   fail: {
@@ -1282,7 +1282,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
   }
 #+end_src
 
-*** Extra Instructions
+** Extra Instructions
 
 #+begin_src c
   // Charset X, S[i] ∈ X [ (p, i, e, c) -> (p+1, i+1, e, c) ]
@@ -1318,7 +1318,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
     else { p += getoffset(p); }
     continue;
   }
-  // PartialCommit L [ (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L, i₀, (p₁, i₀, c₀):e, c₀) ]
+  // PartialCommit L [ (p₂, i₂, (p₁, i₁, c₁):e, c₂) -> (p₂+L, i₂, (p₁, i₂, c₂):e, c₂) ]
   case IPartialCommit: {
     assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
     (stack - 1)->s = s;
@@ -1336,7 +1336,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
     p += 1 + p->i.aux2.set.size;
     continue;
   }
-  // BackCommit L [ (p₀, i₀, (p₁, i₁, c₁):e, c₀) -> (p₀+L, i₁, e, c₁) ]
+  // BackCommit L [ (p₂, i₂, (p₁, i₁, c₁):e, c₂) -> (p₂+L, i₁, e, c₁) ]
   case IBackCommit: {
     assert(stack > getstackbase(L, ptop) && (stack - 1)->s != NULL);
     s = (--stack)->s;
