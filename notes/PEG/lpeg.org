@@ -380,12 +380,12 @@ listed in order of decreasing precedence.
 | (p, i, e, c)                  | Jump L           | (p+L, i, e, c)             |
 | (p, i, e, c)                  | Choice L         | (p+1, i, (p+L, i, c):e, c) |
 | (p, i, e, c)                  | Call L           | (p+L, i, (p+1):e, c)       |
-| (p₀, i, p₁:e, c)              | Return           | (p₁, i, e, c)              |
+| (p₂, i, p₁:e, c)              | Return           | (p₁, i, e, c)              |
 | (p, i, h:e, c)                | Commit L         | (p+L, i, e, c)             |
 | (p, i, e, c)                  | Capture K        | (p+1, i, e, (i, p):c)      |
 | (p, i, e, c)                  | Fail             | (Fail, i, e, c)            |
 | (Fail, i, p:e, c)             | any              | (Fail, i, e, c)            |
-| (Fail, i₀, (p, i₁, c₁):e, c₀) | any              | (p, i₁, e, c₁)             |
+| (Fail, i₂, (p, i₁, c₁):e, c₂) | any              | (p, i₁, e, c₁)             |
 
 - Char x :: Tries to match the character *x* against the current subject position, advancing
   one position if successful.
@@ -415,18 +415,17 @@ listed in order of decreasing precedence.
   as the last instruction of a complete pattern.
 
 *** Extra Instructions
-
-| current state                | instruction                    | next state                     |
-|------------------------------+--------------------------------+--------------------------------|
-| (p, i, e, c)                 | Charset X, S[i] ∈ X            | (p+1, i+1, e, c)               |
-| (p, i, e, c)                 | Charset X, S[i] ∉ X            | (Fail, i, e, c)                |
-| (p, i, e, c)                 | Any, i + 1 ≤ \vert{}S\vert{}   | (p+1, i+1, e, c)               |
-| (p, i, e, c)                 | Any, i + 1 > \vert{}S\vert{}   | (Fail, i, e, c)                |
-| (p₀, i₀, (p₁, i₁, c₁):e, c₀) | PartialCommit L                | (p₀+L, i₀, (p₁, i₀, c₀):e, c₀) |
-| (p, i, e, c)                 | Span X, S[i] ∈ X               | (p, i+1, e, c)                 |
-| (p, i, e, c)                 | Span X, S[i] ∉ X               | (p+1, i, e, c)                 |
-| (p, i, h:e, c)               | FailTwice                      | (Fail, i, e, c)                |
-| (p₀, i₀, (p₁, i₁, c₁):e, c₀) | BackCommit L                   | (p₀+L, i₁, e, c₁)              |
+| current state                | instruction                  | next state                     |
+|------------------------------+------------------------------+--------------------------------|
+| (p, i, e, c)                 | Charset X, S[i] ∈ X          | (p+1, i+1, e, c)               |
+| (p, i, e, c)                 | Charset X, S[i] ∉ X          | (Fail, i, e, c)                |
+| (p, i, e, c)                 | Any, i + 1 ≤ \vert{}S\vert{} | (p+1, i+1, e, c)               |
+| (p, i, e, c)                 | Any, i + 1 > \vert{}S\vert{} | (Fail, i, e, c)                |
+| (p₂, i₂, (p₁, i₁, c₁):e, c₂) | PartialCommit L              | (p₂+L, i₂, (p₁, i₂, c₂):e, c₂) |
+| (p, i, e, c)                 | Span X, S[i] ∈ X             | (p, i+1, e, c)                 |
+| (p, i, e, c)                 | Span X, S[i] ∉ X             | (p+1, i, e, c)                 |
+| (p, i, h:e, c)               | FailTwice                    | (Fail, i, e, c)                |
+| (p₂, i₂, (p₁, i₁, c₁):e, c₂) | BackCommit L                 | (p₂+L, i₁, e, c₁)              |
 
 - Charset set :: If the current character is a member of *set*, instruction consumes the character
   and moves forward one instruction. Fails otherwise. Sets are represented as bit sets, with one
