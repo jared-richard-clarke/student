@@ -779,7 +779,7 @@ The transformation function *Π* operates on the domain *Grammar × N × Pattern
                       Π'(g, 2) <--------- Keeps the invariant that all positions are relative
                                           to the first instruction of the closed grammar.
 
-  where Π'(g, x) = Π(g, i, g(A1))
+  where Π'(g, i) = Π(g, i, g(A1))
                    Return
                    ...
                            k-1
@@ -796,7 +796,9 @@ The transformation function *Π* operates on the domain *Grammar × N × Pattern
 
                       k-1
   o: Grammar × V → N = Σ (|Π(g, x, Aj)| + 1)
-                      j=1                 ^ The size of the "Return" instruction.
+                      j=1       ^         ^ The size of the "Return" instruction.
+                                |
+                                  Position relative to size of subprogram.
 #+end_example
 
 ** Extended Examples
