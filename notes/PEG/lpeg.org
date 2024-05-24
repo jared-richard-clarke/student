@@ -602,7 +602,7 @@ wherein the whole instruction set fails.
   -- === Virtual Machine (optimization) ===
   --     Choice L1        (p+1, i, (p+L1, i, c):e, c)
   --     Char "a"         (p+1, i+1, e, c)
-  --     BackCommit L2    p₂, i₂, (p₁, i₁, c₁):e, c₂) -> (p₂+L2, i₁, e, c₁)
+  --     BackCommit L2    (p₂, i₂, (p₁, i₁, c₁):e, c₂) -> (p₂+L2, i₁, e, c₁)
   -- L1: Fail
   -- L2: ...
 #+end_src
