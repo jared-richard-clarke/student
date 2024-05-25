@@ -10,7 +10,6 @@ one, currently, interprets Joy programs.
 - `compute-stack.scm`: a stack-based calculator.
 - `compute.scm`: an arithmetic interpreter and symbolic processor.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
-- `holden`: a custom LISP implemented in C by Daniel Holden.
 - `joy.md`: a Joy interpreter written in Joy by Manfred von Thun.
 - `miranda-scheme.md`: a comparison between Miranda and Scheme interpreters.
 - `norvig.py`: a Scheme interpreter written in Python as defined by Peter Norvig.
