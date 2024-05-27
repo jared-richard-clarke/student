@@ -140,7 +140,7 @@ An expression that contains no free variables is *closed*. Closed lambda express
 
 ** Static and Dynamic Scope
 
-Scoping rules are all about how to evaluate free variables in a program fragment. With static
+Scoping rules are all about how to evaluate free variables in an expression. With static
 scope, free variables of a term ~λx.e~ are interpreted according to the syntactic context in
 which the term ~λx.e~ occurs. With dynamic scope, free variables of ~λx.e~ are interpreted
 according to the environment in effect when ~λx.e~ is applied.
