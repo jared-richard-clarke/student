@@ -138,6 +138,60 @@ An expression that contains no free variables is *closed*. Closed lambda express
 | *F = λx.λy.y*                 | False                |
 | *Y = λf.(λx.f(xx))(λx.f(xx))* | Fixed Point          |
 
+** Static and Dynamic Scope
+
+Scoping rules are all about how to evaluate free variables in a program fragment. With static
+scope, free variables of a term ~λx.e~ are interpreted according to the syntactic context in
+which the term ~λx.e~ occurs. With dynamic scope, free variables of ~λx.e~ are interpreted
+according to the environment in effect when ~λx.e~ is applied.
+
+The pairing of a function ~λx.e~ with an environment is called a *closure*. An *environment*
+is a partial function with a finite domain from names to values.
+
+#+begin_src scheme
+  ;; === Extended Lambda Calculus ===
+  ;;
+  ;; static scope: f 2 -> 4
+  ;; dynamic scope: f 2 -> 3
+  ;;
+  ;; let y = 2 in
+  ;; let f = λx.x + y in
+  ;; let y = 1 in
+  ;; f 2
+
+  ;; === Scheme: Static Scope ===
+
+  (let ([y 2])
+    (let ([f (lambda (x) (+ x y))])
+      (let ([y 1])
+        (f 2))))
+#+end_src
+
+*** Static Scope
+
+1. The outer ~y~ is bound to ~2~.
+
+2. The ~f~ is bound to ~λx.x + y~. Since ~y~ is statically bound, this will always be
+   equivalent to ~λx.x + 2~.
+
+3. The inner ~y~ is bound to ~1~.
+
+4. When evaluating the expression ~f 2~, free variables in the body of ~f~ are evaluated
+   using the environment in which ~f~ was defined. In that environment, ~y~ was bound to
+   ~2~, so that ~f 2~ reduces to ~2 + 2~.
+
+*** Dynamic Scope
+
+1. The outer ~y~ is bound to ~2~.
+
+2. The ~f~ is bound to ~λx.x + y~. The occurrence of ~y~ in the body of ~f~ is not locked
+   to the outer declaration of ~y~.
+
+3. The inner ~y~ is bound to ~1~.
+
+4. When evaluating the expression ~f 2~, free variables in the body of ~f~ are evaluated using
+   the environment of the call, in which ~y~ is ~1~. Therefore ~f 2~ reduces to ~2 + 1~.
+
 ** Encoding Datatypes
 
 The basic lambda calculus may be used to model arithmetic, booleans, data structures, and recursion.
