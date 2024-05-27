@@ -1181,6 +1181,8 @@ I have, to the best of my knowledge, updated my notes accordingly.
   //       capture = capture list
   //       ptop    = top index in Lua stack
 
+  // The following chunks of code are executed within a "for (;;) {...}" loop.
+
   // Char x, S[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
   // Char x, S[i] ≠ x [ (p, i, e, c) -> (Fail, i, e, c)  ]
   case IChar: {
