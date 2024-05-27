@@ -1131,16 +1131,6 @@ I have, to the best of my knowledge, updated my notes accordingly.
 *** VM Interpreter
 
 #+begin_src c
-  // The opcode interpreter as called in lp_match:
-  // r = match(L, s, s + i, s + l, code, capture, ptop);
-  // where L       = lua_State
-  //       s       = input string
-  //       s + i   = initial input position
-  //       s + l   = input length
-  //       code    = instruction list
-  //       capture = capture list
-  //       ptop    = top index in Lua stack
-
   // Bytecode instruction
   typedef union Instruction {
     struct Inst {
@@ -1179,6 +1169,17 @@ I have, to the best of my knowledge, updated my notes accordingly.
     byte kind;           // Kind of capture
     byte siz;            // Size of full capture + 1 (0 = not a full capture)
   } Capture;
+
+  // The opcode interpreter as called in lp_match:
+  //     match(L, o, s,     e,     op,   capture, ptop)
+  // r = match(L, s, s + i, s + l, code, capture, ptop);
+  // where L       = lua_State
+  //       s       = input string
+  //       s + i   = initial input position
+  //       s + l   = input length
+  //       code    = instruction list
+  //       capture = capture list
+  //       ptop    = top index in Lua stack
 
   // Char x, S[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
   // Char x, S[i] ≠ x [ (p, i, e, c) -> (Fail, i, e, c)  ]
