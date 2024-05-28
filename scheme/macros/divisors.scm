@@ -1,6 +1,6 @@
-; (divisors 10) -> '(5 2)
-; do syntax: (do ((var init update) ...) (test result ...) expr ...)
-; simplified macro expansion
+;; (divisors 10) -> '(5 2)
+;; do syntax: (do ((var init update) ...) (test result ...) expr ...)
+;; simplified macro expansion
 
 (define divisors
   (lambda (n)
@@ -11,44 +11,44 @@
       ((>= i n) lst))))
 
 ; === letrec expansion ===
-(define divisors-letrec
+(define divisors
   (lambda (n)
     (letrec ([loop (lambda (i lst)
                      (if (>= i n)
-                         lst                          ; (begin (if #f #f #f) lst)
-                         (loop (+ i 1)                ; (begin (loop (+ i 1)
-                               (if (integer? (/ n i)) ;              (if (integer? (/ n i))
-                                   (cons i lst)       ;                  (cons i lst)
-                                   lst))))])          ;                  lst)))))])
+                         lst                          ;; (begin (if #f #f #f) lst)
+                         (loop (+ i 1)                ;; (begin (loop (+ i 1)
+                               (if (integer? (/ n i)) ;;              (if (integer? (/ n i))
+                                   (cons i lst)       ;;                  (cons i lst)
+                                   lst))))])          ;;                  lst)))))])
       (loop 2 (quote ())))))
 
 ; === let expansion ===
-(define divisors-let
+(define divisors
   (lambda (n)
     (let ((loop #f))
-      (let ([temp (lambda (i lst)
+      (let ([loop1 (lambda (i lst)
                     (if (>= i n)
-                        lst                           ; (begin (if #f #f #f) lst)
-                        (loop (+ i 1)                 ; (begin (loop (+ i 1)
-                              (if (integer? (/ n i))  ;              (if (integer? (/ n i))
-                                  (cons i lst)        ;                  (cons i lst)
-                                  lst))))])           ;                  lst)))))])
-        (set! loop temp)
-        (loop 2 (quote ()))))))
+                        lst                           ;; (begin (if #f #f #f) lst)
+                        (loop (+ i 1)                 ;; (begin (loop (+ i 1)
+                              (if (integer? (/ n i))  ;;              (if (integer? (/ n i))
+                                  (cons i lst)        ;;                  (cons i lst)
+                                  lst))))])           ;;                  lst)))))])
+        (set! loop loop1)
+        (let () (loop 2 (quote ())))))))
 
 ; === lambda expansion ===
-(define divisors-lambda
+(define divisors
   (lambda (n)
     ((lambda (loop)
-       ((lambda (temp)
-          (set! loop temp)
-          (loop 2 (quote ())))
+       ((lambda (loop1)
+          (set! loop loop1)
+          ((lambda () (loop 2 (quote ())))))
         (lambda (i lst)
           (if (>= i n)
-              lst                                     ; (begin (if #f #f #f) lst)
-              (loop (+ i 1)                           ; (begin (loop (+ i 1)
-                    (if (integer? (/ n i))            ;              (if (integer? (/ n i))
-                        (cons i lst)                  ;                  (cons i lst)
-                        lst))))))                     ;                  lst)))))])
+              lst                                     ;; (begin (if #f #f #f) lst)
+              (loop (+ i 1)                           ;; (begin (loop (+ i 1)
+                    (if (integer? (/ n i))            ;;              (if (integer? (/ n i))
+                        (cons i lst)                  ;;                  (cons i lst)
+                        lst))))))                     ;;                  lst)))))])
      #f)))
 
