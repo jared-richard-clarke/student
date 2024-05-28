@@ -1,3 +1,4 @@
+;; === Macro as defined in R6RS ===
 (define-syntax letrec
   (lambda (x)
     (syntax-case x ()
