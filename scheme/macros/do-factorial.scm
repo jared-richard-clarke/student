@@ -75,3 +75,21 @@
 ;;  unspecified if no result expressions are provided."
 ;;
 ;; — The Scheme Programming Language, 4th edition
+
+;; === do expression ===
+(define scale-vector!
+  (lambda (v k)
+    (let ([n (vector-length v)])
+      (do ([i 0 (+ i 1)])
+        ((= i n))
+        (vector-set! v i (* (vector-ref v i) k))))))
+
+;; === named let expansion ===
+(define scale-vector!
+  (lambda (v k)
+    (let ([n (vector-length v)])
+      (let loop ((i 0))
+        (if (= i n)
+            (begin (if #f #f))
+            (begin (vector-set! v i (* (vector-ref v i) k))
+                   (loop (+ i 1))))))))
