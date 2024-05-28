@@ -1175,8 +1175,8 @@ I have, to the best of my knowledge, updated my notes accordingly.
   // r = match(L, s, s + i, s + l, code, capture, ptop);
   // where L       = lua_State
   //       s       = input string
-  //       s + i   = initial input position
-  //       s + l   = input length
+  //       s + i   = input start
+  //       s + l   = input end
   //       code    = instruction list
   //       capture = capture list
   //       ptop    = top index in Lua stack
