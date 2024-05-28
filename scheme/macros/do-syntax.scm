@@ -1,15 +1,25 @@
 ;; === Macro as defined in R6RS ===
+;; (with-syntax ((pattern expression) ...) body1 body2 ...)
+(define-syntax with-syntax
+  (lambda (x)
+    (syntax-case x ()
+      [(_ ((p e) ...) b1 b2 ...)
+       (syntax (syntax-case (list e ...) ()
+                 [(p ...) (let () b1 b2 ...)]))])))
+
+;; === Macro as defined in R6RS ===
+;; (do ((var init update) ...) (test result ...) expression ...)
 (define-syntax do
   (lambda (x)
     (syntax-case x ()
       [(_ (binding ...) (test res ...) expr ...)
-       (with-syntax ([((var val update) ...)
-                      (map (lambda (b)
+       (with-syntax ([((var val update) ...) ;; <- with-syntax: pattern
+                      (map (lambda (b) ;; <------- with-syntax: expression
                              (syntax-case b ()
                                [(var val) (syntax (var val var))]
                                [(var val update) (syntax (var val update))]))
                            (syntax (binding ...)))])
-         (syntax (let loop ([var val] ...)
+         (syntax (let loop ([var val] ...) ;; <--- with-syntax: body
                    (if test
                        (begin (if #f #f) res ...)
                        (begin expr ... (loop update ...))))))])))
