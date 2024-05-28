@@ -1,3 +1,19 @@
+;; === Macro as defined in R6RS ===
+(define-syntax do
+  (lambda (x)
+    (syntax-case x ()
+      [(_ (binding ...) (test res ...) expr ...)
+       (with-syntax ([((var val update) ...)
+                      (map (lambda (b)
+                             (syntax-case b ()
+                               [(var val) (syntax (var val var))]
+                               [(var val update) (syntax (var val update))]))
+                           (syntax (binding ...)))])
+         (syntax (let loop ([var val] ...)
+                   (if test
+                       (begin (if #f #f) res ...)
+                       (begin expr ... (loop update ...))))))])))
+
 ;; === do expression ===
 (define factorial
   (lambda (n)
