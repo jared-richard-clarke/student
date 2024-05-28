@@ -10,41 +10,43 @@
         (loop (* product operand) 
               (- operand 1)))))
 
-; === letrec expansion ===
-(define factorial-letrec
+;; === letrec expansion ===
+(define factorial
   (lambda (n)
-    ((letrec ([loop (lambda (product operand)
-                      (if (< operand 1)
-                          product
-                          (loop (* product operand)
-                                (- operand 1))))])
+    ((letrec ((loop
+               (lambda (product operand)
+                 (if (< operand 1)
+                     product
+                     (loop (* product operand) (- operand 1))))))
        loop)
-     1 n)))
+     1
+     n)))
 
-; === let expansion ===
-(define factorial-let
+;; === let expansion ===
+(define factorial
   (lambda (n)
-    ((let ([loop #f])
-       (let ([temp (lambda (product operand)
-                     (if (< operand 1)
-                         product
-                         (loop (* product operand)
-                               (- operand 1))))])
-         (set! loop temp)
-         loop))
-     1 n)))
+    ((let ((loop #f))
+       (let ((loop1
+              (lambda (product operand)
+                (if (< operand 1)
+                    product
+                    (loop (* product operand) (- operand 1))))))
+         (set! loop loop1)
+         (let () loop)))
+     1
+     n)))
 
-; === lambda expansion ===
-(define factorial-lambda
+;; === lambda expansion ===
+(define factorial
   (lambda (n)
     (((lambda (loop)
-        ((lambda (temp)
-           (set! loop temp)
-           loop)
+        ((lambda (loop1)
+           (set! loop loop1)
+           ((lambda () loop)))
          (lambda (product operand)
            (if (< operand 1)
                product
-               (loop (* product operand)
-                     (- operand 1))))))
+               (loop (* product operand) (- operand 1))))))
       #f)
-     1 n)))
+     1
+     n)))
