@@ -5,7 +5,7 @@
        (z (* x y))]
   z)
 
-;; -- expands ->
+;; === let expansion ===
 
 (let [(x 3)]
   (let [(y 4)]
@@ -13,7 +13,7 @@
       (let []
         z))))
 
-;; -- expands ->
+;; === lambda expansion ===
 
 ((lambda (x)
    ((lambda (y)
