@@ -69,9 +69,9 @@
      n
      1)))
 
-;; "The odd-looking expression `(if #f #f)` is inserted before the result expressions `res ...`
+;; "The odd-looking expression '(if #f #f)' is inserted before the result expressions 'res ...'
 ;;  in case no result expressions are provided, since begin requires at least one subexpression.
-;;  The value of `(if #f #f)` is unspecified, which is what we want since the value of do is
+;;  The value of '(if #f #f)' is unspecified, which is what we want since the value of do is
 ;;  unspecified if no result expressions are provided."
 ;;
 ;; — The Scheme Programming Language, 4th edition
