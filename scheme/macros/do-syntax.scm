@@ -1,10 +1,10 @@
 ;; === Macro as defined in R6RS ===
-;; (with-syntax ((pattern expression) ...) body1 body2 ...)
+;; (with-syntax ([pattern syntax]) body) -> (syntax-case syntax () [pattern body])
 (define-syntax with-syntax
   (lambda (x)
     (syntax-case x ()
-      [(_ ((p e) ...) b1 b2 ...)
-       (syntax (syntax-case (list e ...) ()
+      [(_ ((p s) ...) b1 b2 ...)
+       (syntax (syntax-case (list s ...) ()
                  [(p ...) (let () b1 b2 ...)]))])))
 
 ;; === Macro as defined in R6RS ===
