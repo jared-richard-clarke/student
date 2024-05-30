@@ -14,7 +14,7 @@
     (syntax-case x ()
       [(_ (binding ...) (test res ...) expr ...)
        (with-syntax ([((var val update) ...) ;; <- with-syntax: pattern
-                      (map (lambda (b) ;; <------- with-syntax: expression
+                      (map (lambda (b) ;; <------- with-syntax: syntax
                              (syntax-case b ()
                                [(var val) (syntax (var val var))]
                                [(var val update) (syntax (var val update))]))
