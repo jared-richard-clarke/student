@@ -175,6 +175,50 @@ Lua is implemented not as a standalone program, but as a C library. The standalo
 is an interface that feeds files and strings from the user to the Lua library.
 
 #+begin_src c
+  // === Standard Libraries ===
+  
+  static const luaL_Reg loadedlibs[] = {
+    { LUA_GNAME, luaopen_base },
+    { LUA_LOADLIBNAME, luaopen_package },
+    { LUA_COLIBNAME, luaopen_coroutine },
+    { LUA_TABLIBNAME, luaopen_table },
+    { LUA_IOLIBNAME, luaopen_io },
+    { LUA_OSLIBNAME, luaopen_os },
+    { LUA_STRLIBNAME, luaopen_string },
+    { LUA_MATHLIBNAME, luaopen_math },
+    { LUA_UTF8LIBNAME, luaopen_utf8 },
+    { LUA_DBLIBNAME, luaopen_debug },
+    { NULL, NULL }
+  };
+
+  LUALIB_API void luaL_openlibs (lua_State *L) {
+    const luaL_Reg *lib;
+    for (lib = loadedlibs; lib->func; lib++) {
+      luaL_requiref(L, lib->name, lib->func, 1);
+      lua_pop(L, 1);
+    }
+  }
+
+  LUALIB_API void luaL_requiref (lua_State *L, const char *modname, lua_CFunction openf, int glb) {
+    luaL_getsubtable(L, LUA_REGISTRYINDEX, LUA_LOADED_TABLE);
+    lua_getfield(L, -1, modname);   // LOADED[modname]
+    if (!lua_toboolean(L, -1)) {    // Package not already loaded?
+      lua_pop(L, 1);                // Remove field.
+      lua_pushcfunction(L, openf);
+      lua_pushstring(L, modname);   // Argument to open function.
+      lua_call(L, 1, 1);            // Call "openf" to open module.
+      lua_pushvalue(L, -1);         // Make copy of module (call result).
+      lua_setfield(L, -3, modname); // LOADED[modname] = module
+    }
+    lua_remove(L, -2);              // Remove LOADED table.
+    if (glb) {
+      lua_pushvalue(L, -1);         // Copy of module.
+      lua_setglobal(L, modname);    // _G[modname] = module
+    }
+  }
+
+  // === Lua Standalone Interpreter ===
+
   // Main body of the Lua stand-alone intepreter. Called in protected mode.
   // Parses and handles all arguments to the main program.
   static int pmain (lua_State *L) {
