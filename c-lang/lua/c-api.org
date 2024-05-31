@@ -176,19 +176,20 @@ is an interface that feeds files and strings from the user to the Lua library.
 
 #+begin_src c
   // === Standard Libraries ===
-  
+  // Portions from "linit.c" and "lauxlib.c".
+
   static const luaL_Reg loadedlibs[] = {
-    { LUA_GNAME, luaopen_base },
+    { LUA_GNAME,       luaopen_base },
     { LUA_LOADLIBNAME, luaopen_package },
-    { LUA_COLIBNAME, luaopen_coroutine },
-    { LUA_TABLIBNAME, luaopen_table },
-    { LUA_IOLIBNAME, luaopen_io },
-    { LUA_OSLIBNAME, luaopen_os },
-    { LUA_STRLIBNAME, luaopen_string },
+    { LUA_COLIBNAME,   luaopen_coroutine },
+    { LUA_TABLIBNAME,  luaopen_table },
+    { LUA_IOLIBNAME,   luaopen_io },
+    { LUA_OSLIBNAME,   luaopen_os },
+    { LUA_STRLIBNAME,  luaopen_string },
     { LUA_MATHLIBNAME, luaopen_math },
     { LUA_UTF8LIBNAME, luaopen_utf8 },
-    { LUA_DBLIBNAME, luaopen_debug },
-    { NULL, NULL }
+    { LUA_DBLIBNAME,   luaopen_debug },
+    { NULL,            NULL }
   };
 
   LUALIB_API void luaL_openlibs (lua_State *L) {
@@ -218,6 +219,7 @@ is an interface that feeds files and strings from the user to the Lua library.
   }
 
   // === Lua Standalone Interpreter ===
+  // Portions from "lua.c".
 
   // Main body of the Lua stand-alone intepreter. Called in protected mode.
   // Parses and handles all arguments to the main program.
