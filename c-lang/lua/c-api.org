@@ -202,19 +202,29 @@ is an interface that feeds files and strings from the user to the Lua library.
 
   LUALIB_API void luaL_requiref (lua_State *L, const char *modname, lua_CFunction openf, int glb) {
     luaL_getsubtable(L, LUA_REGISTRYINDEX, LUA_LOADED_TABLE);
-    lua_getfield(L, -1, modname);   // LOADED[modname]
-    if (!lua_toboolean(L, -1)) {    // Package not already loaded?
-      lua_pop(L, 1);                // Remove field.
+    // LOADED[modname]
+    lua_getfield(L, -1, modname);
+     // Package not already loaded?
+    if (!lua_toboolean(L, -1)) {
+      // Remove field.
+      lua_pop(L, 1);
       lua_pushcfunction(L, openf);
-      lua_pushstring(L, modname);   // Argument to open function.
-      lua_call(L, 1, 1);            // Call "openf" to open module.
-      lua_pushvalue(L, -1);         // Make copy of module (call result).
-      lua_setfield(L, -3, modname); // LOADED[modname] = module
+      // Argument to open function.
+      lua_pushstring(L, modname);
+      // Call "openf" to open module.
+      lua_call(L, 1, 1);
+      // Make copy of module (call result).
+      lua_pushvalue(L, -1);
+      // LOADED[modname] = module
+      lua_setfield(L, -3, modname);
     }
-    lua_remove(L, -2);              // Remove LOADED table.
+    // Remove LOADED table.
+    lua_remove(L, -2);
     if (glb) {
-      lua_pushvalue(L, -1);         // Copy of module.
-      lua_setglobal(L, modname);    // _G[modname] = module
+      // Copy of module.
+      lua_pushvalue(L, -1);
+      // _G[modname] = module
+      lua_setglobal(L, modname);
     }
   }
 
@@ -227,6 +237,9 @@ is an interface that feeds files and strings from the user to the Lua library.
     int argc = (int)lua_tointeger(L, 1);
     char **argv = (char **)lua_touserdata(L, 2);
     int script;
+    // Traverses all arguments from "argv", returning a mask with those
+    // needed before running any Lua code or an error code if it finds any
+    // invalid arguments.
     int args = collectargs(argv, &script);
 
     // First argument is not an option.
