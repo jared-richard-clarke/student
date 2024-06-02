@@ -181,6 +181,18 @@ The API has a dedicated push function for each Lua type with a direct representa
 
 ** Lua Standalone Interpreter
 
+#+begin_quote
+  "To properly handle errors in our application code, we must call our code through Lua,
+   so that it sets an appropriate context to catch errors — that is, it runs the code in
+   the context of a ~setjmp~. In the same way that we can run Lua code in protected mode
+   using ~pcall~, we can run C code using ~lua_pcall~. More specifically, we pack the code
+   in a function and call that function through Lua, using ~lua_pcall~. With this setting,
+   our C code will run in protected mode. Even in case of memory-allocation failure,
+   ~lua_pcall~ returns a proper error code, leaving the interpreter in a consistent state."
+
+  - *Programming in Lua*, Roberto Ierusalimschy
+#+end_quote
+
 Lua is implemented not as a standalone program, but as a C library. The standalone Lua interpreter
 is an interface that feeds files and strings from the user to the Lua library.
 
