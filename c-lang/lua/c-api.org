@@ -416,6 +416,11 @@ is an interface that feeds files and strings from the user to the Lua library.
 Lua's generic buffer implementation.
 
 #+begin_src c
+  // LUAI_MAXALIGN defines fields that, when used in a union, ensure
+  // maximum alignment for the other items in that union.
+  //
+  // LUAI_MAXALIGN -> lua_Number n; double u; void *s; lua_Integer i; long l
+
   struct luaL_Buffer {
     char *b;      // Buffer address
     size_t size;  // Buffer size
