@@ -259,7 +259,7 @@ is an interface that feeds files and strings from the user to the Lua library.
     int argc = (int)lua_tointeger(L, 1);
     char **argv = (char **)lua_touserdata(L, 2);
     int script;
-    // Traverses all arguments from "argv". Returns a mask of those
+    // Traverses all arguments from "argv" and returns a mask of those
     // arguments before running any Lua code. Returns an error code if it
     // finds any invalid arguments.
     int args = collectargs(argv, &script);
