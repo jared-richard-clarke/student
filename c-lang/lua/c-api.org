@@ -38,24 +38,24 @@
 The API has a dedicated push function for each Lua type with a direct representation in C.
 
 #+begin_src c
-  LUA_API void (lua_pushnil)            (lua_State *L);
-  LUA_API void (lua_pushboolean)        (lua_State *L, int bool);
-  LUA_API void (lua_pushnumber)         (lua_State *L, lua_Number n);
-  LUA_API void (lua_pushinteger)        (lua_State *L, lua_Integer n);
-  LUA_API const char *(lua_pushlstring) (lua_State *L, const char *s, size_t len);
-  LUA_API const char *(lua_pushstring)  (lua_State *L, const char *s);
+  LUA_API void        (lua_pushnil)           (lua_State *L);
+  LUA_API void        (lua_pushboolean)       (lua_State *L, int bool);
+  LUA_API void        (lua_pushnumber)        (lua_State *L, lua_Number n);
+  LUA_API void        (lua_pushinteger)       (lua_State *L, lua_Integer n);
+  LUA_API const char *(lua_pushlstring)       (lua_State *L, const char *s, size_t len);
+  LUA_API const char *(lua_pushstring)        (lua_State *L, const char *s);
 
-  LUA_API void (lua_pushcclosure)       (lua_State *L, lua_CFunction fn, int n);
-  LUA_API void (lua_pushlightuserdata)  (lua_State *L, void *p);
-  LUA_API int (lua_pushthread)          (lua_State *L);
+  LUA_API void        (lua_pushcclosure)      (lua_State *L, lua_CFunction fn, int n);
+  LUA_API void        (lua_pushlightuserdata) (lua_State *L, void *p);
+  LUA_API int         (lua_pushthread)        (lua_State *L);
 
   // If possible, grows stack to accomodate "sz" number of slots.
   // Otherwise returns zero.
-  LUA_API int (lua_checkstack)          (lua_State *L, int sz);
+  LUA_API int         (lua_checkstack)        (lua_State *L, int sz);
 
   // Similar to "lua_checkstack" but raises an error with the given message
   // if unable to complete operation.
-  LUALIB_API void (luaL_checkstack)     (lua_State *L, int sz, const char *msg);
+  LUALIB_API void     (luaL_checkstack)       (lua_State *L, int sz, const char *msg);
 #+end_src
 
 *** Indexing Elements
@@ -110,7 +110,7 @@ The API has a dedicated push function for each Lua type with a direct representa
 
 #+begin_src c
   // Returns the number of elements on the stack, which is also the top element's index.
-  LUA_API int (lua_gettop)     (lua_State *L);
+  LUA_API int  (lua_gettop)    (lua_State *L);
 
   // Sets the number of elements on the stack. lua_settop(L, 0) empties the stack.
   LUA_API void (lua_settop)    (lua_State *L, int idx);
@@ -132,7 +132,7 @@ The API has a dedicated push function for each Lua type with a direct representa
 
   // Pops an element and sets it at the given index.
   #define lua_replace(L, idx)  (lua_copy(L, -1, (idx)), lua_pop(L, 1))
-  
+
   // Pops n elements from the stack.
   #define lua_pop(L, n)        lua_settop(L, -(n) - 1)
 #+end_src
