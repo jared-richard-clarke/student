@@ -188,7 +188,15 @@ The API has a dedicated push function for each Lua type with a direct representa
    using ~pcall~, we can run C code using ~lua_pcall~. More specifically, we pack the code
    in a function and call that function through Lua, using ~lua_pcall~. With this setting,
    our C code will run in protected mode. Even in case of memory-allocation failure,
-   ~lua_pcall~ returns a proper error code, leaving the interpreter in a consistent state."
+   ~lua_pcall~ returns a proper error code, leaving the interpreter in a consistent state.
+
+   ...When we write library functions for Lua, however, usually they do not need to handle
+   errors. Errors raised by a library function will be caught either by a ~pcall~ in Lua or
+   by a ~lua_pcall~ in the application code. So, whenever a function in a C library detects
+   an error, it can simply call ~lua_error~ (or better yet ~luaL_error~, which formats the error
+   message and then calls ~lua_error~). The function ~lua_error~ tidies any loose ends in the
+   Lua system and jumps back to the protected call that originated that execution, passing
+   along the error message."
 
   - *Programming in Lua*, Roberto Ierusalimschy
 #+end_quote
