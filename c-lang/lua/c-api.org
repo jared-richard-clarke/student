@@ -111,20 +111,28 @@ The API has a dedicated push function for each Lua type with a direct representa
 #+begin_src c
   // Returns the number of elements on the stack, which is also the top element's index.
   LUA_API int (lua_gettop)     (lua_State *L);
+
   // Sets the number of elements on the stack. lua_settop(L, 0) empties the stack.
   LUA_API void (lua_settop)    (lua_State *L, int idx);
+
   // Pushes onto the stack a copy of the element at the given index.
   LUA_API void (lua_pushvalue) (lua_State *L, int idx);
+
   // Rotates the stack elements from the given index to the top of the stack by "n" positions.
   LUA_API void (lua_rotate)    (lua_State *L, int idx, int n);
+
   // Copies the element at one index into another, leaving the original untouched.
   LUA_API void (lua_copy)      (lua_State *L, int fromidx, int toidx);
+
   // Removes element at given index, shifting elements above it to fill in the gap.
   #define lua_remove(L, idx)   (lua_rotate(L, (idx), -1), lua_pop(L, 1))
+
   // Inserts top element into given index, shifting elements above to open space.
   #define lua_insert(L, idx)   lua_rotate(L, (idx), 1)
+
   // Pops an element and sets it at the given index.
   #define lua_replace(L, idx)  (lua_copy(L, -1, (idx)), lua_pop(L, 1))
+  
   // Pops n elements from the stack.
   #define lua_pop(L, n)        lua_settop(L, -(n) - 1)
 #+end_src
