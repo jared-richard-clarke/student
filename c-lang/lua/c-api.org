@@ -173,7 +173,7 @@ The API has a dedicated push function for each Lua type with a direct representa
   lua_remove(L, -2);
   // 3rd argument.
   lua_pushinteger(L, 14);
-  // Call "f" with 3 arguments and 1 result.
+  // Call "f" with 3 arguments and return 1 result.
   lua_call(L, 3, 1);
   // Set global "a".
   lua_setglobal(L, "a");
