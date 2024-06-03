@@ -363,6 +363,9 @@ is an interface that feeds files and strings from the user to the Lua library.
 #+begin_src c
   // === C API ===
 
+  #include "lua.h"
+  #include "lauxlib.h"
+
   lua_State *L = luaL_newstate();
   luaL_openlibs(L);
 
@@ -406,6 +409,11 @@ is an interface that feeds files and strings from the user to the Lua library.
 
 #+begin_src c
   // === C API ===
+
+  #include <ctype.h>
+
+  #include "lua.h"
+  #include "lauxlib.h"
 
   lua_State *L = luaL_newstate();
   luaL_openlibs(L);
