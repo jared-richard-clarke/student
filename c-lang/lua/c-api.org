@@ -10,6 +10,9 @@
 
 ** Introduction
 
+Data transfer from C to Lua takes place through functions that receive C types, convert them
+to Lua values, and place them on a virtual stack.
+
 #+begin_quote
   "The Lua library defines no C global variables at all. It keeps all its state in the dynamic
    structure ~lua_State~; all functions inside Lua receive a pointer to this structure as an
@@ -360,6 +363,14 @@ is an interface that feeds files and strings from the user to the Lua library.
 
 ** Lua C Map Function
 
+For C functions registered in Lua's virtual machine, arguments must be passed through
+the stack, not as arguments to the function. A C function receives its arguments
+from the stack in direct order, where the first index corresponds to the function's
+first argument. To return values to Lua, a C function pushes its results onto the
+stack, also in direct order, and returns in C the number of results.
+
+- ~lua_CFunction~ :: ~typedef int (*lua_CFunction) (lua_State *L)~
+
 #+begin_src c
   // === C API ===
 
@@ -472,6 +483,10 @@ Lua's generic buffer implementation.
 #+end_src
 
 ** Lua C Bit Array
+
+The Lua type ~userdata~ allows the creation of C data structures within the Lua environment.
+~userdata~ contain memory blocks managed by the Lua VM, which are transparently accessible
+to C code but are opaque objects when accessed by Lua.
 
 #+begin_src c
   #include <stddef.h>
