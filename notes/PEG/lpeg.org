@@ -1173,9 +1173,9 @@ I have, to the best of my knowledge, updated my notes accordingly.
     int caplevel;
   } Stack;
 
-  // An unsigned integer large enough to index any subject.
-  // "size_t" would double the size of the captures array on a 64-bit machine.
-  // "uint" = "unsigned int"
+  // An unsigned integer large enough to index any subject in a captures array.
+  // "size_t" would also work, but it would double the size of the captures array
+  // on a 64-bit machine. "uint" is a macro for "unsigned int".
   typedef uint Index_t;
 
   // Captures array as defined in "lpcap.c".
