@@ -1088,11 +1088,6 @@ I have, to the best of my knowledge, updated my notes accordingly.
     byte buff[1];
   } Instruction;
 
-  // An unsigned integer large enough to index any subject.
-  // "size_t" would double the size of the captures array on a 64-bit machine.
-  // "uint" = "unsigned int"
-  typedef uint Index_t;
-
   // Entry stack
   // Side Note: "stack" points to first empty slot in "Stack".
   typedef struct Stack {
@@ -1100,6 +1095,11 @@ I have, to the best of my knowledge, updated my notes accordingly.
     const Instruction *p; // Next instruction
     int caplevel;
   } Stack;
+
+  // An unsigned integer large enough to index any subject.
+  // "size_t" would double the size of the captures array on a 64-bit machine.
+  // "uint" = "unsigned int"
+  typedef uint Index_t;
 
   // Captures array
   typedef struct Capture {
