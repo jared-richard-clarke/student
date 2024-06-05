@@ -1067,6 +1067,83 @@ the opcode interpreter — otherwise known as the virtual machine.
 explicated by Ierusalimschy in his paper *A Text Pattern-Matching Tool Based on Parsing Expression Grammars*.
 I have, to the best of my knowledge, updated my notes accordingly.
 
+*** Match Function
+
+#+begin_src c
+  // The main match function for all LPEG patterns.
+  static int lp_match (lua_State *L) {
+    // Initialize capture list.
+    Capture capture[INITCAPSIZE];
+    const char *r;
+    size_t l;
+    // Build and/or retrieve pattern from userdata.
+    Pattern *p = (getpatt(L, 1, NULL), getpattern(L, 1));
+    // Compile tree into instruction list, if not already compiled.
+    Instruction *code = (p->code != NULL) ? p->code : prepcompile(L, p, 1);
+    // Retrieve input text.
+    const char *s = luaL_checklstring(L, SUBJIDX, &l);
+    // Locate initial position in input.
+    size_t i = initposition(L, l);
+    int ptop = lua_gettop(L);
+    luaL_argcheck(L, l < MAXINDT, SUBJIDX, "subject too long");
+    // Initialize subcache.
+    lua_pushnil(L);
+    // Push pointer to capture list.
+    lua_pushlightuserdata(L, capture);
+    // Retrieve key table.
+    lua_getuservalue(L, 1);
+    // Run the virtual machine.
+    r = match(L, s, s + i, s + l, code, capture, ptop);
+    if (r == NULL) {
+      lua_pushnil(L);
+      return 1;
+    }
+    // Pull the captures out of the capture list.
+    return getcaptures(L, s, r, ptop);
+  }
+
+  int getcaptures (lua_State *L, const char *s, const char *r, int ptop) {
+    // Retrieve the capture list.
+    Capture *capture = (Capture *)lua_touserdata(L, caplistidx(ptop));
+    int n = 0;
+    // Are there any captures?
+    if (!isclosecap(capture)) {
+      CapState cs;
+      cs.ocap = cs.cap = capture;
+      cs.L = L;
+      cs.reclevel = 0;
+      cs.s = s;
+      cs.valuecached = 0;
+      cs.ptop = ptop;
+      cs.firstcap = lua_gettop(L) + 1;
+      // Collect and process captures.
+      do {
+        n += pushcapture(&cs);
+      } while (!isclosecap(cs.cap));
+      assert(lua_gettop(L) - cs.firstcap == n - 1);
+    }
+    // Are there any capture values?
+    if (n == 0) {
+      // Return end position in match.
+      lua_pushinteger(L, r - s + 1);
+      n = 1;
+    }
+    return n;
+  }
+
+  // The state machine for collecting match captures.
+  typedef struct CapState {
+    Capture *cap;    // The current capture.
+    Capture *ocap;   // The original capture list.
+    lua_State *L;
+    int ptop;        // Stack index of last match.
+    int firstcap;    // Stack index of first capture.
+    const char *s;   // Input text.
+    int valuecached; // Value stored in cache.
+    int reclevel;    // Recursion level.
+  } CapState;
+#+end_src
+
 *** VM Interpreter
 
 #+begin_src c
