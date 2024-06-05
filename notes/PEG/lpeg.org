@@ -1020,7 +1020,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
   close = Pattern("*/")
 
   -- comment_block = re.compile[[ "/*" (!"*/" .)* "*/" ]]
-  comment_block = open * (-close * Any) ^ 0 * close
+  comment_block = open * (Any - close) ^ 0 * close
 
   -- === AST ===
   --
