@@ -1147,7 +1147,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
 *** VM Interpreter
 
 #+begin_src c
-  // Bytecode instruction
+  // Bytecode instruction as defined in "lpvm.h".
   typedef union Instruction {
     struct Inst {
       byte code;
@@ -1165,7 +1165,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
     byte buff[1];
   } Instruction;
 
-  // Entry stack
+  // Entry stack as defined in "lpvm.c".
   // Side Note: "stack" points to first empty slot in "Stack".
   typedef struct Stack {
     const char *s;        // Saved position (NULL for calls)
@@ -1178,7 +1178,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
   // "uint" = "unsigned int"
   typedef uint Index_t;
 
-  // Captures array
+  // Captures array as defined in "lpcap.c".
   typedef struct Capture {
     Index_t index;       // Subject position
     unsigned short idx;  // Extra info (group name, argument index, etc.)
@@ -1186,7 +1186,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
     byte siz;            // Size of full capture + 1 (0 = not a full capture)
   } Capture;
 
-  // The opcode interpreter as called in lp_match:
+  // The opcode interpreter as called in "lp_match":
   //     match(L, o, s,     e,     op,   capture, ptop)
   // r = match(L, s, s + i, s + l, code, capture, ptop);
   // where L       = lua_State
