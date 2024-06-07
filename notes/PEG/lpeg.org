@@ -777,7 +777,7 @@ The transformation function *Π* operates on the domain *Grammar × N × Pattern
   Π(g', i, (g, Ak)) ≡ Call o(g, Ak)
                       Jump |Π'(g, x)| + 1
                       Π'(g, 2) <--------- Keeps the invariant that all positions are relative
-                                          to the first instruction of the closed grammar.
+                                          to the first rule of the closed grammar.
 
   where Π'(g, i) = Π(g, i, g(A1))
                    Return
