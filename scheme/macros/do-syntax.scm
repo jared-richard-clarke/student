@@ -3,9 +3,9 @@
 (define-syntax with-syntax
   (lambda (x)
     (syntax-case x ()
-      [(_ ((p s) ...) b1 b2 ...)
+      [(_ ((p s) ...) e1 e2 ...)
        (syntax (syntax-case (list s ...) ()
-                 [(p ...) (let () b1 b2 ...)]))])))
+                 [(p ...) (let () e1 e2 ...)]))])))
 
 ;; === Macro as defined in R6RS ===
 ;; (do ((var init update) ...) (test result ...) expression ...)
