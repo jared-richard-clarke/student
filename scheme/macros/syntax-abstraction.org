@@ -217,8 +217,8 @@ process is repeated for the result returned by the transformer until no macro ca
    in the output of a transformer. ~bound-identifier=?~ is used to determine if two identifiers
    would be equivalent if they appeared as bound identifiers in the output of a transformer. (In
    the system of the MTW paper, two identifiers ~x~ and ~y~ would be ~free-identifier=?~ in an
-   environment ~e~ iff ~e(x) = e(y)~. They would be ~bound-identifier=?~ iff they are the same
-   ~x'j~ from the same macro expansion.)
+   environment ~e~ if and only if ~e(x) = e(y)~. They would be ~bound-identifier=?~ if and only
+   if they are the same ~x'j~ from the same macro expansion.)
 
 4. Context information may be stripped from or added to a syntax object by the operations.
    ~syntax->datum~ and ~datum->syntax~. The former strips the context information from a
