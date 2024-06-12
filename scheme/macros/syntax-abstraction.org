@@ -65,29 +65,28 @@ process is repeated for the result returned by the transformer until no macro ca
   (keyword sub-form ...)
 
   ;; === macro definition and binding ===
-  (define-syntax <keyword> <transformer>)
+  (define-syntax keyword transformer)
 
-  (let-syntax ([<keyword> <transformer>] ...) <body>)
+  (let-syntax ([keyword transformer] ...) body)
 
-  (letrec-syntax ([<keyword> <transformer>] ...) <body>)
+  (letrec-syntax ([keyword transformer] ...) body)
 
   ;; === destructuring and restructuring ===
-  (syntax-case <input> (<literal> ...)
-    (<pattern> <fender> <expression>)
-    ...)
+  (syntax-case input (literal ...)
+    (pattern fender expression) ...)
 
-  (syntax <template>)
+  (syntax template)
 
-  (syntax->datum <syntax>)
+  (syntax->datum syntax)
 
-  (datum->syntax <identifier> <datum>)
+  (datum->syntax identifier datum)
 
   ;; === predicates ===
-  (identifier? <object>)
+  (identifier? object)
 
-  (free-identifier=?  <identifier-1> <identifier-2>)
+  (free-identifier=?  identifier-1 identifier-2)
 
-  (bound-identifier=? <identifier-1> <identifier-2>)
+  (bound-identifier=? identifier-1 identifier-2)
 #+end_src
 
 - syntax object :: The argument to a macro transformer, a syntax object contains contextual
