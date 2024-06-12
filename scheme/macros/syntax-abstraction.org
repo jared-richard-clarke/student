@@ -5,12 +5,13 @@
 | source                            | author                                          |
 |-----------------------------------+-------------------------------------------------|
 | *Syntactic Abstraction in Scheme* | R. Kent Dybvig, Robert Hieb, and Carl Bruggeman |
+| *Hygienic Macro Technology*       | William D. Clinger and Mitchell Wand            |
 
 ** Introduction
 
 - The capturing problem :: A fundamental problem with traditional Lisp macro systems is
-  that they do not respect lexical scoping. When one expression is substituted for another,
-  apparent bindings can be shadowed, resulting in unintended capture of identifier references.
+  that they do not respect lexical scoping. Moving a piece of syntax from one place to
+  another might lead to the accidental rebinding of a program's identifiers.
 
 Dybvig, Hieb, and Bruggeman present a macro system for Scheme that enforces hygiene automatically
 while maintaining the correlation between source and object code for debuggers and optimizing
@@ -199,3 +200,37 @@ process is repeated for the result returned by the transformer until no macro ca
   parse(⟦(let-syntax (i e1) e2)⟧, r)  = syntax-binding(i, e1, e2) if r(⟦let-syntax⟧) = Special
   parse(⟦letrec-syntax (i e1) e2⟧, r) = rec-syntax-binding(i, e1, e2) if r(⟦letrec-syntax⟧) = Special
 #+end_example
+
+** Dybvig's Algorithm
+
+1. Syntax objects are constructed using the form ~(syntax <template>)~, which behaves like ~quote~,
+   except it preserves contextual information from the template.
+
+2. Syntax objects are observed using ~syntax-case~. A use of ~syntax-case~ consists of a sequence
+   of pattern-expression pairs. A pattern may be a pattern variable, a list structure, an identifier,
+   or a constant. Each pattern binds its pattern variables and evaluates the expression in the
+   resulting environment. Right-hand-side expressions are arbitrary Scheme expressions that
+   return syntax objects.
+
+3. Syntax objects may be compared in two different ways: ~free-identifier=?~ is used to
+   determine whether two identifiers would be equivalent if they appeared as free identifiers
+   in the output of a transformer. ~bound-identifier=?~ is used to determine if two identifiers
+   would be equivalent if they appeared as bound identifiers in the output of a transformer. (In
+   the system of the MTW paper, two identifiers ~x~ and ~y~ would be ~free-identifier=?~ in an
+   environment ~e~ iff ~e(x) = e(y)~. They would be ~bound-identifier=?~ iff they are the same
+   ~x'j~ from the same macro expansion.)
+
+4. Context information may be stripped from or added to a syntax object by the operations.
+   ~syntax->datum~ and ~datum->syntax~. The former strips the context information from a
+   syntax object. The latter takes a syntax object and a Scheme datum (usually, but not always,
+   a Scheme identifier) and produces the syntax object that would have been created had that
+   datum appeared in the same context as the syntax object. This is useful for controlled escape
+   from hygiene. There is no operation to extract the context information from a syntax object.
+
+5. A syntax object may be *marked*. It is assumed that there is an infinite collection of
+   marks ~m~. Marks have the property that if an object is marked with the mark ~m~, and
+   later marked with ~m~ again, the marks cancel.
+
+6. A syntax object is subject to substitution ~subst(e, i, i')~, which returns a syntax object
+   like ~e~ except that every occurrence of the identifier ~i~ (along with its context information)
+   is replaced by ~i'~ (with its context information).
