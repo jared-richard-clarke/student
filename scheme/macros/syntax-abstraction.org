@@ -203,7 +203,7 @@ process is repeated for the result returned by the transformer until no macro ca
 #+begin_example
   # === Macro Expansion Algorithm ===
 
-  expand: Expression × Environment -> Expanded-Expression
+  expand:  Expression × Environment         -> Expanded-Expression
 
   mark:    Expression × Mark                -> Expression
   
