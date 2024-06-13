@@ -244,13 +244,10 @@ process is repeated for the result returned by the transformer until no macro ca
    resulting environment. Right-hand-side expressions are arbitrary Scheme expressions that
    return syntax objects.
 
-3. Syntax objects may be compared in two different ways: ~free-identifier=?~ is used to
-   determine whether two identifiers would be equivalent if they appeared as free identifiers
-   in the output of a transformer. ~bound-identifier=?~ is used to determine if two identifiers
-   would be equivalent if they appeared as bound identifiers in the output of a transformer. (In
-   the system of the MTW paper, two identifiers ~x~ and ~y~ would be ~free-identifier=?~ in an
-   environment ~e~ if and only if ~e(x) = e(y)~. They would be ~bound-identifier=?~ if and only
-   if they are the same ~x'j~ from the same macro expansion.)
+3. Syntax objects may be compared in two different ways to determine equivalency within the
+   output of a transformer: Two identifiers ~x~ and ~y~ would be ~free-identifier=?~ in an
+   environment ~e~ if and only ~e(x) = e(y)~. They would be ~bound-identifier=?~ if the
+   binding for one captures references to the other within its scope.
 
 4. Context information may be stripped from or added to a syntax object by the operations.
    ~syntax->datum~ and ~datum->syntax~. The former strips the context information from a
@@ -263,6 +260,6 @@ process is repeated for the result returned by the transformer until no macro ca
    marks ~m~. Marks have the property that if an object is marked with the mark ~m~, and
    later marked with ~m~ again, the marks cancel.
 
-6. A syntax object is subject to substitution ~subst(e, i, i')~, which returns a syntax object
+6. A syntax object is subject to substitution ~subst(e, i, s)~, which returns a syntax object
    like ~e~ except that every occurrence of the identifier ~i~ (along with its context information)
-   is replaced by ~i'~ (with its context information).
+   is replaced by ~s~ (with its context information).
