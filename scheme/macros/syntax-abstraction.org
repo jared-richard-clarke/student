@@ -5,7 +5,6 @@
 | source                            | author                                          |
 |-----------------------------------+-------------------------------------------------|
 | *Syntactic Abstraction in Scheme* | R. Kent Dybvig, Robert Hieb, and Carl Bruggeman |
-| *Hygienic Macro Technology*       | William D. Clinger and Mitchell Wand            |
 
 ** Introduction
 
@@ -157,24 +156,65 @@ process is repeated for the result returned by the transformer until no macro ca
       parse: Expression × Environment -> Parsed-Expression
 
       parse(⟦c⟧, r)            = constant(c)
-
       parse(⟦s⟧, r)            = variable(s) if r(s) = Variable
-
       parse(⟦(e1 e2)⟧, r)      = application(e1, e2) if e1 ∉ Symbol
-
       parse(⟦(s e)⟧, r)        = macro-application(s, e) if r(s) ∈ Transformer
-
       parse(⟦(quote e)⟧, r)    = symbolic-data(e) if r(⟦quote⟧) = Special
-
       parse(⟦(lambda s e)⟧, r) = function(s, e) if r(⟦lambda⟧) = Special
 #+end_example
 
 ** Substitution-Based Macro-Expansion Algorithm
 
+#+begin_quote
+  "In the λ-calculus, alpha conversion is used to circumvent hygiene problems caused
+   by program transformations. Since the actual name of a bound variable is immaterial,
+   a binding expression can be converted into an equivalent expression in which different
+   names are used for the bound variables. Our algorithm uses alpha conversion to
+   preserve hygiene during macro expansion.
+
+   Whether an identifier is being used as symbolic data or as a program variable,
+   pattern variable, or keyword cannot be determined until after macro expansion. Since
+   the name of an identifier used as symbolic data is important, naive alpha conversion
+   is not viable in traditional macro expansion algorithms. Our algorithm makes alpha
+   conversion possible by abandoning the traditional Lisp identification of variables
+   and symbols. Instead, we introduce a new type of object, the identifier, which
+   maintains both symbolic names and binding names until an identifier’s role in a
+   program is determined. Alpha conversion is accomplished by replacing only the binding
+   names of bound identifiers."
+
+  — *Syntactic Abstraction in Scheme*, R. Kent Dybvig, Robert Hieb, and Carl Bruggeman
+#+end_quote
+
+- For simplicity, ~let-syntax~ and ~letrec-syntax~ are each restricted to a single binding.
+  The sub-form of a ~syntax~ expression is restricted to a single identifier.
+
+- ~plambda~ replaces ~syntax-case~ but binds only a single pattern variable within its body.
+
+- ~expand~ uses ~resolve~ to complete alpha substitution and determine the actual binding
+  name of an identifier.
+
+- When expanding a binding expression, ~subst~ replaces the binding name of the bound
+  identifier with a fresh binding name.
+
+- To distinguish new identifiers introduced by a transformer, both input to the transformer
+  and output from the transformer are freshly marked. Since identical marks cancel each other,
+  only new syntax retains the mark.
+
 #+begin_example
   # === Macro Expansion Algorithm ===
 
   expand: Expression × Environment -> Expanded-Expression
+
+  mark:    Expression × Mark                -> Expression
+  
+  subst:   Expression × Identifier × Symbol -> Expression
+  
+  # resolve: Extracts the binding name of an identifier.
+  resolve: Identifier                       -> Symbol
+  
+  # strip: Undoes marking and substitution operations.
+  #        Extracts the symbolic name of an identifier.
+  strip:   Expression                       -> Expression
 
   expand(e, r) =
     case parse(e, r) of:
@@ -209,57 +249,80 @@ process is repeated for the result returned by the transformer until no macro ca
   parse: Expression × Environment -> Parsed-Expression
 
   parse(⟦c⟧, r)                       = symbolic-data(c)
-
   parse(⟦i⟧, r)                       = variable(i) if r(resolve(i)) = Variable
-
   parse(⟦(e1 e2)⟧, r)                 = application(e1, e2) if e1 ∉ Symbol
-
   parse(⟦(i e)⟧, r)                   = application(i, e) if r(resolve(i)) = Variable
-
   parse(⟦i e⟧, r)                     = macro-application(i, e) if r(resolve(i)) ∈ Transformer
-
   parse(⟦(quote e)⟧, r)               = symbolic-data(e) if r(⟦quote⟧) = Special
-
   parse(⟦(lambda i e)⟧, r)            = function(i, e) if r(⟦lambda⟧) = Special
-
   parse(⟦(plambda i e)⟧, r)           = pfunction(i, e) if r(⟦plambda⟧) = Special
-
   parse(⟦(syntax i)⟧, r)              = syntax-data(i) if r(resolve(i)) ≠ PVariable
-
   parse(⟦(syntax i)⟧, r)              = variable(i) if r(resolve(i)) = PVariable
-
   parse(⟦(let-syntax (i e1) e2)⟧, r)  = syntax-binding(i, e1, e2) if r(⟦let-syntax⟧) = Special
-
   parse(⟦letrec-syntax (i e1) e2⟧, r) = rec-syntax-binding(i, e1, e2) if r(⟦letrec-syntax⟧) = Special
 #+end_example
 
-** Dybvig's Algorithm
+- identifier :: An ordered triple: ~<original name, binding name, {mark ...}>~
 
-1. Syntax objects are constructed using the form ~(syntax <template>)~, which behaves like ~quote~,
-   except it preserves contextual information from the template.
+#+begin_src scheme
+  ;; Substitution and marking prevent the binding for "if" in the source expression
+  ;; from interfering with the macro's use of "if" and the macro's binding for "t"
+  ;; from interfering with the source expression's reference to "t".
 
-2. Syntax objects are observed using ~syntax-case~. A use of ~syntax-case~ consists of a sequence
-   of pattern-expression pairs. A pattern may be a pattern variable, a list structure, an identifier,
-   or a constant. Each pattern binds its pattern variables and evaluates the expression in the
-   resulting environment. Right-hand-side expressions are arbitrary Scheme expressions that
-   return syntax objects.
+  (let ([if #f])
+    (or if t))
 
-3. Syntax objects may be compared in two different ways to determine equivalency within the
-   output of a transformer: Two identifiers ~x~ and ~y~ would be ~free-identifier=?~ in an
-   environment ~e~ if and only ~e(x) = e(y)~. They would be ~bound-identifier=?~ if the
-   binding for one captures references to the other within its scope.
+  ;; - expands ->
 
-4. Context information may be stripped from or added to a syntax object by the operations.
-   ~syntax->datum~ and ~datum->syntax~. The former strips the context information from a
-   syntax object. The latter takes a syntax object and a Scheme datum (usually, but not always,
-   a Scheme identifier) and produces the syntax object that would have been created had that
-   datum appeared in the same context as the syntax object. This is useful for controlled escape
-   from hygiene. There is no operation to extract the context information from a syntax object.
+  (<let let {}> ([<if if {}> #f])
+    (<or or {}> <if if {}> <t t {}>))
 
-5. A syntax object may be *marked*. It is assumed that there is an infinite collection of
-   marks ~m~. Marks have the property that if an object is marked with the mark ~m~, and
-   later marked with ~m~ again, the marks cancel.
+  ;; - expands ->
 
-6. A syntax object is subject to substitution ~subst(e, i, s)~, which returns a syntax object
-   like ~e~ except that every occurrence of the identifier ~i~ (along with its context information)
-   is replaced by ~s~ (with its context information).
+  (let ([G1 #f])
+    (<or or {}> <if G1 {}> <t t {}>))
+
+  ;; - expands ->
+  ;; The transformer for "or" is invoked. Identifiers in its input are marked "m₁".
+
+  (let ([G1 #f])
+    (<or or {m₁}> <if G1 {m₁}> <t t {m₁}>))
+
+  ;; - expands ->
+
+  (let ([G1 #f])
+    (<let let {}> ([<t t {}> <if G1 {m₁}>])
+      (<if if {}> <t t {}> <t t {}> <t t {m₁}>)))
+
+  ;; - expands ->
+  ;; Within the output of the "or" transformer, identifiers not marked "m₁"
+  ;; are marked "m₁". Identical marks cancel.
+
+  (let ([G1 #f])
+    (<let let {m₁}> ([<t t {m₁}> <if G1 {}>])
+      (<if if {m₁}> <t t {m₁}> <t t {m₁}> <t t {}>)))
+
+  ;; - expands ->
+
+  (let ([G1 #f])
+    (let ([G2 <if G1 {}>])
+      (<if if {m₁}> <t G2 {m₁}> <t G2 {m₁}> <t t {}>)))
+
+  ;; - expands ->
+
+  (let ([G1 #f])
+    (let ([G2 G1])
+      (<if if {m₁}> <t G2 {m₁}> <t G2 {m₁}> <t t {}>)))
+
+  ;; - expands ->
+
+  (let ([G1 #f])
+    (let ([G2 G1])
+      (if <t G2 {m₁}> <t G2 {m₁}> <t t {}>)))
+
+  ;; - expands ->
+
+  (let ([G1 #f])
+    (let ([G2 G1])
+      (if G2 G2 t)))
+#+end_src
