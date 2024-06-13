@@ -61,7 +61,7 @@ call expression is passed to the associated transformer to be processed. The exp
 process is repeated for the result returned by the transformer until no macro calls remain.
 
 #+begin_src scheme
-  ;; === macro calls ===
+  ;; === macro call ===
   (keyword sub-form ...)
 
   ;; === macro definition and binding ===
