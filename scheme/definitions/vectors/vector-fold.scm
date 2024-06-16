@@ -1,6 +1,6 @@
 ;; (vector-fold-left function any vector vectors ...) -> any
 ;; Combines vector elements piecewise, left to right, into an accumulative value using function "fn".
-;; The combining function takes the accumulative value and the next element
+;; The combining function takes the accumulative value and the next elements
 ;; from one or more vectors. "base" provides the initial value for the accumulator.
 ;; The number of elements combined match the length of the initial vector.
 ;; (vector-fold-left + 0 #(1 2 3) #(4 5 6) #(7 8 9)) -> 45
@@ -24,7 +24,7 @@
 
 ;; (vector-fold-right function any vector vectors ...) -> any
 ;; Combines vector elements piecewise, right to left, into an accumulative value using function "fn".
-;; The combining function takes the accumulative value and the next element from one or more vectors.
+;; The combining function takes the accumulative value and the next elements from one or more vectors.
 ;; "base" provides the initial value for the accumulator. The number of elements combined match the
 ;; length of the initial vector.
 ;; (vector-fold-right list 'base #(1 2 3) #(4 5 6) #(7 8 9)) -> '(((base 3 6 9) 2 5 8) 1 4 7)
