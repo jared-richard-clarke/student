@@ -13,7 +13,7 @@
                      [accum base])
             (if (>= index size)
                 accum
-                (loop size (+ index 1) (fn accum (vector-ref v index)))))
+                (loop (+ index 1) (fn accum (vector-ref v index)))))
           (let loop ([index 0]
                      [accum base])
             (if (>= index size)
@@ -38,7 +38,7 @@
                      [accum base])
             (if (< index 0)
                 accum
-                (loop size (- index 1) (fn accum (vector-ref v index)))))
+                (loop (- index 1) (fn accum (vector-ref v index)))))
           (let loop ([index (- size 1)]
                      [accum base])
             (if (< index 0)
