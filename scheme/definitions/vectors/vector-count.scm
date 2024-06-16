@@ -6,8 +6,8 @@
 (define vector-count
   (lambda (predicate v . vs)
     (apply vector-fold-left
-           (lambda (count . x)
-             (+ count (if (apply predicate x) 1 0)))
+           (lambda (counter . x)
+             (+ counter (if (apply predicate x) 1 0)))
            0
            v
            vs)))
