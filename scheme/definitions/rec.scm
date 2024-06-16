@@ -1,11 +1,18 @@
-;; (rec var expr) -> value
-;; Creates a recursive expression from "expr" by binding
-;; "var" within "expr" to the value of "expr".
+;; The "rec" syntactic form as defined in the Chez Scheme manual.
+;; "rec" is a special case of "letrec" for self-recursive objects.
 
 (define-syntax rec
   (syntax-rules ()
-    [(_ x e)
-     (letrec ([x e]) x)]))
+    [(_ x e) (letrec ((x e)) x)]))
+
+;; Expanded definition of the "rec" syntactic form as defined within
+;; the Nanopass framework.
+
+(define-syntax rec
+  (syntax-rules ()
+    [(_ name fn) (letrec ([name fn]) name)]
+    [(_ (name . xs) e1 e2 ...)
+     (letrec ([name (lambda xs e1 e2 ...)]) name)]))
 
 ;; === example ===
 ;;
