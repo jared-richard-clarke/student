@@ -1,19 +1,16 @@
-;; (zip (list any) (list any)) -> (list any)
-;; Combines two lists pairwise. Returns when the shortest list is exhausted.
-;; (zip '(one two three) '(1 2 3)) -> '((one . 1) (two . 2) (three . 3))
-
-(define zip
-  (lambda (xs ys)
-    (zip-with cons xs ys)))
-
-;; (zip-with function (list any) (list any)) -> (list any)
-;; Combines two lists pairwise, applying a function to each element pair.
+;; (zip-with function list list ...) -> list
+;; Combines lists pairwise, applying a function to each element pair.
 ;; Returns when shortest list is exhausted.
-;; (zip-with + '(1 2 3 4) '(1 2 3)) -> '(2 4 6)
+;; (zip-with + '(1 2 3) '(4 5 6) '(7 8 9)) -> '(12 15 18)
 
 (define zip-with
-  (lambda (fn xs ys)
-    (if (or (null? xs) (null? ys))
-        '()
-        (cons (fn (car xs) (car ys))
-              (zip-with fn (cdr xs) (cdr ys))))))
+  (lambda (fn . lists)
+    (apply map fn lists)))
+
+;; (zip list list ...) -> list
+;; Combines lists pairwise. Returns when the shortest list is exhausted.
+;; (zip '(1 2 3) '(4 5 6) '(7 8 9)) -> '((1 4 7) (2 5 8) (3 6 9))
+
+(define zip
+  (lambda lists
+    (apply zip-with list lists)))
