@@ -38,7 +38,7 @@
       (if (not (pair? tree))
           (begin (fn tree))
           (begin (cons (traverse (car tree) fn)
-		       (traverse (cdr tree) fn))))))
+                       (traverse (cdr tree) fn))))))
 
 (define (memoize fn)
   (define cache '())
