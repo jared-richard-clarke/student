@@ -1,16 +1,16 @@
 ;; === nested let ===
 
-(let* [(x 3)
-       (y 4)
-       (z (* x y))]
+(let* ([x 3]
+       [y 4]
+       [z (* x y)])
   z)
 
 ;; === let expansion ===
 
-(let [(x 3)]
-  (let [(y 4)]
-    (let [(z (* x y))]
-      (let []
+(let ([x 3])
+  (let ([y 4])
+    (let ([z (* x y)])
+      (let ()
         z))))
 
 ;; === lambda expansion ===
