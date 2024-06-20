@@ -56,18 +56,23 @@
   (define make-binary-tree
     (lambda (left right)
       (vector 'binary-tree left right)))
+ 
   (define binary-tree?
     (lambda (x)
       (and (vector? x)
            (= (vector-length x) 3)
            (eq? (vector-ref x 0) 'binary-tree))))
+ 
   (define binary-tree-left
     (lambda (x) (vector-ref x 1)))
+ 
   (define binary-tree-right
     (lambda (x) (vector-ref x 2)))
+ 
   (define set-binary-tree-left!
     (lambda (x update)
       (vector-set! x 1 update)))
+ 
   (define set-binary-tree-right!
     (lambda (x update)
       (vector-set! x 2 update))))
