@@ -31,7 +31,7 @@ compilers:
 *** Identifier Capture
 
 #+begin_src scheme
-  ;; 1. Macro identifiers capture runtime identifiers.
+  ;; 1. Macro identifiers shadow runtime identifiers.
   (let ([t "okay"])
     (or #f t))
 
@@ -41,7 +41,7 @@ compilers:
     (let ([t #f])
       (if t t t)))
 
-  ;; 2. Runtime identifiers capture macro identifiers.
+  ;; 2. Runtime identifiers shadow macro identifiers.
   (let ([if #f])
     (or if "okay"))
 
