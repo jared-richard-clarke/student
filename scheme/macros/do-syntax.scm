@@ -8,18 +8,18 @@
                  [(pattern ...) (let () body-1 body-2 ...)]))])))
 
 ;; === Macro as defined in R6RS ===
-;; (do ((var val update) ...) (test result ...) expression ...)
+;; (do ((variable value update) ...) (test result ...) expression ...)
 (define-syntax do
   (lambda (x)
     (syntax-case x ()
       [(_ (binding ...) (test result ...) expression ...)
-       (with-syntax ([((var val update) ...) ;; <- with-syntax: pattern
-                      (map (lambda (b) ;; <------- with-syntax: syntax
+       (with-syntax ([((variable value update) ...) ;; <- with-syntax: pattern
+                      (map (lambda (b) ;; <-------------- with-syntax: syntax
                              (syntax-case b ()
-                               [(var val) (syntax (var val var))]
-                               [(var val update) (syntax (var val update))]))
+                               [(variable value) (syntax (variable value variable))]
+                               [(variable value update) (syntax (variable value update))]))
                            (syntax (binding ...)))])
-         (syntax (let loop ([var val] ...) ;; <--- with-syntax: body
+         (syntax (let loop ([variable value] ...) ;; <--- with-syntax: body
                    (if test
                        (begin (if #f #f) result ...)
                        (begin expression ... (loop update ...))))))])))
@@ -55,11 +55,11 @@
 (define factorial
   (lambda (n)
     ((let ([loop #f])
-       (let ([loop1 (lambda (operand product)
-                      (if (zero? operand)
-                          (begin (if #f #f) product)
-                          (begin (loop (- operand 1) (* product operand)))))])
-         (set! loop loop1)
+       (let ([loop-1 (lambda (operand product)
+                       (if (zero? operand)
+                           (begin (if #f #f) product)
+                           (begin (loop (- operand 1) (* product operand)))))])
+         (set! loop loop-1)
          (let () loop)))
      n
      1)))
@@ -68,8 +68,8 @@
 (define factorial
   (lambda (n)
     (((lambda (loop)
-        ((lambda (loop1)
-           (set! loop loop1)
+        ((lambda (loop-1)
+           (set! loop loop-1)
            ((lambda () loop)))
          (lambda (operand product)
            (if (zero? operand)
