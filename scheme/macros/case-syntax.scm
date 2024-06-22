@@ -1,4 +1,5 @@
-;; Syntactic form "case" as defined in "The Scheme Programming Language" by R. Kent Dybvig.
+;; The Scheme Programming Language, R. Kent Dybvig
+;; Chapter 8: Syntactic Extension
 
 (define-syntax case
   (lambda (x)
