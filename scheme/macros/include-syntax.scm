@@ -4,7 +4,7 @@
 
 ;; The "include" form uses "datum->syntax" to convert the objects read from the file
 ;; into syntax objects in the proper lexical context, so that identifier references
-;; and definitions within those expressions are scoped where the "include"
+;; and definitions within those expressions are scoped to where the "include"
 ;; form appears.
 
 (define-syntax include
