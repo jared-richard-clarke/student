@@ -22,19 +22,19 @@
 ;; === let expansion ===
 (let ([is-even? #f]
       [is-odd? #f])
-  (let ([is-even?1 (lambda (n)
-                     (or (zero? n) (is-odd? (sub1 n))))]
-        [is-odd?2  (lambda (n)
-                     (and (not (zero? n)) (is-even? (sub1 n))))])
-    (set! is-even? is-even?1)
-    (set! is-odd? is-odd?2)
+  (let ([is-even?-1 (lambda (n)
+                      (or (zero? n) (is-odd? (sub1 n))))]
+        [is-odd?-2  (lambda (n)
+                      (and (not (zero? n)) (is-even? (sub1 n))))])
+    (set! is-even? is-even?-1)
+    (set! is-odd? is-odd?-2)
     (let () (is-odd? 11))))
 
 ;; === lambda expansion ===
 ((lambda (is-even? is-odd?)
-   ((lambda (is-even?1 is-odd?2)
-      (set! is-even? is-even?1)
-      (set! is-odd? is-odd?2)
+   ((lambda (is-even?-1 is-odd?-2)
+      (set! is-even? is-even?-1)
+      (set! is-odd? is-odd?-2)
       ((lambda () (is-odd? 11))))
     (lambda (n)
       (or (zero? n) (is-odd? (sub1 n))))
