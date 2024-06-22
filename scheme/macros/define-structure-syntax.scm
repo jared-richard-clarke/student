@@ -7,12 +7,12 @@
       (lambda (template-id . args)
         (datum->syntax template-id
                        (string->symbol
-                        (apply string-append
-                               (map (lambda (x)
-                                      (if (string? x)
-                                          x
-                                          (symbol->string (syntax->datum x))))
-                                    args))))))
+                         (apply string-append
+                                (map (lambda (x)
+                                       (if (string? x)
+                                           x
+                                           (symbol->string (syntax->datum x))))
+                                     args))))))
     (syntax-case x ()
       [(_ name field ...)
        (with-syntax ([constructor (gen-id #'name "make-" #'name)]
