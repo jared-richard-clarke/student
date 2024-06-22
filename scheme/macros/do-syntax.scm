@@ -1,18 +1,18 @@
 ;; === Macro as defined in R6RS ===
-;; (with-syntax ([pattern syntax]) body) -> (syntax-case syntax () [pattern body])
+;; (with-syntax ((pattern syntax) ...) body-1 body-2 ...)
 (define-syntax with-syntax
   (lambda (x)
     (syntax-case x ()
-      [(_ ((p s) ...) e1 e2 ...)
-       (syntax (syntax-case (list s ...) ()
-                 [(p ...) (let () e1 e2 ...)]))])))
+      [(_ ((pattern stx) ...) body-1 body-2 ...)
+       (syntax (syntax-case (list stx ...) ()
+                 [(pattern ...) (let () body-1 body-2 ...)]))])))
 
 ;; === Macro as defined in R6RS ===
 ;; (do ((var init update) ...) (test result ...) expression ...)
 (define-syntax do
   (lambda (x)
     (syntax-case x ()
-      [(_ (binding ...) (test res ...) expr ...)
+      [(_ (binding ...) (test result ...) expression ...)
        (with-syntax ([((var val update) ...) ;; <- with-syntax: pattern
                       (map (lambda (b) ;; <------- with-syntax: syntax
                              (syntax-case b ()
@@ -21,8 +21,8 @@
                            (syntax (binding ...)))])
          (syntax (let loop ([var val] ...) ;; <--- with-syntax: body
                    (if test
-                       (begin (if #f #f) res ...)
-                       (begin expr ... (loop update ...))))))])))
+                       (begin (if #f #f) result ...)
+                       (begin expression ... (loop update ...))))))])))
 
 ;; === do expression ===
 (define factorial
