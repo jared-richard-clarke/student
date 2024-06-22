@@ -1,5 +1,5 @@
 ;; === Chez Scheme Manual, Version 10.0 ===
-;; Converts a syntax list into a list of syntax objects.
+;; Converts a syntax object into a list of syntax objects.
 
 (define syntax->list
   (lambda (stx)
