@@ -8,7 +8,7 @@
                  [(pattern ...) (let () body-1 body-2 ...)]))])))
 
 ;; === Macro as defined in R6RS ===
-;; (do ((var init update) ...) (test result ...) expression ...)
+;; (do ((var val update) ...) (test result ...) expression ...)
 (define-syntax do
   (lambda (x)
     (syntax-case x ()
