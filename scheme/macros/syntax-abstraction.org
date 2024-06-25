@@ -24,7 +24,8 @@ compilers:
 
 - Supplies a hygiene-preserving mechanism for controlled identifier capture.
 
-- Maintain referential transparency for all local macros.
+- Maintain referential transparency for all local macros. Free identifiers appearing in the output
+  of a local macro are scoped to where the macro definition appears.
 
 - Provides automatic syntax checking, input destructuring, and output restructuring for low-level
   macros.
@@ -34,11 +35,21 @@ compilers:
    whereas unhygienic expansion implements lexical scoping with respect to the code
    after expansion."
 
-  — *Syntactic Abstraction*, R. Kent Dybvig
+  — *Syntactic Abstraction: The syntax-case expander*, R. Kent Dybvig
 #+end_quote
 
 *** Identifier Capture
 
+- An identifier binding introduced by macro can capture references to identifiers of the
+  same name within the sub-expressions of the macro call.
+
+- An identifier reference introduced by macro can be captured by identifier bindings for
+  the same name within the context of the macro call.
+
+- A program's bindings can capture a macro's free identifiers.
+
+- A program's free identifiers can be captured by a macro's bindings.
+  
 #+begin_src scheme
   ;; 1. Macro identifiers shadow runtime identifiers.
   (let ([t "okay"])
@@ -147,7 +158,7 @@ process is repeated for the result returned by the transformer until no macro ca
 
       variable(s)             -> variable(s)
 
-      application(e1, e2)     -> application(expand(e1, r), expand(e2, r))
+      application(e₁, e₂)     -> application(expand(e₁, r), expand(e₂, r))
 
       symbolic-data(e)        -> symbolic-data(e)
 
@@ -166,7 +177,7 @@ process is repeated for the result returned by the transformer until no macro ca
 
       parse(⟦c⟧, r)            = constant(c)
       parse(⟦s⟧, r)            = variable(s) if r(s) = Variable
-      parse(⟦(e1 e2)⟧, r)      = application(e1, e2) if e1 ∉ Symbol
+      parse(⟦(e₁ e₂)⟧, r)      = application(e₁, e₂) if e₁ ∉ Symbol
       parse(⟦(s e)⟧, r)        = macro-application(s, e) if r(s) ∈ Transformer
       parse(⟦(quote e)⟧, r)    = symbolic-data(e) if r(⟦quote⟧) = Special
       parse(⟦(lambda s e)⟧, r) = function(s, e) if r(⟦lambda⟧) = Special
@@ -230,7 +241,7 @@ process is repeated for the result returned by the transformer until no macro ca
 
       variable(i)                   -> variable(resolve(i))
 
-      application(e1, e2)           -> application(expand(e1, r), expand(e2, r))
+      application(e₁, e₂)           -> application(expand(e₁, r), expand(e₂, r))
 
       symbolic-data(e)              -> symbolic-data(strip(e))
 
@@ -245,11 +256,11 @@ process is repeated for the result returned by the transformer until no macro ca
       macro-application(i, e)       -> expand(mark(t(mark(e, m)), m), r)
                                          where t = r(resolve(i)) and m is fresh
 
-      syntax-binding(i, e1, e2)     -> expand(subst(e2, i, s), r[s := t])
-                                         where t = eval(expand(e1, r)) and s is fresh
+      syntax-binding(i, e₁, e₂)     -> expand(subst(e₂, i, s), r[s := t])
+                                         where t = eval(expand(e₁, r)) and s is fresh
 
-      rec-syntax-binding(i, e1, e2) -> expand(subst(e2, i, s), r[s := t])
-                                         where t = eval(expand(subst(e1, i, s), r)) and s is fresh
+      rec-syntax-binding(i, e₁, e₂) -> expand(subst(e₂, i, s), r[s := t])
+                                         where t = eval(expand(subst(e₁, i, s), r)) and s is fresh
 
       Environment = Symbol -> Transformer + { Variable } + { PVariable } + { Special }
 
@@ -259,7 +270,7 @@ process is repeated for the result returned by the transformer until no macro ca
 
   parse(⟦c⟧, r)                       = symbolic-data(c)
   parse(⟦i⟧, r)                       = variable(i) if r(resolve(i)) = Variable
-  parse(⟦(e1 e2)⟧, r)                 = application(e1, e2) if e1 ∉ Symbol
+  parse(⟦(e₁ e₂)⟧, r)                 = application(e₁, e₂) if e₁ ∉ Symbol
   parse(⟦(i e)⟧, r)                   = application(i, e) if r(resolve(i)) = Variable
   parse(⟦i e⟧, r)                     = macro-application(i, e) if r(resolve(i)) ∈ Transformer
   parse(⟦(quote e)⟧, r)               = symbolic-data(e) if r(⟦quote⟧) = Special
@@ -267,8 +278,8 @@ process is repeated for the result returned by the transformer until no macro ca
   parse(⟦(plambda i e)⟧, r)           = pfunction(i, e) if r(⟦plambda⟧) = Special
   parse(⟦(syntax i)⟧, r)              = syntax-data(i) if r(resolve(i)) ≠ PVariable
   parse(⟦(syntax i)⟧, r)              = variable(i) if r(resolve(i)) = PVariable
-  parse(⟦(let-syntax (i e1) e2)⟧, r)  = syntax-binding(i, e1, e2) if r(⟦let-syntax⟧) = Special
-  parse(⟦letrec-syntax (i e1) e2⟧, r) = rec-syntax-binding(i, e1, e2) if r(⟦letrec-syntax⟧) = Special
+  parse(⟦(let-syntax (i e₁) e₂)⟧, r)  = syntax-binding(i, e₁, e₂) if r(⟦let-syntax⟧) = Special
+  parse(⟦letrec-syntax (i e₁) e₂⟧, r) = rec-syntax-binding(i, e₁, e₂) if r(⟦letrec-syntax⟧) = Special
 #+end_example
 
 - identifier :: An ordered triple: ~<original name, binding name, {mark ...}>~
