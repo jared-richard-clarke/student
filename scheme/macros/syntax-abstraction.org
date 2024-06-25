@@ -2,9 +2,10 @@
 
 ** Sources
 
-| source                            | author                                          |
-|-----------------------------------+-------------------------------------------------|
-| *Syntactic Abstraction in Scheme* | R. Kent Dybvig, Robert Hieb, and Carl Bruggeman |
+| source                                            | author                                          |
+|---------------------------------------------------+-------------------------------------------------|
+| *Syntactic Abstraction in Scheme*                 | R. Kent Dybvig, Robert Hieb, and Carl Bruggeman |
+| *Syntactic Abstraction: The syntax-case expander* | R. Kent Dybvig                                  |
 
 ** Introduction
 
@@ -27,6 +28,14 @@ compilers:
 
 - Provides automatic syntax checking, input destructuring, and output restructuring for low-level
   macros.
+
+#+begin_quote
+  "[H]ygienic macro expansion implements lexical scoping with respect to the source code,
+   whereas unhygienic expansion implements lexical scoping with respect to the code
+   after expansion."
+
+  — *Syntactic Abstraction*, R. Kent Dybvig
+#+end_quote
 
 *** Identifier Capture
 
@@ -206,12 +215,12 @@ process is repeated for the result returned by the transformer until no macro ca
   expand:  Expression × Environment         -> Expanded-Expression
 
   mark:    Expression × Mark                -> Expression
-  
+
   subst:   Expression × Identifier × Symbol -> Expression
-  
+
   # resolve: Extracts the binding name of an identifier.
   resolve: Identifier                       -> Symbol
-  
+
   # strip: Undoes marking and substitution operations.
   #        Extracts the symbolic name of an identifier.
   strip:   Expression                       -> Expression
@@ -325,4 +334,320 @@ process is repeated for the result returned by the transformer until no macro ca
   (let ([G1 #f])
     (let ([G2 G1])
       (if G2 G2 t)))
+#+end_src
+
+** Implementing ~syntax-case~ (simplified)
+
+#+begin_src scheme
+  ;; === representations ===
+
+  (define-record syntax-object (expr wrap))
+
+  (define-record mark '())
+
+  (define-record subst (sym mark* label))
+
+  (define-record label '())
+
+  (define-record binding (type value))
+
+  ;; === fresh names ===
+
+  (define gen-var
+    (let ([n 0])
+      (lambda (id)
+        (set! n (+ n 1))
+        (let ([name (syntax-object-expr id)])
+          (string->symbol (format "~s.~s" name n))))))
+
+  ;; === stripping syntax objects ===
+
+  (define strip
+    (lambda (x)
+      (cond
+        [(syntax-object? x)
+         (if (top-marked? (syntax-object-wrap x))
+             (syntax-object-expr x)
+             (strip (syntax-object-expr x)))]
+        [(pair? x)
+         (let ([a (strip (car x))] [d (strip (cdr x))])
+           (if (and (eq? a (car x)) (eq? d (cdr x)))
+               x
+              (cons a d)))]
+        [else x])))
+
+  (define top-mark (make-mark))
+
+  (define top-marked?
+    (lambda (wrap)
+      (and (not (null? wrap))
+           (or (eq? (car wrap) top-mark)
+               (top-marked? (cdr wrap))))))
+
+  ;; === syntax errors ===
+
+  (define syntax-error
+    (lambda (object message)
+      (error #f "~a ~s" message (strip object))))
+
+  ;; === structural predicates ===
+
+  (define identifier?
+    (lambda (x)
+      (and (syntax-object? x)
+           (symbol? (syntax-object-expr x)))))
+
+  (define self-evaluating?
+    (lambda (x)
+      (or (boolean? x) (number? x) (string? x) (char? x))))
+
+  ;; === creating wraps ===
+
+  (define add-mark
+    (lambda (mark x)
+      (extend-wrap (list mark) x)))
+
+  (define add-subst
+    (lambda (id label x)
+      (extend-wrap (list (make-subst (syntax-object-expr id)
+                         (wrap-marks (syntax-object-wrap id))
+                         label))
+                   x)))
+
+  (define extend-wrap
+    (lambda (wrap x)
+      (if (syntax-object? x)
+          (make-syntax-object (syntax-object-expr x)
+                              (join-wraps wrap (syntax-object-wrap x)))
+          (make-syntax-object x wrap))))
+
+  (define join-wraps
+    (lambda (wrap1 wrap2)
+      (cond
+        [(null? wrap1) wrap2]
+        [(null? wrap2) wrap1]
+        [else (let loop ([w (car wrap1)] [w* (cdr wrap1)])
+                (if (null? w*)
+                    (if (and (mark? w) (eq? (car wrap2) w))
+                        (cdr wrap2)
+                        (cons w wrap2))
+                    (cons w (loop (car w*) (cdr w*)))))])))
+
+  ;; === manipulating environments ===
+
+  (define extend-env
+    (lambda (label binding env)
+      (cons (cons label binding) env)))
+
+  ;; === identifier resolution ===
+
+  (define id-binding
+    (lambda (id r)
+      (label-binding id (id-label id) r)))
+
+  (define id-label
+    (lambda (id)
+      (let ([sym (syntax-object-expr id)]
+            [wrap (syntax-object-wrap id)])
+        (let search ([wrap wrap] [mark* (wrap-marks wrap)])
+          (if (null? wrap)
+              (syntax-error id "undefined identifier")
+              (let ([w0 (car wrap)])
+                (if (mark? w0)
+                    (search (cdr wrap) (cdr mark*))
+                    (if (and (eq? (subst-sym w0) sym)
+                             (same-marks? (subst-mark* w0) mark*))
+                        (subst-label w0)
+                        (search (cdr wrap) mark*)))))))))
+
+  (define wrap-marks
+    (lambda (wrap)
+      (if (null? wrap)
+          '()
+          (let ([w0 (car wrap)])
+            (if (mark? w0)
+                (cons w0 (wrap-marks (cdr wrap)))
+                (wrap-marks (cdr wrap)))))))
+
+  (define same-marks?
+    (lambda (m1* m2*)
+      (if (null? m1*)
+          (null? m2*)
+          (and (not (null? m2*))
+               (eq? (car m1*) (car m2*))
+               (same-marks? (cdr m1*) (cdr m2*))))))
+
+  (define label-binding
+    (lambda (id label r)
+      (let ([a (assq label r)])
+        (if a
+            (cdr a)
+            (syntax-error id "displaced lexical")))))
+
+  ;; === the expander ===
+  ;; Bootstraps one version of the syntax expander by using another.
+
+  (define exp
+    (lambda (x r mr)
+      (syntax-case x ()
+        [id
+         (identifier? #'id)
+         (let ([b (id-binding #'id r)])
+           (case (binding-type b)
+             [(macro) (exp (exp-macro (binding-value b) x) r mr)]
+             [(lexical) (binding-value b)]
+             [else (syntax-error x "invalid syntax")]))]
+        [(e0 e1 ...)
+         (identifier? #'e0)
+         (let ([b (id-binding #'e0 r)])
+           (case (binding-type b)
+             [(macro) (exp (exp-macro (binding-value b) x) r mr)]
+             [(lexical) '(,(binding-value b) ,@(exp-exprs #'(e1 ...) r mr))]
+             [(core) (exp-core (binding-value b) x r mr)]
+             [else (syntax-error x "invalid syntax")]))]
+        [(e0 e1 ...) '(,(exp #'e0 r mr) ,@(exp-exprs #'(e1 ...) r mr))]
+        [_ (let ([d (strip x)])
+             (if (self-evaluating? d)
+                 d
+                 (syntax-error x "invalid syntax")))])))
+
+  (define exp-macro
+    (lambda (p x)
+      (let ([m (make-mark)])
+        (add-mark m (p (add-mark m x))))))
+
+  (define exp-core
+    (lambda (p x r mr)
+      (p x r mr)))
+
+  (define exp-exprs
+    (lambda (x* r mr)
+      (map (lambda (x) (exp x r mr)) x*)))
+
+  ;; === core transformers ===
+
+  (define exp-quote
+    (lambda (x r mr)
+      (syntax-case x ()
+        [(_ d) '(quote ,(strip #'d))])))
+
+  (define exp-if
+    (lambda (x r mr)
+      (syntax-case x ()
+        [(_ e1 e2 e3)
+         '(if ,(exp #'e1 r mr)
+              ,(exp #'e2 r mr)
+              ,(exp #'e3 r mr))])))
+
+  (define exp-lambda
+    (lambda (x r mr)
+      (syntax-case x ()
+        [(_ (var) body)
+         (let ([label (make-label)] [new-var (gen-var #'var)])
+           '(lambda (,new-var)
+              ,(exp (add-subst #’var label #’body)
+                    (extend-env label
+                                (make-binding ’lexical new-var)
+                                r)
+                    mr)))])))
+
+  (define exp-let
+    (lambda (x r mr)
+      (syntax-case x ()
+        [(_ ([var expr]) body)
+         (let ([label (make-label)] [new-var (gen-var #'var)])
+           '(let ([,new-var ,(exp #'expr r mr)])
+              ,(exp (add-subst #'var label #'body)
+                    (extend-env label
+                                (make-binding 'lexical new-var)
+                                r)
+                    mr)))])))
+
+  (define exp-letrec-syntax
+    (lambda (x r mr)
+      (syntax-case x ()
+        [(_ ((kwd expr)) body)
+         (let ([label (make-label)])
+           (let ([b (make-binding 'macro
+                                  (eval (exp (add-subst #'kwd label #'expr) mr mr)))])
+             (exp (add-subst #'kwd label #'body)
+                  (extend-env label b r)
+                  (extend-env label b mr))))])))
+
+  ;; === parsing and constructing syntax objects ===
+  ;; The following low-level operators can be used as the basis implementation
+  ;; for pattern matching.
+
+  (define syntax-pair?
+    (lambda (x)
+      (pair? (syntax-object-expr x))))
+
+  (define syntax-car
+    (lambda (x)
+      (extend-wrap (syntax-object-wrap x)
+                   (car (syntax-object-expr x)))))
+
+  (define syntax-cdr
+    (lambda (x)
+      (extend-wrap (syntax-object-wrap x)
+                   (cdr (syntax-object-expr x)))))
+
+  (define exp-syntax
+    (lambda (x r mr)
+      (syntax-case x ()
+        [(_ t) '(quote ,#'t)])))
+
+  ;; === comparing identifiers ===
+
+  (define free-identifier=?
+    (lambda (x y)
+      (eq? (id-label x) (id-label y))))
+
+  (define bound-identifier=?
+    (lambda (x y)
+      (and (eq? (syntax-object-expr x) (syntax-object-expr y))
+           (same-marks? (wrap-marks (syntax-object-wrap x))
+                        (wrap-marks (syntax-object-wrap y))))))
+
+  ;; === conversions ===
+
+  (define datum->syntax
+    (lambda (template-id x)
+      (make-syntax-object x (syntax-object-wrap template-id))))
+
+  (define syntax->datum strip)
+
+  ;; === start expansion ===
+
+  (define expand
+    (lambda (x)
+      (let-values ([(wrap env) (initial-wrap-and-env)])
+        (exp (make-syntax-object x wrap) env env))))
+
+  (define initial-wrap-and-env
+    (lambda ()
+      (define id-binding*
+        '((quote . ,(make-binding 'core exp-quote))
+          (if . ,(make-binding 'core exp-if))
+          (lambda . ,(make-binding 'core exp-lambda))
+          (let . ,(make-binding 'core exp-let))
+          (letrec-syntax . ,(make-binding 'core exp-letrec-syntax))
+          (identifier? . ,(make-binding 'lexical 'identifier?))
+          (free-identifier=? . ,(make-binding 'lexical 'free-identifier=?))
+          (bound-identifier=? . ,(make-binding 'lexical 'bound-identifier=?))
+          (datum->syntax . ,(make-binding 'lexical 'datum->syntax))
+          (syntax->datum . ,(make-binding 'lexical 'syntax->datum))
+          (syntax-error . ,(make-binding 'lexical 'syntax-error))
+          (syntax-pair? . ,(make-binding 'lexical 'syntax-pair?))
+          (syntax-car . ,(make-binding 'lexical 'syntax-car))
+          (syntax-cdr . ,(make-binding 'lexical 'syntax-cdr))
+          (syntax . ,(make-binding 'core exp-syntax))
+          (list . ,(make-binding 'core 'list))))
+      (let ([label* (map (lambda (x) (make-label)) id-binding*)])
+        (values '(,@(map (lambda (sym label)
+                           (make-subst sym (list top-mark) label))
+                         (map car id-binding*)
+                         label*)
+                  ,top-mark)
+                 (map cons label* (map cdr id-binding*))))))
 #+end_src
