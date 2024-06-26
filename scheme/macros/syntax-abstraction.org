@@ -273,7 +273,7 @@ process is repeated for the result returned by the transformer until no macro ca
   parse(⟦(syntax i)⟧, r)              = syntax-data(i) if r(resolve(i)) ≠ PVariable
   parse(⟦(syntax i)⟧, r)              = variable(i) if r(resolve(i)) = PVariable
   parse(⟦(let-syntax (i e₁) e₂)⟧, r)  = syntax-binding(i, e₁, e₂) if r(⟦let-syntax⟧) = Special
-  parse(⟦letrec-syntax (i e₁) e₂⟧, r) = rec-syntax-binding(i, e₁, e₂) if r(⟦letrec-syntax⟧) = Special
+  parse(⟦(letrec-syntax (i e₁) e₂)⟧, r) = rec-syntax-binding(i, e₁, e₂) if r(⟦letrec-syntax⟧) = Special
 #+end_example
 
 - identifier :: An ordered triple: ~<original name, binding name, {mark ...}>~
