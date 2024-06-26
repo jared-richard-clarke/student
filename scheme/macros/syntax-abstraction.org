@@ -218,9 +218,23 @@ within the scope of the macro definition rather than the scope of the macro call
 
 - resolve(i) :: Extracts the binding name of an identifier.
 
-- free-identifier=? :: If and only if *resolve(i₁) = resolve(i₂)*.
+- free-identifier=? :: If and only if *resolve(i₁) = resolve(i₂)*. Because identifier references
+  are lexically scoped, two identifiers are equal free identifiers if and only if they refer
+  to the same lexical or top-level binding.
 
 - bound-identifier=? :: If and only if *resolve(subst(i₁, i₂, s)) = s* for a fresh symbol *s*.
+  In general, two identifiers are equal bound identifiers if and only if both are present in
+  the original program or both are introduced by the same macro call.
+
+#+begin_quote
+  "Two identifiers that are ~bound-identifier=?~ are also ~free-identifier=?~,
+   but two identifiers that are ~free-identifier=?~ may not be ~bound-identifier=?~.
+   An identifier introduced by a macro transformer may refer to the same enclosing
+   binding as an identifier not introduced by the transformer, but an introduced
+   binding for one will not capture references to the other."
+
+  — *Syntactic Abstraction in Scheme*, R. Kent Dybvig, Robert Hieb, and Carl Bruggeman
+#+end_quote
 
 #+begin_example
   # === Macro Expansion Algorithm ===
