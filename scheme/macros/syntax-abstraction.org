@@ -106,7 +106,9 @@ process is repeated for the result returned by the transformer until no macro ca
   information about an expression in addition to its structure. This contextual information
   is used by the expander to maintain hygiene and referential transparency. Transformers can
   compare identifiers according to their use as free identifiers, bound identifiers, or
-  symbolic data.
+  symbolic data. Syntax objects may also contain source annotations, which correlate final
+  object code with original source code. Syntax objects may contain information that, for
+  efficiency reasons, has not been fully processed.
 
 #+begin_src scheme
   ;; Hygiene dictates that the binding for "t" is visible only within code
