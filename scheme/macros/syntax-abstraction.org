@@ -199,36 +199,27 @@ process is repeated for the result returned by the transformer until no macro ca
   — *Syntactic Abstraction in Scheme*, R. Kent Dybvig, Robert Hieb, and Carl Bruggeman
 #+end_quote
 
-- For simplicity, ~let-syntax~ and ~letrec-syntax~ are each restricted to a single binding.
-  The sub-form of a ~syntax~ expression is restricted to a single identifier.
+- identifier :: An ordered triple: *<symbolic name, binding name, { mark ... }>*
 
-- ~plambda~ replaces ~syntax-case~ but binds only a single pattern variable within its body.
+- mark (i, m) :: Adds mark to the mark field of *i* unless it is already present,
+  in which case it removes it.
 
-- ~expand~ uses ~resolve~ to complete alpha substitution and determine the actual binding
-  name of an identifier.
+- subst(i₁, i₂, s) :: Replaces the binding name field of *i₁* with *s* if the binding
+  names and the marks of *i₁* and *i₂* are the same, otherwise it leaves the identifier
+  unchanged.
 
-- When expanding a binding expression, ~subst~ replaces the binding name of the bound
-  identifier with a fresh binding name.
+- strip(i) :: Extracts the symbolic name of an identifier.
 
-- To distinguish new identifiers introduced by a transformer, both input to the transformer
-  and output from the transformer are freshly marked. Since identical marks cancel each other,
-  only new syntax retains the mark.
+- resolve(i) :: Extracts the binding name of an identifier.
+
+- free-identifier=? :: If and only if *resolve(i₁) = resolve(i₂)*.
+
+- bound-identifier=? :: If and only if *resolve(subst(i₁, i₂, s)) = s* for a fresh symbol *s*.
 
 #+begin_example
   # === Macro Expansion Algorithm ===
 
-  expand:  Expression × Environment         -> Expanded-Expression
-
-  mark:    Expression × Mark                -> Expression
-
-  subst:   Expression × Identifier × Symbol -> Expression
-
-  # resolve: Extracts the binding name of an identifier.
-  resolve: Identifier                       -> Symbol
-
-  # strip: Undoes marking and substitution operations.
-  #        Extracts the symbolic name of an identifier.
-  strip:   Expression                       -> Expression
+  expand:  Expression × Environment -> Expanded-Expression
 
   expand(e, r) =
     case parse(e, r) of:
@@ -276,7 +267,7 @@ process is repeated for the result returned by the transformer until no macro ca
   parse(⟦(letrec-syntax (i e₁) e₂)⟧, r) = rec-syntax-binding(i, e₁, e₂) if r(⟦letrec-syntax⟧) = Special
 #+end_example
 
-- identifier :: An ordered triple: ~<original name, binding name, {mark ...}>~
+*** Example Expansion
 
 #+begin_src scheme
   ;; Substitution and marking prevent the binding for "if" in the source expression
