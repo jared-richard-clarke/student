@@ -203,7 +203,7 @@ process is repeated for the result returned by the transformer until no macro ca
 
 - identifier :: An ordered triple: *<symbolic name, binding name, { mark ... }>*
 
-- mark (i, m) :: Adds mark to the mark field of *i* unless it is already present,
+- mark(i, m) :: Adds mark to the mark field of *i* unless it is already present,
   in which case it removes it.
 
 - subst(i₁, i₂, s) :: Replaces the binding name field of *i₁* with *s* if the binding
