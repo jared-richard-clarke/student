@@ -262,17 +262,17 @@ process is repeated for the result returned by the transformer until no macro ca
 
   parse: Expression × Environment -> Parsed-Expression
 
-  parse(⟦c⟧, r)                       = symbolic-data(c)
-  parse(⟦i⟧, r)                       = variable(i) if r(resolve(i)) = Variable
-  parse(⟦(e₁ e₂)⟧, r)                 = application(e₁, e₂) if e₁ ∉ Symbol
-  parse(⟦(i e)⟧, r)                   = application(i, e) if r(resolve(i)) = Variable
-  parse(⟦i e⟧, r)                     = macro-application(i, e) if r(resolve(i)) ∈ Transformer
-  parse(⟦(quote e)⟧, r)               = symbolic-data(e) if r(⟦quote⟧) = Special
-  parse(⟦(lambda i e)⟧, r)            = function(i, e) if r(⟦lambda⟧) = Special
-  parse(⟦(plambda i e)⟧, r)           = pfunction(i, e) if r(⟦plambda⟧) = Special
-  parse(⟦(syntax i)⟧, r)              = syntax-data(i) if r(resolve(i)) ≠ PVariable
-  parse(⟦(syntax i)⟧, r)              = variable(i) if r(resolve(i)) = PVariable
-  parse(⟦(let-syntax (i e₁) e₂)⟧, r)  = syntax-binding(i, e₁, e₂) if r(⟦let-syntax⟧) = Special
+  parse(⟦c⟧, r)                         = symbolic-data(c)
+  parse(⟦i⟧, r)                         = variable(i) if r(resolve(i)) = Variable
+  parse(⟦(e₁ e₂)⟧, r)                   = application(e₁, e₂) if e₁ ∉ Symbol
+  parse(⟦(i e)⟧, r)                     = application(i, e) if r(resolve(i)) = Variable
+  parse(⟦i e⟧, r)                       = macro-application(i, e) if r(resolve(i)) ∈ Transformer
+  parse(⟦(quote e)⟧, r)                 = symbolic-data(e) if r(⟦quote⟧) = Special
+  parse(⟦(lambda i e)⟧, r)              = function(i, e) if r(⟦lambda⟧) = Special
+  parse(⟦(plambda i e)⟧, r)             = pfunction(i, e) if r(⟦plambda⟧) = Special
+  parse(⟦(syntax i)⟧, r)                = syntax-data(i) if r(resolve(i)) ≠ PVariable
+  parse(⟦(syntax i)⟧, r)                = variable(i) if r(resolve(i)) = PVariable
+  parse(⟦(let-syntax (i e₁) e₂)⟧, r)    = syntax-binding(i, e₁, e₂) if r(⟦let-syntax⟧) = Special
   parse(⟦(letrec-syntax (i e₁) e₂)⟧, r) = rec-syntax-binding(i, e₁, e₂) if r(⟦letrec-syntax⟧) = Special
 #+end_example
 
