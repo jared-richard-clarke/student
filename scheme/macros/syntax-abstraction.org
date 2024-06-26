@@ -40,15 +40,9 @@ compilers:
 
 *** Identifier Capture
 
-- An identifier binding introduced by macro can capture references to identifiers of the
-  same name within the sub-expressions of the macro call.
+- A program's bound identifiers can capture a macro's free identifiers.
 
-- An identifier reference introduced by macro can be captured by identifier bindings for
-  the same name within the context of the macro call.
-
-- A program's bindings can capture a macro's free identifiers.
-
-- A program's free identifiers can be captured by a macro's bindings.
+- A program's free identifiers can be captured by a macro's bound identifiers.
   
 #+begin_src scheme
   ;; 1. Macro identifiers shadow runtime identifiers.
