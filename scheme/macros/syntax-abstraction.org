@@ -40,9 +40,9 @@ compilers:
 
 *** Identifier Capture
 
-- A program's bound identifiers can capture a macro's free identifiers.
+- A program's bound identifiers capture a macro's free identifiers.
 
-- A program's free identifiers can be captured by a macro's bound identifiers.
+- A program's free identifiers are captured by a macro's bound identifiers.
   
 #+begin_src scheme
   ;; 1. Macro identifiers shadow runtime identifiers.
