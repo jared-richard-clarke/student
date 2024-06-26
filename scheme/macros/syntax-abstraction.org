@@ -270,6 +270,8 @@ process is repeated for the result returned by the transformer until no macro ca
 *** Example Macro Expansion
 
 #+begin_src scheme
+  ;; identifier = <symbolic name, binding name, { mark ... }>
+
   ;; Substitution and marking prevent the binding for "if" in the source expression
   ;; from interfering with the macro's use of "if" and the macro's binding for "t"
   ;; from interfering with the source expression's reference to "t".
