@@ -226,7 +226,7 @@ within the scope of the macro definition rather than the scope of the macro call
 
 - strip(i) :: Extracts the symbolic name of an identifier.
 
-- resolve(i) :: Extracts the binding name of an identifier.
+- resolve(i) :: Extracts the binding name of an identifier. Resolves substitutions.
 
 - free-identifier=? :: If and only if *resolve(i₁) = resolve(i₂)*. Because identifier references
   are lexically scoped, two identifiers are equal free identifiers if and only if they refer
