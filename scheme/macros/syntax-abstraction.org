@@ -142,6 +142,11 @@ process is repeated for the result returned by the transformer until no macro ca
 
 ** Traditional Macro-Expansion Algorithm (Simplified)
 
+The expander is assumed to be part of the standard evaluation process, where the value
+of program *e* is obtained by *eval(expand(e, r))*. The symbols *quote* and *lambda*
+are bound to *Special* in the initial expansion environment *r*. All other symbols are
+bound to *Variable*.
+
 #+begin_example
   # === Macro Expansion Algorithm ===
 
