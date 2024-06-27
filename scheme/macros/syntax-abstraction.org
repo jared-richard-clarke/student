@@ -150,6 +150,10 @@ bound to *Variable*.
 #+begin_example
   # === Macro Expansion Algorithm ===
 
+  e = Expression
+  s = Symbol
+  c = Constant
+
   expand: Expression × Environment -> Expanded-Expression
 
   expand(e, r) =
