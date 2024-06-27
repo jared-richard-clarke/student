@@ -154,6 +154,11 @@ bound to *Variable*.
   s = Symbol
   c = Constant
 
+  r ∈ Environment = Symbol -> Transformer + { Variable } + { Special }
+    where Special = "quote" and "lambda"
+
+  t ∈ Transformer = Expression -> Expression
+
   expand: Expression × Environment -> Expanded-Expression
 
   expand(e, r) =
@@ -170,11 +175,6 @@ bound to *Variable*.
       function(s, e)          -> function(s, expand(e, r[s := Variable]))
 
       macro-application(s, e) -> expand(t(e), r) where t = r(s)
-
-      r ∈ Environment = Symbol -> Transformer + { Variable } + { Special }
-        where Special = "quote" and "lambda"
-
-      t ∈ Transformer = Expression -> Expression
 
       # === Macro Expansion Parser ===
 
