@@ -309,7 +309,7 @@ within the scope of the macro definition rather than the scope of the macro call
 
 #+begin_src scheme
   ;; identifier = <symbolic name, binding name, { mark ... }>
-
+  
   ;; Substitution and marking prevent the binding for "if" in the source expression
   ;; from interfering with the macro's use of "if" and the macro's binding for "t"
   ;; from interfering with the source expression's reference to "t".
@@ -317,12 +317,16 @@ within the scope of the macro definition rather than the scope of the macro call
   (let ([if #f])
     (or if t))
 
-  ;; - expands ->
+  ;; - identifier triples ->
 
   (<let let {}> ([<if if {}> #f])
     (<or or {}> <if if {}> <t t {}>))
 
   ;; - expands ->
+  ;; The bound variable from the outer let is replaced with the generated
+  ;; name G1. The inner occurrence of the identifier is replaced with a
+  ;; new identifier that contains both the original and generated names.
+  ;; G1 is recorded in the lexical expand-time environment.
 
   (let ([G1 #f])
     (<or or {}> <if G1 {}> <t t {}>))
@@ -348,24 +352,39 @@ within the scope of the macro definition rather than the scope of the macro call
       (<if if {m₁}> <t t {m₁}> <t t {m₁}> <t t {}>)))
 
   ;; - expands ->
+  ;; Only the binding name is relevant when an identifier's binding is determined
+  ;; in the expand time environment, so even though the mark "m₁" has been attached
+  ;; to the identifier "let", it still resolves to the top-level definition for "let".
+  ;; The bound identifier is replaced with a generated name and occurrences of the
+  ;; identifier with the same binding name and marks are replaced with the new
+  ;; identifier within the scope of the "let" expression. G2 is recorded in the
+  ;; lexical expand-time environment.
 
   (let ([G1 #f])
     (let ([G2 <if G1 {}>])
       (<if if {m₁}> <t G2 {m₁}> <t G2 {m₁}> <t t {}>)))
 
   ;; - expands ->
+  ;; Since G1 is recorded as a lexically bound variable in the expand-time
+  ;; environment, the occurrence of <if G1 {}> expands into a reference to G1.
 
   (let ([G1 #f])
     (let ([G2 G1])
       (<if if {m₁}> <t G2 {m₁}> <t G2 {m₁}> <t t {}>)))
 
   ;; - expands ->
+  ;; Since the binding name of the identifier <if if {m₁}> is "if",
+  ;; the last line is recognized as an "if" expression. 
 
   (let ([G1 #f])
     (let ([G2 G1])
       (if <t G2 {m₁}> <t G2 {m₁}> <t t {}>)))
 
   ;; - expands ->
+  ;; The binding name G2 is recorded as a lexical variable in the expand-time environment,
+  ;; so both identifiers containing G2 as a binding name, expand into references to G2.
+  ;; The binding name for the third identifier is "t", which has no binding in the lexical
+  ;; expand-time environment. It expands into a top-level reference to "t".
 
   (let ([G1 #f])
     (let ([G2 G1])
