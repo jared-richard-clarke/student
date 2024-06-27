@@ -217,7 +217,8 @@ within the scope of the macro definition rather than the scope of the macro call
 - identifier :: An ordered triple: *<symbolic name, binding name, { mark ... }>*
 
 - mark(i, m) :: Adds mark to the mark field of *i* unless it is already present,
-  in which case it removes it.
+  in which case it removes it. Marks distinguish identifiers introduced by
+  transformers.
 
 - subst(i₁, i₂, s) :: Replaces the binding name field of *i₁* with *s* if the binding
   names and the marks of *i₁* and *i₂* are the same, otherwise it leaves the identifier
