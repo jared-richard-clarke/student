@@ -248,6 +248,14 @@ within the scope of the macro definition rather than the scope of the macro call
 #+begin_example
   # === Macro Expansion Algorithm ===
 
+  e = Expression
+  s = Symbol
+  i = Identifier
+
+  r ∈ Environment = Symbol -> Transformer + { Variable } + { PVariable } + { Special }
+
+  t ∈ Transformer = Expression -> Expression
+
   expand:  Expression × Environment -> Expanded-Expression
 
   expand(e, r) =
