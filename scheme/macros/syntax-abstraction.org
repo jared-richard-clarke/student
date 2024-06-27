@@ -256,7 +256,7 @@ within the scope of the macro definition rather than the scope of the macro call
 
   t ∈ Transformer = Expression -> Expression
 
-  expand:  Expression × Environment -> Expanded-Expression
+  expand: Expression × Environment -> Expanded-Expression
 
   expand(e, r) =
     case parse(e, r) of:
