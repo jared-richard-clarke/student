@@ -1,5 +1,5 @@
 ;; Abstract object with message passing as defined in 
-;; The Scheme Programming Language, by R. Kent Dybvig.
+;; The Scheme Programming Language by R. Kent Dybvig.
 
 (define-syntax define-object
   (syntax-rules ()
