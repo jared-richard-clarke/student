@@ -6,21 +6,21 @@
          (define-syntax for
            (syntax-rules (<- when)
              ;; base case
-             [(for ([x <- mx]) expression)
+             [(_ ([x <- mx]) expression)
               (concat-map mx (lambda (x)
                                (list expression)))]
              ;; recursive case
-             [(for ([x <- mx] [y <- my] ...) expression)
+             [(_ ([x <- mx] [y <- my] ...) expression)
               (concat-map mx (lambda (x)
                                (for ([y <- my] ...) expression)))]
              ;; base case with predicate
-             [(for ([x <- mx]) (when predicate) expression)
+             [(_ ([x <- mx]) (when predicate) expression)
               (concat-map mx (lambda (x)
                                (if predicate
                                    (list expression)
                                    empty)))]
              ;; recursive case with predicate
-             [(for ([x <- mx] [y <- my] ...) (when predicate) expression)
+             [(_ ([x <- mx] [y <- my] ...) (when predicate) expression)
               (concat-map mx (lambda (x)
                                (for ([y <- my] ...) (when predicate) expression)))]))
 
