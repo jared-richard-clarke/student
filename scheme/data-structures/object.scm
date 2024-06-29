@@ -3,11 +3,11 @@
 
 (define-syntax define-object
   (syntax-rules ()
-    [(_ (name . init-states)
+    [(_ (name . initial-states)
         ((property value) ...)
         ((method function) ...))
      (define name
-       (lambda init-states
+       (lambda initial-states
          (let* ([property value] ...)
            (letrec ([method function] ...)
              (lambda (message . arguments)
@@ -15,9 +15,9 @@
                  [(method) (apply method arguments)] ...
                  [else (error 'name "invalid input: "
                               (cons message arguments))]))))))]
-    [(_ (name . init-states)
+    [(_ (name . initial-states)
         ((method function) ...))
-     (define-object (name . init-states)
+     (define-object (name . initial-states)
        ()
        ((method function) ...))]))
 
