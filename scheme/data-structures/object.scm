@@ -22,9 +22,9 @@
        ((method function) ...))]))
 
 (define-object (stack)
-  [(name 'stack)
+  [(type  'stack)
    (state '())]
-  [(type?  (lambda () name))
+  [(type?  (lambda () type))
    (empty? (lambda () (null? state)))
    (push!  (lambda xs (set! state (append xs state))))
    (peek   (lambda () (car state)))
