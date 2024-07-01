@@ -1,3 +1,6 @@
+* The Gofer Standard Prelude
+
+#+begin_src haskell
 --         __________   __________   __________   __________   ________
 --        /  _______/  /  ____   /  /  _______/  /  _______/  /  ____  \
 --       /  / _____   /  /   /  /  /  /______   /  /______   /  /___/  /
@@ -861,3 +864,4 @@ openfile        :: String -> String
 openfile f       = primFopen f (error ("can't open file "++f)) id
 
 -- End of Gofer standard prelude: --------------------------------------------
+#+end_src
