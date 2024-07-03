@@ -1349,7 +1349,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
   }
 #+end_src
 
-** Extra Instructions
+*** Extra VM Instructions
 
 #+begin_src c
   // Charset X, S[i] ∈ X [ (p, i, e, c) -> (p+1, i+1, e, c) ]
