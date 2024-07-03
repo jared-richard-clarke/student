@@ -1222,7 +1222,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
   lua_pushlightuserdata(L, stackbase);
 
   // The following chunks of code are executed within a "for (;;) {...}" loop
-  // and a switch((Opcode)p->i.code) {...} statement.
+  // and a "switch ((Opcode)p->i.code) {...}" statement.
 
   // Char x, S[i] = x [ (p, i, e, c) -> (p+1, i+1, e, c) ]
   // Char x, S[i] ≠ x [ (p, i, e, c) -> (Fail, i, e, c)  ]
