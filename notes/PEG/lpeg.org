@@ -1060,7 +1060,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
 
 ** Virtual Machine Internals
 
-Samples of C source code from LPEG's ~match~ function, a function that runs
+Samples of C source code for LPEG's ~match~ function, a function that runs
 the opcode interpreter — otherwise known as the LPEG virtual machine.
 
 *Side Note:* Some of the actual opcode instructions are subtly different from the examples
@@ -1101,6 +1101,30 @@ I have, to the best of my knowledge, updated my notes accordingly.
     // Pull the captures out of the capture list.
     return getcaptures(L, s, r, ptop);
   }
+
+  // An LPEG pattern is an abstract syntax tree and, if already compiled,
+  // an accompanying set of bytecode instructions.
+  typedef struct Pattern {
+    union Instruction *code;
+    TTree tree[1];
+  } Pattern;
+
+  // Abstract syntax tree encoded as 8-byte units inside an array.
+  typedef struct TTree {
+    byte tag;
+    byte cap;           // Kind of capture (if it is a capture).
+    unsigned short key; // Key in ktable for Lua data (0 if no key).
+    union {
+      int ps;           // Occasional second child.
+      int n;            // Occasional counter or character.
+      struct {
+        byte offset;    // Compact set offset (in bytes).
+        byte size;      // Compact set size (in bytes).
+        byte deflt;     // Default value.
+        byte bitmap[1]; // Bitmap (open array).
+      } set;            // Compact sets.
+    } u;
+  } TTree;
 
   int getcaptures (lua_State *L, const char *s, const char *r, int ptop) {
     // Retrieve the capture list.
@@ -1148,7 +1172,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
 *** VM Interpreter
 
 #+begin_src c
-  // Bytecode instruction as defined in "lpvm.h".
+  // A 4-byte bytecode instruction as defined in "lpvm.h".
   typedef union Instruction {
     struct Inst {
       byte code;
