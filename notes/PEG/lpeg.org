@@ -1061,7 +1061,7 @@ Examples as they are actually output in the ~lpeg~ debugger.
 ** Virtual Machine Internals
 
 Samples of C source code from LPEG's ~match~ function, a function that runs
-the opcode interpreter — otherwise known as the LPeg virtual machine.
+the opcode interpreter — otherwise known as the LPEG virtual machine.
 
 *Side Note:* Some of the actual opcode instructions are subtly different from the examples
 explicated by Ierusalimschy in his paper *A Text Pattern-Matching Tool Based on Parsing Expression Grammars*.
