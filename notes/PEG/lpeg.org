@@ -73,7 +73,7 @@ to the matched string and the capture type.
 | ~pattern % function~          | Accumulates ~pattern~ captures with ~function~ |
 | ~lpeg.Cmt(pattern, function)~ | Maps ~function~ over match-time captures       |
 
-** Repetition
+** Repetition in PEG
 
 #+begin_quote
   "Restricted backtracking means that a PEG does only local backtracking, that is, it only
