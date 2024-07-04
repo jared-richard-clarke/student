@@ -1148,14 +1148,14 @@ I have, to the best of my knowledge, updated my notes accordingly.
 *** VM Interpreter
 
 #+begin_src c
-  // An LPEG pattern is an abstract syntax tree and, if already compiled,
-  // an accompanying array of bytecode instructions.
+  // An LPEG pattern is a struct containing an abstract syntax tree and,
+  // if already compiled, an accompanying array of bytecode instructions.
   typedef struct Pattern {
     union Instruction *code;
     TTree tree[1];
   } Pattern;
 
-  // Abstract syntax tree encoded as 8-byte units inside an array.
+  // Abstract syntax tree encoded as an array of 8-byte units.
   typedef struct TTree {
     byte tag;
     byte cap;           // Kind of capture (if it is a capture).
@@ -1172,7 +1172,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
     } u;
   } TTree;
 
-  // A 4-byte bytecode instruction as defined in "lpvm.h".
+  // Pattern matching instructions encoded as an array of 4-byte bytecodes.
   typedef union Instruction {
     struct Inst {
       byte code;
@@ -1190,7 +1190,8 @@ I have, to the best of my knowledge, updated my notes accordingly.
     byte buff[1];
   } Instruction;
 
-  // Entry stack as defined in "lpvm.c".
+  // A stack encoded as an array of structs containing an input
+  // position, the next bytecode instruction, and the capture level.
   // Side Note: "stack" points to first empty slot in "Stack".
   typedef struct Stack {
     const char *s;        // Saved position (NULL for calls)
