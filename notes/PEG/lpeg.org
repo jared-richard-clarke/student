@@ -1102,30 +1102,6 @@ I have, to the best of my knowledge, updated my notes accordingly.
     return getcaptures(L, s, r, ptop);
   }
 
-  // An LPEG pattern is an abstract syntax tree and, if already compiled,
-  // an accompanying set of bytecode instructions.
-  typedef struct Pattern {
-    union Instruction *code;
-    TTree tree[1];
-  } Pattern;
-
-  // Abstract syntax tree encoded as 8-byte units inside an array.
-  typedef struct TTree {
-    byte tag;
-    byte cap;           // Kind of capture (if it is a capture).
-    unsigned short key; // Key in ktable for Lua data (0 if no key).
-    union {
-      int ps;           // Occasional second child.
-      int n;            // Occasional counter or character.
-      struct {
-        byte offset;    // Compact set offset (in bytes).
-        byte size;      // Compact set size (in bytes).
-        byte deflt;     // Default value.
-        byte bitmap[1]; // Bitmap (open array).
-      } set;            // Compact sets.
-    } u;
-  } TTree;
-
   int getcaptures (lua_State *L, const char *s, const char *r, int ptop) {
     // Retrieve the capture list.
     Capture *capture = (Capture *)lua_touserdata(L, caplistidx(ptop));
@@ -1172,6 +1148,30 @@ I have, to the best of my knowledge, updated my notes accordingly.
 *** VM Interpreter
 
 #+begin_src c
+  // An LPEG pattern is an abstract syntax tree and, if already compiled,
+  // an accompanying array of bytecode instructions.
+  typedef struct Pattern {
+    union Instruction *code;
+    TTree tree[1];
+  } Pattern;
+
+  // Abstract syntax tree encoded as 8-byte units inside an array.
+  typedef struct TTree {
+    byte tag;
+    byte cap;           // Kind of capture (if it is a capture).
+    unsigned short key; // Key in ktable for Lua data (0 if no key).
+    union {
+      int ps;           // Occasional second child.
+      int n;            // Occasional counter or character.
+      struct {
+        byte offset;    // Compact set offset (in bytes).
+        byte size;      // Compact set size (in bytes).
+        byte deflt;     // Default value.
+        byte bitmap[1]; // Bitmap (open array).
+      } set;            // Compact sets.
+    } u;
+  } TTree;
+
   // A 4-byte bytecode instruction as defined in "lpvm.h".
   typedef union Instruction {
     struct Inst {
