@@ -1204,7 +1204,8 @@ I have, to the best of my knowledge, updated my notes accordingly.
   // on a 64-bit machine. "uint" is a macro for "unsigned int".
   typedef uint Index_t;
 
-  // Captures array as defined in "lpcap.c".
+  // Captures list encoded as an array of types, positions, and sizes.
+  // Used to build captures at the end of a successful pattern match.
   typedef struct Capture {
     Index_t index;       // Subject position
     unsigned short idx;  // Extra info (group name, argument index, etc.)
