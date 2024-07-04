@@ -1155,6 +1155,20 @@ I have, to the best of my knowledge, updated my notes accordingly.
     TTree tree[1];
   } Pattern;
 
+  // TTree root                              TTree sib1                                    TTree sib2
+  // +-----+-----+-----+-----+---+---+---+---+-----+-----+-----+-----+---+---+---+---+     +-----+-----+-----+-----+---+---+---+---+
+  // | tag | cap | key | key | u | u | u | u | tag | cap | key | key | u | u | u | u | ... | tag | cap | key | key | u | u | u | u |
+  // +-----+-----+-----+-----+---+---+---+---+-----+-----+-----+-----+---+---+---+---+     +-----+-----+-----+-----+---+---+---+---+
+  //                         ^-------^                                                     ^
+  //                             |                                                         |
+  //                             +---------------------------------------------------------+
+  //
+  // +----+-----+----+-----+----+         op          op + t11
+  // | op | t11 | op | t12 | t2 | <-->   /  \   <-->     |
+  // +----+-----+----+-----+----+      t11  op           + op + t12
+  //      ^-sib1^------sib2-----^           / \               |
+  //                 ^-sib1^sib2^         t12  t2             + t2
+  //
   // Abstract syntax tree encoded as an array of 8-byte or 64-bit units.
   typedef struct TTree {
     byte tag;
