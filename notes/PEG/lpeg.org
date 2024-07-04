@@ -1155,7 +1155,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
     TTree tree[1];
   } Pattern;
 
-  // Abstract syntax tree encoded as an array of 8-byte units.
+  // Abstract syntax tree encoded as an array of 8-byte or 64-bit units.
   typedef struct TTree {
     byte tag;
     byte cap;           // Kind of capture (if it is a capture).
@@ -1172,7 +1172,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
     } u;
   } TTree;
 
-  // Pattern matching instructions encoded as an array of 4-byte bytecodes.
+  // Pattern matching instructions encoded as an array of 4-byte or 32-bit bytecodes.
   typedef union Instruction {
     struct Inst {
       byte code;
