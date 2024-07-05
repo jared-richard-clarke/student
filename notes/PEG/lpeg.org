@@ -1186,7 +1186,8 @@ I have, to the best of my knowledge, updated my notes accordingly.
     } u;
   } TTree;
 
-  // Pattern matching instructions encoded as an array of 4-byte or 32-bit bytecodes.
+  // Pattern matching instructions encoded as an array of 4-byte
+  // or 32-bit bytecodes.
   typedef union Instruction {
     struct Inst {
       byte code;
@@ -1204,7 +1205,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
     byte buff[1];
   } Instruction;
 
-  // Stack entries encoded as an array of saved input positions,
+  // Stack entries encoded as an array of saved subject positions,
   // alternative bytecode instructions, and indices into the capture list.
   // Side Note: "stack" points to first empty slot in "Stack".
   typedef struct Stack {
