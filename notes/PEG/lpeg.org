@@ -1204,8 +1204,8 @@ I have, to the best of my knowledge, updated my notes accordingly.
     byte buff[1];
   } Instruction;
 
-  // Stack entries encoded as an array of saved input positions
-  // and alternative bytecode instructions.
+  // Stack entries encoded as an array of saved input positions,
+  // alternative bytecode instructions, and indices into the capture list.
   // Side Note: "stack" points to first empty slot in "Stack".
   typedef struct Stack {
     const char *s;        // Saved input position (NULL for calls)
