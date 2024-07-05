@@ -1204,12 +1204,12 @@ I have, to the best of my knowledge, updated my notes accordingly.
     byte buff[1];
   } Instruction;
 
-  // A stack encoded as an array of structs containing an input
-  // position, the next bytecode instruction, and the capture level.
+  // Stack entries encoded as an array of saved input positions
+  // and alternative bytecode instructions.
   // Side Note: "stack" points to first empty slot in "Stack".
   typedef struct Stack {
-    const char *s;        // Saved position (NULL for calls)
-    const Instruction *p; // Next instruction
+    const char *s;        // Saved input position (NULL for calls)
+    const Instruction *p; // Next instruction (pending alternative)
     int caplevel;
   } Stack;
 
