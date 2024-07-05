@@ -1206,7 +1206,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
   } Instruction;
 
   // Stack entries encoded as an array of saved subject positions,
-  // alternative bytecode instructions, and indices into the capture list.
+  // alternative bytecode instructions, and saved positions into the capture list.
   // Side Note: "stack" points to first empty slot in "Stack".
   typedef struct Stack {
     const char *s;        // Saved input position (NULL for calls)
