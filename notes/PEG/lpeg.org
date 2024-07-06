@@ -21,6 +21,21 @@
   — Roberto Ierusalimschy
 #+end_quote
 
+*** Functions
+
+- ~lpeg.match(pattern, subject, index?)~ :: Attempts to match the given pattern against
+  the subject string. If successful, returns either the index of the first match or
+  values captured from the subject string. An optional numeric argument starts the
+  match at the given index. Negative indices are offset from the end.
+
+- ~lpeg.type(value)~ :: If the given value is a pattern, returns the string "pattern".
+  Otherwise returns nil.
+
+- ~lpeg.version~ :: A string that denotes the running version of LPEG.
+
+- ~lpeg.setmaxstack(max)~ :: Sets size limit for the stack used by LPEG to track calls
+  and choices. The default limit is 400.
+
 *** Basic Operations
 
 | operation             | description                              |
