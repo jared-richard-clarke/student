@@ -1188,8 +1188,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
       cs.valuecached = 0;
       cs.ptop = ptop;
       cs.firstcap = lua_gettop(L) + 1;
-      // Collect and process captures, pushing results
-      // onto the stack.
+      // Collect and process captures, pushing values onto the stack.
       do {
         n += pushcapture(&cs);
       } while (!isclosecap(cs.cap));
