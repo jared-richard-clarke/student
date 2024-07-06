@@ -71,22 +71,23 @@
 A capture is a pattern that produces values — the semantic information — according
 to the matched string and the capture type.
 
-| operation                     | result                                         |
-|-------------------------------+------------------------------------------------|
-| ~lpeg.C(pattern)~             | Match for ~pattern~ plus all its captures      |
-| ~lpeg.Carg(n)~                | nth extra argument to ~lpeg.match~             |
-| ~lpeg.Cb(key)~                | Previous group capture                         |
-| ~lpeg.Cc(values)~             | Constant capture  of the given values          |
-| ~lpeg.Cg(pattern [, key])~    | Group capture, optionally named by ~key~       |
-| ~lpeg.Cp()~                   | Position capture                               |
-| ~lpeg.Cs(pattern)~            | Substitution capture                           |
-| ~lpeg.Ct(pattern)~            | Table capture                                  |
-| ~pattern / string~            | String capture                                 |
-| ~pattern / number~            | Numbered capture                               |
-| ~pattern / table~             | ~table[c]~, where ~c~ is the ~pattern~ capture |
-| ~pattern / function~          | Maps ~function~ over ~pattern~ captures        |
-| ~pattern % function~          | Accumulates ~pattern~ captures with ~function~ |
-| ~lpeg.Cmt(pattern, function)~ | Maps ~function~ over match-time captures       |
+| operation                     | result                                                         |
+|-------------------------------+----------------------------------------------------------------|
+| ~lpeg.C(pattern)~             | Match for ~pattern~ plus all its captures                      |
+| ~lpeg.Carg(n)~                | nth extra argument to ~lpeg.match~                             |
+| ~lpeg.Cb(key)~                | Previous group capture                                         |
+| ~lpeg.Cc(values)~             | Constant capture  of the given values                          |
+| ~lpeg.Cf(pattern, function)~  | Folding capture (deprecated)                                   |
+| ~lpeg.Cg(pattern, key?)~      | Group capture, optionally named by ~key~                       |
+| ~lpeg.Cp()~                   | Position capture                                               |
+| ~lpeg.Cs(pattern)~            | Substitution capture                                           |
+| ~lpeg.Ct(pattern)~            | Table capture                                                  |
+| ~pattern / string~            | String capture                                                 |
+| ~pattern / number~            | Numbered capture                                               |
+| ~pattern / table~             | ~table[c]~, where ~c~ is the ~pattern~ capture                 |
+| ~pattern / function~          | Maps ~function~ over ~pattern~ captures                        |
+| ~pattern % function~          | Combines ~pattern~ captures into prior capture with ~function~ |
+| ~lpeg.Cmt(pattern, function)~ | Maps ~function~ over match-time pattern captures               |
 
 ** Repetition in PEG
 
