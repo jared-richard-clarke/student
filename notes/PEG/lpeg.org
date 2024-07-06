@@ -251,6 +251,25 @@ to the matched string and the capture type.
 LPEG provides a regex-like expression syntax via the ~re~ module. Constructions are
 listed in order of decreasing precedence.
 
+*** Functions
+
+- ~re.compile(string, definitions?)~ :: Compiles the given string and returns an equivalent
+  LPEG pattern. The optional ~definitions~ table provides extra Lua values to be used by
+  the pattern.
+
+- ~re.find(subject, pattern, index?)~ :: Searches the given pattern in the subject. If the
+  function finds a match, it returns the start and end indices of that match. Otherwise
+  returns nil. An optional numeric argument starts the match at the given index. Negative
+  indices are offset from the end.
+
+- ~re.gsub(subject, pattern, replacement)~ :: Performs a global substitution, replacing all
+  occurrences of a pattern in the given subject with the given replacement.
+
+- ~re.match(subject, pattern)~ :: Matches the given pattern against the given subject.
+  Returns all captures.
+
+- ~re.updatelocale()~ :: Updates the pre-defined character classes to the current locale.
+
 *** Syntax
 
 | syntax              | description                   |
