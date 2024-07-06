@@ -1139,7 +1139,42 @@ I have, to the best of my knowledge, updated my notes accordingly.
     // Pull the captures out of the capture list.
     return getcaptures(L, s, r, ptop);
   }
+#+end_src
 
+*** Captures
+
+#+begin_src c
+  // An unsigned integer large enough to index any subject in a captures array.
+  // "size_t" would also work, but it would double the size of the captures array
+  // on a 64-bit machine. "uint" is a macro for "unsigned int".
+  typedef uint Index_t;
+
+  // Captures list encoded as an array of types, positions, and sizes.
+  // Used to build captures at the end of a successful pattern match.
+  typedef struct Capture {
+    Index_t index;       // Subject position
+    unsigned short idx;  // Extra info (group name, argument index, etc.)
+    byte kind;           // Kind of capture
+    byte siz;            // Size of full capture + 1 (0 = not a full capture)
+  } Capture;
+
+  // The state machine for collecting match captures.
+  typedef struct CapState {
+    Capture *cap;    // The current capture.
+    Capture *ocap;   // The original capture list.
+    lua_State *L;
+    int ptop;        // Stack index of last match.
+    int firstcap;    // Stack index of first capture.
+    const char *s;   // Input text.
+    int valuecached; // Value stored in cache.
+    int reclevel;    // Recursion level.
+  } CapState;
+
+  // getcaptures(L, s, r, ptop)
+  //   where L    = Lua state
+  //         s    = subject string
+  //         r    = final position in match
+  //         ptop = top of the stack where captures were pushed
   int getcaptures (lua_State *L, const char *s, const char *r, int ptop) {
     // Retrieve the capture list.
     Capture *capture = (Capture *)lua_touserdata(L, caplistidx(ptop));
@@ -1169,18 +1204,6 @@ I have, to the best of my knowledge, updated my notes accordingly.
     }
     return n;
   }
-
-  // The state machine for collecting match captures.
-  typedef struct CapState {
-    Capture *cap;    // The current capture.
-    Capture *ocap;   // The original capture list.
-    lua_State *L;
-    int ptop;        // Stack index of last match.
-    int firstcap;    // Stack index of first capture.
-    const char *s;   // Input text.
-    int valuecached; // Value stored in cache.
-    int reclevel;    // Recursion level.
-  } CapState;
 #+end_src
 
 *** VM Interpreter
@@ -1252,20 +1275,6 @@ I have, to the best of my knowledge, updated my notes accordingly.
     const Instruction *p; // Next instruction (pending alternative)
     int caplevel;
   } Stack;
-
-  // An unsigned integer large enough to index any subject in a captures array.
-  // "size_t" would also work, but it would double the size of the captures array
-  // on a 64-bit machine. "uint" is a macro for "unsigned int".
-  typedef uint Index_t;
-
-  // Captures list encoded as an array of types, positions, and sizes.
-  // Used to build captures at the end of a successful pattern match.
-  typedef struct Capture {
-    Index_t index;       // Subject position
-    unsigned short idx;  // Extra info (group name, argument index, etc.)
-    byte kind;           // Kind of capture
-    byte siz;            // Size of full capture + 1 (0 = not a full capture)
-  } Capture;
 
   // The opcode interpreter as called in "lp_match":
   //     match(L, o, s,     e,     op,   capture, ptop)
