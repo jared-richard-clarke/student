@@ -307,6 +307,7 @@ listed in order of decreasing precedence.
 | p -> number         | Numbered capture              |
 | p -> name           | Function/query/string capture |
 | p => name           | Match-time capture            |
+| p ~> name           | Fold capture (deprecated)     |
 | p >> name           | Accumulator capture           |
 
 *** Grammar
