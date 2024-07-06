@@ -1150,6 +1150,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
 #+begin_src c
   // An LPEG pattern is a struct containing an abstract syntax tree and,
   // if already compiled, an accompanying array of bytecode instructions.
+  // Patterns are Lua userdata.
   typedef struct Pattern {
     union Instruction *code;
     TTree tree[1];
