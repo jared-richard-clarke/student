@@ -561,7 +561,7 @@ require traversing only one choice-commit pair.
 
 The ~Choice~ and ~PartialCommit~ instructions together create a loop where only the subject
 position and the capture list are repeatedly updated. Instead of ~Choice~ repeatedly adding
-and removing whole entries on the stack, ~PartialCommit~ simply updates the top entry.
+and removing whole entries on the stack, ~PartialCommit~ simply updates the top stack entry.
 ~Choice~ need execute only once.
 
 Repeated character classes have a dedicated instruction, ~Span charset~ that consumes a maximum
