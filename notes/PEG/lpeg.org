@@ -250,8 +250,7 @@ Lua strings, numbers, tables, and functions.
 
 ** ~re~ Module
 
-LPEG provides a regex-like expression syntax via the ~re~ module. Constructions are
-listed in order of decreasing precedence.
+LPEG provides a regex-like expression syntax via the ~re~ module.
 
 *** Functions
 
@@ -273,6 +272,8 @@ listed in order of decreasing precedence.
 - ~re.updatelocale()~ :: Updates the pre-defined character classes to the current locale.
 
 *** Syntax
+
+Constructions are listed in order of decreasing precedence.
 
 | syntax              | description                   |
 |---------------------+-------------------------------|
