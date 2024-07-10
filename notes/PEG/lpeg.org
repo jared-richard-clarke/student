@@ -622,7 +622,7 @@ wherein the whole instruction set fails.
   -- === LPEG ===
   #lpeg.P("a")
 
-  -- === Virtual Machine (double negation)
+  -- === Virtual Machine (double negation) ===
   --     Choice L1
   --     Choice L2
   --     Char "a"
