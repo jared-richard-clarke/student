@@ -4,11 +4,11 @@
 (define-syntax define-object
   (syntax-rules ()
     [(_ (name . constructors)
-        ((property value) ...)
+        ((property data) ...)
         ((method function) ...))
      (define name
        (lambda constructors
-         (let* ([property value] ...)
+         (let* ([property data] ...)
            (letrec ([method function] ...)
              (lambda (message . arguments)
                (case message
