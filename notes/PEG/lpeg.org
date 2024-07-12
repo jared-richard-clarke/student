@@ -1436,6 +1436,11 @@ I have, to the best of my knowledge, updated my notes accordingly.
     capture[captop].index = MAXINDT;
     return s;
   }
+  // GiveUp: Bottom of the stack. Pattern match failure.
+  case IGiveup: {
+    assert(stack == getstackbase(L, ptop));
+    return NULL;
+  }
 #+end_src
 
 *** Extra VM Instructions
