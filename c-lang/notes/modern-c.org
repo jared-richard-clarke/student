@@ -221,7 +221,7 @@ in an arithmetic expression.
   // Equivalent declarations.
   char ted1    = "ted";
   char ted2    = { "ted" };
-  char ted3    = { 't', 'e', 'd', \0 };
+  char ted3    = { 't', 'e', 'd', '\0' };
   char ted4[4] = { 't', 'e', 'd' };
 
   // Not a string.
