@@ -32,7 +32,7 @@ If the count is at or exceeds capacity, seven steps are taken:
 6. Store the element in the new array.
 7. Update the count.
 
-*Side Note*: Slices in the Go programming language are a high-level versions of dynamic arrays.
+*Side Note*: Slices in the Go programming language are high-level versions of dynamic arrays.
 
 ** Code Example
 
