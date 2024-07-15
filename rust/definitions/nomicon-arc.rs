@@ -71,7 +71,7 @@ impl<T> Drop for Arc<T> {
         // This fence is needed to prevent reordering of the use and deletion
         // of the data.
         atomic::fence(Ordering::Acquire);
-        // This is safe as we know we have the last pointer to the `ArcInner`
+        // This is safe as we know we have the last pointer to the "ArcInner"
         // and that its pointer is valid.
         unsafe { Box::from_raw(self.ptr.as_ptr()); }
     }
