@@ -16,15 +16,14 @@ pub struct ArcInner<T> {
 
 impl<T> Arc<T> {
     pub fn new(data: T) -> Arc<T> {
-        // We start the reference count at 1, as that first reference is the
-        // current pointer.
+        // Reference count starts at 1, the current pointer.
         let boxed = Box::new(ArcInner {
             rc: AtomicUsize::new(1),
             data,
         });
         Arc {
-            // It is okay to call ".unwrap()" here as we get a pointer from
-            // "Box::into_raw" which is guaranteed to not be null.
+            // It is okay to call ".unwrap()" as the pointer from
+            // "Box::into_raw" is guaranteed to be non-null.
             ptr: NonNull::new(Box::into_raw(boxed)).unwrap(),
             phantom: PhantomData,
         }
@@ -46,7 +45,7 @@ impl<T> Deref for Arc<T> {
 impl<T> Clone for Arc<T> {
     fn clone(&self) -> Arc<T> {
         let inner = unsafe { self.ptr.as_ref() };
-        // Using a relaxed ordering. Data is neither modified nor accessed.
+        // Use relaxed ordering. Data is neither modified nor accessed.
         let old_rc = inner.rc.fetch_add(1, Ordering::Relaxed);
 
         if old_rc >= isize::MAX as usize {
