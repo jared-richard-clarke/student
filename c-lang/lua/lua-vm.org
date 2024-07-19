@@ -82,9 +82,9 @@ register or a constant.
 
 ** Lua Function to Bytecode
 
-*** Function
-
 #+begin_src lua
+  -- === Lua Function ===
+  
   function max(a, b)
       local m = a
       if b > a then
@@ -92,18 +92,17 @@ register or a constant.
       end
       return m
   end
+
+  -- === Bytecode ===
+  --
+  -- 1 MOVE      2 0 0    ; R(2) = R(0)
+  -- 2 LT        0 0 1    ; R(0) < R(1) ?
+  -- 3 JMP       1        ; to 5 (4+1)
+  -- 4 MOVE      2 1 0    ; R(2) = R(1)
+  -- 5 RETURN    2 2 0    ; return R(2)
+  -- 6 RETURN    0 1 0    ; return
 #+end_src
 
-*** Bytecode
-
-#+begin_example
-  1 MOVE      2 0 0    ; R(2) = R(0)
-  2 LT        0 0 1    ; R(0) < R(1) ?
-  3 JMP       1        ; to 5 (4+1)
-  4 MOVE      2 1 0    ; R(2) = R(1)
-  5 RETURN    2 2 0    ; return R(2)
-  6 RETURN    0 1 0    ; return
-#+end_example
 
 ** Lua Data Types
 
