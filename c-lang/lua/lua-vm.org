@@ -55,7 +55,7 @@ instructions for implementing control flow.
   RETURN    A B      return R(A), ... ,R(A+B-2)
   FORLOOP   A sBx    R(A)+=R(A+2); if R(A) <?= R(A+1) then PC+= sBx
   TFORLOOP  A C      R(A+2), ... ,R(A+2+C) := R(A)(R(A+1), R(A+2));
-  TFORPREP  A sBx    if type(R(A)) == table then R(A+1) := R(A), R(A):=next;
+  TFORPREP  A sBx    if type(R(A)) == table then R(A+1) := R(A), R(A) := next;
   SETLIST   A Bx     R(A)[Bx-Bx%FPF+i] := R(A+i), 1 <= i <= Bx%FPF+1
   SETLISTO  A Bx
   CLOSE     A        close stack variables up to R(A)
