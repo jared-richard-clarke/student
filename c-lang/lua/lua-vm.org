@@ -147,3 +147,61 @@ register or a constant.
                   -- 10: GETINDEXED 2 ; i
                   -- 11: SETLOCAL   0 ; a
 #+end_src
+
+** Closures and UpValues
+
+#+begin_example
+  === Closures Implemented as UpValues ===
+
+  1. Resolves local variables that are declared in surrounding functions.
+  2. Capture variables that have already left the stack.
+
+                               Function
+                              +-----------+
+             Closure      +-->| chunk     |--> bytecode
+            +----------+  |   |-----------|
+        +-->| function |--+   | constants |--> value array
+        |   |----------|      +-----------+
+        |   | upvalues |--+
+        |   +----------+  |    Upvalue
+        |                 |   +----------+
+        |                 +-->| location |--+
+        |                     +----------+  |
+    +---|-----------------------------------+
+    V   |
+  +---+----+---+-->
+  | x | fn | y |
+  +---+----+---+-->
+
+  === Closing UpValues ===
+
+                    Open Upvalues --+
+                                    |
+                                    V
+       Upvalue       Upvalue        Upvalue
+     +----------+   +----------+   +----------+
+     | next     |<--| next     |<--| next     |
+     |----------|   |----------|   |----------|
+   +-| location | +-| location | +-| location |
+   | +----------+ | +----------+ | +----------+
+   +---+          |              |
+       |        +-+      +-------+
+       V        V        V
+     +---+----+---+----+---+----+
+     | x | fn | y | fn | z | fn | <-- stack
+     +---+----+---+----+---+----+
+
+    Open Upvalue       Closed Upvalue
+   +----------+       +----------+
+   | next     |       | next     |
+   |----------|       |----------|
+   | closed   |       | closed z |<-+
+   |----------|       |----------|  |
+   | location |--+    | location |--+
+   +----------+  |    +----------+
+             +---+
+    Stack    V        Stack
+   +---+---+---+      +---+---+
+   | x | y | z |      | x | y |
+   +---+---+---+      +---+---+
+#+end_example
