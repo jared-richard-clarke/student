@@ -166,11 +166,11 @@ register or a constant.
         +-->| function |--+   | constants |--> value array
         |   |----------|      +-----------+
         |   | upvalues |--+
-        |   +----------+  |    Upvalue
-        |                 |   +----------+
-        |                 +-->| location |--+
-        |                     +----------+  |
-    +---|-----------------------------------+
+        |   +----------+  |    UpValue Array     Upvalue
+        |                 |   +-------------+   +----------+
+        |                 +-->| 0           |-->| location |--+
+        |                     +-------------+   +----------+  |
+    +---|-----------------------------------------------------+
     V   |
   +---+----+---+-->
   | x | fn | y |
@@ -178,7 +178,7 @@ register or a constant.
 
   === Closing UpValues ===
 
-                    Open Upvalues --+
+                    Open UpValues --+
                                     |
                                     V
        Upvalue       Upvalue        Upvalue
