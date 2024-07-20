@@ -73,11 +73,13 @@ will hold the result and ~B~ and ~C~ point to the operands, which can be either 
 register or a constant.
 
 #+begin_example
+  +----+---+-------+
   | OP | A | B | C |
   |----|---|-------|
   | OP | A | Bx    |
   |----|---|-------|
   | OP | A | sBx   |
+  +----+---+-------+
 #+end_example
 
 ** Lua Function to Bytecode
