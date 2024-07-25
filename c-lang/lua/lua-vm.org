@@ -153,13 +153,32 @@ register or a constant.
 
 ** Closures and UpValues
 
+#+begin_quote
+  "When Lua compiles a function it generates a *prototype* containing the virtual machine
+   instructions for the function, its constant values (numbers, literal strings, etc.),
+   and some debug information. At run time, whenever Lua executes a ~function...end~
+   expression, it creates a new closure. Each closure has a reference to its corresponding
+   prototype, a reference to its environment (a table wherein it looks for global variables),
+   and an array of references to upvalues, which are used to access outer local variables...
+
+   Lua uses a structure called an *upvalue* to implement closures. Any outer local variable
+   is accessed indirectly through an upvalue. The upvalue originally points to the stack
+   slot wherein the variable lives. When the variable goes out of scope, it migrates into
+   a slot inside the upvalue itself...
+
+   Unlike its inner functions, the function that declares the variable accesses [that variable]
+   as it accesses its own local variables: directly in the stack."
+
+  — *The Implementation of Lua 5.0*
+#+end_quote
+
 #+begin_example
   === Closures Implemented as UpValues ===
 
   1. Resolves local variables that are declared in surrounding functions.
   2. Capture variables that have already left the stack.
 
-                               Function
+                               Function Prototype
                               +-----------+
              Closure      +-->| chunk     |--> bytecode
             +----------+  |   |-----------|
@@ -173,7 +192,7 @@ register or a constant.
     +---|-----------------------------------------------------+
     V   |
   +---+----+---+-->
-  | x | fn | y |
+  | x | fn | y |   <-- Stack
   +---+----+---+-->
 
   === Closing UpValues ===
