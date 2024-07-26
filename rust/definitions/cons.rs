@@ -12,7 +12,7 @@ impl<T> List<T> {
         Nil
     }
 
-    fn prepend(self, element: T) -> List<T> {
+    fn add(self, element: T) -> List<T> {
         Cons(element, Box::new(self))
     }
 
