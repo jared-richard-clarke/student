@@ -28,24 +28,24 @@ impl<T> RawVec<T> {
     }
 
     fn grow(&mut self) {
-        // since we set the capacity to usize::MAX when T has size 0,
+        // Since we set the capacity to "usize::MAX" when T has size 0,
         // getting to here necessarily means the Vec is overfull.
         assert!(mem::size_of::<T>() != 0, "capacity overflow");
 
         let (new_cap, new_layout) = if self.cap == 0 {
             (1, Layout::array::<T>(1).unwrap())
         } else {
-            // This can't overflow because we ensure self.cap <= isize::MAX.
+            // This can't overflow because we ensure "self.cap" <= "isize::MAX".
             let new_cap = 2 * self.cap;
 
-            // "Layout::array" checks that the number of bytes is <= usize::MAX,
-            // but this is redundant since old_layout.size() <= isize::MAX,
+            // "Layout::array" checks that the number of bytes is <= "usize::MAX",
+            // but this is redundant since "old_layout.size()" <= "isize::MAX",
             // so the "unwrap" should never fail.
             let new_layout = Layout::array::<T>(new_cap).unwrap();
             (new_cap, new_layout)
         };
 
-        // Ensure that the new allocation doesn't exceed `isize::MAX` bytes.
+        // Ensure that the new allocation doesn't exceed "isize::MAX" bytes.
         assert!(
             new_layout.size() <= isize::MAX as usize,
             "Allocation too large"
