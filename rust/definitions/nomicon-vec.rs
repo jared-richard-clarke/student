@@ -20,7 +20,7 @@ impl<T> RawVec<T> {
         // This branch should be stripped at compile time.
         let cap = if mem::size_of::<T>() == 0 { usize::MAX } else { 0 };
 
-        // `NonNull::dangling()` doubles as "unallocated" and "zero-sized allocation"
+        // "NonNull::dangling()" doubles as "unallocated" and "zero-sized allocation"
         RawVec {
             ptr: NonNull::dangling(),
             cap: cap,
@@ -38,9 +38,9 @@ impl<T> RawVec<T> {
             // This can't overflow because we ensure self.cap <= isize::MAX.
             let new_cap = 2 * self.cap;
 
-            // `Layout::array` checks that the number of bytes is <= usize::MAX,
+            // "Layout::array" checks that the number of bytes is <= usize::MAX,
             // but this is redundant since old_layout.size() <= isize::MAX,
-            // so the `unwrap` should never fail.
+            // so the "unwrap" should never fail.
             let new_layout = Layout::array::<T>(new_cap).unwrap();
             (new_cap, new_layout)
         };
@@ -59,7 +59,7 @@ impl<T> RawVec<T> {
             unsafe { alloc::realloc(old_ptr, old_layout, new_layout.size()) }
         };
 
-        // If allocation fails, `new_ptr` will be null, in which case we abort.
+        // If allocation fails, "new_ptr" will be null, in which case we abort.
         self.ptr = match NonNull::new(new_ptr as *mut T) {
             Some(p) => p,
             None => alloc::handle_alloc_error(new_layout),
@@ -160,7 +160,7 @@ impl<T> Vec<T> {
         unsafe {
             let iter = RawValIter::new(&self);
 
-            // this is a mem::forget safety thing. If Drain is forgotten, we just
+            // This is a "mem::forget" safety thing. If Drain is forgotten, we just
             // leak the whole Vec's contents. Also we need to do this *eventually*
             // anyway, so why not do it now?
             self.len = 0;
@@ -276,7 +276,8 @@ impl<T> DoubleEndedIterator for RawValIter<T> {
 }
 
 pub struct IntoIter<T> {
-    _buf: RawVec<T>, // we don't actually care about this. Just need it to live.
+    // We don't actually care about this. Just need it to live.
+    _buf: RawVec<T>, 
     iter: RawValIter<T>,
 }
 
