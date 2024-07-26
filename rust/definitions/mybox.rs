@@ -2,7 +2,7 @@
 // The Rust Programming Language, chapter 15.2, by Steve Klabnik and Carol Nichols
 //
 // Side Note: MyBox does not store data on the heap like Box<T>.
-// This is an an example implementation of the Deref trait.
+// This is an example implementation of the Deref trait.
 
 use std::ops::Deref;
 
