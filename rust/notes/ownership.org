@@ -2,10 +2,11 @@
 
 ** Sources
 
-| source                          | author                          |
-|---------------------------------+---------------------------------|
-| *The Rust Programming Language* | Steve Klabnik and Carol Nichols |
-| *The Rustonomicon*              | rust-lang.org                   |
+| source                                                  | author                          |
+|---------------------------------------------------------+---------------------------------|
+| *The Rust Programming Language*                         | Steve Klabnik and Carol Nichols |
+| *The Rustonomicon*                                      | rust-lang.org                   |
+| *Mozilla Colloquium on Computer Systems Seminar Series* | Aaron Turon                     |
 
 ** Ownership Rules
 
@@ -16,6 +17,28 @@
 - Ownership can be transferred by moves, which happen on assignment and function calls.
 
 - When the owner goes out of scope, the value will be dropped.
+
+** Aliasing + Mutation
+
+*** Ownership (T)
+
+- Forbids aliasing.
+
+- Only one variable can own data at a time.
+
+*** Shared Borrow (&T)
+
+- Forbids mutation. (* mutation only in controlled situations)
+
+- Allows simultaneous access to shared data.
+
+*** Mutable Borrow (&mut T)
+
+- Forbids aliasing, allows mutation.
+
+- Only one code block can borrow and mutate data at a time. This prevents data races.
+
+- A ~&mut T~ is the only way to access its memory.
 
 ** Borrow Checker
 
@@ -43,13 +66,6 @@ The core idea behind the borrow checker is that variables have three kinds of pe
 
 By default a variable has *RO* permissions. *RWO* if prefaced by ~let mut~.
 References can temporarily remove these permissions to prevent undefined behavior.
-
-** Reference Types and Rules
-
-- *immutable references ( shared references )*: Permit aliasing but disallow mutation.
-
-- *mutable references ( unique references )*: Temporarily provide mutable access to data without moving
-  it — one alias at a time.
 
 ** Paths
 
@@ -108,3 +124,20 @@ Scope dictates lifetime.
   // Reference "&s" must outlive scope 'a, but its referent "s" is within scope 'b.
   // The reference outlives its referent, creating potentially undefined behavior.
 #+end_src
+
+** Data Race = Aliasing + Mutation + No Ordering ( no synchronization )
+
+- Two unsynchronized threads accessing the same data where at least one writes.
+
+*** Solutions for Safe Concurrency
+
+- Actor Model :: Forbids aliasing. Pass owned values between actors. ( Erlang )
+
+- Functional Model :: Forbids mutation. ( Haskell )
+
+- Rust Model :: Forbids both from occurring simultaneously.
+
+  - Messaging( actor model ): Ownership is passed between threads.
+
+  - Shared, read-only access( functional model ): Ownership and borrowing.
+    Passing data to a bunch of threads so they can read from it.
