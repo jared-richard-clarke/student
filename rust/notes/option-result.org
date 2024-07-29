@@ -46,6 +46,14 @@
           }
       });
   }
+
+  // "unwrap_or_else" as designed for "Result" in the standard library.
+  fn unwrap_or_else<F: FnOnce(E) -> T>(self, op: F) -> T {
+      match self {
+          Ok(t) => t,
+          Err(e) => op(e),
+      }
+  }
 #+end_src
 
 *** ~unwrap~
