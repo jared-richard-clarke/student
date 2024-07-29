@@ -192,7 +192,7 @@ Returns the value contained in ~Some~ or returns a default value as provided by 
   }
 #+end_src
 
-*** ~unwrap_or_else~ ( simplified )
+*** ~unwrap_or_else~
 
 #+begin_src rust
   impl<T> Option<T> {
