@@ -84,6 +84,14 @@ There is a corresponding ~struct~ for each iterator and iterator adapter in the
   assert_eq!(counter.next(), Some(2));
   assert_eq!(counter.next(), Some(3));
   assert_eq!(counter.next(), None);
+
+  let sum: u32 = Counter::new()
+      .zip(Counter::new().skip(1))
+      .map(|(a, b)| a * b)
+      .filter(|x| x % 3 == 0)
+      .sum();
+  
+  assert_eq!(18, sum);
 #+end_src
 
 ** ~for~ loops and ~IntoIterator~
