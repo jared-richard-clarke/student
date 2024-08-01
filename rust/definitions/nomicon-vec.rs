@@ -171,6 +171,7 @@ impl<T> Vec<T> {
         unsafe {
             self.len -= 1;
             let result = ptr::read(self.ptr().add(index));
+            // ptr::copy(source, destination, length)
             ptr::copy(
                 self.ptr().add(index + 1),
                 self.ptr().add(index),
@@ -200,7 +201,7 @@ impl<T> Vec<T> {
 impl<T> Drop for Vec<T> {
     fn drop(&mut self) {
         while let Some(_) = self.pop() {}
-        // deallocation is handled by RawVec
+        // Deallocation is handled by RawVec
     }
 }
 
