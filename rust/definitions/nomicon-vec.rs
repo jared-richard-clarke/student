@@ -40,7 +40,7 @@ impl<T> RawVec<T> {
 
        // "NonNull::dangling()" returns a placeholder for non-allocated memory.
        // The recommended placeholder is "mem::align_of<T>()", which returns a
-       // non-zero "usize", which can be cast to "*mut T".
+       // non-zero "usize", which can be cast to a "*mut T".
        //
        // A zero-sized memory block, which is different than non-allocated memory,
        // is not allowed by the global allocator.       
