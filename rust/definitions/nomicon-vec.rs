@@ -205,7 +205,8 @@ impl<T> Drop for Vec<T> {
     }
 }
 
-// Deref coercion grants "Vec" access to all the methods implemented on "slice".
+// Deref coercion grants "Vec" access to all the methods implemented
+// on an immutable "slice" reference.
 impl<T> Deref for Vec<T> {
     type Target = [T];
     fn deref(&self) -> &[T] {
@@ -213,6 +214,8 @@ impl<T> Deref for Vec<T> {
     }
 }
 
+// Deref coercion grants "Vec" access to all the methods implemented
+// on a mutable "slice" reference.
 impl<T> DerefMut for Vec<T> {
     fn deref_mut(&mut self) -> &mut [T] {
         unsafe { std::slice::from_raw_parts_mut(self.ptr(), self.len) }
