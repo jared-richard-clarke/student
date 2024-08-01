@@ -150,6 +150,7 @@ impl<T> Vec<T> {
         }
 
         unsafe {
+            // ptr::copy(source, destination, length)
             ptr::copy(
                 self.ptr().add(index),
                 self.ptr().add(index + 1),
