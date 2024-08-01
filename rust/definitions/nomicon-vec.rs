@@ -38,7 +38,12 @@ impl<T> RawVec<T> {
         // This branch should be stripped at compile time.
         let cap = if mem::size_of::<T>() == 0 { usize::MAX } else { 0 };
 
-        // "NonNull::dangling()" doubles as "unallocated" and "zero-sized allocation"
+       // "NonNull::dangling()" returns a placeholder for non-allocated memory.
+       // The recommended placeholder is "mem::align_of<T>()", which returns a
+       // non-zero "usize", which can be cast to "*mut T".
+       //
+       // A zero-sized memory block, which is different than non-allocated memory,
+       // is not allowed by the global allocator.       
         RawVec {
             ptr: NonNull::dangling(),
             cap: cap,
