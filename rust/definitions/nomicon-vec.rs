@@ -205,6 +205,7 @@ impl<T> Drop for Vec<T> {
     }
 }
 
+// Deref coercion grants "Vec" access to all the methods implemented on "slice".
 impl<T> Deref for Vec<T> {
     type Target = [T];
     fn deref(&self) -> &[T] {
