@@ -4,9 +4,9 @@
 
 | source                                      | author        |
 |---------------------------------------------+---------------|
-| *The Rust Standard Library*, version 1.71.1 | rust-lang.org |
+| *The Rust Standard Library*, version 1.80.0 | rust-lang.org |
 | *The Rustonomicon*                          | rust-lang.org |
-| *The Rust Reference*,  version 1.71.1       | rust-lang.org |
+| *The Rust Reference*,  version 1.80.0       | rust-lang.org |
 
 ** Overview
 
@@ -55,9 +55,13 @@
 - ~char~ :: A Unicode scalar value, which is any Unicode code point other than a surrogate
   code point. Always four bytes in size.
   
+- ~f16~ :: A 16-bit floating point type (specifically, the *binary16* type defined in IEEE 754-2008).
+
 - ~f32~ :: A 32-bit floating point type (specifically, the *binary32* type defined in IEEE 754-2008).
-  
+
 - ~f64~ :: A 64-bit floating point type (specifically, the *binary64* type defined in IEEE 754-2008).
+
+- ~f128~ :: A 128-bit floating point type (specifically, the *binary128* type defined in IEEE 754-2008).
   
 - ~fn~ :: Function pointers, like ~fn(usize) -> bool~.
   
@@ -99,6 +103,9 @@
 - ~unit~ :: The ~()~ type, also called *unit*.
   
 - ~usize~ :: The pointer-sized unsigned integer type.
+
+- ~never~ :: The ~!~ type. Also called *never*. Represents computations that never resolve
+  to any value.
 
 ** Composite and Custom Types
 
