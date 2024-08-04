@@ -105,7 +105,7 @@
 - ~usize~ :: The pointer-sized unsigned integer type.
 
 - ~never~ :: The ~!~ type. Also called *never*. Represents computations that never resolve
-  to any value.
+  to any value. ~!~ can be coerced into any other type.
 
 ** Composite and Custom Types
 
