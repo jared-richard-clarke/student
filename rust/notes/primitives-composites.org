@@ -76,7 +76,7 @@
 - ~pointer~ :: Raw, unsafe pointers, ~*const T~, and ~*mut T~.
   
 - ~reference~ :: References, ~&T~ and ~&mut T~. A pointer that is assumed to be aligned, not
-  null, and pointing to memory containing a valid value of ~T~.
+  null, and pointing to memory containing a valid value of ~T~. Enforces borrowing rules.
   
 - ~slice~ :: A dynamically-sized view into a contiguous sequence, ~[T]~. Contiguous here
   means that elements are laid out so that every element is the same distance from its
