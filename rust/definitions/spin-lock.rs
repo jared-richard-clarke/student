@@ -3,10 +3,10 @@
 // Spinning can reduce latency, but it can also waste clockcycles and
 // reduce performance.
 
-use std::ops::{ Deref, DerefMut };
+use std::ops::{Deref, DerefMut};
 use std::cell::UnsafeCell;
 use std::sync::atomic::AtomicBool;
-use std::sync::atomic::Ordering::{ Acquire, Release };
+use std::sync::atomic::Ordering::{Acquire, Release};
 
 pub struct SpinLock<T> {
     locked: AtomicBool,
