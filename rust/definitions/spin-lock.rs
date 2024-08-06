@@ -1,6 +1,6 @@
 // === A spin lock as implemented by Mara Bos in "Rust Atomics and Locks" ===
 // A spin lock is a mutex that busy-loops, or spins, while waiting.
-// Spinning can reduce latency, but can also waste clockcycles and
+// Spinning can reduce latency, but it can also waste clockcycles and
 // reduce performance.
 
 use std::ops::{ Deref, DerefMut };
@@ -15,6 +15,7 @@ pub struct SpinLock<T> {
 
 unsafe impl<T> Sync for SpinLock<T> where T: Send {}
 
+// A lock guard is a special type that represents safe access to a locked lock.
 pub struct Guard<'a, T> {
     lock: &'a SpinLock<T>,
 }
@@ -31,6 +32,8 @@ impl<T> SpinLock<T> {
 
     pub fn lock(&self) -> Guard<T> {
         while self.locked.swap(true, Acquire) {
+            // Emits a machine instruction to signal to the processor
+            // that it is running in a busy-wait spin-loop.
             std::hint::spin_loop();
         }
         Guard { lock: self }
@@ -40,16 +43,14 @@ impl<T> SpinLock<T> {
 impl<T> Deref for Guard<'_, T> {
     type Target = T;
     fn deref(&self) -> &T {
-        // Safety: The very existence of this Guard
-        // guarantees we've exclusively locked the lock.
+        // Safety: Guard guarantees exclusive access.
         unsafe { &*self.lock.value.get() }
     }
 }
 
 impl<T> DerefMut for Guard<'_, T> {
     fn deref_mut(&mut self) -> &mut T {
-        // Safety: The very existence of this Guard
-        // guarantees we've exclusively locked the lock.
+        // Safety: Guard guarantees exclusive access.
         unsafe { &mut *self.lock.value.get() }
     }
 }
