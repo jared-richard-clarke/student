@@ -148,6 +148,8 @@ impl<T> Vec<T> {
             None
         } else {
             self.len -= 1;
+            // To prevent uninitialized memory, "ptr::read" copies bits from target
+            // address and interprets those bits as type "T".
             unsafe { Some(ptr::read(self.ptr().add(self.len))) }
         }
     }
