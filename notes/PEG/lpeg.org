@@ -164,11 +164,11 @@ Lua strings, numbers, tables, and functions.
   Close  = ")" * Spaces
 
   -- Evaluator
-  function eval(v1, op, v2)
-    if (op == "+") then return v1 + v2
-    elseif (op == "-") then return v1 - v2
-    elseif (op == "*") then return v1 * v2
-    elseif (op == "/") then return v1 / v2
+  function eval(x, op, y)
+    if (op == "+") then return x + y
+    elseif (op == "-") then return x - y
+    elseif (op == "*") then return x * y
+    elseif (op == "/") then return x / y
     end
   end
 
