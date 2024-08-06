@@ -1,4 +1,8 @@
 // === A spin lock as implemented by Mara Bos in "Rust Atomics and Locks" ===
+// A spin lock is a mutex that busy-loops, or spins, while waiting.
+// Spinning can reduce latency, but can also waste clockcycles and
+// reduce performance.
+
 use std::ops::{ Deref, DerefMut };
 use std::cell::UnsafeCell;
 use std::sync::atomic::AtomicBool;
