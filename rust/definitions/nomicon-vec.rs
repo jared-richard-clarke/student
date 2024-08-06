@@ -132,7 +132,9 @@ impl<T> Vec<T> {
         if self.len == self.cap() {
             self.buf.grow();
         }
-
+        // By blindly writing to the pointer offset, we avoid evaluating
+        // invalid memory through indexing and dereferencing. We also avoid
+        // subsequently calling "drop" on an invalid value.
         unsafe {
             ptr::write(self.ptr().add(self.len), elem);
         }
