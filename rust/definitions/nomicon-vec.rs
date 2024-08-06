@@ -85,6 +85,8 @@ impl<T> RawVec<T> {
         // If allocation fails, "new_ptr" will be null, in which case we abort.
         self.ptr = match NonNull::new(new_ptr as *mut T) {
             Some(p) => p,
+            // Abort in a platform-specific manner. Panic, unlike abort, unwinds,
+            // which may try to allocate memory that isn't there.
             None => alloc::handle_alloc_error(new_layout),
         };
         self.cap = new_cap;
