@@ -2,7 +2,7 @@
 use std::marker::PhantomData;
 use std::ops::Deref;
 use std::ptr::NonNull;
-use std::sync::atomic::{ self, AtomicUsize, Ordering };
+use std::sync::atomic::{self, AtomicUsize, Ordering};
 
 pub struct Arc<T> {
     ptr: NonNull<ArcInner<T>>,
