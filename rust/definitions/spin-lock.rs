@@ -15,7 +15,7 @@ pub struct SpinLock<T> {
 
 unsafe impl<T> Sync for SpinLock<T> where T: Send {}
 
-// A lock guard is a special type that represents safe access to a locked lock.
+// A lock guard is a special type that guarantees safe access to a locked lock.
 pub struct Guard<'a, T> {
     lock: &'a SpinLock<T>,
 }
