@@ -311,7 +311,8 @@ impl<T> DoubleEndedIterator for RawValIter<T> {
 }
 
 pub struct IntoIter<T> {
-    // We don't actually care about this. Just need it to live.
+    // Hold onto "RawVec" allocation in order to free it
+    // once "IntoIter" is dropped.
     _buf: RawVec<T>, 
     iter: RawValIter<T>,
 }
