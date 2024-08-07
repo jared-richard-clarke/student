@@ -1,5 +1,5 @@
 // === A spin lock as implemented by Mara Bos in "Rust Atomics and Locks" ===
-// A spin lock is a mutex that busy-loops, or spins, while waiting.
+// A spin lock is a mutex that busy-loops, or spins, while waiting on a lock.
 // Spinning can reduce latency, but it can also waste clockcycles and
 // reduce performance.
 
