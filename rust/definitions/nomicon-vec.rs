@@ -148,8 +148,8 @@ impl<T> Vec<T> {
             None
         } else {
             self.len -= 1;
-            // To prevent uninitialized memory, "ptr::read" copies bits from target
-            // address and interprets those bits as type "T".
+            // To prevent uninitialized memory, "ptr::read" copies bits
+            // from target address and interprets those bits as type "T".
             unsafe { Some(ptr::read(self.ptr().add(self.len))) }
         }
     }
@@ -190,10 +190,6 @@ impl<T> Vec<T> {
     pub fn drain(&mut self) -> Drain<T> {
         unsafe {
             let iter = RawValIter::new(&self);
-
-            // This is a "mem::forget" safety thing. If Drain is forgotten, we just
-            // leak the whole Vec's contents. Also we need to do this *eventually*
-            // anyway, so why not do it now?
             self.len = 0;
 
             Drain {
@@ -212,7 +208,7 @@ impl<T> Drop for Vec<T> {
 }
 
 // Deref coercion grants "Vec" access to all the methods implemented
-// on an immutable "slice" reference.
+// on immutable "slice" references.
 impl<T> Deref for Vec<T> {
     type Target = [T];
     fn deref(&self) -> &[T] {
@@ -221,7 +217,7 @@ impl<T> Deref for Vec<T> {
 }
 
 // Deref coercion grants "Vec" access to all the methods implemented
-// on a mutable "slice" reference.
+// on mutable "slice" references.
 impl<T> DerefMut for Vec<T> {
     fn deref_mut(&mut self) -> &mut [T] {
         unsafe { std::slice::from_raw_parts_mut(self.ptr(), self.len) }
