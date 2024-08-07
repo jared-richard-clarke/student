@@ -230,6 +230,7 @@ impl<T> IntoIterator for Vec<T> {
     fn into_iter(self) -> IntoIter<T> {
         unsafe {
             let iter = RawValIter::new(&self);
+
             let buf = ptr::read(&self.buf);
             mem::forget(self);
 
