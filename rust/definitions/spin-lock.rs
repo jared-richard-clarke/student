@@ -10,7 +10,7 @@ use std::sync::atomic::Ordering::{Acquire, Release};
 
 pub struct SpinLock<T> {
     locked: AtomicBool,
-    // Data can be mutated, even though the spinlock itself is shared.
+    // Data can be mutated, even though the spinlock itself is shared by immutable reference.
     // Interior mutability is provided by "UnsafeCell".
     value: UnsafeCell<T>,
 }
