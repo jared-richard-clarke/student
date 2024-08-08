@@ -10,16 +10,23 @@ use std::sync::atomic::Ordering::{Acquire, Release};
 
 pub struct SpinLock<T> {
     locked: AtomicBool,
+    // Data can be mutated, even though the spinlock itself is shared.
+    // Interior mutability is provided by "UnsafeCell".
     value: UnsafeCell<T>,
 }
 
+// "UnsafeCell" does not automatically implement "Sync". We promise the compiler that
+// "UnsafeCell" is sychronisable as long its interior type implements "Send".
 unsafe impl<T> Sync for SpinLock<T> where T: Send {}
 
-// A lock guard is a special type that guarantees safe access to a locked lock.
+// "Guard" provides a safe interface to "SpinLock" by tying "Spinlock's" unlocking
+// mechanism to its "Drop" implementation. A "Guard" can only be created by calling
+// "lock" on "SpinLock", therefore "Guard" implies a locked "SpinLock".
 pub struct Guard<'a, T> {
     lock: &'a SpinLock<T>,
 }
 
+// Ensure "Guard" is "Sync" only when its internal type "T" is "Sync".
 unsafe impl<T> Sync for Guard<'_, T> where T: Sync {}
 
 impl<T> SpinLock<T> {
@@ -55,6 +62,7 @@ impl<T> DerefMut for Guard<'_, T> {
     }
 }
 
+// Hides the unsafe "unlock" operation.
 impl<T> Drop for Guard<'_, T> {
     fn drop(&mut self) {
         self.lock.locked.store(false, Release);
