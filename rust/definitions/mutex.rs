@@ -38,14 +38,13 @@ impl<T> DerefMut for MutexGuard<'_, T> {
 impl<T> Mutex<T> {
     pub const fn new(value: T) -> Self {
         Self {
-            state: AtomicU32::new(0), // unlocked state
+            state: AtomicU32::new(0),
             value: UnsafeCell::new(value),
         }
     }
 
     pub fn lock(&self) -> MutexGuard<T> {
         if self.state.compare_exchange(0, 1, Acquire, Relaxed).is_err() {
-            // The lock was already locked. :(
             lock_contended(&self.state);
         }
         MutexGuard { mutex: self }
@@ -75,4 +74,24 @@ impl<T> Drop for MutexGuard<'_, T> {
             wake_one(&self.mutex.state);
         }
     }
+}
+
+#[test]
+fn main() {
+    use std::thread;
+    use std::time::Instant;
+    let m = Mutex::new(0);
+    std::hint::black_box(&m);
+    let start = Instant::now();
+    thread::scope(|s| {
+        for _ in 0..4 {
+            s.spawn(|| {
+                for _ in 0..5_000_000 {
+                    *m.lock() += 1;
+                }
+            });
+        }
+    });
+    let duration = start.elapsed();
+    println!("locked {} times in {:?}", *m.lock(), duration);
 }
