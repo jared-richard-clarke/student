@@ -26,6 +26,7 @@ use std::ops::{Deref, DerefMut};
 use std::ptr::{self, NonNull};
 
 struct RawVec<T> {
+    // "NonNull" is covariant over "T". Pointer is never null.
     ptr: NonNull<T>,
     cap: usize,
 }
