@@ -183,7 +183,9 @@ The central type of the ~fmt~ module.
 | ~E~       | ~UpperExp~                          |
 
 #+begin_src rust
-  // Required type signature of all formatting traits.
+  // Required type signature of all formatting traits. Types that implement this
+  // method typically write formatted text into "Formatter" using the "write!" macro.
+  // Example: write!(formatter, "{}", self.field)
   fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error>;
 
   // A "Formatter" represents various options related to formatting. Users do not
