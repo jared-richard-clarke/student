@@ -99,7 +99,7 @@ The central type of the ~fmt~ module.
   }
 
   struct Arguments<'a> {
-      // Literal strings.
+      // String Literals.
       pieces: &'a [&'static str],
       // Placeholder specifications.
       placeholders: Option<&'a [Placeholder]>,
