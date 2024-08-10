@@ -2,9 +2,10 @@
 
 ** Sources
 
-| source                                      | author        |
-|---------------------------------------------+---------------|
-| *The Rust Standard Library*, version 1.80.0 | rust-lang.org |
+| source                                        | author        |
+|-----------------------------------------------+---------------|
+| *The Rust Standard Library*, version 1.80.0   | rust-lang.org |
+| *Behind the Scenes of Rust String Formatting* | Mara Bos      |
 
 ** Module ~fmt~
 
@@ -106,7 +107,8 @@ The central type of the ~fmt~ module.
       pieces: &'a [&'static str],
       // Formatting options and indices of the arguments to be formatted.
       placeholders: Option<&'a [Placeholder]>,
-      // The arguments to be formatted.
+      // Dynamic arguments for interpolation, to be interleaved with
+      // string pieces.
       args: &'a [Argument<'a>],
   }
 
@@ -142,6 +144,8 @@ The central type of the ~fmt~ module.
   }
 
   enum ArgumentType<'a> {
+    // A reference to the argument itself and the function pointer that implements
+    // a particular formatting trait.
     Placeholder { value: &'a Opaque, formatter: fn(&Opaque, &mut Formatter<'_>) -> Result },
     Count(usize),
   }
@@ -185,12 +189,12 @@ The central type of the ~fmt~ module.
 #+begin_src rust
   // Required type signature of all formatting traits. Types that implement this
   // method typically write formatted text into "Formatter" using the "write!" macro.
-  // Example: write!(formatter, "{}", self.field)
+  // Example: write!(formatter, "{:?}", self.field)
   fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error>;
 
-  // A "Formatter" represents various options related to formatting. Users do not
-  // construct "Formatter"s directly. A mutable reference to one is passed to
-  // the "fmt" method of all formatting traits, like "Debug" and "Display".
+  // "Formatter" acts as a text buffer containing optional methods
+  // for altering a particular type's textual representation according
+  // to arguments provided in a format string.
   struct Formatter<'a> {
       flags: u32,
       fill: char,
@@ -199,6 +203,44 @@ The central type of the ~fmt~ module.
       precision: Option<usize>,
 
       // A mutable reference to a trait object that implements "Write".
+      // A dynamic reference to a text buffer.
       buf: &'a mut (dyn Write + 'a),
+  }
+#+end_src
+
+** ~format_args!~ to ~Arguments~
+
+#+begin_src rust
+  // === Example 1 ===
+
+  format_args!("{0} {0:?} {1:x}", a, b)
+
+  // - expands ->
+
+  fmt::Arguments {
+      pieces: &["", " ", " "],
+      placeholders: None,
+      args: &[
+          fmt::Argument::new(&a, Display::fmt),
+          fmt::Argument::new(&a, Debug::fmt),
+          fmt::Argument::new(&b, LowerHex::fmt),
+      ],
+  }
+
+  // === Example 2 ===
+
+  format_args!("{0:?} {0:#?}", a)
+
+  // - expands ->
+
+  fmt::Arguments {
+    pieces: &["", " "],
+    placeholders: Some(&[
+        fmt::Placeholder { argument: 0, ..default() },
+        fmt::Placeholder { argument: 0, flags: 4 /* alternate */, ..default() },
+    ]),
+    args: &[
+        fmt::Argument::new(&a, Debug::fmt),
+    ],
   }
 #+end_src
