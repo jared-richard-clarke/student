@@ -16,9 +16,15 @@ order to format arguments at runtime into strings.
 
 - ~format!~ :: Creates a ~String~ using the interpolation of runtime expressions.
 
+- ~format(args: Arguments<'_>) -> String~ :: Function takes an ~Arguments~ struct
+  and returns the resulting formatted string.
+
 - ~write!~ and ~writeln!~ :: Writes a formatted string to a specified stream without
   intermediate allocations. Macro invokes the ~write_fmt~ function defined on
   the ~std::io::Write~ and ~std::fmt::Write~ traits.
+
+- ~write(output: &mut dyn Write, args: Arguments<'_>) -> Result<(), Error>~ :: Writes the contents
+  of an ~Arguments~ struct to the provided output stream that implements the ~Write~ trait.
 
 - ~print!~ and ~println!~ :: Writes a formatted string directly to ~stdout~.
 
