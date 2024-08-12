@@ -65,7 +65,7 @@ The core idea behind the borrow checker is that variables have three kinds of pe
 - *Own( O )*: data can be owned or dropped.
 
 By default a variable has *RO* permissions. *RWO* if prefaced by ~let mut~.
-References can temporarily remove these permissions to prevent undefined behavior.
+References temporarily remove select permissions to prevent undefined behavior.
 
 ** Paths
 
