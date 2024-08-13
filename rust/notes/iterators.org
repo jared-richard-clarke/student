@@ -2,10 +2,10 @@
 
 ** Sources
 
-| source                      | author        |
-|-----------------------------+---------------|
-| *The Rust Standard Library* | rust-lang.org |
-| *Why Async Rust?*           | srrrse        |
+| source                                      | author        |
+|---------------------------------------------+---------------|
+| *The Rust Standard Library*, version 1.80.1 | rust-lang.org |
+| *Why Async Rust?*                           | srrrse        |
 
 ** Iterator Core
 
@@ -38,6 +38,10 @@
 An iterator has a method, ~next~, which when called, returns an ~Option<Item>~.
 Calling ~next~ will return ~Some(Item)~ as long as there are elements, and once
 they’ve all been exhausted, will return ~None~ to indicate that iteration is finished.
+
+~Iterator~'s full definition includes a number of provided methods — 75 as of Rust 1.80.1 —
+that are defined in terms of ~next~. These methods are automatically provided to any data
+type that implements ~next~ as part of the ~Iterator~ trait.
 
 ** Three Forms of Iteration
 
