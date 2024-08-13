@@ -57,7 +57,7 @@ There is a corresponding ~struct~ for each iterator and iterator adapter in the
 ~std::iter~ module.
 
 #+begin_src rust
-  use std::iter::Iterator
+  use std::iter::Iterator;
 
   struct Counter {
       count: usize,
@@ -131,7 +131,7 @@ syntax, a data structure must be either an iterator or a collection that impleme
       result
   }
 
-  // === Counter: an iterator ===
+  // === Counter: implements "Iterator" ===
 
     let mut sum = 0;
     for count in Counter::new() {
