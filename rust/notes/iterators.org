@@ -30,7 +30,9 @@
 
 #+begin_src rust
   trait Iterator {
+      // The type of the elements being iterated over.
       type Item;
+      // Advances the iterator and returns the next value.
       fn next(&mut self) -> Option<Self::Item>;
   }
 #+end_src
