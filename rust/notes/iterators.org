@@ -40,7 +40,7 @@ Calling ~next~ will return ~Some(Item)~ as long as there are elements, and once
 they’ve all been exhausted, will return ~None~ to indicate that iteration is finished.
 
 ~Iterator~'s full definition includes a number of provided methods — 75 as of Rust 1.80.1 —
-that are defined in terms of ~next~. These methods are automatically provided to any data
+that are defined in terms of ~next~. These methods are provided automatically to any data
 type that implements ~next~ as part of the ~Iterator~ trait.
 
 ** Three Forms of Iteration
