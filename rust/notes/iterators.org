@@ -192,7 +192,7 @@ where ~into_iter~ delegates to ~iter_mut()~.
 ** Adapters
 
 Functions which take an ~Iterator~ and return another ~Iterator~, such as ~map~, ~take~,
-and ~filter~.
+and ~filter~. Each adapter transforms the output of ~next~.
 
 #+begin_src rust
   let mut counter = Counter::new().map(|x| x * 2);
