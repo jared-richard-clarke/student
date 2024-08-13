@@ -170,6 +170,25 @@ This means two things:
   }
 #+end_src
 
+To iterate over a collection without consuming it, many collections offer methods that
+provide iterators over references, conventionally called ~iter()~ and ~iter_mut()~.
+
+A collection ~X~ that provides ~into_iter()~ might also implement ~IntoIterator~ for ~&X~,
+where ~into_iter()~ delegates to ~iter()~. It might also implement ~IntoIterator~ for ~&mut X~,
+where ~into_iter~ delegates to ~iter_mut()~.
+
+#+begin_src rust
+  let values = vec![1, 2, 3];
+  for x in &values { // - equivalent -> "values.iter()"
+      println!("{x}");
+  }
+  
+  let mut values = vec![1, 2, 3];
+  for x in &mut values { // - equivalent -> "values.iter_mut()"
+      *x += 1;
+  }
+#+end_src
+
 ** Adapters
 
 Functions which take an ~Iterator~ and return another ~Iterator~, such as ~map~, ~take~,
