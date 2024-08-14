@@ -232,8 +232,8 @@ The central type of the ~fmt~ module.
   fmt::Arguments {
     pieces: &["", " "],
     placeholders: Some(&[
-        fmt::Placeholder { argument: 0, ..default() },
-        fmt::Placeholder { argument: 0, flags: 4 /* alternate */, ..default() },
+        fmt::Placeholder { position: 0, ..default() },
+        fmt::Placeholder { position: 0, flags: 4 /* alternate */, ..default() },
     ]),
     args: &[
         fmt::Argument::new(&a, Debug::fmt),
