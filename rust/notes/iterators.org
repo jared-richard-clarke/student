@@ -100,7 +100,7 @@ There is a corresponding ~struct~ for each iterator and iterator adapter in the
   assert_eq!(18, sum);
 #+end_src
 
-** ~for~ loops and ~IntoIterator~
+** The ~for~ Loop Syntax and ~IntoIterator~
 
 Rust's ~for~ loop is syntactic sugar for producing and using iterators. In order to use this
 syntax, a data structure must be either an iterator or a collection that implements the
