@@ -91,7 +91,7 @@ There is a corresponding ~struct~ for each iterator and iterator adapter in the
   assert_eq!(counter.next(), Some(3));
   assert_eq!(counter.next(), None);
 
-  let sum: u32 = Counter::new()
+  let sum: usize = Counter::new()
       .zip(Counter::new().skip(1))
       .map(|(a, b)| a * b)
       .filter(|x| x % 3 == 0)
