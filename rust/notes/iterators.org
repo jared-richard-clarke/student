@@ -211,6 +211,45 @@ and ~filter~. Each adapter transforms the output of ~next~.
   assert_eq!(counter.next(), None);
 #+end_src
 
+*** Map Adapter
+
+#+begin_src rust
+  // "map" function as provided by the "Iterator" trait.
+  fn map<B, F>(self, f: F) -> Map<Self, F>
+  where
+      Self: Sized,
+      F: FnMut(Self::Item) -> B,
+  {
+      Map::new(self, f)
+  }
+
+  // "Map" struct as created by the "map" function.
+  struct Map<I, F> {
+      iter: I,
+      f: F,
+  }
+
+  impl<I, F> Map<I, F> {
+      fn new(iter: I, f: F) -> Map<I, F> {
+          Map { iter, f }
+      }
+    }
+  }
+
+  impl<B, I: Iterator, F> Iterator for Map<I, F>
+  where
+      F: FnMut(I::Item) -> B,
+  {
+      type Item = B;
+
+      fn next(&mut self) -> Option<B> {
+          // "map" as implemented for "Option". If "Some(x)" then return "Some(f(x))".
+          // Otherwise return "None".
+          self.iter.next().map(&mut self.f)
+      }
+  }
+#+end_src
+
 ** Infinity
 
 Because iterators are lazily evaluated, they can be infinite in range.
