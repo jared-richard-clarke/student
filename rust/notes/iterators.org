@@ -214,7 +214,7 @@ and ~filter~. Each adapter transforms the output of ~next~.
 *** Map Adapter
 
 #+begin_src rust
-  // "map" function as provided by the "Iterator" trait.
+  // The "map" method as provided by the "Iterator" trait.
   fn map<B, F>(self, f: F) -> Map<Self, F>
   where
       Self: Sized,
@@ -223,7 +223,7 @@ and ~filter~. Each adapter transforms the output of ~next~.
       Map::new(self, f)
   }
 
-  // "Map" struct as created by the "map" function.
+  // "Map" struct as created by the "map" method.
   struct Map<I, F> {
       iter: I,
       f: F,
@@ -246,6 +246,46 @@ and ~filter~. Each adapter transforms the output of ~next~.
           // "map" as implemented for "Option". If "Some(x)" then return "Some(f(x))".
           // Otherwise return "None".
           self.iter.next().map(&mut self.f)
+      }
+  }
+#+end_src
+
+*** Take Adapter
+
+#+begin_src rust
+  // The "take" method as provided by the "Iterator" trait.
+  fn take(self, n: usize) -> Take<Self>
+  where
+      Self: Sized,
+  {
+      Take::new(self, n)
+  }
+
+  // The "Take" struct as created by the "take" method.
+  struct Take<I> {
+      iter: I,
+      n: usize,
+  }
+
+  impl<I> Take<I> {
+      fn new(iter: I, n: usize) -> Take<I> {
+          Take { iter, n }
+      }
+  }
+
+  impl<I> Iterator for Take<I>
+  where
+      I: Iterator,
+  {
+      type Item = <I as Iterator>::Item;
+
+      fn next(&mut self) -> Option<<I as Iterator>::Item> {
+          if self.n != 0 {
+              self.n -= 1;
+              self.iter.next()
+          } else {
+              None
+          }
       }
   }
 #+end_src
