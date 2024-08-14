@@ -4,7 +4,7 @@
 
 | source                                        | author        |
 |-----------------------------------------------+---------------|
-| *The Rust Standard Library*, version 1.80.0   | rust-lang.org |
+| *The Rust Standard Library*, version 1.80.1   | rust-lang.org |
 | *Behind the Scenes of Rust String Formatting* | Mara Bos      |
 
 ** Module ~fmt~
