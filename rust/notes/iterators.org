@@ -290,6 +290,34 @@ and ~filter~. Each adapter transforms the output of ~next~.
   }
 #+end_src
 
+** Fold Method
+
+A method provided by the ~Iterator~ trait, ~fold~ combines every element into an accumulator
+by repeatedly applying a closure that takes the accumulator and the next element in the iterator.
+Returns the accumulated value once the iterator is exhausted.
+
+#+begin_src rust
+  // The "fold" method as provided by the "Iterator" trait.
+  fn fold<B, F>(mut self, init: B, mut f: F) -> B
+  where
+      Self: Sized,
+      F: FnMut(B, Self::Item) -> B,
+  {
+      let mut accum = init;
+      while let Some(x) = self.next() {
+          accum = f(accum, x);
+      }
+      accum
+  }
+
+  // === Example ===
+  let xs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+  let sum = xs.iter().fold(0, |acc, x| acc + x);
+
+  assert_eq!(sum, 55);
+#+end_src
+
 ** Infinity
 
 Because iterators are lazily evaluated, they can be infinite in range.
