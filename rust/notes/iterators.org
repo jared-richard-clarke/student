@@ -96,14 +96,14 @@ There is a corresponding ~struct~ for each iterator and iterator adapter in the
       .map(|(a, b)| a * b)
       .filter(|x| x % 3 == 0)
       .sum();
-  
+
   assert_eq!(18, sum);
 #+end_src
 
 ** The ~for~ Loop Syntax and ~IntoIterator~
 
 Rust's ~for~ loop is syntactic sugar for producing and using iterators. In order to use this
-syntax, a data structure must be either an iterator or a collection that implements the
+syntax, a data structure must either be an iterator or a collection that implements the
 ~IntoIterator~ trait.
 
 #+begin_src rust
@@ -184,7 +184,7 @@ where ~into_iter~ delegates to ~iter_mut()~.
   for x in &values { // - equivalent -> "values.iter()"
       println!("{x}");
   }
-  
+
   let mut values = vec![1, 2, 3];
   for x in &mut values { // - equivalent -> "values.iter_mut()"
       *x += 1;
@@ -212,6 +212,8 @@ and ~filter~. Each adapter transforms the output of ~next~.
 #+end_src
 
 *** Map Adapter
+
+An iterator that calls a given closure on each element of the underlying iterator.
 
 #+begin_src rust
   // The "map" method as provided by the "Iterator" trait.
@@ -252,6 +254,8 @@ and ~filter~. Each adapter transforms the output of ~next~.
 
 *** Take Adapter
 
+An iterator that yields the first ~n~ elements, or fewer if the underlying iterator ends sooner.
+
 #+begin_src rust
   // The "take" method as provided by the "Iterator" trait.
   fn take(self, n: usize) -> Take<Self>
@@ -290,7 +294,83 @@ and ~filter~. Each adapter transforms the output of ~next~.
   }
 #+end_src
 
-** Fold Method
+*** Filter Adapter
+
+An iterator which uses a closure to determine if an element of the underlying iterator should be yielded.
+
+#+begin_src rust
+  // The "filter" method as provided by the "Iterator" trait.
+  fn filter<P>(self, predicate: P) -> Filter<Self, P>
+  where
+      Self: Sized,
+      P: FnMut(&Self::Item) -> bool,
+  {
+      Filter::new(self, predicate)
+  }
+
+  // The "Filter" struct as created by the "filter" method.
+  struct Filter<I, P> {
+      iter: I,
+      predicate: P,
+  }
+  
+  impl<I, P> Filter<I, P> {
+      fn new(iter: I, predicate: P) -> Filter<I, P> {
+          Filter { iter, predicate }
+      }
+  }
+
+  impl<I: Iterator, P> Iterator for Filter<I, P>
+  where
+      P: FnMut(&I::Item) -> bool,
+  {
+      type Item = I::Item;
+
+      fn next(&mut self) -> Option<I::Item> {
+          self.iter.find(&mut self.predicate)
+      }
+  }
+
+  // Method provided by the "Iterator" trait.
+  // "find" searches for an element of an iterator that satisfies the given predicate.
+  // Method is short-circuiting, ceasing iteration once predicate returns "true".
+  fn find<P>(&mut self, predicate: P) -> Option<Self::Item>
+  where
+      Self: Sized,
+      P: FnMut(&Self::Item) -> bool,
+  {
+      fn check<T>(mut predicate: impl FnMut(&T) -> bool) -> impl FnMut((), T) -> ControlFlow<T> {
+          move |(), x| {
+              if predicate(&x) { ControlFlow::Break(x) } else { ControlFlow::Continue(()) }
+          }
+      }
+
+      // "break_value()" converts the "ControlFlow" enum into an "Option" enum,
+      // which is "Some" if the "ControlFlow" was "Break" and "None" otherwise.
+      self.try_fold((), check(predicate)).break_value()
+  }
+
+  // Method provided by the "Iterator" trait.
+  // "try_fold" is similar to "fold" but short-circuits, propagating errors back to the caller.
+  fn try_fold<B, F, R>(&mut self, init: B, mut f: F) -> R
+  where
+      Self: Sized,
+      F: FnMut(B, Self::Item) -> R,
+      R: Try<Output = B>,
+  {
+      let mut accum = init;
+      while let Some(x) = self.next() {
+          accum = f(accum, x)?;
+      }
+      try { accum }
+  }
+#+end_src
+
+** General ~Iterator~ Trait Methods
+
+Not all methods provided by the ~Iterator~ trait return adapters.
+
+*** Fold Method
 
 A method provided by the ~Iterator~ trait, ~fold~ combines every element into an accumulator
 by repeatedly applying a closure that takes the accumulator and the next element in the iterator.
@@ -318,7 +398,7 @@ Returns the accumulated value once the iterator is exhausted.
   assert_eq!(sum, 55);
 #+end_src
 
-** For-Each Method
+*** For-Each Method
 
 A method provided by the ~Iterator~ trait, ~for_each~ calls a closure on each element of an iterator.
 This is equivalent to using a ~for~ loop, although ~break~ and ~continue~ are not possible from
