@@ -318,6 +318,31 @@ Returns the accumulated value once the iterator is exhausted.
   assert_eq!(sum, 55);
 #+end_src
 
+** For-Each Method
+
+A method provided by the ~Iterator~ trait, ~for_each~ calls a closure on each element of an iterator.
+This is equivalent to using a ~for~ loop, although ~break~ and ~continue~ are not possible from
+within the closure.
+
+#+begin_src rust
+  fn for_each<F>(self, f: F)
+  where
+      Self: Sized,
+      F: FnMut(Self::Item),
+  {
+      fn call<T>(mut f: impl FnMut(T)) -> impl FnMut((), T) {
+          move |(), item| f(item)
+      }
+
+      self.fold((), call(f));
+  }
+
+  // === Example ===
+  let xs = [1, 2, 3];
+
+  xs.iter().for_each(|x| println!("{x}"));
+#+end_src
+
 ** Infinity
 
 Because iterators are lazily evaluated, they can be infinite in range.
