@@ -111,7 +111,7 @@ The central type of the ~fmt~ module.
   struct Arguments<'a> {
       // String Literals.
       pieces: &'a [&'static str],
-      // Placeholder specifications.
+      // Placeholder specifications. "None" if all specs are default.
       placeholders: Option<&'a [Placeholder]>,
       // Dynamic arguments for interpolation, to be interleaved with
       // string literals.
