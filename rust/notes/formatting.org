@@ -150,8 +150,8 @@ The central type of the ~fmt~ module.
   }
 
   enum ArgumentType<'a> {
-    // A reference to the argument itself and the function pointer that implements
-    // a particular formatting trait.
+    // Contains two pointers: a reference to the argument itself and
+    // a function pointer that implements a particular formatting trait.
     Placeholder { value: &'a Opaque, formatter: fn(&Opaque, &mut Formatter<'_>) -> Result },
     Count(usize),
   }
