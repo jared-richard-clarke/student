@@ -108,6 +108,7 @@ The central type of the ~fmt~ module.
       ($fmt:expr, $($args:tt)*) => {{ /* compiler built-in */ }};
   }
 
+  // A safely precompiled version of a format string and its arguments.
   struct Arguments<'a> {
       // String Literals.
       pieces: &'a [&'static str],
