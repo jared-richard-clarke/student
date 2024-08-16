@@ -31,7 +31,7 @@ Provides utilities for formatting and printing ~Strings~.
   formatted string. All macros in the format family are implemented in terms of ~format_args!~.
 
 #+begin_quote
-  "The provided write_fmt method simply calls ~std::fmt::write()~, which is the only function
+  "The provided ~write_fmt~ method simply calls ~std::fmt::write()~, which is the only function
    that knows how to "execute" the formatting instructions contained in a ~fmt::Arguments~ type.
    It calls ~write_str~ for the static parts of the template, and it will call the right
    ~Display::fmt~ (or ~LowerHex::fmt~, etc.) functions for the arguments, which will also result
