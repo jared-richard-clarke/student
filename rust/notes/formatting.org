@@ -104,7 +104,7 @@ The central type of the ~fmt~ module.
       // Placeholder specifications.
       placeholders: Option<&'a [Placeholder]>,
       // Dynamic arguments for interpolation, to be interleaved with
-      // string pieces.
+      // string literals.
       args: &'a [Argument<'a>],
   }
 
