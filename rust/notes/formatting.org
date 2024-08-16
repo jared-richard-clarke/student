@@ -30,6 +30,16 @@ Provides utilities for formatting and printing ~Strings~.
 - ~format_args!~ :: A macro used to safely pass around an opaque object describing a
   formatted string. All macros in the format family are implemented in terms of ~format_args!~.
 
+#+begin_quote
+  "The provided write_fmt method simply calls ~std::fmt::write()~, which is the only function
+   that knows how to "execute" the formatting instructions contained in a ~fmt::Arguments~ type.
+   It calls ~write_str~ for the static parts of the template, and it will call the right
+   ~Display::fmt~ (or ~LowerHex::fmt~, etc.) functions for the arguments, which will also result
+   in calls to ~write_str~ down the line."
+
+  — *Behind the Scenes of Rust String Formatting*, Mara Bos
+#+end_quote
+
 #+begin_src rust
   macro_rules! format {
       ($($arg::tt)*) => {{
@@ -191,6 +201,9 @@ The central type of the ~fmt~ module.
   // "Formatter" acts as a text buffer containing optional methods
   // for altering a particular type's textual representation according
   // to arguments provided in a format string.
+  //
+  // A "Formatter" is created internally by functions such as "write". Its fields
+  // are typically filled in by an "Arguments" struct.
   struct Formatter<'a> {
       flags: u32,
       fill: char,
