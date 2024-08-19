@@ -379,7 +379,9 @@ such as offset addition and subtraction. They have state, including a dedicated 
 
 - Array and pointer access are the same. ~A[i]~ is equivalent to ~*(A + 1)~
 
-- array-to-pointer decay :: Evaluation of an array ~A~ returns ~&A[0]~.
+- array-to-pointer decay :: Evaluation of an array ~A~ returns ~&A[0]~. Whenever an array
+  occurs that requires a value, it decays to a pointer and all additional information is
+  lost.
 
 - For structs, operations ~(*object).x~ and ~object->x~ are equivalent.
 
