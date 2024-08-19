@@ -1,0 +1,202 @@
+* Async Await in Rust
+
+** Sources
+
+| source                                  | author         |
+|-----------------------------------------+----------------|
+| *Understanding Async Await in Rust*     | eventhelix.com |
+| *Rust Standard Library*, version 1.80.1 | rust-lang.org  |
+
+** The Future Trait
+
+#+begin_src rust
+  // "The core method of future, poll, attempts to resolve the future into a final value.
+  //  This method does not block if the value is not ready. Instead, the current task is
+  //  scheduled to be woken up when it’s possible to make further progress by polling again.
+  //  The context passed to the poll method can provide a Waker, which is a handle for
+  //  waking up the current task.
+  //
+  //  When using a future, you generally won’t call poll directly, but instead
+  //  .await the value."
+  //
+  // — The Rust Standard Library
+
+  pub trait Future {
+      type Output;
+
+      // Required method
+      fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output>;
+  }
+#+end_src
+
+** Futures and Async
+
+#+begin_src rust
+  #[derive(Default)]
+  struct Unit {
+      // The 1-D position of the unit. In a real game, it would be 2D or 3D.
+      pub pos: i32,
+  }
+  type UnitRef = Rc<RefCell<Unit>>;
+
+  // A future that will move the unit towards "target_pos" at each step,
+  // and complete when the unit has reached that position.
+  struct UnitGotoFuture {
+      unit: UnitRef,
+      target_pos: i32,
+  }
+  impl Future for UnitGotoFuture {
+      type Output = ();
+      fn poll(self: Pin<&mut Self>, _cx: &mut Context) -> Poll<Self::Output> {
+          let unit_pos = self.unit.borrow().pos;
+          if unit_pos == self.target_pos {
+              Poll::Ready(())
+          } else {
+              self.unit.borrow_mut().pos += (self.target_pos - unit_pos).signum();
+              Poll::Pending
+          }
+      }
+  }
+
+  // Helper async function to write unit behavior.
+  async fn goto(unit: UnitRef, pos: i32) {
+      UnitGotoFuture {
+          unit,
+          target_pos: pos,
+      }
+      .await;
+  }
+#+end_src
+
+** Async Desugared
+
+#+begin_src rust
+  // The state machine enum defines three states for the "goto" function:
+  // 1. Start: The initial state, where the function is called with the unit and target position.
+  // 2. Waiting: The state where the function is waiting for the "UnitGotoFuture" to complete.
+  // 3. Done: The final state, where the function has been completed.
+
+  #[repr(u8)]
+  enum GotoFuture {
+      // Initial state
+      Start(UnitRef, i32) = 0,
+      // Waiting for UnitGotoFuture to complete
+      Waiting(UnitGotoFuture) = 3,
+      // Final state
+      Done = 1,
+  }
+
+  impl Future for GotoFuture {
+      type Output = ();
+
+      // The "Future's" poll method will be called by the async executor to check if the future
+      // is ready and if the execution can continue.
+      fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+          // The loop is used to transition between states
+          loop {
+              match &mut *self {
+                  // Start (0): In the start state, create a "UnitGotoFuture" and move to the waiting state.
+                  GotoFuture::Start(unit, pos) => {
+                      let fut = UnitGotoFuture { unit: unit.clone(), target_pos: *pos };
+                      *self = GotoFuture::Waiting(fut);
+                  }
+                  // Waiting (3): In the waiting state, poll the "UnitGotoFuture"
+                  // and move to the done state if it's ready.
+                  GotoFuture::Waiting(ref mut fut) => {
+                      match Pin::new(fut).poll(cx) {
+                          Poll::Ready(()) => *self = GotoFuture::Done,
+                          Poll::Pending => return Poll::Pending,
+                      }
+                  }
+                  // Done (1): In the done state, return ready.
+                  GotoFuture::Done => return Poll::Ready(()),
+              }
+          }
+      }
+  }
+
+  // The original async function is equivalent to creating a new
+  // "GotoFuture" instance in the start state.
+  fn goto(unit: UnitRef, pos: i32) -> impl Future<Output = ()> {
+      GotoFuture::Start(unit, pos)
+  }
+#+end_src
+
+** The State Machine
+
+#+begin_example
+                      +--------------------------------------------+
+                      | Start(0)                                   |
+                      |--------------------------------------------|
+                      | Invoked, but has not hit an "await" point. |
+                      +--------------------------------------------+
+                         /                                      |
+                        / "await"                               |
+                       /                                        |
+                      V                                         |
+  +------------------------------------------+                  |
+  | Waiting(3)                               |--+               |
+  |------------------------------------------|  | unresolved    | resolved
+  | UnitGotoFuture{ unit, target_pos }.await |<-+               |
+  +------------------------------------------+                  |
+                       \                                        |
+                        \ resolved                              |
+                         \                                      |
+                          V                                     V
+                      +--------------------------------------------+
+                      | Done(1)                                    |
+                      |--------------------------------------------|
+                      | The future is resolved as "unit" has       |
+                      | reached "target_pos".                      |
+                      +--------------------------------------------+
+#+end_example
+
+** The Executor
+
+#+begin_example
+  +----------+                  +-------------+
+  | executor |                  | goto_future |
+  +----------+                  +-------------+
+       |                               |
+       |                    +----------------------+
+       |                    | env.state = Start(0) |
+       |                    +----------------------+
+       |                               |
+       | -- 1. poll(env, context) --> +-+
+       |                              | |
+       |                         +------------+
+       |                         | resolved?  |
+       |                         +------------+
+       |                              | |
+       |                         +------------+
+       |                         | unresolved |
+       |                         +------------+
+       |                              | |
+       |                    +------------------------+
+       |                    | env.state = Waiting(3) |
+       |                    +------------------------+
+       |                              | |
+       | <- 2. return Poll::Pending - +-+
+       |                               |
+       |                               |
+       | -- 3. poll(env, context) --> +-+
+       |                              | |
+       |                         +------------+
+       |                         | resolved?  |
+       |                         +------------+
+       |                              | |
+       |                         +------------+
+       |                         | resolved   |
+       |                         +------------+
+       |                              | |
+       |                     +---------------------+
+       |                     | env.state = Done(1) |
+       |                     +---------------------+
+       |                              | |
+       | <- 4. return Poll::Ready --- +-+
+       |                               |
+       V                               V
+  +----------+                  +-------------+
+  | executor |                  | goto_future |
+  +----------+                  +-------------+
+#+end_example
