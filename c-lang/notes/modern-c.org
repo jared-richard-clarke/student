@@ -402,7 +402,7 @@ such as offset addition and subtraction. They have state, including a dedicated 
 - The function call operator ~(...)~ applies to function pointers.
 
 In terms of the abstract state machine, pointer decay is always performed, and a function
-is always called via a function pointer.
+is always called via a function pointer:
 
 #+begin_src c
   double f(double x);
