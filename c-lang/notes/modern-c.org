@@ -479,8 +479,8 @@ is always called via a function pointer:
 
 - ~sizeof(char)~ is ~1~ by definition.
 
-- Every object ~A~ can be viewed as ~(unsigned|signed)? char[sizeof A]~. All objects can
-  be inspected and manipulated as if they were arrays of a particular character type.
+- Every object ~A~ can be viewed as ~unsigned char[sizeof A]~. All objects can be inspected
+  and manipulated as if they were arrays of a particular character type.
 
 #+begin_example
   === Two's Complement Signed Representation — Little Endian Object Representation ===
@@ -502,7 +502,7 @@ is always called via a function pointer:
                                          +------------------------------+
                                                         |
                                                         |
-                                              sign representation
+                                               sign representation
                                                         |
                                   [3]           [2]     |     [1]         [0]
                             +-------------+-------------+------------+-----------+
@@ -515,10 +515,14 @@ is always called via a function pointer:
                                [0]             [1]      |      [2]             [3]
                         +---------------+---------------+---------------+---------------+
   Object Representation | unsigned char | unsigned char | unsigned char | unsigned char |
-       unsigned char[4] +---------------+---------------+---------------+---------------+
-                                |               |               |               |
                         +---------------+---------------+---------------+---------------+
-                        | byte          | byte          | byte          | byte          |
+       unsigned char[4]  +0     |        +1     |        +2     |        +3     |
+                        +---------------+---------------+---------------+---------------+
+       Storage Instance | byte          | byte          | byte          | byte          |
+                        +---------------+---------------+---------------+---------------+
+                  void*  +0     |        +1     |        +2     |        +3     |
+                        +---------------+---------------+---------------+---------------+
+     OS/Physical Memory | byte          | byte          | byte          | byte          |
                         +---------------+---------------+---------------+---------------+
 #+end_example
 
