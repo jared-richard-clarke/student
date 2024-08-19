@@ -257,7 +257,9 @@ such as offset addition and subtraction. They have state, including a dedicated 
   whereas a null pointer will crash a program. This null pointer behavior is considered
   a feature.
 
-- A valid pointer points to the first element of an array of the reference type.
+- A valid pointer points to the first element of an array of its reference type.
+  In other words, a pointer may reference either a single value in memory or an
+  array of unknown length *n*.
 
 #+begin_src c
   void swap(double* p1, double* p2) {
