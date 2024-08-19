@@ -477,8 +477,10 @@ is always called via a function pointer:
   types that by definition use exactly one byte of memory: the character type ~char~,
   ~unsigned char~, and ~signed char~.
 
+- ~sizeof(char)~ is ~1~ by definition.
 
-- Every object ~A~ can be viewed as ~unsigned char[sizeof A]~.
+- Every object ~A~ can be viewed as ~(unsigned|signed)? char[sizeof A]~. All objects can
+  be inspected and manipulated as if they were arrays of a particular character type.
 
 #+begin_example
   === Two's Complement Signed Representation — Little Endian Object Representation ===
