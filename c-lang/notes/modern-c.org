@@ -243,7 +243,7 @@ such as offset addition and subtraction. They have state, including a dedicated 
 
 - Pointers are either valid, null, or indeterminate.
 
-- Initialization or assignment with 0 makes a pointer null.
+- Initialization or assignment with ~0~ makes a pointer null.
 
 - In logical expressions, pointers evaluate to ~false~ if they are null.
 
