@@ -236,7 +236,12 @@ The term *pointer* stands for a special derived type construct that "points" or 
 something. Pointers are considered scalar values: arithmetic operations are defined for them,
 such as offset addition and subtraction. They have state, including a dedicated null state.
 
-- Pointers are valid, null, or indeterminate.
+- ~*~ (object-of) operator :: In a declaration, the operator declares a new pointer type.
+  In an expression, the operator accesses an object to which a pointer refers.
+
+- ~&~ (address-of) operator :: Refers to an object through its address.
+
+- Pointers are either valid, null, or indeterminate.
 
 - Initialization or assignment with 0 makes a pointer null.
 
