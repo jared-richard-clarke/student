@@ -399,6 +399,22 @@ such as offset addition and subtraction. They have state, including a dedicated 
 - Function pointers must be used with their exact type. The calling conventions for functions
   with different prototypes may be quite different and the pointer itself tracks none of this.
 
+- The function call operator ~(...)~ applies to function pointers.
+
+In terms of the abstract state machine, pointer decay is always performed, and a function
+is always called via a function pointer.
+
+#+begin_src c
+  double f(double x);
+
+  // Equivalent calls to "f". Steps in the abstract state machine.
+  f(7);     // Decay -> call
+  (&f)(7);  // Address of -> call
+  (*f)(7);  // Decay -> dereference -> decay -> call
+  (*&f)(7); // Address of -> dereference -> decay -> call
+  (&*f)(7); // Decay -> dereference -> address of -> call
+#+end_src
+
 *** Structures
 
 #+begin_src c
