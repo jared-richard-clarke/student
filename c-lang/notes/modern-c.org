@@ -396,7 +396,8 @@ such as offset addition and subtraction. They have state, including a dedicated 
 - function decay :: A function ~f~ without a following opening ~(~ decays to a pointer to
   its start.
 
-- Function pointers must be used with their exact type.
+- Function pointers must be used with their exact type. The calling conventions for functions
+  with different prototypes may be quite different and the pointer itself tracks none of this.
 
 *** Structures
 
