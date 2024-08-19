@@ -365,6 +365,16 @@ such as offset addition and subtraction. They have state, including a dedicated 
 - Don't use ~NULL~. It hides more than it clarifies. Use ~0~. Use the sequence
   ~(void*)0~ for pointers.
 
+| ~NULL~ expansion      | type               |
+|-----------------------+--------------------|
+| ~0U~                  | unsigned           |
+| ~0~, ~'\0'~, ~enum 0~ | signed             |
+| ~0UL~                 | unsigned long      |
+| ~0L~                  | signed long        |
+| ~0ULL~                | unsigned long long |
+| ~0LL~                 | signed long long   |
+| ~(void*)0~            | void*              |
+
 - Don't hide pointers in a ~typedef~.
 
 - Array and pointer access are the same. ~A[i]~ is equivalent to ~*(A + 1)~
