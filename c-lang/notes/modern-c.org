@@ -333,6 +333,12 @@ such as offset addition and subtraction. They have state, including a dedicated 
     }
     return sum;
   }
+
+  // === Side Note ===
+  // When manipulating arrays through functions, array notation should be preferred.
+  // Such conventions clarify the relationship between length and pointer arguments.
+  //
+  // double sum(size_t length, double const a[length]);
 #+end_src
 
 - The length of an array object cannot be reconstructed from a pointer.
