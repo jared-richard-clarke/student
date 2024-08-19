@@ -381,6 +381,8 @@ such as offset addition and subtraction. They have state, including a dedicated 
 
 - array-to-pointer decay :: Evaluation of an array ~A~ returns ~&A[0]~.
 
+- For structs, operations ~(*object).x~ and ~object->x~ are equivalent.
+
 - In a function declaration, any array parameter rewrites to a pointer.
 
 - Only the innermost dimension of an array parameter is rewritten. ~A[x][y]~ becomes ~(*A)[y]~.
