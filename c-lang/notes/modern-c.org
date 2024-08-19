@@ -362,8 +362,8 @@ such as offset addition and subtraction. They have state, including a dedicated 
 
 - A pointer must point to a valid object or one position beyond a valid object or be null.
 
-- Don't use ~NULL~. It hides more than it clarifies. Use ~0~. Use the sequence
-  ~(void*)0~ for pointers.
+- Don't use ~NULL~. It hides more than it clarifies. Generally, use ~0~. Otherwise, use
+  the sequence ~(void*)0~ for pointers.
 
 | ~NULL~ expansion      | type               |
 |-----------------------+--------------------|
