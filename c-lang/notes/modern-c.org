@@ -526,8 +526,6 @@ is always called via a function pointer:
                         +---------------+---------------+---------------+---------------+
 #+end_example
 
-- Pointers to character types are special.
-
 - Use the type ~char~ for character and string data.
 
 - Use the type ~unsigned char~ as the atom of all object types.
