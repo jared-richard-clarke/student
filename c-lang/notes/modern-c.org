@@ -551,8 +551,9 @@ The object representation ~unsigned char[sizeof A]~ of object ~A~ provides acces
 memory that is stripped of its original type information. C has a tool to handle such
 pointers more generically. These are pointers to non-type ~void~.
 
-- Any object pointer converts to and from ~void*~. Object pointers are considered separate
-  from function pointers.
+- Any object pointer converts to and from ~void*~. Think of a ~void*~ pointer that holds the
+  address of an existing object as a pointer into a storage instance that holds that object.
+  Object pointers are considered separate from function pointers.
 
 - An object has storage, type, and value.
 
