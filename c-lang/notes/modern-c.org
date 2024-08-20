@@ -560,6 +560,8 @@ pointers more generically. These are pointers to non-type ~void~.
 - Converting an object pointer to ~void*~ and then back to the same type is the identity
   operation. Converting to ~void*~ loses the type information, but the value remains intact.
 
+- Casting :: ~(T)X~ casts an expression of type ~X~ to type ~T~.
+
 #+begin_quote
   "In addition to the implicit conversions that we have seen until now, C also allows us to
    convert explicitly using casts. With a cast, you are telling the compiler that you know
@@ -570,6 +572,10 @@ pointers more generically. These are pointers to non-type ~void~.
 
   — Jens Gustedt
 #+end_quote
+
+- Effective Types :: To cope with the different views of the same object that pointers may provide,
+  C has introduced the concept of effective types, which heavily restricts how an object can be
+  accessed.
 
 - Objects must be accessed through their effective type or through a pointer to a character type.
 
