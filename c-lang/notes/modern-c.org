@@ -588,8 +588,9 @@ pointers more generically. These are pointers to non-type ~void~.
   pointer to a character type. Any object can be seen as being composed of ~unsigned char~,
   but no array of unsigned chars can be used through another type.
 
-- Memory can be aligned differently according to the need for a specific data type. In particular,
-  not all arrays of ~unsigned char~ can be used to represent any object type.
+- Memory can be aligned differently according to the need for a specific data type.
+  Most non-character types must start at a particular byte position — usually a word boundary.
+  Only particular arrays of ~unsigned char~ can represent particular object types.
 
 ** Storage
 
