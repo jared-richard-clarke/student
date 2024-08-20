@@ -574,7 +574,7 @@ pointers more generically. These are pointers to non-type ~void~.
 #+end_quote
 
 - Effective Types :: To cope with the different views of the same object that pointers may provide,
-  C has introduced the concept of effective types, which heavily restricts how an object can be
+  C has introduced the concept of effective types, which heavily restrict how an object can be
   accessed.
 
 - Objects must be accessed through their effective type or through a pointer to a character type.
