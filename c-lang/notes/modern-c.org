@@ -573,6 +573,9 @@ pointers more generically. These are pointers to non-type ~void~.
 
 - Objects must be accessed through their effective type or through a pointer to a character type.
 
+- Any member of an object that has an effective ~union~ type can be accessed at any time, provided
+  the byte representation amounts to a valid value of the access type.
+
 - The effective type of a variable or compound literal is the type of its declaration.
 
 - Variables and compound literals must be accessed through their declared type or through a
