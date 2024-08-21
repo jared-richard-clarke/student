@@ -1,6 +1,10 @@
 * Strings in C
 
-*Strings in C*, Systems Encyclopedia
+** Sources
+
+| source         | author               |
+|----------------+----------------------|
+| *Strings in C* | Systems Encyclopedia |
 
 C does not feature an explicit string type. Instead, they are strictly represented as character arrays
 terminated with a null byte, ~\0~ or ~NUL~.
