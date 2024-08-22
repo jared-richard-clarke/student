@@ -615,7 +615,7 @@ interpretation as objects. They only acquire a type after something is stored in
   can even be harmful when ~stdlib.h~ is not included. Older C compilers might assume a return
   of ~int~ and trigger an erroneous conversion from ~int~ to a pointer type.
 
-- ~malloc~ indicates failure by a returning a null pointer value.
+- ~malloc~ indicates failure by a returning a null pointer value — typically ~(void*)0~.
 
 - For every allocation, there must be a ~free~. Only call ~free~ with pointers as they are returned by
   ~malloc~, ~calloc~, ~aligned_alloc~, or ~realloc~.
