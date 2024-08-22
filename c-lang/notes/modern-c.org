@@ -594,8 +594,10 @@ pointers more generically. These are pointers to non-type ~void~.
 
 ** Storage
 
-*Dynamic allocation* creates storage instances that are only seen as byte arrays and do not have
-interpretation as objects. They only acquire a type after something is stored inside them.
+- Dynamic allocation :: Creates and destroys objects at runtime. These storage instances are
+  byte arrays and do not have interpretation as objects. They acquire a type only after
+  something is stored inside them. Each newly-allocated array returns ~void*~, a pointer
+  without type information. Assignment converts the pointer to its effective type.
 
 #+begin_src c
   #include <stdlib.h>
@@ -607,13 +609,6 @@ interpretation as objects. They only acquire a type after something is stored in
   void* realloc(void* ptr, size_t size);
   void* aligned_alloc(size_t alignment, size_t size);
 #+end_src
-
-- Storage that is allocated through ~malloc~ is uninitialized and has no type.
-
-- Don't cast the return type of ~malloc~ and related allocation functions. Assignment provides
-  the effective type and value. Not only is the cast superfluous, but doing an explicit conversion
-  can even be harmful when ~stdlib.h~ is not included. Older C compilers might assume a return
-  of ~int~ and trigger an erroneous conversion from ~int~ to a pointer type.
 
 - ~malloc~ indicates failure by a returning a null pointer value — typically ~(void*)0~.
 
