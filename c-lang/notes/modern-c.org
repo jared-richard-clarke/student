@@ -652,3 +652,9 @@ pointers more generically. These are pointers to non-type ~void~.
 - Objects of automatic or allocated storage duration must be initialized explicitly.
 
 - Systematically provide an initialization function for each of your data types.
+
+| storage class      | lifetime           | visibility                  |
+|--------------------+--------------------+-----------------------------|
+| ~extern~           | program execution  | external (whole program)    |
+| ~static~           | program execution  | internal (translation unit) |
+| ~auto~, ~register~ | function execution | none                        |
