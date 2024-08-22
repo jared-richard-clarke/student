@@ -594,11 +594,46 @@ pointers more generically. These are pointers to non-type ~void~.
 
 ** Storage
 
-- Dynamic allocation :: Creates and destroys objects at runtime via ~malloc~ and related allocation
-  functions. These storage instances are byte arrays and do not have interpretation as objects.
-  They acquire an effective type only after something is stored inside them. Each newly-allocated
-  array returns ~void*~, a pointer without type information. Assignment converts the pointer to its
-  effective type.
+- Static :: Either objects defined in file scope or variables declared within function blocks
+  that are prefixed with the storage specifier ~static~. These object lifetimes span the entire
+  program execution, either being completely defined at compile time or resolved by a system's
+  startup procedure.
+
+  - *static storage duration* is not the same as declaring a variable with the *storage class*
+    ~static~. The latter ensures that a variable or function has internal linkage.
+
+  - Objects with static storage duration are always initialized.
+
+- Automatic :: Any block-scope variables that are not declared ~static~, block-scope compound
+  literals, and some temporary objects that are returned by function calls. They are typically
+  local variables created when program execution enters the scope in which they are defined
+  and are destroyed when that scope is exited. Such object lifetimes can be determined by the
+  compiler.
+
+  - Unless they are VLA or temporary objects, automatic objects have a lifetime corresponding
+    to the execution of their block of definition.
+
+  - For an object that is not VLA, lifetime starts when the scope of the definition is entered,
+    and it ends when that scope is left.
+
+  - Initializers of automatic variables and compound literals are evaluated each time the
+    definition is met.
+
+  - Each recursive call to a function creates a new local instance of an automatic object.
+
+  - The ~&~ operator is not allowed for variables declared with ~register~, meaning variables
+    declared with ~register~ can't alias.
+
+- Allocated :: Objects that are created and destroyed at runtime via ~malloc~ and related
+  allocation functions. These storage instances are byte arrays and do not have interpretation
+  as objects. They acquire an effective type only after something is stored inside them. Each
+  newly-allocated array returns ~void*~, a pointer without type information. Assignment converts
+  the pointer to its effective type.
+
+  - ~malloc~ indicates failure by a returning a null pointer value — typically ~(void*)0~.
+
+  - For every allocation, there must be a ~free~. Only call ~free~ with pointers as they
+    are returned by ~malloc~, ~calloc~, ~aligned_alloc~, or ~realloc~.
 
 #+begin_src c
   #include <stdlib.h>
@@ -610,51 +645,6 @@ pointers more generically. These are pointers to non-type ~void~.
   void* realloc(void* ptr, size_t size);
   void* aligned_alloc(size_t alignment, size_t size);
 #+end_src
-
-- ~malloc~ indicates failure by a returning a null pointer value — typically ~(void*)0~.
-
-- For every allocation, there must be a ~free~. Only call ~free~ with pointers as they are returned by
-  ~malloc~, ~calloc~, ~aligned_alloc~, or ~realloc~.
-
-- Identifiers only have visibility inside their scope, starting at their declaration. The visibility
-  of an identifier can be shadowed by an identifier of the same name in a subordinate scope.
-
-- Every declaration of a variable creates a new, distinct object.
-
-- Read-only object literals may overlap.
-
-- Objects have a lifetime outside of which they can't be accessed. Referring to an object outside
-  of its lifetime has undefined behavior.
-
-| storage duration | determination                          |
-|------------------+----------------------------------------|
-| *static*         | Compile time                           |
-| *automatic*      | Runtime                                |
-| *allocated*      | Function calls to ~malloc~ and friends |
-| *thread*         | Thread of execution                    |
-
-- Objects with static storage duration are always initialized.
-
-- Unless they are VLA or temporary objects, automatic objects have a lifetime corresponding to the
-  execution of their block of definition.
-
-- For an object that is not VLA, lifetime starts when the scope of the definition is entered, and
-  it ends when that scope is left.
-
-- Initializers of automatic variables and compound literals are evaluated each time the definition
-  is met.
-
-- Each recursive call to a function creates a new local instance of an automatic object.
-
-- For a VLA, lifetime starts when the definition is encountered and ends when the visibility scope
-  is left. The size of a VLA is a runtime property. The space for it can't be allocated when the
-  block of a definition is entered.
-
-- Objects of static or thread-storage duration are initialized by default.
-
-- Objects of automatic or allocated storage duration must be initialized explicitly.
-
-- Systematically provide an initialization function for each of your data types.
 
 | storage class      | lifetime           | visibility                  |
 |--------------------+--------------------+-----------------------------|
