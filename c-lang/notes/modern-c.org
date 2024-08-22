@@ -646,8 +646,11 @@ pointers more generically. These are pointers to non-type ~void~.
   void* aligned_alloc(size_t alignment, size_t size);
 #+end_src
 
-| storage class      | lifetime           | visibility                  |
-|--------------------+--------------------+-----------------------------|
-| ~extern~           | program execution  | external (whole program)    |
-| ~static~           | program execution  | internal (translation unit) |
-| ~auto~, ~register~ | function execution | none                        |
+| storage class   | lifetime                      | scope                     | default initializer    |
+|-----------------+-------------------------------+---------------------------+------------------------|
+| ~auto~          | block (stack)                 | block                     | unitialized            |
+| ~register~      | block (stack or CPU register) | block                     | unitialized            |
+| ~static~        | program                       | block or unit compilation | zero                   |
+| ~extern~        | program                       | global (entire program)   | zero                   |
+| ~_Thread_local~ | thread                        |                           |                        |
+| none            | dynamic (heap)                |                           | zero if using ~calloc~ |
