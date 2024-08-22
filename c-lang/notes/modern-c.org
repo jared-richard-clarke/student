@@ -594,10 +594,11 @@ pointers more generically. These are pointers to non-type ~void~.
 
 ** Storage
 
-- Dynamic allocation :: Creates and destroys objects at runtime. These storage instances are
-  byte arrays and do not have interpretation as objects. They acquire an effective type only after
-  something is stored inside them. Each newly-allocated array returns ~void*~, a pointer
-  without type information. Assignment converts the pointer to its effective type.
+- Dynamic allocation :: Creates and destroys objects at runtime via ~malloc~ and related allocation
+  functions. These storage instances are byte arrays and do not have interpretation as objects.
+  They acquire an effective type only after something is stored inside them. Each newly-allocated
+  array returns ~void*~, a pointer without type information. Assignment converts the pointer to its
+  effective type.
 
 #+begin_src c
   #include <stdlib.h>
