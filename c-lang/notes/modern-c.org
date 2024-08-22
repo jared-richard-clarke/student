@@ -648,8 +648,8 @@ pointers more generically. These are pointers to non-type ~void~.
 
 | storage class   | lifetime                      | scope                     | default initializer    |
 |-----------------+-------------------------------+---------------------------+------------------------|
-| ~auto~          | block (stack)                 | block                     | unitialized            |
-| ~register~      | block (stack or CPU register) | block                     | unitialized            |
+| ~auto~          | block (stack)                 | block                     | uninitialized          |
+| ~register~      | block (stack or CPU register) | block                     | uninitialized          |
 | ~static~        | program                       | block or unit compilation | zero                   |
 | ~extern~        | program                       | global (entire program)   | zero                   |
 | ~_Thread_local~ | thread                        |                           |                        |
