@@ -643,6 +643,8 @@ pointers more generically. These are pointers to non-type ~void~.
 - Initializers of automatic variables and compound literals are evaluated each time the definition
   is met.
 
+- Each recursive call to a function creates a new local instance of an automatic object.
+
 - For a VLA, lifetime starts when the definition is encountered and ends when the visibility scope
   is left. The size of a VLA is a runtime property. The space for it can't be allocated when the
   block of a definition is entered.
