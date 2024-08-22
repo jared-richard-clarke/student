@@ -377,7 +377,7 @@ such as offset addition and subtraction. They have state, including a dedicated 
 
 - Don't hide pointers in a ~typedef~.
 
-- Array and pointer access are the same. ~A[i]~ is equivalent to ~*(A + 1)~
+- Array and pointer access are the same. ~A[i]~ is equivalent to ~*(A + i)~
 
 - array-to-pointer decay :: Evaluation of an array ~A~ returns ~&A[0]~. Whenever an array
   occurs that requires a value, it decays to a pointer and all additional information is
