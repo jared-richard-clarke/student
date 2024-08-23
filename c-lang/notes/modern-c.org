@@ -75,7 +75,7 @@ in an arithmetic expression.
 |-------------+------------+--------------------------------------|
 | ~uint64_t~  | ~stdint.h~ | 64-bit unsigned integer              |
 |-------------+------------+--------------------------------------|
-| ~uintmax_t~ | ~stdint.h~ | maximum width unsigned integer       |
+| ~uintmax_t~ | ~stdint.h~ | maximum-width unsigned integer       |
 |-------------+------------+--------------------------------------|
 | ~int8_t~    | ~stdint.h~ | 8-bit signed integer                 |
 |-------------+------------+--------------------------------------|
@@ -85,7 +85,7 @@ in an arithmetic expression.
 |-------------+------------+--------------------------------------|
 | ~int64_t~   | ~stdint.h~ | 64-bit signed integer                |
 |-------------+------------+--------------------------------------|
-| ~intmax_t~  | ~stdint.h~ | maximum width signed integer         |
+| ~intmax_t~  | ~stdint.h~ | maximum-width signed integer         |
 |-------------+------------+--------------------------------------|
 | ~time_t~    | ~time.h~   | calendar time in seconds since epoch |
 |-------------+------------+--------------------------------------|
