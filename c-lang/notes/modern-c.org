@@ -2,9 +2,11 @@
 
 ** Sources
 
-| source         | author       |
-|----------------+--------------|
-| *Modern C*     | Jens Gustedt |
+| source        | author       |
+|---------------+--------------|
+| *Modern C*    | Jens Gustedt |
+| *C Syntax*    | Wikipedia    |
+| *C Reference* | cppreference |
 
 ** Primary Types
 
