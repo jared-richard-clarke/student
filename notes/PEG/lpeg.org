@@ -1304,7 +1304,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
 
   // static const Instruction giveup = {{IGiveup, 0, {0}}};
   // Marks the bottom of the entries stack for the virtual machine,
-  // indicating that the match has failed.
+  // signaling that the match has failed.
   stack->p = &giveup;
   stack->s = s;
   stack->caplevel = 0;
