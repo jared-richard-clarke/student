@@ -77,7 +77,7 @@ The API has a dedicated push function for each Lua type with a direct representa
     int i;
     // Stack depth
     int top = lua_gettop(L);
-    // Iterate through stack
+    // Traverse stack, bottom to top.
     for (i = 1; i <= top; i += 1) {
       int t = lua_type(L, i);
       switch (t) {
