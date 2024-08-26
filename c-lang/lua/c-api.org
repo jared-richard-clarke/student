@@ -2,11 +2,12 @@
 
 ** Sources
 
-| source                                           | author                                                                       |
-|--------------------------------------------------+------------------------------------------------------------------------------|
-| *A Look at the Design of Lua*                    | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
-| *Passing a Language through the Eye of a Needle* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
-| *Programming in Lua*                             | Roberto Ierusalimschy                                                        |
+| source                                           | author                                                                 |
+|--------------------------------------------------+------------------------------------------------------------------------|
+| *Lua Manual*, version 5.4                        | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
+| *A Look at the Design of Lua*                    | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
+| *Passing a Language through the Eye of a Needle* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
+| *Programming in Lua*                             | Roberto Ierusalimschy                                                  |
 
 ** Introduction
 
@@ -487,6 +488,9 @@ Lua's generic buffer implementation.
 The Lua type ~userdata~ allows the creation of C data structures within the Lua environment.
 ~userdata~ contain memory blocks managed by the Lua VM, which are transparently accessible
 to C code but are opaque objects when accessed by Lua.
+
+Lua's only predefined operations for ~userdata~ are assignment and identity testing.
+Metatables provide user-defined operations.
 
 #+begin_src c
   #include <stddef.h>
