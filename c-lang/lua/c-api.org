@@ -218,9 +218,9 @@ Lua application.
   // 3rd argument.
   lua_pushinteger(L, 14);
   // Call "f" with 3 arguments and return 1 result.
-  // Pops "f" and its inputs. Pushes "f's" output.
+  // Pop "f" and its inputs. Push output from "f".
   lua_call(L, 3, 1);
-  // Set "f's" output to global "a".
+  // Set output from "f" to global "a".
   lua_setglobal(L, "a");
 #+end_src
 
