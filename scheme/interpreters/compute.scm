@@ -24,6 +24,5 @@
         [(number? expression) expression]
         [(pair? expression)
          (apply (compute (car expression))
-                (map compute
-                     (cdr expression)))]
+                (map compute (cdr expression)))]
         [else (error "invalid expression:" expression)]))))
