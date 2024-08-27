@@ -156,6 +156,45 @@ The API has a dedicated push function for each Lua type with a direct representa
 | ~lua_settop(L, -5);~              | [ true ]                              |
 | ~lua_close(L);~                   |                                       |
 
+** Memory Allocation
+
+#+begin_quote
+  "The Lua core does not assume anything about how to allocate memory. It calls neither ~malloc~ nor
+   ~realloc~ to allocate memory. Instead, it does all its memory allocation and deallocation through
+   one single allocation function, which the user must provide when she creates a Lua state."
+
+  — *Programming in Lua*, Roberto Ierusalimschy
+#+end_quote
+
+The auxiliary function ~luaL_newstate~ creates a Lua state with a default allocation function.
+This default function uses the standard functions ~malloc~, ~realloc~, and ~free~ from the C
+standard library. The primitive ~lua_newstate~ requires that the user provide their own allocation
+function, which provides resource management for the entire Lua application.
+
+#+begin_src c
+  // "lua_newstate" takes two arguments: an allocation function and a user data.
+  lua_State *lua_newstate(lua_Alloc f, void *ud);
+
+  // All allocation functions must match the "lua_Alloc" type signature.
+  // where ud    = user data
+  //       ptr   = memory block address
+  //       osize = original block size
+  //       nsize = requested block size
+  typedef void * (*lua_Alloc) (void *ud, void *ptr, size_t osize, size_t nsize);
+
+  // "luaL_newstate" as defined in "lauxlib.c".
+  void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize) {
+    // Not used.
+    (void)ud; (void)osize;
+    if (nsize == 0) {
+      free(ptr);
+      return NULL;
+    } else {
+      return realloc(ptr, nsize);
+    }
+  }
+#+end_src
+
 ** Calling Functions from C
 
 #+begin_src c
