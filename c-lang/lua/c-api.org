@@ -643,8 +643,12 @@ Metatables provide user-defined operations.
   };
 
   int luaopen_array(lua_State *L) {
+    // Creates a metatable registered with "LuaBook.array".
     luaL_newmetatable(L, "LuaBook.array");
+    // Registers functions with table on top of stack. In this case, a metatable.
     luaL_setfuncs(L, arraylib_m, 0);
+    // Creates a new table and registers functions from the provided list.
+    // Implemented as the macro "(luaL_newlibtable(L, 1), luaL_setfuncs(L, l, 0))".
     luaL_newlib(L, arraylib_f);
     return 1;
   }
