@@ -168,8 +168,9 @@ The API has a dedicated push function for each Lua type with a direct representa
 
 The auxiliary function ~luaL_newstate~ creates a Lua state with a default allocation function.
 This default function uses the standard functions ~malloc~, ~realloc~, and ~free~ from the C
-standard library. The primitive ~lua_newstate~ requires that the user provide their own allocation
-function, which provides resource management for the entire Lua application.
+standard library. The primitive ~lua_newstate~, on the other hand, requires that the user
+provide their own allocation function, which provides resource management for the entire
+Lua application.
 
 #+begin_src c
   // "lua_newstate" takes two arguments: an allocation function and a user data.
