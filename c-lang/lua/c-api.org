@@ -196,7 +196,7 @@ Lua application.
   }
 #+end_src
 
-** Calling Functions from C
+** Calling Lua Functions from C
 
 #+begin_src c
   // === Lua Function Call ===
