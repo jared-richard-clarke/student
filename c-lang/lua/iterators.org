@@ -94,10 +94,9 @@ repeating the process.
 #+begin_src lua
   function iter(xs)
     local x = 0
-    local size = table.getn(xs)
     return function()
              x = x + 1
-             if x <= size then return xs[x] end
+             return xs[x] end
            end
   end
 
