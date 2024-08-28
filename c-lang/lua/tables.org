@@ -23,7 +23,7 @@ first-class functions allow exportation.
        local Module = {}
 
        function Module.new (x, y)
-         return { x = x, y = y }
+         return { ["x"] = x, ["y"] = y }
        end
 
        function Module.add (v1, v2)
@@ -57,7 +57,7 @@ called with different environments.
 
        -- _ENV["new"]
        function new (x, y)
-         return { x = x, y = y }
+         return { ["x"] = x, ["y"] = y }
        end
        -- _ENV["add"]
        function add (v1, v2)
@@ -107,7 +107,7 @@ called with different environments.
   local meta = {}
 
   function vector (x, y)
-    local v = { x = x, y = y }
+    local v = { ["x"] = x, ["y"] = y }
     setmetatable(v, meta)
     return v
   end
