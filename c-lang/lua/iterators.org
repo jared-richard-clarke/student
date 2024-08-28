@@ -135,7 +135,7 @@ of the generic ~for~ loop.
   -- iter = iterator function
   -- xs   = invariant state
   -- 0    = control variable
-  function ipairs (xs)
+  function ipairs(xs)
     return iter, xs, 0
   end
 
