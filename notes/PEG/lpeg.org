@@ -1129,7 +1129,9 @@ I have, to the best of my knowledge, updated my notes accordingly.
     lua_pushnil(L);
     // Push pointer to capture list.
     lua_pushlightuserdata(L, capture);
-    // Retrieve key table.
+    // Retrieves key table, a uservalue.
+    // Uservalues provide a local mechanism for referencing objects
+    // through userdata.
     lua_getuservalue(L, 1);
     // Run the virtual machine.
     r = match(L, s, s + i, s + l, code, capture, ptop);
