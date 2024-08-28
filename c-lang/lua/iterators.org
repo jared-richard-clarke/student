@@ -153,7 +153,8 @@ of the generic ~for~ loop.
   end
 
   -- Calls "next(t, k)", where "k" is a key of the table "t",
-  -- and returns the next key in "t".
+  -- and returns the next key in "t" alongside its associated
+  -- value "v".
   for k, v in pairs(t) do
     print(k, v)
   end
