@@ -171,10 +171,11 @@ of the generic ~for~ loop.
   -- equivalent ->
 
   do
-    local next, dictionary = pairs(dictionary)
+    local next, dictionary, control = pairs(dictionary)
     while true do
-      key, value = next(dictionary, key)
-      if key == nil then break end
+      local key, value = next(dictionary, key)
+      control = key
+      if control == nil then break end
       print(key, value)
     end
   end
