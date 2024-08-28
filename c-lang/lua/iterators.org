@@ -124,7 +124,7 @@ Stateless iterators keep no internal state. All state is kept externally in the 
 of the generic ~for~ loop.
 
 #+begin_src lua
-  function iter (xs, i)
+  function iter(xs, i)
     i = i + 1
     local x = xs[i]
     if x then
@@ -146,7 +146,7 @@ of the generic ~for~ loop.
   end
 
   -- pairs iterator
-  function pairs (t)
+  function pairs(t)
     return next, t, nil
   end
 
