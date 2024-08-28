@@ -168,4 +168,14 @@ of the generic ~for~ loop.
   -- where next = iterator function
   --       t    = invariant state
   --       nil  = control variable
+
+  -- equivalent ->
+
+  do
+    while true do
+      k, v = next(t, k)
+      if k == nil then break end
+      print(k, v)
+    end
+  end
 #+end_src
