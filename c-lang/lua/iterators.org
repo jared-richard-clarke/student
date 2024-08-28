@@ -172,6 +172,7 @@ of the generic ~for~ loop.
   -- equivalent ->
 
   do
+    local next, t = pairs(t)
     while true do
       k, v = next(t, k)
       if k == nil then break end
