@@ -11,11 +11,12 @@
 
 #+begin_quote
   "The name "iterator" is a little misleading, because our iterators do not iterate:
-   What iterates is the for loop. Iterators only provide the successive values for
-   the iteration. Maybe a better name would be "generator", but "iterator" is already
-   well established in other languages, such as Java."
+   What iterates is the *for* loop. Iterators only provide the successive values for
+   the iteration. Maybe a better name would be "generator" — which generates elements
+   for the iteration — but "iterator" is already well established in other languages,
+   such as Java."
 
-  — Roberto Ierusalimschy
+  — *Programming in Lua* Roberto Ierusalimschy
 #+end_quote
 
 ** Numeric ~for~ Loop
