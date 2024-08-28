@@ -88,16 +88,19 @@ called with different environments.
 *** Meta Tables
 
 #+begin_quote
-  "Each value in Lua can have a metatable. Tables and userdata have individual metatables;
-   values of other types share one single metatable for all values of that type.
-   Lua always creates new tables without metatables.
 
-   When looking for a metamethod, Lua performs the following steps: if the first value has
-   a metatable with the required metamethod, Lua uses this metamethod, independently of
-   the second value; otherwise, if the second value has a metatable with the required
-   metamethod, Lua uses it; otherwise, Lua raises an error."
+  "Metatables allow us to change the behavior of a value when confronted with an unknown operation.
+   For instance, using metatables, we can define how Lua computes the expression ~a + b~, where
+   ~a~ and ~b~ are tables. Whenever Lua tries to add two tables, it checks whether either of them
+   has a metatable and whether this metatable has an ~__add~ field. If Lua finds this field, it
+   calls the corresponding value — the so-called metamethod, which should be a function —
+   to compute the sum."
 
-  — Roberto Ierusalimschy
+  "Each value in Lua can have a metatable. Tables and userdata have individual metatables; values
+   of other types share one single metatable for all values of that type. Lua always creates new
+   tables without metatables...We can use ~setmetatable~ to set or change the metatable of a table"
+
+  — *Programming in Lua*, Roberto Ierusalimschy
 #+end_quote
 
 #+begin_src lua
@@ -118,6 +121,15 @@ called with different environments.
   B = vector(2, 2)
   C = A + B --> { x = 3, y = 4 }
 #+end_src
+
+#+begin_quote
+  "When looking for a metamethod, Lua performs the following steps: if the first value has
+   a metatable with the required metamethod, Lua uses this metamethod, independently of
+   the second value; otherwise, if the second value has a metatable with the required
+   metamethod, Lua uses it; otherwise, Lua raises an error."
+
+  — *A Look at the Design of Lua*, Roberto Ierusalimschy, Luiz Henrique De Figueiredo, and Waldemar Celes
+#+end_quote
 
 *** Protoypes
 
