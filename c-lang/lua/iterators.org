@@ -110,11 +110,13 @@ repeating the process.
 
   -- === "while" Loop ===
 
-  iterator = iter(list)
-  while true do
-    local element = iterator()
-    if element == nil then break end
-    print(element)
+  do
+    local next = iter(list)
+    while true do
+      local element = next()
+      if element == nil then break end
+      print(element)
+    end
   end
 #+end_src
 
