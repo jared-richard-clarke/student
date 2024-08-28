@@ -100,12 +100,12 @@ repeating the process.
            end
   end
 
-  list = { 1, 2, 3 }
+  xs = { 1, 2, 3 }
 
   -- === Generic "for" Loop ===
 
-  for element in iter(list) do
-    print(element)
+  for x in iter(xs) do
+    print(x)
   end
 
   -- === "while" Loop ===
@@ -113,12 +113,12 @@ repeating the process.
   do
     -- External "state" variable is ignored. Useful state
     -- within closure.
-    local next, state, control = iter(list)
+    local next, state, control = iter(xs)
     while true do
-      local element = next()
-      control = element
-      if element == nil then break end
-      print(element)
+      local x = next()
+      control = x
+      if control == nil then break end
+      print(x)
     end
   end
 #+end_src
