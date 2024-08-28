@@ -152,30 +152,30 @@ of the generic ~for~ loop.
     return next, t, nil
   end
 
-  -- Calls "next(t, k)", where "k" is a key of the table "t",
-  -- and returns the next key in "t" alongside its associated
-  -- value "v".
-  for k, v in pairs(t) do
-    print(k, v)
+  dictionary = { x = 3, y = 4 }
+
+  -- Calls "next(dictionary, key)", which returns the next key in "dictionary"
+  -- alongside its associated value.
+  for key, value in pairs(dictionary) do
+    print(key, value)
   end
 
   -- equivalent ->
 
-  for k, v in next, t do
-    print(k, v)
+  for key, value in next, dictionary do
+    print(key, value)
   end
-  
-  -- where next = iterator function
-  --       t    = invariant state
+  -- where next       = iterator function
+  --       dictionary = invariant state
 
   -- equivalent ->
 
   do
-    local next, t = pairs(t)
+    local next, dictionary = pairs(dictionary)
     while true do
-      k, v = next(t, k)
-      if k == nil then break end
-      print(k, v)
+      key, value = next(dictionary, key)
+      if key == nil then break end
+      print(key, value)
     end
   end
 #+end_src
