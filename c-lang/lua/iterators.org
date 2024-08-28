@@ -111,9 +111,12 @@ repeating the process.
   -- === "while" Loop ===
 
   do
-    local next = iter(list)
+    -- External "state" variable is ignored. Useful state
+    -- within closure.
+    local next, state, control = iter(list)
     while true do
       local element = next()
+      control = element
       if element == nil then break end
       print(element)
     end
@@ -134,9 +137,10 @@ of the generic ~for~ loop.
     end
   end
 
-  -- iter = iterator function
-  -- xs   = invariant state
-  -- 0    = control variable
+  -- ipairs iterator
+  -- where iter = iterator function
+  --       xs   = invariant state
+  --       0    = control variable
   function ipairs(xs)
     return iter, xs, 0
   end
@@ -147,7 +151,28 @@ of the generic ~for~ loop.
     print(i, x)
   end
 
+  -- equivalent ->
+
+  for i, x in iter, xs, 0 do
+    print(i, x)
+  end
+
+  -- equivalent ->
+
+  do
+    local iter, xs, control = ipairs(xs)
+    while true do
+      local i, x = iter(xs)
+      control = i
+      if control == nil then break end
+      print(i, x)
+    end
+  end
+
   -- pairs iterator
+  -- where next = iterator function
+  --       t    = invariant state
+  --       nil  = control variable
   function pairs(t)
     return next, t, nil
   end
@@ -165,8 +190,6 @@ of the generic ~for~ loop.
   for key, value in next, dictionary do
     print(key, value)
   end
-  -- where next       = iterator function
-  --       dictionary = invariant state
 
   -- equivalent ->
 
