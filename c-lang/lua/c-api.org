@@ -642,6 +642,8 @@ Metatables provide user-defined operations.
     { NULL,         NULL }
   };
 
+  // "luaopen_<module name>" is the naming convention used by "require"
+  // to find loaders for C libraries.
   int luaopen_array(lua_State *L) {
     // Creates a metatable registered with "LuaBook.array".
     luaL_newmetatable(L, "LuaBook.array");
