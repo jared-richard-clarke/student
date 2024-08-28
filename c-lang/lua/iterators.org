@@ -115,7 +115,8 @@ repeating the process.
     -- within closure.
     local next, state, control = iter(xs)
     while true do
-      local x = next()
+      -- "state" and "control" ignored by "next".
+      local x = next(state, control)
       control = x
       if control == nil then break end
       print(x)
@@ -162,7 +163,8 @@ of the generic ~for~ loop.
   do
     local iter, xs, control = ipairs(xs)
     while true do
-      local i, x = iter(xs)
+      -- "control" ignored by "iter".
+      local i, x = iter(xs, control)
       control = i
       if control == nil then break end
       print(i, x)
@@ -196,7 +198,7 @@ of the generic ~for~ loop.
   do
     local next, dictionary, control = pairs(dictionary)
     while true do
-      local key, value = next(dictionary, key)
+      local key, value = next(dictionary, control)
       control = key
       if control == nil then break end
       print(key, value)
