@@ -190,9 +190,10 @@ called with different environments.
   function freeze (t)
     local proxy = {}
     local meta = {
-      __index = t,
-      __newindex = function (t, k, v)
-        error("attempt to update a read-only table")
+      ["__index"] = t,
+      -- Ignore key-value assignments.
+      ["__newindex"] = function (t, k, v)
+        return t
       end
     }
     setmetatable(proxy, meta)
