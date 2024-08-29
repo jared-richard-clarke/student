@@ -221,9 +221,9 @@ called with different environments.
     local get_balance = function () return self.balance end
 
     return {
-      withdraw    = withdraw,
-      deposit     = deposit,
-      get_balance = get_balance
+      ["withdraw"]    = withdraw,
+      ["deposit"]     = deposit,
+      ["get_balance"] = get_balance
     }
   end
 
