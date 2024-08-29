@@ -141,7 +141,7 @@ called with different environments.
   -- If we access an absent field, Lua will look for a
   -- corresponding field in the table's metatable.
   local meta = { __index = Account }
-  --    meta = { __index = function (_, key) return Account[key] end }
+  --    meta = { __index = function (self, key) return Account[key] end }
 
   --       Account.new = function (self)
   function Account:new ()
