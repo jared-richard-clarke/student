@@ -1194,6 +1194,11 @@ I have, to the best of my knowledge, updated my notes accordingly.
       cs.firstcap = lua_gettop(L) + 1;
       // Collect and process captures, pushing values onto the stack.
       do {
+        // Each call to "pushcapture" pushes all the values of the current
+        // capture onto the stack, delegating semantic transformations
+        // to dedicated functions. Returns the number of values pushed.
+        // This number is accumulated in variable "n" for all calls
+        // to "pushcapture".
         n += pushcapture(&cs);
       } while (!isclosecap(cs.cap));
       assert(lua_gettop(L) - cs.firstcap == n - 1);
