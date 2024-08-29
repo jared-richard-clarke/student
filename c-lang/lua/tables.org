@@ -207,18 +207,18 @@ called with different environments.
   -- === Implementation 1 ===
 
   function new_account (x)
-    local self = { balance = x }
+    local state = { balance = x }
 
     local deposit = function (v)
-                      self.balance = self.balance + v
+                      state.balance = state.balance + v
                     end
 
     local withdraw = function (v)
-                       if amount > self.balance then error("insufficient funds") end
-                       self.balance = self.balance - v
+                       if amount > state.balance then error("insufficient funds") end
+                       state.balance = state.balance - v
                      end
 
-    local get_balance = function () return self.balance end
+    local get_balance = function () return state.balance end
 
     return {
       ["withdraw"]    = withdraw,
