@@ -215,9 +215,10 @@ called with different environments.
 **** Account Revisited
 
 #+begin_src lua
-  -- === Implementation 1 ===
+  -- === Implementation 1: state and interface ===
 
   function new_account (x)
+    -- === private state table ===
     local state = { balance = x }
 
     local deposit = function (v)
@@ -231,6 +232,7 @@ called with different environments.
 
     local get_balance = function () return state.balance end
 
+    -- === public interface table ===
     return {
       ["withdraw"]    = withdraw,
       ["deposit"]     = deposit,
@@ -238,7 +240,7 @@ called with different environments.
     }
   end
 
-  -- === Implementation 2 ===
+  -- === Implementation 2: weak key locks ===
 
   local balance = {}
 
