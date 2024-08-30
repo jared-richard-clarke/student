@@ -1,6 +1,6 @@
 ;; (map function list ...) -> list
 ;; Applies function to the corresponding elements of one or more lists
-;; and returns a list of resulting values.
+;; and returns a list of transformed values.
 ;; (map + '(1 2 3) '(1 2 3)) -> '(2 4 6)
 
 (define (map fn x . xs)
