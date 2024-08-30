@@ -6,8 +6,18 @@
 |-----------------------------------------+----------------|
 | *Understanding Async Await in Rust*     | eventhelix.com |
 | *Rust Standard Library*, version 1.80.1 | rust-lang.org  |
+| *Tokio Tutorial*                        | tokio.rs       |
 
-** The Future Trait
+** Future Trait
+
+#+begin_quote
+  "Unlike how futures are implemented in other languages, a Rust future does not represent
+   a computation happening in the background, rather the Rust future is the computation itself.
+   The owner of the future is responsible for advancing the computation by polling the future.
+   This is done by calling ~Future::poll~."
+
+  — *Tokio Tutorial*, tokio.rs
+#+end_quote
 
 #+begin_src rust
   // "The core method of future, poll, attempts to resolve the future into a final value.
@@ -28,6 +38,20 @@
       fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output>;
   }
 #+end_src
+
+The return value of an ~async fn~ is an anonymous type that implements the ~Future~ trait.
+These types must be driven by a runtime. A runtime typically contains a task scheduler,
+an I/O event loop, and timers amongst other things.
+
+#+begin_quote
+  "Async functions are called like any other Rust function. However, calling these functions
+   does not result in the function body executing. Instead, calling an ~async fn~ returns
+   a value representing the operation. This is conceptually analogous to a zero-argument
+   closure. To actually run the operation, you should use the ~.await~ operator on the
+   return value."
+
+  — *Tokio Tutorial*, tokio.rs
+#+end_quote
 
 ** Futures and Async: Single Threaded
 
@@ -69,6 +93,16 @@
 #+end_src
 
 ** Async Desugared
+
+Rust futures are state machines. Below ~GotoFuture~ is represented as an ~enum~ of the
+future's possible states. When ~poll~ is invoked by a runtime, the future attempts to
+advance its internal state as much as possible. If the future is able to complete,
+~Poll::Ready~ is returned to the runtime with the output of its computation. Otherwise,
+~Poll::Pending~ is returned, which tells the runtime to call ~poll~ again on this
+future at a later time.
+
+Futures can compose other futures. Calling ~poll~ on an outer future might call an inner
+future's ~poll~ function.
 
 #+begin_src rust
   // The state machine enum defines three states for the "goto" function:
