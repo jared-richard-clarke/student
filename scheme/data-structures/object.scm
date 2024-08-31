@@ -13,8 +13,7 @@
              (lambda (message . arguments)
                (case message
                  [(method) (apply method arguments)] ...
-                 [else (error 'name "invalid input: "
-                              (cons message arguments))]))))))]
+                 [else (assertion-violation 'name "invalid input" (cons message arguments))]))))))]
     [(_ (name . constructors)
         ((method function) ...))
      (define-object (name . constructors)
