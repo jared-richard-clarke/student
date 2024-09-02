@@ -8,7 +8,7 @@ const set = Object.freeze({
     has: function (xs, x) {
         return xs[x] === true;
     },
-    length: function (xs) {
+    size: function (xs) {
         return Object.keys(xs).reduce((accum, x) => accum + 1, 0);
     },
     // xs ∪ ys
