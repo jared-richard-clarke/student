@@ -1,24 +1,34 @@
 const set = Object.freeze({
     create: function (xs) {
-        const data = Object.create(null);
-        xs.forEach((x) => (data[x] = true));
-        return Object.freeze(data);
+        const zs = Object.create(null);
+        xs.forEach((x) => (zs[x] = true));
+        return Object.freeze(zs);
     },
-    has: function (set, x) {
-        return set[x] === true;
+    // x ∈ xs
+    has: function (xs, x) {
+        return xs[x] === true;
     },
-    unite: function (x, y) {
-        const data = Object.create(null);
-        Object.keys(x).forEach((key) => (data[key] = true));
-        Object.keys(y).forEach((key) => (data[key] = true));
-        return Object.freeze(data);
+    length: function (xs) {
+        return Object.keys(xs).reduce((accum, x) => accum + 1, 0);
     },
-    intersect: function (x, y) {
-        const data = Object.create(null);
-        Object.keys(x).forEach((key) => (data[key] = y[key]));
-        return Object.freeze(data);
+    // xs ∪ ys
+    union: function (xs, ys) {
+        const zs = Object.create(null);
+        Object.keys(xs).forEach((x) => (zs[x] = true));
+        Object.keys(ys).forEach((y) => (zs[y] = true));
+        return Object.freeze(zs);
     },
-    print: function (x) {
-        return "[ " + Object.keys(x).join(", ") + " ]";
+    // xs \ ys
+    difference: function (xs, ys) {
+        const zs = Object.create(null);
+        Object.keys(xs).forEach((x) => {
+            if (ys[x] !== true) {
+                zs[x] = xs[x];
+            }
+        });
+        return Object.freeze(zs);
+    },
+    print: function (xs) {
+        return "[ " + Object.keys(xs).join(", ") + " ]";
     },
 });
