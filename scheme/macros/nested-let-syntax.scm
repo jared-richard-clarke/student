@@ -1,3 +1,14 @@
+(define-syntax let*
+  (lambda (x)
+    (syntax-case x ()
+      ;; === base case ===
+      [(_ () b1 b2 ...)
+       (syntax (let () b1 b2 ...))]
+      ;; === recursive case ===
+      [(_ ([i1 e1] [i2 e2] ...) b1 b2 ...)
+       (syntax (let ([i1 e1])
+                 (let* ([i2 e2] ...) b1 b2 ...)))])))
+
 ;; === nested let ===
 
 (let* ([x 3]
