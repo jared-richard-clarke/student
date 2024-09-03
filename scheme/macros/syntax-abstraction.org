@@ -6,6 +6,7 @@
 |---------------------------------------------------+-------------------------------------------------|
 | *Syntactic Abstraction in Scheme*                 | R. Kent Dybvig, Robert Hieb, and Carl Bruggeman |
 | *Syntactic Abstraction: The syntax-case expander* | R. Kent Dybvig                                  |
+| *The Scheme Programming Language*, 4th edition    | R. Kent Dybvig                                  |
 
 ** Introduction
 
@@ -73,6 +74,38 @@ procedures, or transformers. When the macro expander encounters a macro call, th
 call expression is passed to the associated transformer to be processed. The expansion
 process is repeated for the result returned by the transformer until no macro calls remain.
 
+Rules for matching form *F* to pattern *P*:
+
+1. *P* is an underscore or pattern variable.
+
+2. *P* is a literal identifier and *F* is an identifier with the same binding as determined
+   by the predicate ~free-identifier=?~.
+
+3. *P* is of the form *"(" P1 → Pn ")"* and *F* is a list of *n* elements that match *P1* through *Pn*.
+
+4. *P* is of the form *"(" P1 → Pn "." Px ")"* and *F* is a list or improper list of *n* or more
+   elements whose first *n* elements match *p1* through *Pn* and whose *nth* cdr matches *Px*.
+
+5. *P* is of the form *"(" P1 → Pk Pe "..." Pm+1 → Pn ")"* and *F* is a list or improper list of *n*
+   elements whose first *k* elements match *P1* through *Pk*, whose next *m - k* elements each match
+   *Pe*, and whose next *n - m* elements match *Pm+1* through *Pn*.
+
+6. *P* is of the form *"(" P1 → Pk Pe "..." Pm+1 → Pn "." Px ")"* and *F* is a list or improper list
+   of *n* elements whose first *k* elements match *P1* through *Pk*, whose next *m - k* elements each
+   match *Pe*, whose next *n - m* elements match *Pm+1* through *Pn*, and whose *nth* cdr matches *Px*.
+
+7. *P* is of the form *"#(" P1 → Pn ")"* and *F* is a vector of *n* elements that match *P1* through *Pn*.
+
+8. *P* is of the form *"#(" P1 → Pk Pe "..." Pm+1 → Pn ")"* and *F* is a vector of *n* elements whose first
+   *k* elements match *P1* through *Pk*, whose next *m - k* elements each match *Pe*, and whose remaining
+   *n - m* elements match *Pm+1* through *Pn*.
+
+9. *P* is a pattern datum — any non-list, non-vector, non-symbol object — and *F* is equal to *P* in the
+   sense of the *equal?* procedure.
+
+For the transformer ~syntax-rules~, the outermost structure of a pattern must be a list-structured form as
+outlined above. The first element in the list is ignored. These rules do not apply to ~syntax-case~.
+
 #+begin_src scheme
   ;; === macro call ===
   (keyword sub-form ...)
@@ -109,6 +142,17 @@ process is repeated for the result returned by the transformer until no macro ca
   symbolic data. Syntax objects may also contain source annotations, which correlate final
   object code with original source code. Syntax objects may contain information that, for
   efficiency reasons, has not been fully processed.
+
+A *syntax object* is one of four forms:
+
+1. A non-pair, non-vector, non-symbol value.
+
+2. A pair of syntax objects.
+
+3. A vector of syntax objects.
+
+4. A wrapped object, which contains contextual information about a form in addition
+   to its structure. All identifiers — symbols, variables, and keywords — must be wrapped.
 
 #+begin_src scheme
   ;; Hygiene dictates that the binding for "t" is visible only within code
