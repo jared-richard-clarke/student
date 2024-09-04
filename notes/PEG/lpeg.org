@@ -690,7 +690,7 @@ with other patterns, including other grammars.
 
 *** Tail Call Optimization
 
-An ~OpenCall~ followed by a ~Return~ instruction is translated to a ~Jump~ instruction
+An ~OpenCall~ directly followed by a ~Return~ instruction is translated to a ~Jump~ instruction
 — otherwise known as a tail call.
 
 #+begin_src lua
