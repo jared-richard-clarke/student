@@ -5,4 +5,4 @@
 
 (define length
   (lambda (xs)
-    (fold-left (lambda (x acc) (+ acc 1)) 0 xs)))
+    (fold-left (lambda (x accum) (+ accum 1)) 0 xs)))
