@@ -64,7 +64,7 @@
 | negative number     | Pattern match less than *n* characters                          |
 | boolean             | Pattern that always succeeds (*true*) or always fails (*false*) |
 | table               | Grammar                                                         |
-| function            | Pattern equivalent of match-time capture over empty string      |
+| function            | Pattern equivalent of match-time capture over an empty string   |
 
 *** Captures
 
