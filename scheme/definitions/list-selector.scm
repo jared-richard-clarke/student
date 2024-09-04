@@ -1,0 +1,23 @@
+(define-syntax define-selector
+  (syntax-rules ()
+    [(_ name index)
+     (define name
+       (lambda (xs)
+         (unless (list? xs)
+           (assertion-violation name "argument is not a list" xs))
+         (let loop ([ys xs] [i index])
+           (if (pair? ys)
+               (if (eq? i 1)
+                   (car ys)
+                   (loop (cdr ys) (- i 1)))
+               (assertion-violation name "list contains too few elements" xs)))))]))
+
+(define-selector second  2)
+(define-selector third   3)
+(define-selector fourth  4)
+(define-selector fifth   5)
+(define-selector sixth   6)
+(define-selector seventh 7)
+(define-selector eighth  8)
+(define-selector ninth   9)
+(define-selector tenth  10)
