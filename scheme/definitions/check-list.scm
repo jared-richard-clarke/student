@@ -1,5 +1,5 @@
 ;; (list? any) -> boolean
-;; Checks if object is a proper list.
+;; Checks if object is a proper, non-cyclic list.
 ;; (list? '(x y z))   -> #t
 ;; (list? '(x y . z)) -> #f
 ;; (list? x)          -> #f
