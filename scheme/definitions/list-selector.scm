@@ -7,7 +7,7 @@
            (assertion-violation name "argument is not a list" xs))
          (let loop ([ys xs] [i index])
            (if (pair? ys)
-               (if (eq? i 1)
+               (if (= i 1)
                    (car ys)
                    (loop (cdr ys) (- i 1)))
                (assertion-violation name "list contains too few elements" xs)))))]))
