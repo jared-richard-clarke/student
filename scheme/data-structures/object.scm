@@ -20,6 +20,8 @@
        ()
        ((method function) ...))]))
 
+;; === stack object ===
+
 (define-object (stack)
   [(id    'stack)
    (state '())]
@@ -34,23 +36,23 @@
    (clear! (lambda () (set! state '())))])
 
 ;; - expands ->
-;;
-;; (define stack
-;;   (lambda ()
-;;     (let* ([id 'stack] [state '()])
-;;       (letrec ([type   (lambda () id)]
-;;                [empty? (lambda () (null? state))]
-;;                [push!  (lambda xs (set! state (append xs state)))]
-;;                [peek   (lambda () (car state))]
-;;                [pop!   (lambda () (let ([item (car state)]) (set! state (cdr state)) item))]
-;;                [clear! (lambda () (set! state '()))])
-;;         (lambda (message . arguments)
-;;           (case message
-;;             [(type)   (apply type arguments)]
-;;             [(empty?) (apply empty? arguments)]
-;;             [(push!)  (apply push! arguments)]
-;;             [(peek)   (apply peek arguments)]
-;;             [(pop!)   (apply pop! arguments)]
-;;             [(clear!) (apply clear! arguments)]
-;;             [else
-;;              (assertion-violation 'stack "invalid input" (cons message arguments))]))))))
+
+(define stack
+  (lambda ()
+    (let* ([id 'stack] [state '()])
+      (letrec ([type   (lambda () id)]
+               [empty? (lambda () (null? state))]
+               [push!  (lambda xs (set! state (append xs state)))]
+               [peek   (lambda () (car state))]
+               [pop!   (lambda () (let ([item (car state)]) (set! state (cdr state)) item))]
+               [clear! (lambda () (set! state '()))])
+        (lambda (message . arguments)
+          (case message
+            [(type)   (apply type arguments)]
+            [(empty?) (apply empty? arguments)]
+            [(push!)  (apply push! arguments)]
+            [(peek)   (apply peek arguments)]
+            [(pop!)   (apply pop! arguments)]
+            [(clear!) (apply clear! arguments)]
+            [else
+             (assertion-violation 'stack "invalid input" (cons message arguments))]))))))
