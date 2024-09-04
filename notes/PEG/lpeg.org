@@ -68,10 +68,9 @@
 
 *** Captures
 
-A capture is a pattern that produces values — the semantic information — according
-to the matched string and the capture type. A capture either pulls a value directly
-from the subject or combines and transforms the values of other captures using
-Lua strings, numbers, tables, and functions.
+A capture is a pattern that produces values according to the matched string and the capture type.
+A capture either pulls a value directly from the subject or combines and transforms the values of
+other captures using Lua strings, numbers, tables, and functions.
 
 | operation                     | result                                                         |
 |-------------------------------+----------------------------------------------------------------|
