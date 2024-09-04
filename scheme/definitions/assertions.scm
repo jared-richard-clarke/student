@@ -1,6 +1,6 @@
 ;; (assert predicate expression expression) -> current-output-port
 ;; If the left-hand-expression does not satisfy the predicate comparing it to the right-hand-expression,
-;; `assert` prints the failed test to the current-output port.
+;; "assert" prints the failed test to the current-output port.
 ;; (assert equal? (+ 1 6) (- 1 6)) ->
 ;; "Test failed:
 ;; lhs: (+ 1 6) -> 7, rhs: (- 1 6) -> -5"
@@ -17,7 +17,7 @@
                  (quote y)
                  computed-y)))]))
 
-;; Version of `assert` compatible with `rnrs`
+;; Version of "assert" compatible with "rnrs"
 
 (define-syntax assert
   (syntax-rules ()
