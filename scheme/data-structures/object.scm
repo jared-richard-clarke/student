@@ -39,12 +39,15 @@
 
 (define stack
   (lambda ()
-    (let* ([id 'stack] [state '()])
+    (let* ([id 'stack]
+           [state '()])
       (letrec ([type   (lambda () id)]
                [empty? (lambda () (null? state))]
                [push!  (lambda xs (set! state (append xs state)))]
                [peek   (lambda () (car state))]
-               [pop!   (lambda () (let ([item (car state)]) (set! state (cdr state)) item))]
+               [pop!   (lambda () (let ([item (car state)])
+                                    (set! state (cdr state))
+                                    item))]
                [clear! (lambda () (set! state '()))])
         (lambda (message . arguments)
           (case message
