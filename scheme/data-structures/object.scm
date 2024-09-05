@@ -1,6 +1,9 @@
 ;; Abstract object with message passing as defined in 
 ;; The Scheme Programming Language by R. Kent Dybvig.
 
+;; The "define-object" macro defines procedures that create abstract objects.
+;; These objects are opaque in that their state can only be accessed indirectly
+;; through their methods via message passing.
 (define-syntax define-object
   (syntax-rules ()
     [(_ (name . constructors)
@@ -13,7 +16,7 @@
              (lambda (message . arguments)
                (case message
                  [(method) (apply method arguments)] ...
-                 [else (assertion-violation 'name "invalid input" (cons message arguments))]))))))]
+                 [else (assertion-violation 'name "invalid message" (cons message arguments))]))))))]
     [(_ (name . constructors)
         ((method function) ...))
      (define-object (name . constructors)
