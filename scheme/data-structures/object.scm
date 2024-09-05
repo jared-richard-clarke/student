@@ -61,4 +61,4 @@
             [(pop!)   (apply pop! arguments)]
             [(clear!) (apply clear! arguments)]
             [else
-             (assertion-violation 'stack "invalid input" (cons message arguments))]))))))
+             (assertion-violation 'stack "invalid message" (cons message arguments))]))))))
