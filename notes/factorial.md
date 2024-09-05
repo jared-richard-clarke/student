@@ -348,7 +348,9 @@ fn factorial(x: i64) -> i64 {
   (lambda (f)
     (f (lambda (x) ((Y f) x)))))
 
-;; Complete definition.
+;; Y := λf.(λx.f (x x)) (λx.f (x x))
+;; Complete strict definition in that the Y combinator is wrapped in a thunk
+;; to prevent immediate and infinite evaluation.
 (define Y
   (lambda (f)
     ((lambda (g)
