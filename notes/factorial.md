@@ -351,7 +351,8 @@ fn factorial(x: i64) -> i64 {
 ;; Complete definition.
 (define Y
   (lambda (f)
-    ((lambda (g) (g g))
+    ((lambda (g)
+       (f (lambda (x) ((g g) x))))
      (lambda (g)
        (f (lambda (x) ((g g) x)))))))
 
