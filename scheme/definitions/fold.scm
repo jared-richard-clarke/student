@@ -49,15 +49,11 @@
 (define fold
   (lambda (fn base x . xs)
     (if (null? xs)
-        (let fold-x ([x     x]
-                     [accum base])
+        (let fold-x ([accum base] [x x])
           (if (pair? x)
-              (fold-x (cdr x)
-                      (fn (car x) accum))
+              (fold-x (fn accum (car x)) (cdr x))
               accum))
-        (let fold-xs ([xs    (cons x xs)]
-                      [accum base])
+        (let fold-xs ([accum base] [xs (cons x xs)])
           (if (for-all pair? xs)
-              (fold-xs (map cdr xs)
-                       (apply fn (map-onto car xs (list accum))))
+              (fold-xs (apply fn accum (map car xs)) (map cdr xs))
               accum)))))
