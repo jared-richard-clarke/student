@@ -5,7 +5,7 @@ as written by others and myself. Most of these programs interpret Scheme program
 one, currently, interprets Joy programs.
 
 ## Table of Contents
-- `tang`: A Scheme interpreter implemented in Haskell by Jonathan Tang.
+
 - `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
 - `compute-stack.scm`: a stack-based calculator.
 - `compute.scm`: an arithmetic interpreter and symbolic processor.
@@ -13,6 +13,7 @@ one, currently, interprets Joy programs.
 - `joy.md`: a Joy interpreter written in Joy by Manfred von Thun.
 - `miranda-scheme.md`: a comparison between Miranda and Scheme interpreters.
 - `norvig.py`: a Scheme interpreter written in Python as defined by Peter Norvig.
+- `tang.hs`: A Scheme interpreter implemented in Haskell by Jonathan Tang.
 
 ## Grammar
 **LISP** is defined in terms of the evaluation of data structures, **not** in terms of the syntax of character streams or files.
