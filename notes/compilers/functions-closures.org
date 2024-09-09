@@ -1,0 +1,212 @@
+* Functions and Closures Using Stack Semantics
+
+** Sources
+
+| source                          | author                                                                       |
+|---------------------------------+------------------------------------------------------------------------------|
+| *Crafting Interpreters*         | Robert Nystrom                                                               |
+| *The Implementation of Lua 5.0* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
+
+** Functions, Call Frames, and The Stack
+
+*** Lox Code
+
+#+begin_example
+  fun sum(a, b, c) {
+    return a + b + c;
+  }
+
+  4 + sum(5, 6, 7);
+#+end_example
+
+*** The Stack
+
+#+begin_example
+  === Calling Functions ===
+
+        (base pointer)      (stack pointer)
+         frame->slots        stackTop
+               |                 |
+               V  -1 |  argCount V
+  0        1   2     3   4   5   6
+  +--------+---+-----+---+---+---+
+  | script | 4 | sum | 5 | 6 | 7 |
+  +--------+---+-----+---+---+---+
+               ^ sum() CallFrame ^
+
+  "script" calls "sum"
+
+       0     1    2    3   4   5
+  |------------------------------| <- arguments
+  +--------+---+-----+---+---+---+
+  | script | 4 | sum | 5 | 6 | 7 |
+  +--------+---+-----+---+---+---+
+               |-----------------| <- parameters
+                  0    1   2   3
+                       a   b   c
+
+               sum(), callee
+
+  === Returning Values ===
+
+  |-------- top frame -----------|
+  +--------+---+-----+---+---+---+----+
+  | script | 4 | sum | 5 | 6 | 7 | 18 |
+  +--------+---+-----+---+---+---+----+
+               |-- sum() frame --|
+
+  1. Pop return value
+
+  |------------------------------|
+  +--------+---+-----+---+---+---+
+  | script | 4 | sum | 5 | 6 | 7 |
+  +--------+---+-----+---+---+---+
+               |-----------------|
+
+  2. Discard call frame
+
+  |------------|
+  +--------+---+
+  | script | 4 |
+  +--------+---+
+
+  3. Push return value
+
+  |-----------------|
+  +--------+---+----+
+  | script | 4 | 18 |
+  +--------+---+----+
+#+end_example
+
+*** Op-Code Instructions
+
+#+begin_example
+  == sum ==
+  0000    2 OP_GET_LOCAL        1
+  0002    | OP_GET_LOCAL        2
+  0004    | OP_ADD
+  0005    | OP_GET_LOCAL        3
+  0007    | OP_ADD
+  0008    | OP_RETURN
+  0009    3 OP_NIL
+  0010    | OP_RETURN
+
+  == script ==
+  0000    3 OP_CLOSURE          1 <fn sum>
+  0002    | OP_DEFINE_GLOBAL    0 'sum'
+  0004    5 OP_CONSTANT         2 '4'
+  0006    | OP_GET_GLOBAL       3 'sum'
+  0008    | OP_CONSTANT         4 '5'
+  0010    | OP_CONSTANT         5 '6'
+  0012    | OP_CONSTANT         6 '7'
+  0014    | OP_CALL             3
+  0016    | OP_ADD
+  0017    | OP_POP
+  0018    | OP_NIL
+  0019    | OP_RETURN
+#+end_example
+
+** Implementing Closures
+
+Closures are functions that do two things:
+
+1. Resolve local variables that are declared in surrounding functions.
+
+2. Capture variables that have already left the stack.
+
+In Lox, like in Lua, closures are data structures generated at runtime. They contain
+a pointer to a precompiled function, its *prototype*, and a pointer to an array of upvalues.
+These upvalues either point to local variables declared in surrounding functions or capture
+variables that have already left the stack.
+
+#+begin_example
+  === Closure Data Structure ==
+                               Function
+                              +-----------+
+             Closure      +-->| chunk     |--> bytecode
+            +----------+  |   |-----------|
+        +-->| function |--+   | constants |--> value array
+        |   |----------|      +-----------+
+        |   | upvalues |--+
+        |   +----------+  |    upvalue array     Upvalue
+        |                 |   +-------------+   +----------+
+        |                 +-->| 0           |-->| location |--+
+        |                     +-------------+   +----------+  |
+    +---|-----------------------------------------------------+
+    V   |
+  +---+----+---+-->
+  | x | fn | y |
+  +---+----+---+-->
+      ^        ^
+      |        |
+      |        + argument
+      |
+      + environment
+
+  === Closing UpValues ===
+
+                   open upvalues --+
+                                   |
+                                   V
+     Upvalue        Upvalue        Upvalue
+    +----------+   +----------+   +----------+
+    | next     |<--| next     |<--| next     |
+    |----------|   |----------|   |----------|
+  +-| location | +-| location | +-| location |
+  | +----------+ | +----------+ | +----------+
+  +---+          |              |
+      |        +-+      +-------+
+      V        V        V
+    +---+----+---+----+---+----+->
+    | 1 | fn | 2 | fn | 3 | fn |
+    +---+----+---+----+---+----+->
+
+   Upvalue            Upvalue
+  +----------+       +----------+
+  | next     |       | next     |
+  |----------|       |----------|
+  | closed   |       | closed z |<-+
+  |----------|       |----------|  |
+  | location |--+    | location |--+
+  +----------+  |    +----------+
+            +---+
+            V
+  +---+---+---+->    +---+---+->
+  | x | y | z |      | x | y |
+  +---+---+---+->    +---+---+->
+#+end_example
+
+*** Closure Variable Capture
+
+#+begin_example
+  === Lox Code ===
+
+  fun makeClosure() {
+    var a = "data";
+
+    fun f() { print a; }
+    return f;
+  }
+
+  var closure = makeClosure();
+
+  closure();
+
+  === compiles ===>
+                                    Function
+                                   +-----------+
+                  Closure      +-->| chunk     |--> bytecode
+                 +----------+  |   |-----------|
+             +-->| function |--+   | constants |--> value array
+             |   |----------|      +-----------+
+             |   | upvalues |--+
+             |   +----------+  |    upvalue array     Upvalue
+             |                 |   +-------------+   +----------+
+             |                 +-->| 0           |-->| location |--+    String          char array
+             |                     +-------------+   |----------|  |   +---------+     +---+---+---+---+----+
+             |                                    +->| closed   |--|-->| chars   |---->| d | a | t | a | \0 |
+             |                                    |  +----------+  |   +---------+     +---+---+---+---+----+
+  +--------+----+-->                              +----------------+
+  | script | fn |
+  +--------+----+-->
+#+end_example
