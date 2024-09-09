@@ -33,7 +33,7 @@
                 (case set?
                   [(single) value]
                   [(multiple) (apply values value)]
-                  [(#f) (set! value x)
+                  [(#f) (set! value xs)
                         (set! set? 'multiple)
                         (apply values xs)])]))])))))
 (define force
