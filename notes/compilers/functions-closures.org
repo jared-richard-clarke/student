@@ -1,4 +1,4 @@
-* Functions and Closures Using Stack Semantics
+* Functions and Closures
 
 ** Sources
 
