@@ -6,8 +6,8 @@
 
 (define-syntax delay
   (syntax-rules ()
-    [(_ expr) 
-     (promise (lambda () expr))]))
+    [(_ expression) 
+     (promise (lambda () expression))]))
 
 (define promise
   (lambda (thunk)
