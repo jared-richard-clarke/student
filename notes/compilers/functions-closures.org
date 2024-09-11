@@ -139,11 +139,11 @@ variables that have already left the stack.
   +---+----+---+-->
   | x | fn | y |
   +---+----+---+-->
-      ^        ^
-      |        |
-      |        + argument
-      |
-      + environment
+    ^        ^
+    |        |
+    |        + argument
+    |
+    + environment
 
   === Closing UpValues ===
 
