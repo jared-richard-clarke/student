@@ -25,14 +25,14 @@
   === Calling Functions ===
 
         (base pointer)      (stack pointer)
-         frame->slots        stackTop
+         frame->slots        stack-top
                |                 |
-               V  -1 |  argCount V
+               V  -1 | arg-count V
   0        1   2     3   4   5   6
   +--------+---+-----+---+---+---+
   | script | 4 | sum | 5 | 6 | 7 |
   +--------+---+-----+---+---+---+
-               ^ sum() CallFrame ^
+               ^ sum() callframe ^
   ^------------------------------^
    The Stack
 
