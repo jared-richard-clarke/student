@@ -17,3 +17,19 @@
   (lambda (xs)
     (let ([id (lambda (x) x)])
       (flat-map id xs))))
+
+;; === Side Note ===
+;; An alternative definition of "flat-map" is the monadic definition of "bind":
+;; flat-map: [a] -> (a -> [b]) -> [b]
+
+(define flat-map
+  (lambda (fn xs)
+	  (fold-right append '() (map fn xs))))
+
+;; -- equivalent ->
+
+(define flat-map
+  (lambda (fn xs)
+    (if (null? xs)
+        '()
+        (append (fn (car xs)) (flat-map fn (cdr xs))))))
