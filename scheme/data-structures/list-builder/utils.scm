@@ -25,10 +25,10 @@
              [(start stop step)
               (if (<= step 0)
                   '()
-                  (let loop ([number stop]
-                             [result '()])
-                    (if (> start number)
-                        result
-                        (loop (- number step)
-                              (cons number result)))))]))
+                  (let recur ([start start]
+                              [stop  stop]
+                              [step  step])
+                    (if (> start stop)
+                        '()
+                        (cons start (recur (+ start step) stop step)))))]))
          )
