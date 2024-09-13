@@ -19,13 +19,13 @@
       (flat-map id xs))))
 
 ;; === Side Note ===
-;; An alternative definition of "flat-map" is the monadic definition of "bind":
+;; An alternative definition of "flat-map" is the monadic definition "bind":
 ;; flat-map: (a -> [b]) -> [a] -> [b]
 ;; bind:     [a] -> (a -> [b]) -> [b]
 
 (define flat-map
   (lambda (fn xs)
-	  (fold-right append '() (map fn xs))))
+    (fold-right append '() (map fn xs))))
 
 ;; -- equivalent ->
 
