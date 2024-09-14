@@ -12,6 +12,7 @@
                    (loop (cdr ys) (- i 1)))
                (assertion-violation name "list contains too few elements" xs)))))]))
 
+(define-selector first   1)
 (define-selector second  2)
 (define-selector third   3)
 (define-selector fourth  4)
