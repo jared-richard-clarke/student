@@ -90,6 +90,9 @@ other captures using Lua strings, numbers, tables, and functions.
 | ~pattern % function~          | Combines ~pattern~ captures into prior capture with ~function~ |
 | ~lpeg.Cmt(pattern, function)~ | Maps ~function~ over match-time pattern captures               |
 
+- Folding and Accumulator Capture :: Generally, folding capture ~lpeg.Cf(px * py ^ 0, function)~ is equivalent
+  to accumulator capture ~px * (py % function) ^ 0~.
+
 ** Repetition in PEG
 
 #+begin_quote
