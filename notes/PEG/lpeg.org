@@ -1216,6 +1216,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
 
   static int pushcapture (CapState *cs) {
     lua_State *L = cs->L;
+    // Records number of values pushed onto stack by capture.
     int res;
     luaL_checkstack(L, 4, "too many captures");
     if (cs->reclevel++ > MAXRECLEVEL) {
