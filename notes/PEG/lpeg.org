@@ -1243,7 +1243,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
         res = 1;
         break;
       }
-      // For string captures, place intermediate results in buffer before pushing
+      // For string captures, places intermediate results in buffer before pushing
       // the final result to the stack.
       case Cstring: {
         luaL_Buffer b;
