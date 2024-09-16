@@ -986,21 +986,22 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- === AST ===
   --
   -- [1 = function  2 = function  3 = function]
+  --
   -- sequence
-  --    capture kind: 'function'  key: 1 --> tonumber
-  --      sequence
-  --        set(06-2) [(30-39)]
-  --        repeat
-  --          set(06-2) [(30-39)]
-  --     repeat
-  --       capture kind: 'accumulator'  key: 3 --> accumulator add
-  --         sequence
-  --           char ','
-  --           capture kind: 'function'  key: 2 --> tonumber
-  --             sequence
-  --               set(06-2) [(30-39)]
-  --               repeat
-  --                 set(06-2) [(30-39)]
+  --   capture kind: 'function'  key: 1 --> tonumber
+  --     sequence
+  --       set(06-2) [(30-39)]
+  --       repeat
+  --         set(06-2) [(30-39)]
+  --    repeat
+  --      capture kind: 'accumulator'  key: 3 --> accumulator add
+  --        sequence
+  --          char ','
+  --          capture kind: 'function'  key: 2 --> tonumber
+  --            sequence
+  --              set(06-2) [(30-39)]
+  --              repeat
+  --                set(06-2) [(30-39)]
 
   -- === VM Instructions ===
   --
