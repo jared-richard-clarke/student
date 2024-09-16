@@ -1199,14 +1199,14 @@ I have, to the best of my knowledge, updated my notes accordingly.
       return luaL_error(L, "subcapture nesting too deep");
     }
     switch (captype(cs->cap)) {
-      // Match epsilon and capture index position in string.
+      // Matches epsilon and captures index position in string.
       case Cposition: {
         lua_pushinteger(L, cs->cap->index + 1);
         cs->cap++;
         res = 1;
         break;
       }
-      // Match epsilon and return all values provided outside string as captures.
+      // Matches epsilon and captures values provided outside string.
       case Cconst: {
         // Pull value from ktable.
         pushluaval(cs);
@@ -1214,10 +1214,10 @@ I have, to the best of my knowledge, updated my notes accordingly.
         res = 1;
         break;
       }
-      // Match epsilon and return the nth extra argument in "lpeg.match" as capture.
+      // Matches epsilon and captures the nth extra argument in "lpeg.match".
       case Carg: {
         int arg = (cs->cap++)->idx;
-        // Three arguments to match before capture arguments.
+        // Three arguments - pattern, subject, index - before capture arguments.
         if (arg + FIXEDARGS > cs->ptop) {
           return luaL_error(L, "reference to absent extra argument #%d", arg);
         }
@@ -1225,7 +1225,7 @@ I have, to the best of my knowledge, updated my notes accordingly.
         res = 1;
         break;
       }
-      // Capture subject's matching substring, which can be followed by nested captures.
+      // Captures subject's matching substring, which can be followed by nested captures.
       case Csimple: {
         // Collate nested captures.
         int k = pushnestedvalues(cs, 1);
