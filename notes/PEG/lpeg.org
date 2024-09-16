@@ -973,80 +973,52 @@ Examples as they are actually output in the ~lpeg~ debugger.
 #+begin_src lua
   -- === LPEG ===
 
-  Set   = lpeg.S
   Range = lpeg.R
 
-  spaces = Set(" \t\r\n") ^ 0
-  trim   = function (x) return spaces * x * spaces end
+  number = Range("09") ^ 1 / tonumber
 
-  number = trim((Range("09") ^ 1) / tonumber)
+  function add (accum, value) return accum + value end
 
-  add = function (accum, value) return accum + value end
+  sum = number * ("," * number % add) ^ 0
 
-  sum = "[" * number * ("," * number % add) ^ 0 * "]"
-
-  -- === Match ===
-
-  total = sum:match("[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]") --> 55
+  total = sum:match("1,2,3,4") --> 10
 
   -- === AST ===
   --
   -- [1 = function  2 = function  3 = function]
-  --
   -- sequence
-  --   sequence
-  --     sequence
-  --       char '['
-  --       sequence
-  --         sequence
-  --           repeat
-  --             set(01-4) [(09-0a)(0d)(20)]
-  --           capture kind: 'function'  key: 1 --> tonumber
-  --             sequence
-  --               set(06-2) [(30-39)]
-  --               repeat
-  --                 set(06-2) [(30-39)]
-  --         repeat
-  --           set(01-4) [(09-0a)(0d)(20)]
+  --    capture kind: 'function'  key: 1 --> tonumber
+  --      sequence
+  --        set(06-2) [(30-39)]
+  --        repeat
+  --          set(06-2) [(30-39)]
   --     repeat
   --       capture kind: 'accumulator'  key: 3 --> accumulator add
   --         sequence
   --           char ','
-  --           sequence
+  --           capture kind: 'function'  key: 2 --> tonumber
   --             sequence
+  --               set(06-2) [(30-39)]
   --               repeat
-  --                 set(01-4) [(09-0a)(0d)(20)]
-  --               capture kind: 'function'  key: 2 --> tonumber
-  --                 sequence
-  --                   set(06-2) [(30-39)]
-  --                   repeat
-  --                     set(06-2) [(30-39)]
-  --             repeat
-  --               set(01-4) [(09-0a)(0d)(20)]
-  --   char ']'
+  --                 set(06-2) [(30-39)]
 
   -- === VM Instructions ===
   --
-  -- 00: char '[' (5b)
-  -- 01: span (08-1) [(09-0a)(0d)(20)]
-  -- 03: opencapture function (idx = 1) --> tonumber
-  -- 04: set (30-1) [(30-39)]
-  -- 06: span (30-1) [(30-39)]
-  -- 08: closecapture
-  -- 09: span (08-1) [(09-0a)(0d)(20)]
-  -- 11: testchar ',' (2c)-> 28
-  -- 13: opencapture accumulator (idx = 3) --> accumulator add
-  -- 14: any
-  -- 15: span (08-1) [(09-0a)(0d)(20)]
-  -- 17: opencapture function (idx = 2) --> tonumber
-  -- 18: set (30-1) [(30-39)]
-  -- 20: span (30-1) [(30-39)]
-  -- 22: closecapture
-  -- 23: span (08-1) [(09-0a)(0d)(20)]
-  -- 25: closecapture
-  -- 26: jmp -> 11
-  -- 28: char ']' (5d)
-  -- 29: end
+  -- 00: opencapture function (idx = 1) --> tonumber
+  -- 01: set (30-1) [(30-39)]
+  -- 03: span (30-1) [(30-39)]
+  -- 05: closecapture
+  -- 06: testchar ',' (2c)-> 21
+  -- 08: choice -> 21
+  -- 10: opencapture accumulator (idx = 3) --> accumulator add
+  -- 11: char ',' (2c)
+  -- 12: opencapture function (idx = 2) --> tonumber
+  -- 13: set (30-1) [(30-39)]
+  -- 15: span (30-1) [(30-39)]
+  -- 17: closecapture
+  -- 18: closecapture
+  -- 19: partial_commit -> 10
+  -- 21: end
 #+end_src
 
 *** C Comment Block
