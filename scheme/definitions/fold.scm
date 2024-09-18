@@ -6,7 +6,6 @@
 ;; Folds right to left. Stacks calls to combining operation.
 ;; (fold-right list 'init '(a b c)) -> '(a (b (c init)))
 ;; (fold-right cons '() '(1 2 3)) -> '(1 2 3)
-
 (define (fold-right fn accum xs)
   (if (null? xs)
       accum
@@ -31,7 +30,6 @@
 ;; Folds left to right. Tail recursive.
 ;; (fold-left list 'init '(a b c)) -> '(((init a) b) c)
 ;; (fold-left cons '() '(1 2 3)) -> '(((() . 1) . 2) . 3)
-
 (define (fold-left fn accum xs)
   (if (null? xs)
       accum
@@ -62,7 +60,6 @@
 ;; been exhausted. Folds left to right.
 ;; (fold + 10 '(9 8 7) '(6 5 4) '(3 2 1))       -> 55
 ;; (fold list 'init '(1 2 3) '(3 4 5) '(6 7 8)) -> (((init 1 3 6) 2 4 7) 3 5 8)
-
 (define fold
   (lambda (fn base x . xs)
     (if (null? xs)
