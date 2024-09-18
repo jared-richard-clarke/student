@@ -13,6 +13,20 @@
       (fn (car xs)
           (fold-right fn accum (cdr xs)))))
 
+;; (reduce-right function list) -> any
+;; Like "fold-right" but the last element in the list
+;; is the base accumulator. Consequently, the list must
+;; be non-empty.
+;; (reduce-right cons '(1 2 3)) -> '(1 2 . 3)
+(define reduce-right
+  (lambda (fn xs)
+    (fold-right (lambda (x accum)
+                  (if (null? accum)
+                      x
+                      (fn x accum)))
+                '()
+                xs)))
+
 ;; (fold-left function any list) -> any
 ;; Folds left to right. Tail recursive.
 ;; (fold-left list 'init '(a b c)) -> '(((init a) b) c)
@@ -24,6 +38,17 @@
       (fold-left fn
                 (fn accum (car xs))
                 (cdr xs))))
+
+;; (reduce function list) -> any
+;; Like "fold-left" but the first element in the list
+;; is the base accumulator. Consequently, the list must
+;; be non-empty.
+;; (reduce cons '(1 2 3)) -> '((1 . 2) . 3)
+(define reduce
+  (lambda (fn xs)
+    (let ([head (car xs)]
+          [tail (cdr xs)])
+      (fold-left fn head tail))))
 
 ;; === Side Note ===
 ;; Racket:      (foldl cons 'a '(b c)) -----> '(c b . a)
