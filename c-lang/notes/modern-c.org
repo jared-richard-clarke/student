@@ -712,7 +712,7 @@ pointers more generically. These are pointers to non-type ~void~.
           mov     edx, DWORD PTR [rbp-4]        ;  |
           mov     eax, DWORD PTR [rbp-8]        ; <+
           add     eax, edx                      ; <-- Call the add operator.
-          pop     rbp                           ; <-- Return from "add" function.
+          pop     rbp                           ; <-- Return to caller of "add" function.
           ret                                   ; <+
   main:
           push    rbp                           ; <+
@@ -735,8 +735,8 @@ pointers more generically. These are pointers to non-type ~void~.
           mov     DWORD PTR [rbp-28], 10        ; <+
           jmp     .L4                           ; <-- Jump to "while" loop section of "main".
   .L5:
-          mov     eax, DWORD PTR [rbp-4]
-          cdqe
+          mov     eax, DWORD PTR [rbp-4]        ; <-- Move "index" into register "eax".
+          cdqe                                  ; <-- RAX := SignExtend(EAX)
           mov     edx, DWORD PTR [rbp-64+rax*4] ; <-- Index into "numbers" array.
           mov     eax, DWORD PTR [rbp-8]        ; <-- Move "sum" into "eax" register.
           mov     esi, edx                      ; <-- Move "numbers[index]" into "esi" register
@@ -763,11 +763,11 @@ pointers more generically. These are pointers to non-type ~void~.
   char* copy_string(char* destination, const char* source) {
       char* saved = destination;
       while (*source != '\0') {
-          *saved = *source;
+          *destination = *source;
           source += 1;
-          saved += 1;
+          destination += 1;
       }
-      *saved = '\0';
+      *destination = '\0';
       return saved;
   }
 
@@ -790,25 +790,25 @@ pointers more generically. These are pointers to non-type ~void~.
           mov     rbp, rsp                 ;  |- Set up state for "copy_string" function.
           mov     QWORD PTR [rbp-24], rdi  ;  |
           mov     QWORD PTR [rbp-32], rsi  ; <+
-          mov     rax, QWORD PTR [rbp-24]  ; <-- Move "destination" pointer into "saved" pointer.
+          mov     rax, QWORD PTR [rbp-24]  ; <-- Save the first pointer to "destination".
           mov     QWORD PTR [rbp-8], rax   ; <+
           jmp     .L2                      ; <-- Jump to "while" loop.
   .L3:
           mov     rax, QWORD PTR [rbp-32]  ; <+
-          movzx   edx, BYTE PTR [rax]      ;  |- Copy value from "source" to "saved".
-          mov     rax, QWORD PTR [rbp-8]   ;  |
+          movzx   edx, BYTE PTR [rax]      ;  |- Copy value from "source" to "destination".
+          mov     rax, QWORD PTR [rbp-24]  ;  |
           mov     BYTE PTR [rax], dl       ; <+
           add     QWORD PTR [rbp-32], 1    ; <-- Increment pointer to "source".
-          add     QWORD PTR [rbp-8], 1     ; <-- Increment pointer to "saved".
+          add     QWORD PTR [rbp-24], 1    ; <-- Increment pointer to "destination".
   .L2:
           mov     rax, QWORD PTR [rbp-32]  ; <+
           movzx   eax, BYTE PTR [rax]      ;  |- If predicate is satisfied, jump to "while" block.
           test    al, al                   ;  |
           jne     .L3                      ; <+
-          mov     rax, QWORD PTR [rbp-8]   ; <+- Append '\0' to end of "saved" array.
+          mov     rax, QWORD PTR [rbp-24]  ; <+- Append '\0' to end of "destination" array.
           mov     BYTE PTR [rax], 0        ; <+
-          mov     rax, QWORD PTR [rbp-8]   ; <-- Return "saved" pointer from "copy_string".
-          pop     rbp                      ; <+- Return to caller from "copy_string".
+          mov     rax, QWORD PTR [rbp-8]   ; <-- Return first pointer to "destination".
+          pop     rbp                      ; <+- Return to caller of "copy_string".
           ret                              ; <+
   .LC0:
           .string "Jared Clarke"           ; <-- String literal.
