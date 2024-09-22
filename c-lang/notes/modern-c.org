@@ -801,7 +801,7 @@ pointers more generically. These are pointers to non-type ~void~.
           movzx   eax, BYTE PTR [rax]      ;  |- If predicate is satisfied, jump to "while" block.
           test    al, al                   ;  |
           jne     .L3                      ; <+
-          mov     rax, QWORD PTR [rbp-8]   ; <+- Append '\0' to end of array.
+          mov     rax, QWORD PTR [rbp-8]   ; <+- Append '\0' to end of "saved" array.
           mov     BYTE PTR [rax], 0        ; <+
           mov     rax, QWORD PTR [rbp-8]   ; <-- Return "saved" pointer from "copy_string".
           pop     rbp                      ; <+- Return to caller from "copy_string".
