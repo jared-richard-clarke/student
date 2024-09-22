@@ -2,11 +2,12 @@
 
 ** Sources
 
-| source        | author       |
-|---------------+--------------|
-| *Modern C*    | Jens Gustedt |
-| *C Syntax*    | Wikipedia    |
-| *C Reference* | cppreference |
+| source              | author       |
+|---------------------+--------------|
+| *Modern C*          | Jens Gustedt |
+| *C Syntax*          | Wikipedia    |
+| *C Reference*       | cppreference |
+| *Compiler Explorer* | godbolt.org  |
 
 ** Primary Types
 
@@ -672,3 +673,80 @@ pointers more generically. These are pointers to non-type ~void~.
 | ~extern~        | program                       | global (entire program)   | zero                   |
 | ~_Thread_local~ | thread                        |                           |                        |
 | none            | dynamic (heap)                |                           | zero if using ~calloc~ |
+
+* The State Machine: C to Assembly
+
+*** C Source Code
+
+#+begin_src c
+  int add(int x, int y) {
+      return x + y;
+  }
+
+  int main (int argc, char *argv[]) {
+      int index =  0;
+      int bound = 10;
+      int sum   =  0;
+
+      int numbers[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+      while (index <= bound) {
+          sum = add(sum, numbers[index]);
+          index += 1;
+      }
+
+      return 0;
+  }
+#+end_src
+
+*** Assembly Output: ~x86-64 gcc 14.2~
+
+#+begin_src asm
+  add:
+          push    rbp                           ; <+
+          mov     rbp, rsp                      ;  |
+          mov     DWORD PTR [rbp-4], edi        ;  |- Setup state for "add" function;
+          mov     DWORD PTR [rbp-8], esi        ;  |
+          mov     edx, DWORD PTR [rbp-4]        ;  |
+          mov     eax, DWORD PTR [rbp-8]        ; <+
+          add     eax, edx                      ; <-- Call the add operator.
+          pop     rbp                           ; <-- Return from "add" function.
+          ret                                   ; <+
+  main:
+          push    rbp                           ; <+
+          mov     rbp, rsp                      ;  |
+          sub     rsp, 80                       ;  |- Setup up state for "main" function.
+          mov     DWORD PTR [rbp-68], edi       ;  |
+          mov     QWORD PTR [rbp-80], rsi       ; <+
+          mov     DWORD PTR [rbp-4], 0          ; <-- Move 0 into "index".
+          mov     DWORD PTR [rbp-12], 10        ; <-- Move 10 into "bound".
+          mov     DWORD PTR [rbp-8], 0          ; <-- Move 0 into "sum".
+          mov     DWORD PTR [rbp-64], 1         ; <+
+          mov     DWORD PTR [rbp-60], 2         ;  |
+          mov     DWORD PTR [rbp-56], 3         ;  |
+          mov     DWORD PTR [rbp-52], 4         ;  |
+          mov     DWORD PTR [rbp-48], 5         ;  |- Setup "numbers" array.
+          mov     DWORD PTR [rbp-44], 6         ;  |
+          mov     DWORD PTR [rbp-40], 7         ;  |
+          mov     DWORD PTR [rbp-36], 8         ;  |
+          mov     DWORD PTR [rbp-32], 9         ;  |
+          mov     DWORD PTR [rbp-28], 10        ; <+
+          jmp     .L4                           ; <-- Jump to "while" loop section of "main".
+  .L5:
+          mov     eax, DWORD PTR [rbp-4]
+          cdqe
+          mov     edx, DWORD PTR [rbp-64+rax*4] ; <-- Index into "numbers" array.
+          mov     eax, DWORD PTR [rbp-8]        ; <-- Move "sum" into "eax" register.
+          mov     esi, edx                      ; <-- Move "numbers[index]" into "esi" register
+          mov     edi, eax                      ; <-- Move "sum" from "eax" register to "edi" register.
+          call    add                           ; <-- Call "add" function.
+          mov     DWORD PTR [rbp-8], eax        ; <-- Move result into "sum" register.
+          add     DWORD PTR [rbp-4], 1          ; <-- Add 1 into "index" register
+  .L4:
+          mov     eax, DWORD PTR [rbp-4]        ; <+
+          cmp     eax, DWORD PTR [rbp-12]       ;  |- Setup "while" loop and jump to body if condition is satisfied.
+          jle     .L5                           ; <+
+          mov     eax, 0                        ; <-- Return success code 0 from "main".
+          leave                                 ; <-- Exit "main".
+          ret                                   ; <+
+#+end_src
