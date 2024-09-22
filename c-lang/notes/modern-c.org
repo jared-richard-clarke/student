@@ -674,9 +674,11 @@ pointers more generically. These are pointers to non-type ~void~.
 | ~_Thread_local~ | thread                        |                           |                        |
 | none            | dynamic (heap)                |                           | zero if using ~calloc~ |
 
-* The State Machine: C to Assembly
+** The State Machine: C to Assembly
 
-*** Numbers Loop: C Source Code
+*** Numbers Loop
+
+**** C Source Code
 
 #+begin_src c
   int add(int x, int y) {
@@ -699,7 +701,7 @@ pointers more generically. These are pointers to non-type ~void~.
   }
 #+end_src
 
-*** Numbers Loop: Assembly Output ~x86-64 gcc 14.2~
+**** Assembly Output ~x86-64 gcc 14.2~
 
 #+begin_src asm
   add:
@@ -751,7 +753,9 @@ pointers more generically. These are pointers to non-type ~void~.
           ret                                   ; <+
 #+end_src
 
-*** Copy String: C Source Code
+*** Copy String
+
+**** C Source Code
 
 #+begin_src c
   #include <stdlib.h>
@@ -778,7 +782,7 @@ pointers more generically. These are pointers to non-type ~void~.
   }
 #+end_src
 
-*** Copy String: Assembly Output ~x86-64 gcc 14.2~
+**** Assembly Output ~x86-64 gcc 14.2~
 
 #+begin_src asm
   copy_string:
