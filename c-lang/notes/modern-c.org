@@ -676,7 +676,7 @@ pointers more generically. These are pointers to non-type ~void~.
 
 * The State Machine: C to Assembly
 
-*** C Source Code
+*** Numbers Loop: C Source Code
 
 #+begin_src c
   int add(int x, int y) {
@@ -699,7 +699,7 @@ pointers more generically. These are pointers to non-type ~void~.
   }
 #+end_src
 
-*** Assembly Output: ~x86-64 gcc 14.2~
+*** Numbers Loop: Assembly Output ~x86-64 gcc 14.2~
 
 #+begin_src asm
   add:
@@ -749,4 +749,86 @@ pointers more generically. These are pointers to non-type ~void~.
           mov     eax, 0                        ; <-- Return success code 0 from "main".
           leave                                 ; <-- Exit "main".
           ret                                   ; <+
+#+end_src
+
+*** Copy String: C Source Code
+
+#+begin_src c
+  #include <stdlib.h>
+
+  char* copy_string(char* destination, const char* source) {
+      char* saved = destination;
+      while (*source != '\0') {
+          *saved = *source;
+          source += 1;
+          saved += 1;
+      }
+      *saved = '\0';
+      return saved;
+  }
+
+  const char* name = "Jared Clarke";
+
+  int main(int argc, char* argv[]) {
+      char* text = malloc(13);
+      copy_string(text, name);
+      free(text);
+      text = NULL;
+      return 0;
+  }
+#+end_src
+
+*** Copy String: Assembly Output ~x86-64 gcc 14.2~
+
+#+begin_src asm
+  copy_string:
+          push    rbp                      ; <+
+          mov     rbp, rsp                 ;  |- Set up state for "copy_string" function.
+          mov     QWORD PTR [rbp-24], rdi  ;  |
+          mov     QWORD PTR [rbp-32], rsi  ; <+
+          mov     rax, QWORD PTR [rbp-24]  ; <-- Move "destination" pointer into "saved" pointer.
+          mov     QWORD PTR [rbp-8], rax   ; <+
+          jmp     .L2                      ; <-- Jump to "while" loop.
+  .L3:
+          mov     rax, QWORD PTR [rbp-32]  ; <+
+          movzx   edx, BYTE PTR [rax]      ;  |- Copy value from "source" to "saved".
+          mov     rax, QWORD PTR [rbp-8]   ;  |
+          mov     BYTE PTR [rax], dl       ; <+
+          add     QWORD PTR [rbp-32], 1    ; <-- Increment pointer to "source".
+          add     QWORD PTR [rbp-8], 1     ; <-- Increment pointer to "saved".
+  .L2:
+          mov     rax, QWORD PTR [rbp-32]  ; <+
+          movzx   eax, BYTE PTR [rax]      ;  |- If predicate is satisfied, jump to "while" block.
+          test    al, al                   ;  |
+          jne     .L3                      ; <+
+          mov     rax, QWORD PTR [rbp-8]   ; <+- Append '\0' to end of array.
+          mov     BYTE PTR [rax], 0        ; <+
+          mov     rax, QWORD PTR [rbp-8]   ; <-- Return "saved" pointer from "copy_string".
+          pop     rbp                      ; <+- Return to caller from "copy_string".
+          ret                              ; <+
+  .LC0:
+          .string "Jared Clarke"           ; <-- String literal.
+  name:
+          .quad   .LC0
+  main:
+          push    rbp                      ; <+
+          mov     rbp, rsp                 ;  |
+          sub     rsp, 32                  ;  |- Set up state for "main" function.
+          mov     DWORD PTR [rbp-20], edi  ;  |
+          mov     QWORD PTR [rbp-32], rsi  ; <+
+          mov     edi, 13                  ; <+
+          call    malloc                   ;  |- Allocate a 13-part array of type "char".
+          mov     QWORD PTR [rbp-8], rax   ; <+
+          mov     rdx, QWORD PTR name[rip] ; <+
+          mov     rax, QWORD PTR [rbp-8]   ;  |
+          mov     rsi, rdx                 ;  |- Call "copy_string".
+          mov     rdi, rax                 ;  |
+          call    copy_string              ; <+
+          mov     rax, QWORD PTR [rbp-8]   ; <+
+          mov     rdi, rax                 ;  |- Free memory for "text".
+          call    free                     ; <+
+          mov     QWORD PTR [rbp-8], 0     ; <-- Set "text" pointer to NULL.
+          mov     eax, 0                   ; <-- Return success code 0 from "main" function.
+          leave                            ; <-- Exit "main" function.
+          ret                              ; <+
 #+end_src
