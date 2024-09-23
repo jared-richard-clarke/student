@@ -296,7 +296,7 @@ such as offset addition and subtraction. They have state, including a dedicated 
   }
 #+end_src
 
-**** Pointer Addition
+**** Pointer Arithmetic
 
 #+begin_src c
   // === Sum 1 ===
@@ -309,7 +309,7 @@ such as offset addition and subtraction. They have state, including a dedicated 
   //                          |
   //                        a + i
   //
-  double sum1(size_t length, double const* a) {
+  double sum(size_t length, double const* a) {
     double sum = 0.0;
     for (size_t i = 0; i < length; i += 1) {
       sum += *(a + i);
@@ -327,7 +327,7 @@ such as offset addition and subtraction. They have state, including a dedicated 
   //                     |                             |
   //                     p                           a + length
   //
-  double sum2(size_t length, double const* a) {
+  double sum(size_t length, double const* a) {
     double sum = 0.0;
     for (double const* p = a; p < a+length; p += 1) {
       sum += *p;
@@ -345,7 +345,7 @@ such as offset addition and subtraction. They have state, including a dedicated 
   //                     |                             |
   //                     a                            end
   //
-  double sum3(size_t length, double const* a) {
+  double sum(size_t length, double const* a) {
     double sum = 0.0;
     for (double const*const end = a + length; a < end; a += 1) {
       sum += *a;
@@ -353,11 +353,52 @@ such as offset addition and subtraction. They have state, including a dedicated 
     return sum;
   }
 
-  // === Side Note ===
-  // When manipulating arrays through functions, array notation should be preferred.
-  // Such conventions clarify the relationship between length and pointer arguments.
+  // === Decrement ===
+  pointer--
+  // - equivalent ->
+  pointer - 1 * sizeof(type)
+
+  // === Increment ===
+  pointer++
+  // - equivalent ->
+  pointer + 1 * sizeof(type)
+
+  //  === Memory ===
+  //  -----------------------------------
+  // | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+  //  -----------------------------------
+  //   <---------------^--------------->
+  //  ptr--           ptr             ptr++
   //
-  // double sum(size_t length, double const a[length]);
+  //  where sizeof(type) = 4 bytes
+
+  // === Addition ===
+  pointer + 2
+  // - equivalent ->
+  pointer + 2 * sizeof(type)
+
+  //  === Memory ===
+  //  -----------------------------------
+  // | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+  //  -----------------------------------
+  //   +------------------------------->
+  //  ptr                          ptr + 2
+  //
+  //  where sizeof(type) = 4 bytes
+
+  // === Subtraction ===
+  pointer - 2
+  // - equivalent ->
+  pointer - 2 * sizeof(type)
+
+  //  === Memory ===
+  //  -----------------------------------
+  // | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+  //  -----------------------------------
+  //   <-------------------------------+
+  //  ptr - 2                         ptr
+  //
+  //  where sizeof(type) = 4 bytes
 #+end_src
 
 - The length of an array object cannot be reconstructed from a pointer.
@@ -365,6 +406,16 @@ such as offset addition and subtraction. They have state, including a dedicated 
 - Pointers are not arrays but can refer to arrays.
 
 - Only subtract pointers from elements of an array object — the same array object.
+  Calculates the offset between two addresses.
+
+#+begin_example
+  // === Pointer Subtraction ===
+  pointer 8 - pointer 4 = 4 bytes
+
+  sizeof(integer) = 4 bytes
+
+  4 / sizeof(integer) = offset 1
+#+end_example
 
 - All pointer differences have type ~ptrdiff_t~.
 
