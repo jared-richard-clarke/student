@@ -780,7 +780,7 @@ pointers more generically. These are pointers to non-type ~void~.
       return x + y;
   }
 
-  int main (int argc, char *argv[]) {
+  int main (int argc, const char* argv[]) {
       int index =  0;
       int bound = 10;
       int sum   =  0;
@@ -868,7 +868,7 @@ pointers more generically. These are pointers to non-type ~void~.
 
   const char* name = "Jared Clarke";
 
-  int main(int argc, char* argv[]) {
+  int main(int argc, const char* argv[]) {
       char* text = malloc(13);
       copy_string(text, name);
       free(text);
