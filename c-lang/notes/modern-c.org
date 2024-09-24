@@ -931,3 +931,80 @@ pointers more generically. These are pointers to non-type ~void~.
           leave                            ; <-- Exit "main" function.
           ret                              ; <+
 #+end_src
+
+*** Add Vectors
+
+**** C Source Code
+
+#+begin_src c
+  typedef struct Vec2 {
+      float x;
+      float y;
+  } Vec2;
+
+  Vec2 add(Vec2 v1, Vec2 v2) {
+      Vec2 result = { v1.x + v2.x, v1.y + v2.y };
+      return result;
+  }
+
+  int main(int argc, const char* argv[]) {
+      Vec2 v1 = { 3.0, 4.0 };
+      Vec2 v2 = { 7.0, 11.0 };
+      Vec2 v3 = add(v1, v2);
+      return 0;
+  }
+#+end_src
+
+**** Assembly Output ~x86-64 gcc 14.2~
+
+#+begin_src asm
+  add:
+          push    rbp                       ; <+
+          mov     rbp, rsp                  ;  |- Set up state for "add" function.
+          movq    QWORD PTR [rbp-24], xmm0  ;  |
+          movq    QWORD PTR [rbp-32], xmm1  ; <+
+          movss   xmm1, DWORD PTR [rbp-24]  ; <+
+          movss   xmm0, DWORD PTR [rbp-32]  ;  |
+          addss   xmm0, xmm1                ;  |
+          movss   DWORD PTR [rbp-8], xmm0   ;  |- Add "v1" to "v2" and place sum in "result".
+          movss   xmm1, DWORD PTR [rbp-20]  ;  |
+          movss   xmm0, DWORD PTR [rbp-28]  ;  |
+          addss   xmm0, xmm1                ;  |
+          movss   DWORD PTR [rbp-4], xmm0   ; <+
+          mov     rax, QWORD PTR [rbp-8]    ; <-- Return "result".
+          movq    xmm0, rax                 ; <+
+          pop     rbp                       ;  |- Return to caller of "add" function.
+          ret                               ; <+
+  main:
+          push    rbp                       ; <+
+          mov     rbp, rsp                  ;  |
+          sub     rsp, 48                   ;  |- Set up state for "main" function.
+          mov     DWORD PTR [rbp-36], edi   ;  |
+          mov     QWORD PTR [rbp-48], rsi   ; <+
+          movss   xmm0, DWORD PTR .LC0[rip] ; <+
+          movss   DWORD PTR [rbp-8], xmm0   ;  |- Declare and initialize "v1".
+          movss   xmm0, DWORD PTR .LC1[rip] ;  |
+          movss   DWORD PTR [rbp-4], xmm0   ; <+
+          movss   xmm0, DWORD PTR .LC2[rip] ; <+
+          movss   DWORD PTR [rbp-16], xmm0  ;  |- Declare and initialize "v2".
+          movss   xmm0, DWORD PTR .LC3[rip] ;  |
+          movss   DWORD PTR [rbp-12], xmm0  ; <+
+          movq    xmm0, QWORD PTR [rbp-16]  ; <+
+          mov     rax, QWORD PTR [rbp-8]    ;  |
+          movdqa  xmm1, xmm0                ;  |
+          movq    xmm0, rax                 ;  |- Call "add" on "v1" and "v2" and place result in "v3".
+          call    add                       ;  |
+          movq    rax, xmm0                 ;  |
+          mov     QWORD PTR [rbp-24], rax   ; <+
+          mov     eax, 0                    ; <-- Return success code 0 from "main" function.
+          leave                             ; <-- Exit "main" function.
+          ret                               ; <+
+  .LC0:
+          .long   1077936128                ; <--  3.0f
+  .LC1:                                     ;
+          .long   1082130432                ; <--  4.0f
+  .LC2:                                     ;
+          .long   1088421888                ; <--  7.0f
+  .LC3:                                     ;
+          .long   1093664768                ; <-- 11.0f
+#+end_src
