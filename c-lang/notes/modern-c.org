@@ -554,7 +554,7 @@ is always called via a function pointer:
 
 ** Flexible Array Members
 
-*Flexible Array Members are a feature introduced in the C99 standard that allow structs
+*Flexible Array Members* are a feature introduced in the C99 standard that allow structs
 to contain a variable-sized array, preferably declared as the last member. The structure
 must contain at least one named member in addition to the flexible array. The size of
 the structure is determined by the static size of its other members plus the
