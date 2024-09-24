@@ -769,7 +769,7 @@ pointers more generically. These are pointers to non-type ~void~.
 | ~_Thread_local~ | thread                        |                           |                        |
 | none            | dynamic (heap)                |                           | zero if using ~calloc~ |
 
-** The State Machine: C to Assembly
+** State Machines: C to Assembly
 
 *** Numbers Loop
 
