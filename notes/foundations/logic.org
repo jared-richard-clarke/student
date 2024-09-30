@@ -52,6 +52,8 @@
 
 - precedence :: *¬* > *∧* > *∨* > *→* > *↔* and *⊕* = *∨*.
 
+- associativity :: For operators of equal precedence, expressions are grouped left to right.
+
 - truth table :: Shows the value of one or more compound propositions for each possible combination
   of values of the propositional variables that they contain. In general, if there are *n* variables,
   then there are *2_{n}* different ways to assign truth values to variables.
