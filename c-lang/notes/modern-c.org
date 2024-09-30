@@ -856,14 +856,14 @@ pointers more generically. These are pointers to non-type ~void~.
   #include <stdlib.h>
 
   char* copy_string(char* destination, const char* source) {
-      char* saved = destination;
+      char* base = destination;
       while (*source != '\0') {
           *destination = *source;
           source += 1;
           destination += 1;
       }
       *destination = '\0';
-      return saved;
+      return base;
   }
 
   const char* name = "Jared Clarke";
