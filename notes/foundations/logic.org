@@ -61,7 +61,7 @@
 
 - logically equivalent :: If two compound expressions have the same value, no matter what truth
   values are assigned to the propositional variables that they contain. *P ≡ Q* reads
-  "*P* is logically equivalent to *Q*".
+  "*P* is logically equivalent to *Q*". *P ≡ Q* if and only if *P ↔ Q* is a tautology.
 
 - implication :: *p → q* reads "*p* implies *q*" or "If *p* is true then *q* must also be true".
   Equivalent to *¬p ∨ q* or *¬(p ∧ ¬q)*.
@@ -70,10 +70,10 @@
 
 - converse :: *p → q* is *not* equivalent to *q → p*.
 
-- tautology :: a compound proposition that is true for all possible combinations of truth values
+- tautology :: A compound proposition that is true for all possible combinations of truth values
   of the propositional variables that it contains.
 
-- contradiction :: a compound proposition that is false for all possible combinations of truth
+- contradiction :: A compound proposition that is false for all possible combinations of truth
   values of the propositional variables that it contains.
 
 ** Truth Tables and Binary Trees
