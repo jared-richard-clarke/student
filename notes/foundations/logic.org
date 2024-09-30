@@ -76,6 +76,35 @@
 - contradiction :: a compound proposition that is false for all possible combinations of truth
   values of the propositional variables that it contains.
 
+** Truth Tables and Binary Trees
+
+#+begin_example
+  === Binary Tree ===
+
+       p  |  q
+    -------------
+          +- T
+          |
+    +- T -+
+    |     |
+    |     +- F
+  +-+
+    |     +- T
+    |     |
+    +- F -+
+          |
+          +- F
+
+  === Truth Table ===
+
+  | p | q |
+  |---+---|
+  | T | T |
+  | T | F |
+  | F | T |
+  | F | F |
+#+end_example
+
 ** Boolean Algebra
 
 *** Laws of Boolean Algebra
