@@ -1,8 +1,11 @@
 * Parsers: Theory and Notation
 
-*Introduction to Compilers and Language Design*, Douglas Thain
+** Sources
 
-*Formal Languages* and *Set Theory*, Wikipedia
+| source                                          | author        |
+|-------------------------------------------------+---------------|
+| *Introduction to Compilers and Language Design* | Douglas Thain |
+| *Formal Languages* and *Set Theory*             | Wikipedia     |
 
 ** Set Theory: Basic Concepts and Notation
 
