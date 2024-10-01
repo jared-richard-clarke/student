@@ -27,7 +27,7 @@
 
   - Non-commutative: *xy ≠ yx* for all strings *x* and *y*.
 
-- reversal :: If *x = a_{1} a_{2} ... a_{n}* then *x^R = a_{n} ... a_{2} a_{1}*.
+- reversal :: If *x = a_{1} a_{2} ... a_{n}* then *x^{R} = a_{n} ... a_{2} a_{1}*.
 
 *Side Note*: *(a, b, c, ...)* for symbols. *(u, v, w, ...)* for strings.
 
