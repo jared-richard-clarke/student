@@ -98,7 +98,7 @@ The collection of regular languages over an alphabet *Σ* is defined recursively
   or *final*. If the machine ends in such a state after completely consuming an input string, the
   string is said to be *accepted* by the machine.
 
-- transition function :: Determines the next state according to the current state.
+- transition function :: Determines the next state according to the current state and symbol.
 
 *** Deterministic Finite-State Automaton
 
