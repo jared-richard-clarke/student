@@ -124,7 +124,7 @@ can make.
 The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ Σ\star{}* that are
 accepted by *M: L(M) = { w ∈ Σ\star{} | δ\star{}(q₀, w) ∈ F }*.
 
-*δ\star{}(q, w)* is the state that a DFA will be in if it starts in state *q* and consumes
+*δ\star{}(q, w)* denotes the state that a DFA will be in if it starts in state *q* and consumes
 input string *w*.
 
 *** Non-deterministic Finite-State Automaton
