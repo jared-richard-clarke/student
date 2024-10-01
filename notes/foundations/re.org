@@ -29,7 +29,7 @@
 
 - reversal :: If *x = a_{1} a_{2} ... a_{n}* then *x^{R} = a_{n} ... a_{2} a_{1}*.
 
-*Side Note*: *(a, b, c, ...)* for symbols. *(u, v, w, ...)* for strings.
+*Side Note*: By convention, *(a, b, c, ...)* are symbols and *(u, v, w, ...)* are strings.
 
 - empty string :: The symbol *ε*, which represents a string with no symbols in it.
 
