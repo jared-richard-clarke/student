@@ -54,14 +54,14 @@ and *Y*      = *{ x | W(x) }*
 - universal set :: Some set that is large enough to contain all the sets under discussion as subsets.
   Given a universal set *U* and any subset *A* of *U*, *{ x ∈ U | ¬(x ∈ A) }*.
 
-- complement :: *A^C = { x ∈ U | x ∉ A }*
+- complement :: *A^{C} = { x ∈ U | x ∉ A }*
 
 | rule               | algebra                         |
 |--------------------+---------------------------------|
-| double complement  | (A^C)^C = A                     |
-| miscellaneous laws | A ∪ A^C = U                     |
-|                    | A ∩ A^C = Ø                     |
-|                    | Ø ∪ A^C = A                     |
+| double complement  | (A^{C})^{C} = A                 |
+| miscellaneous laws | A ∪ A^{C} = U                   |
+|                    | A ∩ A^{C} = Ø                   |
+|                    | Ø ∪ A^{C} = A                   |
 |                    | Ø ∩ A^C = Ø                     |
 | idempotent laws    | A ∩ A = A                       |
 |                    | A ∪ A = A                       |
@@ -71,8 +71,8 @@ and *Y*      = *{ x | W(x) }*
 |                    | A ∪ (B ∪ C) = (A ∪ B) ∪ C       |
 | distributive laws  | A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) |
 |                    | A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) |
-| DeMorgan's laws    | (A ∩ B)^C = A^C ∪ B^C           |
-|                    | (A ∪ B)^C = A^C ∩ B^C           |
+| DeMorgan's laws    | (A ∩ B)^{C} = A^{C} ∪ B^{C}     |
+|                    | (A ∪ B)^{C} = A^{C} ∩ B^{C}     |
 
 *** Logic and Set Theory
 
@@ -96,7 +96,7 @@ and *B* = set
 | F       | Ø          |
 | p ∧ q   | A ∩ B      |
 | p ∨ q   | A ∪ B      |
-| ¬p      | A^C        |
+| ¬p      | A^{C}      |
 
 ** Functions
 
