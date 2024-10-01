@@ -1,8 +1,11 @@
 * LR Grammars and Parsing
 
-*Introduction to Compilers and Language Design*, Douglas Thain
+** Sources
 
-*LR Parsing*, Wikipedia
+| source                                          | author        |
+|-------------------------------------------------+---------------|
+| *Introduction to Compilers and Language Design* | Douglas Thain |
+| *LR Parsing*                                    | Wikipedia     |
 
 ** Actions
 
