@@ -49,6 +49,9 @@ over the alphabet *Σ* defined by *L(G) = { w ∈ Σ\star{} | S ⇒\star{} w }*.
   string consisting of a single terminal symbol followed by a single non-terminal symbol *D → aE*.
   Such grammars produce regular languages.
 
+A language *L* is regular if and only if there is a right-regular grammar *G* such that *L = L(G)*.
+In particular, every regular language is context-free.
+
 ** Backus-Naur Form to Context-Free Grammar
 
 *** Backus-Naur Form
