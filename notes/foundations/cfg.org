@@ -44,6 +44,11 @@ over the alphabet *Σ* defined by *L(G) = { w ∈ Σ\star{} | S ⇒\star{} w }*.
 - derivation :: A sequence of one or more applications of production rules. A derivation of string *w*
   from start symbol *S* would be of the form *S ⇒ x₁ ⇒ x₂ ⇒ ... ⇒ w*.
 
+- right-regular grammar :: A context-free grammar in which the right-hand side of every production rule
+  is either the empty string *A → ε*, a string consisting of a single non-terminal symbol *B → C*, or a
+  string consisting of a single terminal symbol followed by a single non-terminal symbol *D → aE*.
+  Such grammars produce regular languages.
+
 ** Backus-Naur Form to Context-Free Grammar
 
 *** Backus-Naur Form
