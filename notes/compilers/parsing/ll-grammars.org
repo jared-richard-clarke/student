@@ -136,19 +136,19 @@ appear after the derivation of non-terminal *A*.
 
   For Non-Terminals:
   Repeat:
-      For each rule X → Y1Y2...Yk in a grammar G:
+      For each rule X → Y₁Y₂...Yk in a grammar G:
           Add a to FIRST(X)
-              if a is in FIRST(Y1)
-              or a is in FIRST(Yn) and Y1...Yn-1 ⇒ ε
-          If Y1...Yk ⇒ ε then add ε to FIRST(X)
+              if a is in FIRST(Y₁)
+              or a is in FIRST(Yn) and Y₁...Yn-1 ⇒ ε
+          If Y₁...Yk ⇒ ε then add ε to FIRST(X)
   until no more changes occur.
 
   For a Sentential Form α:
-  For each symbol Y1Y2...Yk in α:
+  For each symbol Y₁Y₂...Yk in α:
       Add a to FIRST(α)
-          if a is in FIRST(Y1)
-          or a is in FIRST(Yn) and Y1...Yn-1 ⇒ ε
-      If Y1...Yk ⇒ ε then add ε to FIRST(α).
+          if a is in FIRST(Y₁)
+          or a is in FIRST(Yn) and Y₁...Yn-1 ⇒ ε
+      If Y₁...Yk ⇒ ε then add ε to FIRST(α).
 #+end_example
 
 *** Computing Follow Sets for Grammar *G*
