@@ -143,8 +143,8 @@ In particular, every regular language is context-free.
 ** Pushdown Automaton
 
 Whereas a context-free grammar *generates* a context-free language, a pushdown automaton
-*recognizes* a context-free language. In fact, a language is context-free if and only if
-there exists a pushdown automaton that accepts that language.
+*recognizes* or *accepts* a context-free language. In fact, a language is context-free
+if and only if there exists a pushdown automaton that accepts that language.
 
 A pushdown automaton *M* is specified by six components *M = (Q, Σ, Λ, q_{0}, ∂, F)* where
 
