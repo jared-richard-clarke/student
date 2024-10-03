@@ -281,12 +281,18 @@ applied for any combination of non-terminal on the stack and the next token on t
   Given a grammar G and alphabet Σ, create a parse table T[A, a] that selects
   a rule for each combination of non-terminal A ∈ G and terminal a ∈ Σ.
 
-  For each rule A → α in G:
-      For each terminal a (excepting ε) in FIRST(α):
-          Add A → α to T[A, a].
-      if ε is in FIRST(α):
+  For each rule A → w in G:
+      For each terminal a (excepting ε) in FIRST(w):
+          Add A → w to T[A, a].
+      if ε is in FIRST(w):
           For each terminal b (including $) in FOLLOW(A):
-              Add A → α to T[A, b]
+              Add A → w to T[A, b]
+
+  In other words...
+
+  T[A, a] contains the rule A → w if and only if
+      a is in FIRST(w) or
+      ε is in FIRST(w) and a is in FOLLOW(A)
 #+end_example
 
 *** Grammar
