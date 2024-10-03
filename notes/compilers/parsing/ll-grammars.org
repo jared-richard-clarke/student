@@ -123,6 +123,8 @@ In order to construct a complete parser for an *LL(1)* grammar, we must compute 
 at the start of the derivation of *α*. *FOLLOW(A)* is the set of terminals, including *$*, that can
 appear after the derivation of non-terminal *A*.
 
+*Side Note*: *α* is a sentential form, *a* is a terminal, and *A* is a nonterminal.
+
 *** Computing First Sets for a Grammar *G*
 
 #+begin_example
