@@ -139,3 +139,22 @@ In particular, every regular language is context-free.
     ⇒ ( F + y ) * z |
     ⇒ ( x + y ) * z |
 #+end_example
+
+** Pushdown Automaton
+
+A pushdown automaton *M* is specified by six components *M = (Q, Σ, Λ, q_{0}, ∂, F)* where
+
+- *Q* is a finite set of states.
+
+- *Σ* is the input alphabet for *M*.
+
+- *Λ* is the stack alphabet for *M*.
+
+- *q_{0} ∈ Q* is the start of *M*.
+
+- *F ⊆ Q* is the set of final or accepting states in *M*.
+
+- *∂* is the set of transitions in *M*. *∂* can be taken to be a finite subset of the set
+  *(Q × (Σ ∪ {ε}) × Λ\star{}) × (Q × Λ\star{})*. An element *((q_{1}, σ, x), (q_{2}, y))*
+  represents a transition from state *q_{1}* to state *q_{2}* in which *M* reads *σ* from its
+  *∂* input string, pops *x* from the stack, and pushes *y* onto the stack.
