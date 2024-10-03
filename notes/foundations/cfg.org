@@ -162,3 +162,25 @@ A pushdown automaton *M* is specified by six components *M = (Q, Σ, Λ, q_{0}, 
   *(Q × (Σ ∪ {ε}) × Λ\star{}) × (Q × Λ\star{})*. An element *((q_{1}, σ, x), (q_{2}, y))*
   represents a transition from state *q_{1}* to state *q_{2}* in which *M* reads *σ* from its
   *∂* input string, pops *x* from the stack, and pushes *y* onto the stack.
+
+*** L = L(M)
+
+- *L* is the context free language over an alphabet *Σ*.
+
+- *G = (V, Σ, P, S)* is the context-free grammar for *L*.
+
+- *M = (Q, Σ, Λ, q_{0}, ∂, F)* is the pushdown automaton that accepts *L*.
+
+- *Q = { q_{0}, q_{1} }*
+
+- *Λ = Σ ∪ V*
+
+- *F = { q_{1} }*
+
+*∂* contains the transition forms:
+
+1. *((q_{0}, ε, ε), (q_{1}, S))*
+
+2. *((q_{1}, σ, σ), (q_{1}, ε))*, for *σ ∈ Σ*
+
+3. *((q_{1}, ε, A), (q_{1}, x))*, for each production *A → x* in *G*
