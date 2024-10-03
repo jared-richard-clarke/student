@@ -7,25 +7,6 @@
 | *Foundations of Computation*                     | Carol Critchlow and David Eck |
 | *Concatenative Programming: From Ivory to Metal* | John Purdy                    |
 
-** Pushdown Automata
-
-A pushdown automaton *M* is specified by six components *M = (Q, Σ, Λ, q_{0}, ∂, F)* where
-
-- *Q* is a finite set of states.
-
-- *Σ* is the input alphabet for *M*.
-
-- *Λ* is the stack alphabet for *M*.
-
-- *q_{0} ∈ Q* is the start of *M*.
-
-- *F ⊆ Q* is the set of final or accepting states in *M*.
-
-- *∂* is the set of transitions in *M*. *∂* can be taken to be a finite subset of the set
-  *(Q × (Σ ∪ {ε}) × Λ\star{}) × (Q × Λ\star{})*. An element *((q_{1}, σ, x), (q_{2}, y))*
-  represents a transition from state *q_{1}* to state *q_{2}* in which *M* reads *σ* from its
-  *∂* input string, pops *x* from the stack, and pushes *y* onto the stack.
-
 ** Turing Machine
 
 The Turing machine is a 4-tuple *(Q, Λ, q_{0}, δ)* where
