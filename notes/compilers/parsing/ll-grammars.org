@@ -1,8 +1,11 @@
 * LL Grammars and Parsing
 
-*Introduction to Compilers and Language Design*, Douglas Thain
+** Sources
 
-*Formal Languages* and *Set Theory*, Wikipedia
+| source                                          | author        |
+|-------------------------------------------------+---------------|
+| *Introduction to Compilers and Language Design* | Douglas Thain |
+| *Formal Languages* and *Set Theory*             | Wikipedia     |
 
 ** Actions
 
@@ -349,7 +352,7 @@ While S is not empty:
 | 1 T' E' $   | 1 * 1 $ | match 1              |
 | T' E' $     | * 1 $   | apply 6: T' ⇒ * F T' |
 | * F T' E' $ | * 1 $   | match *              |
-| F T' E' $   | 1 $     | apply9: F ⇒ 1        |
+| F T' E' $   | 1 $     | apply 9: F ⇒ 1       |
 | 1 T' E' $   | 1 $     | match 1              |
 | T' E' $     | $       | apply 7: T' ⇒ ε      |
 | E' $        | $       | apply 4: E' ⇒ ε      |
