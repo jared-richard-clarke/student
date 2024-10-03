@@ -171,16 +171,16 @@ A pushdown automaton *M* is specified by six components *M = (Q, Σ, Λ, q_{0}, 
 
 - *M = (Q, Σ, Λ, q_{0}, ∂, F)* is the pushdown automaton that accepts *L*.
 
-- *Q = { q_{0}, q_{1} }*
+- *Q = { q_{0}, q_{1} }* is the set of finite states.
 
-- *Λ = Σ ∪ V*
+- *Λ = Σ ∪ V* is the set of stack symbols.
 
-- *F = { q_{1} }*
+- *F = { q_{1} }* is the set of accepting states.
 
-*∂* contains the transition forms:
+- *∂* is the set of transition forms:
 
-1. *((q_{0}, ε, ε), (q_{1}, S))*
+  1. *((q_{0}, ε, ε), (q_{1}, S))*
 
-2. *((q_{1}, σ, σ), (q_{1}, ε))*, for *σ ∈ Σ*
+  2. *((q_{1}, σ, σ), (q_{1}, ε))*, for *σ ∈ Σ*
 
-3. *((q_{1}, ε, A), (q_{1}, x))*, for each production *A → x* in *G*
+  3. *((q_{1}, ε, A), (q_{1}, x))*, for each production *A → x* in *G*
