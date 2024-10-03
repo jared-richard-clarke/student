@@ -34,7 +34,7 @@ The Turing machine is a 4-tuple *(Q, Λ, q_{0}, δ)* where
 
 - *Λ* is an alphabet which includes the blank symbol *#*.
 
-- *q0 ∈ Q* is the start state.
+- *q_{0} ∈ Q* is the start state.
 
 - *δ : (Q \ {h}) × Λ → Λ × {L, R} × Q* is the transition function. *δ(q, σ) = (τ, d, r)* means
   that when the Turing machine is in state *q* and reads symbol *σ*, it writes the symbol *τ*,
