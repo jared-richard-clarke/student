@@ -66,6 +66,14 @@ In particular, every regular language is context-free.
 
 **** LL(1)
 
+- Left-to-right reading.
+
+- Left-most derivation.
+
+- One symbol of lookahead.
+
+- Top-down parsing.
+
 #+begin_example
   === grammar ===
 
@@ -82,20 +90,28 @@ In particular, every regular language is context-free.
 
   === derivation ===
 
-  E ⇒ T A
-    ⇒ F B A
-    ⇒ x B A
-    ⇒ x A
-    ⇒ x + T A
-    ⇒ x + F B A
-    ⇒ x + y B A
-    ⇒ x + y * F B A
-    ⇒ x + y * z B A
-    ⇒ x + y * z A
-    ⇒ x + y * z
+  E ⇒ T A           |
+    ⇒ F B A         |
+    ⇒ x B A         |
+    ⇒ x A           |
+    ⇒ x + T A       |
+    ⇒ x + F B A     | parse
+    ⇒ x + y B A     |
+    ⇒ x + y * F B A |
+    ⇒ x + y * z B A |
+    ⇒ x + y * z A   |
+    ⇒ x + y * z     V
 #+end_example
 
 **** LR(1)
+
+- Left-to-right reading.
+
+- Right-most derivation.
+
+- One symbol of lookahead.
+
+- Bottom-up parsing.
 
 #+begin_example
   === grammar ===
@@ -111,15 +127,15 @@ In particular, every regular language is context-free.
 
   === derivation ===
 
-  E ⇒ T
-    ⇒ T * F
-    ⇒ T * z
-    ⇒ F * z
-    ⇒ ( E ) * z
-    ⇒ ( E + T ) * z
-    ⇒ ( E + F ) * z
-    ⇒ ( E + y ) * z
-    ⇒ ( T + y ) * z
-    ⇒ ( F + y ) * z
-    ⇒ ( x + y ) * z
+  E ⇒ T             ^
+    ⇒ T * F         |
+    ⇒ T * z         |
+    ⇒ F * z         |
+    ⇒ ( E ) * z     |
+    ⇒ ( E + T ) * z | parse
+    ⇒ ( E + F ) * z |
+    ⇒ ( E + y ) * z |
+    ⇒ ( T + y ) * z |
+    ⇒ ( F + y ) * z |
+    ⇒ ( x + y ) * z |
 #+end_example
