@@ -28,6 +28,13 @@ and *Γ\star{}*, then *f* is Turing computable if there is a Turing machine *M =
 such that *Σ ⊆ Λ* and *Γ ⊆ Λ* and for each string *w ∈ Σ\star{}*. When *M* is run with input
 *w*, it halts with output *f(w)*. *M* computes *f*.
 
+#+begin_quote
+  "...Turing machines can be shown to be equivalent in their computational power
+   to a pushdown automata with two independent stacks."
+
+  — *Foundations of Computation*, Carol Critchlow and David Eck
+#+end_quote
+
 *** Alternative Definition
 
 #+begin_example
