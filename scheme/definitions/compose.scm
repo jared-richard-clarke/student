@@ -27,8 +27,8 @@
 
 (define compose
   (case-lambda
-    [() (lambda (value) value)]
-    [(function) function]
-    [(function . functions)
-     (lambda (value)
-       (function ((apply compose functions) value)))]))
+    [() (lambda (x) x)]
+    [(f) f]
+    [(f . gs)
+     (lambda (x)
+       (f ((apply compose gs) x)))]))
