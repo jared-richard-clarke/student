@@ -22,3 +22,13 @@
                   (function value))
                 arg
                 functions)))
+
+;; compose: alternative definition
+
+(define compose
+  (case-lambda
+    [() (lambda (value) value)]
+    [(function) function]
+    [(function . functions)
+     (lambda (value)
+       (function ((apply compose functions) value)))]))
