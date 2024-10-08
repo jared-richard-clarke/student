@@ -4,10 +4,10 @@
 ;; Functions are applied left to right.
 ;; (pipe "hElLo" lowercase capitalize) -> "Hello"
 
-(define (pipe arg . functions)
+(define (pipe x . functions)
   (fold-left (lambda (value function)
                (function value))
-             arg
+             x
              functions))
 
 ;; (compose function ...) -> (function any) -> any
@@ -17,10 +17,10 @@
 ;; (map (compose - abs) '(1 -2 7 -11)) -> '(-1 -2 -7 -11)
 
 (define (compose . functions)
-  (lambda (arg)
+  (lambda (x)
     (fold-right (lambda (function value)
                   (function value))
-                arg
+                x
                 functions)))
 
 ;; compose: alternative definition
