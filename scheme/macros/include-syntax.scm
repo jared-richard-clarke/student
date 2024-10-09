@@ -12,10 +12,10 @@
     (define read-file
       (lambda (fn k)
         (let ([p (open-input-file fn)])
-          (let loop ([x (read p)])
+          (let recur ([x (read p)])
             (if (eof-object? x)
                 (begin (close-port p) '())
-                (cons (datum->syntax k x) (loop (read p))))))))
+                (cons (datum->syntax k x) (recur (read p))))))))
     (syntax-case x ()
       [(k filename)
        (let ([fn (syntax->datum (syntax filename))])
