@@ -84,6 +84,15 @@
 
 ** NFA Fragments (Russ Cox)
 
+#+begin_quote
+  "The NFA for a regular expression is built up from partial NFAs for each subexpression,
+   with a different construction for each operator. The partial NFAs have no matching states:
+   instead they have one or more dangling arrows, pointing to nothing. The construction
+   process will finish by connecting these arrows to a matching state."
+
+  — *Regular Expression Matching Can Be Simple and Fast*, Russ Cox
+#+end_quote
+
 #+begin_src c
   // === state fragments ===
 
