@@ -9,154 +9,154 @@
 ** Example Allocator
 
 #+begin_src c
-// *The C Programming Language*, Brian Kernighan and Dennis Ritchie
-// Example: A Storage Allocator, Section 8.7
-//
-//               +------------------------------------------------------------------+
-//               V                                                                  |
-// free list ----+ +------+ +------------------+ +------------------+ +----+ +----+ |
-//               V |      V |                  V |                  V |    V |    V |
-// +------+------+------+------+------+------+------+------+------+------+------+------+------+
-// | .... | used | free | free | used | used | free | .... | used | free | free | free | .... |
-// +------+------+------+------+------+------+------+------+------+------+------+------+------+
-//
-// +------+
-// | free | Free. Owned by malloc.
-// +------+
-// +------+
-// | used | In use. Owned by malloc.
-// +------+
-// +------+
-// | .... | Not owned by malloc.
-// +------+
+  // *The C Programming Language*, Brian Kernighan and Dennis Ritchie
+  // Example: A Storage Allocator, Section 8.7
+  //
+  //               +------------------------------------------------------------------+
+  //               V                                                                  |
+  // free list ----+ +------+ +------------------+ +------------------+ +----+ +----+ |
+  //               V |      V |                  V |                  V |    V |    V |
+  // +------+------+------+------+------+------+------+------+------+------+------+------+------+
+  // | .... | used | free | free | used | used | free | .... | used | free | free | free | .... |
+  // +------+------+------+------+------+------+------+------+------+------+------+------+------+
+  //
+  // +------+
+  // | free | Free. Owned by malloc.
+  // +------+
+  // +------+
+  // | used | In use. Owned by malloc.
+  // +------+
+  // +------+
+  // | .... | Not owned by malloc.
+  // +------+
 
-#include <stddef.h>
+  #include <stddef.h>
 
-// For alignment to long boundary.
-typedef long Align;
+  // For alignment to long boundary.
+  typedef long Align;
 
-// Block header:
-union header {
-  struct {
-    // Next block if on free list.
-    union header *ptr;
-    // Size of this block.
-    unsigned size;
-  } s;
-  // Force alignment of blocks.
-  Align x;
-};
+  // Block header:
+  union header {
+    struct {
+      // Next block if on free list.
+      union header *ptr;
+      // Size of this block.
+      unsigned size;
+    } s;
+    // Force alignment of blocks.
+    Align x;
+  };
 
-typedef union header Header;
+  typedef union header Header;
 
-// Empty list to get started.
-static Header base;
-// Start of the free list.
-static Header *freep = NULL;
+  // Empty list to get started.
+  static Header base;
+  // Start of the free list.
+  static Header *freep = NULL;
 
-// malloc: General-purpose storage allocator.
-//
-// "...[T]his version of malloc is portable only among machines
-//  for which general pointer comparison is meaningful."
-//
-// - *The C Programming Language*, Brian Kernighan and Dennis Ritchie
-//
-// === A block returned by malloc ===
-//
-//    +-----> Points to next free block.
-//    |
-// +-----+------+----------+
-// |     | size |          |
-// +-----+------+----------+
-//              ^
-//              +-- Address returned to user.
-//
-void *malloc(unsigned nbytes) {
-  Header *p, *prevp;
-  Header *morecore(unsigned);
-  unsigned nunits;
+  // malloc: General-purpose storage allocator.
+  //
+  // "...[T]his version of malloc is portable only among machines
+  //  for which general pointer comparison is meaningful."
+  //
+  // - *The C Programming Language*, Brian Kernighan and Dennis Ritchie
+  //
+  // === A block returned by malloc ===
+  //
+  //    +-----> Points to next free block.
+  //    |
+  // +-----+------+----------+
+  // |     | size |          |
+  // +-----+------+----------+
+  //              ^
+  //              +-- Address returned to user.
+  //
+  void *malloc(unsigned nbytes) {
+    Header *p, *prevp;
+    Header *morecore(unsigned);
+    unsigned nunits;
 
-  nunits = (nbytes+sizeof(Header)-1)/sizeof(header) + 1;
-  // No free list yet.
-  if ((prevp = freep) == NULL) {
-    base.s.ptr = freeptr = prevptr = &base;
-    base.s.size = 0;
+    nunits = (nbytes+sizeof(Header)-1)/sizeof(header) + 1;
+    // No free list yet.
+    if ((prevp = freep) == NULL) {
+      base.s.ptr = freeptr = prevptr = &base;
+      base.s.size = 0;
+    }
+
+    for (p = prevp->s.ptr; ; prevp = p, p = p->s.ptr) {
+      // Big enough.
+      if (p->s.size >= nunits) {
+        // Exactly.
+        if (p->s.size == nunits) {
+          prevp->s.ptr = p->s.ptr;
+          // Allocate tail end.
+        } else {
+          p->s.size -= nunits;
+          p += p->s.size;
+          p->s.size = nunits;
+        }
+        freep = prevp;
+        return (void *)(p+1);
+      }
+      // Wrapped around free list.
+      if (p == freep) {
+        if ((p = morecore(nunits)) == NULL) {
+          // None left.
+          return NULL;
+        }
+      }
+    }
   }
 
-  for (p = prevp->s.ptr; ; prevp = p, p = p->s.ptr) {
-    // Big enough.
-    if (p->s.size >= nunits) {
-      // Exactly.
-      if (p->s.size == nunits) {
-        prevp->s.ptr = p->s.ptr;
-        // Allocate tail end.
-      } else {
-        p->s.size -= nunits;
-        p += p->s.size;
-        p->s.size = nunits;
-      }
-      freep = prevp;
-      return (void *)(p+1);
+  // Minimum number of units to request.
+  #define NALLOC  1024
+
+  // morecore: Ask system for more memory.
+  static Header *morecore(unsigned nu) {
+    char *cp, *sbrk(int);
+    Header *up;
+
+    if (nu < NALLOC) {
+        nu = NALLOC;
     }
-    // Wrapped around free list.
-    if (p == freep) {
-      if ((p = morecore(nunits)) == NULL) {
-        // None left.
+    cp = sbrk(nu * sizeof(Header));
+    // No space at all.
+    if (cp == (char *) -1) {
         return NULL;
+    }
+    up = (Header *) cp;
+    up->s.size = nu;
+    free((void *)(up+1));
+    return freep;
+  }
+
+  // free: Put block ap in free list.
+  void free(void *ap) {
+    Header *bp, *p;
+
+    // Point to block header.
+    bp = (Header *)ap - 1;
+    for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr) {
+      if (p >= p->s.ptr && (bp > p || bp < p->s.ptr)) {
+        // Freed block at start or end of arena.
+        break;
       }
     }
-  }
-}
 
-// Minimum number of units to request.
-#define NALLOC  1024
-
-// morecore: Ask system for more memory.
-static Header *morecore(unsigned nu) {
-  char *cp, *sbrk(int);
-  Header *up;
-
-  if (nu < NALLOC) {
-      nu = NALLOC;
-  }
-  cp = sbrk(nu * sizeof(Header));
-  // No space at all.
-  if (cp == (char *) -1) {
-      return NULL;
-  }
-  up = (Header *) cp;
-  up->s.size = nu;
-  free((void *)(up+1));
-  return freep;
-}
-
-// free: Put block ap in free list.
-void free(void *ap) {
-  Header *bp, *p;
-
-  // Point to block header.
-  bp = (Header *)ap - 1;
-  for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr) {
-    if (p >= p->s.ptr && (bp > p || bp < p->s.ptr)) {
-      // Freed block at start or end of arena.
-      break;
+    // Join to upper nbr.
+    if (bp + bp->size == p->s.ptr) {
+        bp->s.size += p->s.ptr->s.size;
+        bp->s.ptr = p->s.ptr->s.ptr;
+    } else {
+        bp->s.ptr = p->s.ptr;
     }
+    // Join to lower nbr.
+    if (p + p->size == bp) {
+        p->s.size += bp->s.size;
+        p->s.ptr = bp->s.ptr;
+    } else {
+        p->s.ptr = bp;
+    }
+    freep = p;
   }
-
-  // Join to upper nbr.
-  if (bp + bp->size == p->s.ptr) {
-      bp->s.size += p->s.ptr->s.size;
-      bp->s.ptr = p->s.ptr->s.ptr;
-  } else {
-      bp->s.ptr = p->s.ptr;
-  }
-  // Join to lower nbr.
-  if (p + p->size == bp) {
-      p->s.size += bp->s.size;
-      p->s.ptr = bp->s.ptr;
-  } else {
-      p->s.ptr = bp;
-  }
-  freep = p;
-}
 #+end_src
