@@ -347,8 +347,7 @@
 
   Step 3:  a b b                 Step 3:  a b b
               ^                                ^
-  Backtrack on failure.          Drop failed first thread.
-                                 Match on second thread.
+  Backtrack on failure.          Drop failed first thread. Match on second.
 
      ◯-a->◯-b->●-a->                ◯-a->◯-b->◯-a->
     /               \              /               \
