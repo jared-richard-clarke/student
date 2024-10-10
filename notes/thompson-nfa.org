@@ -237,7 +237,7 @@
 
 ** Simulating the NFA
 
-*** C Code
+*** Simulator: C Code
 
 #+begin_src c
   typedef struct List {
