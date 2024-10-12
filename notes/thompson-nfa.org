@@ -94,7 +94,7 @@
 #+end_quote
 
 #+begin_src c
-  // Side Note: Infix-to-postfix function is excluded from this example.
+  // Side Note: The infix-to-postfix and main function are excluded from this example.
   //
   // === state fragments ===
   //
