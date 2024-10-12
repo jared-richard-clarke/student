@@ -122,6 +122,7 @@
 
   // Matching state.
   State matchstate = { Match };
+  // State counter.
   int nstate;
 
   // Allocate and initialize State.
