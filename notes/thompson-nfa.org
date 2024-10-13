@@ -84,21 +84,12 @@
 
 ** NFA Fragments (Russ Cox)
 
-#+begin_quote
-  "The NFA for a regular expression is built up from partial NFAs for each subexpression,
-   with a different construction for each operator. The partial NFAs have no matching states:
-   instead they have one or more dangling arrows, pointing to nothing. The construction
-   process will finish by connecting these arrows to a matching state."
-
-  — *Regular Expression Matching Can Be Simple and Fast*, Russ Cox
-#+end_quote
-
 #+begin_src c
-  // Side Note: The infix-to-postfix and main function are excluded from this example.
+  // Side Note: Both the infix-to-postfix parser and main function are excluded from this example.
   //
   // === state fragments ===
   //
-  // Represents an NFA state plus zero or one or two arrows exiting.
+  // Represents an NFA state plus zero, one, or two arrows exiting.
   //
   //                +--->out
   //                |
@@ -109,10 +100,11 @@
   // c < 256       c = 256 (Split)       c = 257 (Match)
 
   enum {
-    Split = 256
-    Match = 257,
+    Split = 256,
+    Match = 257
   };
 
+  // An NFA is represented by a linked collection of State structures.
   typedef struct State {
     int c;
     State *out;
@@ -138,6 +130,10 @@
     return s;
   }
 
+  // The compiler maintains a stack of NFA fragments. Literals push new fragments
+  // onto the stack, while operators pop fragments off the stack, combine those
+  // fragments by linking their pointers, and push a new, composite fragment back
+  // onto the stack.
   typedef struct Frag {
     State *start; // Pointer to the fragment's start state.
     Ptrlist *out; // List of dangling arrows in the NFA fragment.
@@ -191,6 +187,9 @@
   // === NFA Construction Loop ==
   //
   // Convert postfix regular expression to NFA. Return start state.
+  // Given these primitives and a fragment stack, the compiler is
+  // a loop over the provided postfix expression. The output is
+  // a single fragment with a match state patched to its end.
 
   State* post2nfa(char *postfix) {
     char *p;
@@ -279,6 +278,8 @@
 *** Simulator: C Code
 
 #+begin_src c
+  // The simulation of the NFA requires tracking State sets,
+  // which are stored as an array list.
   typedef struct List {
     State **s;
     int n;
@@ -432,6 +433,11 @@
   // }
 
   // Run the NFA on the input "s".
+  // The simulation uses two lists: "clist" is the current set of states
+  // that the NFA is in, and "nlist" is the next set of states that the
+  // NFA will be in after processing the current character. The execution
+  // loop initializes "clist" to contain just the start state and then
+  // runs the machine one step at a time.
   int match(State *start, char *s){
     int i, c;
     List *clist, *nlist, *t;
