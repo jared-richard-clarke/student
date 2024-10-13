@@ -905,6 +905,25 @@ at least one final state of the *NFA*.
     Inst *pc;
   };
 
+  typedef struct ThreadList {
+    int n;
+    Thread t[1];
+  } ThreadList;
+
+  Thread thread(Inst *pc) {
+    Thread t = { pc };
+    return t;
+   }
+
+  ThreadList* threadlist(int n) {
+    return malloc(sizeof(ThreadList)+n*sizeof(Thread));
+  }
+
+  void addthread(ThreadList *l, Thread t) {
+    l->t[l->n] = t;
+    l->n++;
+  }
+
   int thompson_vm(Inst *program, char *input) {
     // Number of instructions
     int length;
