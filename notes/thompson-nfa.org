@@ -912,16 +912,22 @@ at least one final state of the *NFA*.
   };
 
   // Instruction
-  struct Inst {
+  typedef struct Inst {
     int  opcode;
     int  c;
     Inst *x;
     Inst *y;
-  };
+  } Inst;
 
-  struct Thread {
+  typedef struct Thread {
     Inst *pc;
-  };
+  } Thread;
+
+  // typedef struct Thread {
+  //   Inst *pc;
+  //   // $0 through $9: An array of submatching string pointers.
+  //   char *saved[20];
+  // } Thread;
 
   typedef struct ThreadList {
     int n;
@@ -931,7 +937,7 @@ at least one final state of the *NFA*.
   Thread thread(Inst *pc) {
     Thread t = { pc };
     return t;
-   }
+  }
 
   ThreadList* threadlist(int n) {
     return malloc(sizeof(ThreadList)+n*sizeof(Thread));
@@ -943,6 +949,7 @@ at least one final state of the *NFA*.
   }
 
   int thompson_vm(Inst *program, char *input) {
+  // int pike_vm(Inst *program, char *input, char **saved)
     // Number of instructions
     int length;
     // Current list and next list
@@ -957,6 +964,7 @@ at least one final state of the *NFA*.
     nlist  = threadlist(length);
 
     addthread(clist, thread(program));
+    // addthread(clist, thread(program, saved));
 
     for (sp = input; *sp, sp += 1) {
       for (i = 0; i < clist.n; i += 1) {
@@ -967,16 +975,25 @@ at least one final state of the *NFA*.
             break;
           }
           addthread(nlist, thread(pc + 1));
+          // addthread(nlist, thread(pc + 1, t.saved));
           break;
         case Match:
+          // memmove(saved, t.saved, sizeof t.saved);
           return 1
         case Jump:
           addthread(clist, thread(pc->x));
+          // addthread(clist, thread(pc->x, t.saved));
           break;
         case Split:
           addthread(clist, thread(pc->x));
+          // addthread(clist, thread(pc->x, t.saved));
           addthread(clist, thread(pc->y));
+          // addthread(clist, thread(pc->y, t.saved));
           break;
+     // case Save:
+     //   t.saved[t->pc.i] = sp;
+     //   addthread(clist, thread(pc->x, t.saved));
+     //   break;
         }
       }
       swap(clist, nlist);
