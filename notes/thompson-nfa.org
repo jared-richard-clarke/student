@@ -748,6 +748,30 @@
   | 8 | match      |
 #+end_example
 
+** DFA
+
+#+begin_example
+  === regular expression ===
+
+  abab|abbb
+
+  === NFA ===
+
+     [2]-a->[4]-b->[6]-a->[8]-b->
+     /                           \
+  >[1]                          (10)
+     \                           /
+     [3]-a->[5]-b->[7]-b->[9]-b->
+
+  === DFA ===
+
+                              -a->[8]-b->
+                             /           \
+  >[1, 2, 3]-a->[4, 5]-b->[6, 7]        (10)
+                             \           /
+                              -b->[9]-b->
+#+end_example
+
 ** RE to NFA to DFA
 
 #+begin_example
