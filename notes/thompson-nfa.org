@@ -779,6 +779,24 @@
 
 ** RE to NFA to DFA
 
+Each state in the *DFA* corresponds to a list of states from the *NFA*.
+
+The epsilon closure *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the set of
+all states that can be reached from *q* via one or more *ε* transitions.
+
+If *R* is a set of states from *Q*, the epsilon closure *E(R)* is defined as the union of the
+epsilon closures of all the states in *R*.
+
+1. The set of states of the *DFA* is *P(Q)*, the power set of states *Q* in the original *NFA*.
+
+2. The start state of the *DFA* is *E({q₀})*, where *q₀* is the original start state of the *NFA*.
+
+3. For sets *R* in *P(Q)* and input characters *c ∈ Σ*, the transition function *δn* of the *DFA*
+   is defined in terms of the transition function *δ* of the *NFA* by *δn(R,c) = U_{r ∈ R} E(δ(r,c))*.
+
+The set of accepting states *F* of the *DFA* is defined to be the set of all states containing
+at least one final state of the *NFA*.
+
 #+begin_example
   === regular expression ===
 
@@ -849,24 +867,6 @@
        / \
       +-c->
 #+end_example
-
-Each state in the *DFA* corresponds to a list of states from the *NFA*.
-
-The epsilon closure *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the set of
-all states that can be reached from *q* via one or more *ε* transitions.
-
-If *R* is a set of states from *Q*, the epsilon closure *E(R)* is defined as the union of the
-epsilon closures of all the states in *R*.
-
-1. The set of states of the *DFA* is *P(Q)*, the power set of states *Q* in the original *NFA*.
-
-2. The start state of the *DFA* is *E({q₀})*, where *q₀* is the original start state of the *NFA*.
-
-3. For sets *R* in *P(Q)* and input characters *c ∈ Σ*, the transition function *δn* of the *DFA*
-   is defined in terms of the transition function *δ* of the *NFA* by *δn(R,c) = U_{r ∈ R} E(δ(r,c))*.
-
-The set of accepting states *F* of the *DFA* is defined to be the set of all states containing
-at least one final state of the *NFA*.
 
 ** Regular Expression Virtual Machine
 
