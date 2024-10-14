@@ -9,6 +9,7 @@
 | *Regular Expression Matching Can Be Simple and Fast* | Russ Cox        |
 | *Theory of Computation*                              | Michael Sipser  |
 | *Visualizing Thompson's Construction*                | Gregory Cernera |
+| *regexp-bytecode.c*                                  | Jan Burgy       |
 
 ** NFA Fragments
 
@@ -1002,7 +1003,7 @@ at least one final state of the *NFA*.
   }
 #+end_src
 
-** Thompson's VM (Jan Burgy)
+** ~regexp-bytecode.c~ (Jan Burgy)
 
 #+begin_src c
   #include <stdio.h>
@@ -1261,13 +1262,13 @@ at least one final state of the *NFA*.
                   char *re;
                   char *s;
           } test[] = {
-                  { "abcdefg",    "abcdefg"       },
-                  { "(a|b)*a",    "ababababab"    },
-                  { "(a|b)*a",    "aaaaaaaaba"    },
-                  { "(a|b)*a",    "aaaaaabac"     },
-                  { "a(b|c)*d",   "abccbcccd"     },
-                  { "a(b|c)*d",   "abccbcccde"    },
-                  { NULL,                 NULL    }
+                  { "abcdefg",    "abcdefg"    },
+                  { "(a|b)*a",    "ababababab" },
+                  { "(a|b)*a",    "aaaaaaaaba" },
+                  { "(a|b)*a",    "aaaaaabac"  },
+                  { "a(b|c)*d",   "abccbcccd"  },
+                  { "a(b|c)*d",   "abccbcccde" },
+                  { NULL,                 NULL }
           };
 
           for (i = 0; test[i].re; i++) {
