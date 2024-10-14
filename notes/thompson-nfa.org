@@ -380,6 +380,8 @@
   //   DState **dp, *d;
   //
   //   qsort(l->s, l->n, sizeof l->s[0], ptrcmp);
+  //
+  //   // Look in tree for existing DState.
   //   dp = &allstates;
   //   while ((d = *dp) != NULL) {
   //     i = listcmp(l, &d->l);
@@ -392,11 +394,14 @@
   //     }
   //   }
   //
+  //    // Allocate and initialize new DState.
   //    d = malloc(sizeof *d + l->n*sizeof l->s[0]);
   //    memset(d, 0, sizeof *d);
   //    d->l.s = (State**)(d+1);
   //    memmove(d->l.s, l->s, l->n*sizeof l->s[0]);
   //    d->l.n = l->n;
+  //
+  //    // Insert in tree.
   //    *dp = d;
   //    return d;
   // }
