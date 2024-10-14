@@ -1194,8 +1194,7 @@ at least one final state of the *NFA*.
           return  q;
   }
 
-  void dump_code (struct instr *code)
-  {
+  void dump_code (struct instr *code) {
           int i, op;
           char *str[] = { "STOP", "JUMP", "MATCH", "BRANCH" };
 
