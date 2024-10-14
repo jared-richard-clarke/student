@@ -338,7 +338,7 @@
     }
   }
 
-  // // DFA state: a cached NFA state list.
+  // // DFA state: a cached copy of NFA state list "l".
   // typedef struct DState {
   //   List l;
   //   DState *next[256];
