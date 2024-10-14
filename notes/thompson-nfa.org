@@ -191,7 +191,6 @@
   // Given these primitives and a fragment stack, the compiler is
   // a loop over the provided postfix expression. The output is
   // a single fragment with a match state patched to its end.
-
   State* post2nfa(char *postfix) {
     char *p;
     Frag stack[1000], *stackp, e1, e2, e;
