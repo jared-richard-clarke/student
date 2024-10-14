@@ -837,17 +837,6 @@
   | { 6, 8, 10, 7, 1, 5 } | C         | B |   | C |
   | { 4, 8, 7, 1, 5, 10 } | D         | B |   | C |
 
-  while there is an unmarked state T in D-states {
-      mark T
-      for each input symbol a {
-          U := ε-closure(move(T, a))
-          if U is not in D-states {
-              add U as unmarked state to D-states
-          }
-          D-transitions[T, a] := U
-      }
-  }
-
   === DFA ===
 
         <------a
