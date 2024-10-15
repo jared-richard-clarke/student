@@ -1062,8 +1062,9 @@ at least one final state of the *NFA*.
                                   c = escape[(int)src[i + 1]];
                                   c ? i++ : (c = '\\');
                           default:
-                                  if (concat)
+                                  if (concat) {
                                           dest[j++] = CONCAT;
+                                  }
                                   dest[j++] = c;
 
                   }
@@ -1119,7 +1120,7 @@ at least one final state of the *NFA*.
           }
           dest[j++] = '\0';
 
-          return  dest;
+          return dest;
   }
 
   struct instr {
@@ -1131,7 +1132,7 @@ at least one final state of the *NFA*.
           struct instr this;
           this.operand = operand;
           this.address = address;
-          return  this;
+          return this;
   }
 
   size_t memlen (const unsigned char *s) {
@@ -1139,7 +1140,7 @@ at least one final state of the *NFA*.
           while (*p) {
                   p++;
           }
-          return  p - s;
+          return p - s;
   }
 
   struct instr *compile (const unsigned char *src) {
@@ -1183,14 +1184,14 @@ at least one final state of the *NFA*.
 
           code[pc++] = assemble (STOP, pc);
 
-          return  code;
+          return code;
   }
 
   struct instr *study (const char *re) {
           unsigned char *p = convert (re);
           struct instr *q = compile (p);
           if (p) { free (p), p = NULL; }
-          return  q;
+          return q;
   }
 
   void dump_code (struct instr *code) {
@@ -1251,7 +1252,7 @@ at least one final state of the *NFA*.
                   }
           }
 
-          return  code[pc].operand == STOP;
+          return code[pc].operand == STOP;
   }
 
   int main (void) {
