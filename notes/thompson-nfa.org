@@ -1266,7 +1266,7 @@ at least one final state of the *NFA*.
                   { "(a|b)*a",    "aaaaaabac"  },
                   { "a(b|c)*d",   "abccbcccd"  },
                   { "a(b|c)*d",   "abccbcccde" },
-                  { NULL,                 NULL }
+                  { NULL,         NULL         }
           };
 
           for (i = 0; test[i].re; i++) {
