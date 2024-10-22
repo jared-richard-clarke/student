@@ -302,7 +302,7 @@ The relation *⇀_{G}* summarizes grammar *⇒_{G}* as follows:
 
 *WF(e)* for *e ∈ WF_{G}*: Expression *e* is well-formed in grammar *G*.
 
-*N(e)*: Nullable expression *e* can succeed without consuming input. 
+*N(e)*: Nullable expression *e* can succeed without consuming input. *e ⇀ 0*.
 
 1. *WF(ε)*
 
