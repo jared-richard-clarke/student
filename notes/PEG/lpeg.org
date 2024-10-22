@@ -24,9 +24,9 @@
 *** Functions
 
 - ~lpeg.match(pattern, subject, index?)~ :: Attempts to match the given pattern against
-  the subject string. If successful, returns either the index of the first match or
-  values captured from the subject string. An optional numeric argument starts the
-  match at the given index. Negative indices are offset from the end.
+  the subject string. If successful, returns either the index of the first character after
+  the match or the values captured from the subject string. An optional numeric argument
+  starts the match at the given index. Negative indices are offset from the end.
 
 - ~lpeg.type(value)~ :: If the given value is a pattern, returns the string "pattern".
   Otherwise returns nil.
