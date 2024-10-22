@@ -244,6 +244,60 @@ the reference to *G* is implied.
 - Not-predicate ( case 2 ) :: If *(e, x) ⇒ (n, f)*, then *(!e, x) ⇒ (n + 1, ε)*. If *e* fails,
   then *!e* succeeds but consumes nothing.
 
+** Grammatical Analysis
+
+The relation *⇀_{G}* is the pair *(e, o)*, where *e* is an expression and *o ∈ {0, 1, f}*.
+*e ⇀ o* implies *(e, o) ∈ ⇀_{G}*. Relation *⇀_{G}* is the abstract simulation of grammar *⇒_{G}*.
+
+| relation *⇀_{G}* | meaning                    |
+|------------------+----------------------------|
+| *e ⇀ 0*          | success, consumes no input |
+| *e ⇀ 1*          | success, consumes input    |
+| *e ⇀ f*          | failure                    |
+| *s*              | *0* or *1*                 |
+
+*** Inductive Definition
+
+1. *ε ⇀ 0*.
+
+2. *a ⇀ 1*.
+
+3. *a ⇀ f*.
+
+4. *A ⇀ o if R_{G}(A) ⇀ o*.
+
+5. *e_{1}e_{2} ⇀ 0* if *e_{1} ⇀ 0* and *e_{2} ⇀ 0*.
+
+   *e_{1}e_{2} ⇀ 1* if *e_{1} ⇀ 1* and *e_{2} ⇀ s*.
+
+   *e_{1}e_{2} ⇀ 1* if *e_{1} ⇀ s* and *e_{2} ⇀ 1*.
+
+6. *e_{1}e_{2} ⇀ f* if *e_{1} ⇀ f*.
+
+7. *e_{1}e_{2} ⇀ f* if *e_{1} ⇀ s*. and *e_{2} ⇀ f*.
+
+8. *e_{1} / e_{2} ⇀ s* if *e_{1} ⇀ s*
+
+9. *e_{1} / e_{2} ⇀ o* if *e_{1} ⇀ f* abd *e_{2} ⇀ o*.
+
+10. *e\star{} ⇀ 1* if *e ⇀ 1*.
+
+11. *e\star{} ⇀ 0* if *e ⇀ f*.
+
+12. *!e ⇀ f* if *e ⇀ s*.
+
+13. *!e ⇀ 0* if *e ⇀ f*.
+
+*** Summary
+
+The relation *⇀_{G}* summarizes grammar *⇒_{G}* as follows:
+
+- If *(e, x) ⇒_{G} (n, ε)*, then *e ⇀ 0*.
+
+- If *(e, x) ⇒_{G} (n, y)* and *|y| > 0*, then *e ⇀ 1*.
+
+- If *(e, x) ⇒_{G} (n, f)*, then *e ⇀ f*.
+
 ** Well-Formed Grammars
 
 *WF(e)* for *e ∈ WF_{G}*: Expression *e* is well-formed in grammar *G*.
