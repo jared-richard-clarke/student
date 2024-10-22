@@ -278,7 +278,7 @@ The relation *⇀_{G}* is the pair *(e, o)*, where *e* is an expression and *o �
 
 8. *e_{1} / e_{2} ⇀ s* if *e_{1} ⇀ s*
 
-9. *e_{1} / e_{2} ⇀ o* if *e_{1} ⇀ f* abd *e_{2} ⇀ o*.
+9. *e_{1} / e_{2} ⇀ o* if *e_{1} ⇀ f* and *e_{2} ⇀ o*.
 
 10. *e\star{} ⇀ 1* if *e ⇀ 1*.
 
