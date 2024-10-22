@@ -189,7 +189,7 @@ Where *e_{d}* is the desugaring of *e*.
 ** PEG Formal Interpretation
 
 The expression set *E(G)* of *G* is the set containing the start expression *e_{S}*, the expressions
-used in all grammar rules, and all subexpressions of those expressions.
+used in all grammar rules, and all sub-expressions of those expressions.
 
 For grammar *G = (V_{N} ,V_{T} , R, e_{S})*, *⇒_{G}* is a relation between pairs *(e, x)* to *(n, o)*,
 where *e* is a parsing expression, *x ∈ V_{T}\star* is an input string to be recognized, *n ≥ 0*
