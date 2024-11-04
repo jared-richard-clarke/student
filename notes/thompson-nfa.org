@@ -1146,7 +1146,7 @@ at least one final state of the *NFA*.
   struct instr *compile(const unsigned char *src) {
           int i, c, pc = 0, top = 0;
           int stack[BUFSIZ];
-          struct instr *code = malloc(5 * memlen (src) * sizeof *code / 2);
+          struct instr *code = malloc(5 * memlen(src) * sizeof *code / 2);
 
           for (i = 0; (c = src[i]); i++) {
 
