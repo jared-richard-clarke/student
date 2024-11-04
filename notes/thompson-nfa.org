@@ -1022,9 +1022,9 @@ at least one final state of the *NFA*.
           KLEENE                 // rules!
   };
 
-  unsigned char *prepare (const char *src) {
+  unsigned char *prepare(const char *src) {
           unsigned char escape[CHAR_MAX + 1] = "";
-          unsigned char *dest = malloc (2 * (strlen (src) + 1));
+          unsigned char *dest = malloc(2 * (strlen (src) + 1));
           int c, i, j = 0, concat = 0, nparen = 0;
 
           escape['a'] = '\a';
@@ -1070,19 +1070,19 @@ at least one final state of the *NFA*.
                   }
                   concat = 1;
                   if (nparen < 0) {
-                          printf ("unbalanced parentheses\n");
+                          printf("unbalanced parentheses\n");
                   }
 
           }
           dest[j++] = RPAREN;
           dest[j++] = '\0';
 
-          return  dest;
+          return dest;
   }
 
-  unsigned char *convert (const char *src) {
+  unsigned char *convert(const char *src) {
           unsigned char stack[BUFSIZ] = "";
-          unsigned char *dest = prepare (src);
+          unsigned char *dest = prepare(src);
           int c, i, j = 0, top = 0;
 
           stack[top++] = LPAREN;
@@ -1135,7 +1135,7 @@ at least one final state of the *NFA*.
           return this;
   }
 
-  size_t memlen (const unsigned char *s) {
+  size_t memlen(const unsigned char *s) {
           const unsigned char *p = s;
           while (*p) {
                   p++;
@@ -1143,10 +1143,10 @@ at least one final state of the *NFA*.
           return p - s;
   }
 
-  struct instr *compile (const unsigned char *src) {
+  struct instr *compile(const unsigned char *src) {
           int i, c, pc = 0, top = 0;
           int stack[BUFSIZ];
-          struct instr *code = malloc (5 * memlen (src) * sizeof *code / 2);
+          struct instr *code = malloc(5 * memlen (src) * sizeof *code / 2);
 
           for (i = 0; (c = src[i]); i++) {
 
@@ -1165,7 +1165,7 @@ at least one final state of the *NFA*.
                           case KLEENE:
                                   code[pc++] = assemble(BRANCH, '*');
                                   code[pc++] = code[stack[top - 1]];
-                                  code[stack[top - 1]] = assemble (JUMP, pc - 2);
+                                  code[stack[top - 1]] = assemble(JUMP, pc - 2);
                                   break;
 
                           case ALTERN:
@@ -1182,29 +1182,29 @@ at least one final state of the *NFA*.
 
           }
 
-          code[pc++] = assemble (STOP, pc);
+          code[pc++] = assemble(STOP, pc);
 
           return code;
   }
 
-  struct instr *study (const char *re) {
-          unsigned char *p = convert (re);
-          struct instr *q = compile (p);
-          if (p) { free (p), p = NULL; }
+  struct instr *study(const char *re) {
+          unsigned char *p = convert(re);
+          struct instr *q = compile(p);
+          if (p) { free(p), p = NULL; }
           return q;
   }
 
-  void dump_code (struct instr *code) {
+  void dump_code(struct instr *code) {
           int i, op;
           char *str[] = { "STOP", "JUMP", "MATCH", "BRANCH" };
 
           for (i = 0; (op = code[i].operand); i++) {
-                  printf (op == JUMP ? "%2d: %s\t%3d\n" : "%2d: %s\t'%c'\n",
-                                  i, str[op], code[i].address);
+                  printf(op == JUMP ? "%2d: %s\t%3d\n" : "%2d: %s\t'%c'\n",
+                                 i, str[op], code[i].address);
           }
   }
 
-  int execute (struct instr *code, const char *src) {
+  int execute(struct instr *code, const char *src) {
           short i = 0, c = src[i++], pc = 0;
           short clist[BUFSIZ], cnode = 0, shift = 0;
           short nlist[BUFSIZ], nnode = 0;
@@ -1234,7 +1234,7 @@ at least one final state of the *NFA*.
                   }
 
                   if (shift == cnode) {
-                          if (!nnode) return 0;
+                          if (!nnode) { return 0; }
                           shift = cnode = 0;
                           while (nnode > 0) {
                                   clist[cnode++] = nlist[--nnode];
@@ -1255,7 +1255,7 @@ at least one final state of the *NFA*.
           return code[pc].operand == STOP;
   }
 
-  int main (void) {
+  int main(void) {
           short i;
           struct {
                   char *re;
@@ -1272,14 +1272,14 @@ at least one final state of the *NFA*.
 
           for (i = 0; test[i].re; i++) {
 
-                  struct instr *this = study (test[i].re);
+                  struct instr *this = study(test[i].re);
 
                   printf ("%s %s /%s/\n",
                                   test[i].s,
-                                  execute (this, test[i].s) ? "~" : "!~",
+                                  execute(this, test[i].s) ? "~" : "!~",
                                   test[i].re);
 
-                  if (this) { free (this), this = NULL; }
+                  if (this) { free(this), this = NULL; }
           }
 
           return EXIT_SUCCESS;
