@@ -473,7 +473,7 @@ Constructions are listed in order of decreasing precedence.
 
 - Charset set :: If the current character is a member of *set*, instruction consumes the character
   and moves forward one instruction. Fails otherwise. Sets are represented as bit sets, with one
-  bit for each possible value of a character. Each instruction uses 256 extra bits, or 16 bytes, to
+  bit for each possible value of a character. Each instruction uses 256 extra bits, or 32 bytes, to
   represent its set.
 
 - Any :: Advances one position if the current position plus one is less than or equal to the length
