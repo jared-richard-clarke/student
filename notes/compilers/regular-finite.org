@@ -27,7 +27,7 @@ Then for regular expressions *s* and *t*:
 3. *s\star{}* is a *RE* such that *L(s\star{}) = L(s)* concatenated zero or more times.
 
 *Rule #3* is known as the *Kleene closure* and has the highest precedence. *Rule #2*
-is known as *concatenation*. Rule #1 has the lowest precedence and is known as *alternation*.
+is known as *concatenation*. *Rule #1* has the lowest precedence and is known as *alternation*.
 Parentheses can be added to adjust the order of operations in the usual way.
 
 *** Examples
