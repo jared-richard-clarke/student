@@ -167,18 +167,3 @@ closures of all the states in *R*.
 
 The set of accepting states *F* of the DFA is defined to be the set of all states containing at least one
 final state of the NFA.
-
-**** Subset Construction Algorithm
-
-#+begin_example
-  while there is an unmarked state T in D-states {
-      mark T
-      for each input symbol a {
-          U := ε-closure(move(T, a))
-          if U is not in D-states {
-              add U as unmarked state to D-states
-          }
-          D-transitions[T, a] := U
-      }
-  }
-#+end_example
