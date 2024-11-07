@@ -749,8 +749,8 @@ An ~OpenCall~ directly followed by a ~Return~ instruction is translated to a ~Ju
   --
   --     Call X
   --     Jump L1
-  --  X: Choice L2 <- Expensive storing and restoring of state
-  --     Char "a"  <- for a repeatedly-failing pattern
+  --  X: Choice L2 <- Expensive storing, dropping, and restoring
+  --     Char "a"  <- of state for a repeatedly-failing pattern.
   --     Char "b'
   --     Char "c"
   --     Commit L3
