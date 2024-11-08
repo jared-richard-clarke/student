@@ -965,7 +965,7 @@ at least one final state of the *NFA*.
     addthread(clist, thread(program));
     // addthread(clist, thread(program, saved));
 
-    for (sp = input; *sp, sp += 1) {
+    for (sp = input; *sp; sp += 1) {
       for (i = 0; i < clist.n; i += 1) {
         pc = clist.t[i].pc;
         switch (pc->opcode) {
