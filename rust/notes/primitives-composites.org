@@ -14,7 +14,7 @@
   - boolean: ~bool~
   - numeric: integer and float
   - textual: ~char~ and ~str~
-  - never: ~!~, a type with no values
+  - never: ~!~
 
 - sequence types:
   - tuple
@@ -144,6 +144,15 @@ efficiency.
   Must always be placed behind a pointer: ~&dyn Trait~, ~Box<dyn Trait>~, ~Rc<dyn Trait>~, etc.
 
 - slice :: A view into a contiguous block of memory represented as a pointer and a length.
+
+#+begin_quote
+  "The purpose of trait objects is to permit "late binding" of methods.
+   Calling a method on a trait object results in virtual dispatch at
+   runtime: that is, a function pointer is loaded from the trait object
+   vtable and invoked indirectly."
+
+   — *The Rust Reference*
+#+end_quote
 
 ** Zero Sized Types
 
