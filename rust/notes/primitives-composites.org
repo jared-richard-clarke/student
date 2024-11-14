@@ -14,7 +14,7 @@
   - boolean: ~bool~
   - numeric: integer and float
   - textual: ~char~ and ~str~
-  - never: ~!~
+  - never: ~!~, a type with no values
 
 - sequence types:
   - tuple
