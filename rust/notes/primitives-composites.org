@@ -143,8 +143,6 @@ efficiency.
   implementing a specified trait and a table used to look up trait methods on that type at runtime.
   Must always be placed behind a pointer: ~&dyn Trait~, ~Box<dyn Trait>~, ~Rc<dyn Trait>~, etc.
 
-- slice :: A view into a contiguous block of memory represented as a pointer and a length.
-
 #+begin_quote
   "The purpose of trait objects is to permit "late binding" of methods.
    Calling a method on a trait object results in virtual dispatch at
@@ -153,6 +151,8 @@ efficiency.
 
    — *The Rust Reference*
 #+end_quote
+
+- slice :: A view into a contiguous block of memory represented as a pointer and a length.
 
 ** Zero Sized Types
 
