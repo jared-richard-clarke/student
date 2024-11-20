@@ -949,14 +949,14 @@ Examples as they are actually output in the ~lpeg~ debugger.
   -- 21: call -> 16 -- Integer: body, Sign: call
   -- 23: jump -> 54
   -- 25: return
-  -- 26: testchar '.' (2e)-> 37 -- Exponent: body
+  -- 26: testchar '.' (2e)-> 37 -- Fractional: body
   -- 28: choice -> 37
   -- 30: any
   -- 31: set (30-1) [(30-39)]
   -- 33: span (30-1) [(30-39)]
   -- 35: commit -> 37
   -- 37: return
-  -- 38: testset (40-2) [(45)(65)]-> 53 -- Fractional: body
+  -- 38: testset (40-2) [(45)(65)]-> 53 -- Exponent: body
   -- 42: choice -> 53
   -- 44: any
   -- 45: call -> 16 -- Sign: call
