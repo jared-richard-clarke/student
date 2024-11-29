@@ -196,14 +196,13 @@ register or a constant.
             +-->| function |--+   | constants |--> value array
             |   |----------|      +-----------+
             |   | upvalues |--+
-            |   +----------+  |    UpValue List      Open Upvalue
+            |   +----------+  |    UpValue Array     Open Upvalue
             |                 |   +-------------+   +----------+
-            |                 +-->| 0           |-->| next     |
-            |                     +-------------+   +----------+
-            |                                       | location |--+
-            |                                       +----------+  |
+            |                 +-->| 0           |-->| location |--+
+            |                     +-------------+   +----------+  |
             |                                       | closed   |  |
             |                                       +----------+  |
+            |                                                     |
         +---|-----------------------------------------------------+
         V   |
   +---+---+---+---->
@@ -221,15 +220,12 @@ register or a constant.
     +-->| function |--+   | constants |--> value array
     |   |----------|      +-----------+
     |   | upvalues |--+
-    |   +----------+  |    UpValue List      Closed Upvalue
+    |   +----------+  |    UpValue Array     Closed Upvalue
     |                 |   +-------------+   +----------+
-    |                 +-->| 0           |-->| next     |
-    |                     +-------------+   +----------+
-    |                                       | location |--+
-    |                                       +----------+  |
+    |                 +-->| 0           |-->| location |--+
+    |                     +-------------+   +----------+  |
     |                                       | closed 7 |<-+
     |                                       +----------+
-    |
     |
   +--->
   | g | <-- Stack
