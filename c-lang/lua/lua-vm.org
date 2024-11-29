@@ -173,57 +173,65 @@ register or a constant.
 #+end_quote
 
 #+begin_example
-  === Closures Implemented as UpValues ===
+  === Closures ===
 
   1. Resolves local variables that are declared in surrounding functions.
   2. Capture variables that have already left the stack.
 
-                               Function Prototype
-                              +-----------+
-             Closure      +-->| chunk     |--> bytecode
-            +----------+  |   |-----------|
-        +-->| function |--+   | constants |--> value array
-        |   |----------|      +-----------+
-        |   | upvalues |--+
-        |   +----------+  |    UpValue Array     Upvalue
-        |                 |   +-------------+   +----------+
-        |                 +-->| 0           |-->| location |--+
-        |                     +-------------+   +----------+  |
-    +---|-----------------------------------------------------+
-    V   |
-  +---+----+---+-->
-  | x | fn | y |   <-- Stack
-  +---+----+---+-->
+  === Open Upvalues ===
 
-  === Closing UpValues ===
+   function f()
+       a = 7
+       function g()
+           print(a)
+       end
+       b = 11
+       return g
+   end
 
-                    Open UpValues --+
-                                    |
-                                    V
-       Upvalue       Upvalue        Upvalue
-     +----------+   +----------+   +----------+
-     | next     |<--| next     |<--| next     |
-     |----------|   |----------|   |----------|
-   +-| location | +-| location | +-| location |
-   | +----------+ | +----------+ | +----------+
-   +---+          |              |
-       |        +-+      +-------+
-       V        V        V
-     +---+----+---+----+---+----+
-     | x | fn | y | fn | z | fn | <-- stack
-     +---+----+---+----+---+----+
+                                   Function Prototype
+                                  +-----------+
+                 Closure      +-->| chunk     |--> bytecode
+                +----------+  |   |-----------|
+            +-->| function |--+   | constants |--> value array
+            |   |----------|      +-----------+
+            |   | upvalues |--+
+            |   +----------+  |    UpValue List      Open Upvalue
+            |                 |   +-------------+   +----------+
+            |                 +-->| 0           |-->| next     |
+            |                     +-------------+   +----------+
+            |                                       | location |--+
+            |                                       +----------+  |
+            |                                       | closed   |  |
+            |                                       +----------+  |
+        +---|-----------------------------------------------------+
+        V   |
+  +---+---+---+---->
+  | f | 7 | g | 11 | <-- Stack
+  +---+---+---+---->
 
-    Open Upvalue       Closed Upvalue
-   +----------+       +----------+
-   | next     |       | next     |
-   |----------|       |----------|
-   | closed   |       | closed z |<-+
-   |----------|       |----------|  |
-   | location |--+    | location |--+
-   +----------+  |    +----------+
-             +---+
-    Stack    V        Stack
-   +---+---+---+      +---+---+
-   | x | y | z |      | x | y |
-   +---+---+---+      +---+---+
+  === Closed Upvalues ===
+
+  closure = f()
+
+                           Function Prototype
+                          +-----------+
+         Closure      +-->| chunk     |--> bytecode
+        +----------+  |   |-----------|
+    +-->| function |--+   | constants |--> value array
+    |   |----------|      +-----------+
+    |   | upvalues |--+
+    |   +----------+  |    UpValue List      Closed Upvalue
+    |                 |   +-------------+   +----------+
+    |                 +-->| 0           |-->| next     |
+    |                     +-------------+   +----------+
+    |                                       | location |--+
+    |                                       +----------+  |
+    |                                       | closed 7 |<-+
+    |                                       +----------+
+    |
+    |
+  +--->
+  | g | <-- Stack
+  +--->
 #+end_example
