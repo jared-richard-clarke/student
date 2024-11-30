@@ -198,15 +198,15 @@ register or a constant.
             |   | upvalues |--+
             |   +----------+  |    Upvalue Pointer Array
             |                 |   +-------------+
-            |                 +-->| 0           |
+            |                 +-->| index 0     |
             |                     +-------------+
             |                            |
-            |                            V
-            |                      Open Upvalue
-            |                     +-------------+
-            |   Open Upvalues <---| next        |
-            |                     +-------------+
-            |                     | location    |--+
+            |                  +---------+
+            |                  |   Open Upvalue
+            |                  |  +-------------+
+            |  Open Upvalues <----| next        |
+            |                  |  +-------------+
+            |                  +->| location    |--+
             |                     +-------------+  |
             |                     | closed      |  |
             |                     +-------------+  |
@@ -230,15 +230,15 @@ register or a constant.
     |   | upvalues |--+
     |   +----------+  |    Upvalue Pointer Array
     |                 |   +-------------+
-    |                 +-->| 0           |
+    |                 +-->| index 0     |
     |                     +-------------+
     |                            |
-    |                            V
-    |                      Closed Upvalue
-    |                     +-------------+
-    |   Open Upvalues <---| next        |
-    |                     +-------------+
-    |                     | location    |--+
+    |                  +---------+
+    |                  |   Closed Upvalue
+    |                  |  +-------------+
+    |  Open Upvalues <----| next        |
+    |                  |  +-------------+
+    |                  +->| location    |--+
     |                     +-------------+  |
     |                     | closed 7    |<-+
     |                     +-------------+
