@@ -193,7 +193,7 @@ register or a constant.
                                   +-------------+
                  Closure      +-->| chunk       |--> bytecode
                 +----------+  |   |-------------|
-            +-->| function |--+   | constants   |--> value array
+            +---| function |--+   | constants   |--> value array
             |   |----------|      +-------------+
             |   | upvalues |--+
             |   +----------+  |    UpValue Array
@@ -212,7 +212,7 @@ register or a constant.
             |                     +-------------+  |
             |                                      |
         +---|--------------------------------------+
-        V   |
+        V   V
   +---+---+---+---->
   | f | 7 | g | 11 | <-- Stack
   +---+---+---+---->
@@ -225,7 +225,7 @@ register or a constant.
                           +-------------+
          Closure      +-->| chunk       |--> bytecode
         +----------+  |   |-------------|
-    +-->| function |--+   | constants   |--> value array
+    +---| function |--+   | constants   |--> value array
     |   |----------|      +-------------+
     |   | upvalues |--+
     |   +----------+  |    UpValue Array
@@ -242,7 +242,7 @@ register or a constant.
     |                     +-------------+  |
     |                     | closed 7    |<-+
     |                     +-------------+
-    |
+    V
   +--->
   | g | <-- Stack
   +--->
