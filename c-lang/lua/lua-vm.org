@@ -191,12 +191,12 @@ register or a constant.
 
                                    Function Prototype
                                   +-------------+
-                 Closure      +-->| chunk       |--> bytecode
+                 Closure      +-->| chunk       |--> Bytecode Array
                 +----------+  |   |-------------|
-            +---| function |--+   | constants   |--> value array
+            +---| function |--+   | constants   |--> Value Array
             |   |----------|      +-------------+
             |   | upvalues |--+
-            |   +----------+  |    UpValue Array
+            |   +----------+  |    Upvalue Pointer Array
             |                 |   +-------------+
             |                 +-->| 0           |
             |                     +-------------+
@@ -204,7 +204,7 @@ register or a constant.
             |                            V
             |                      Open Upvalue
             |                     +-------------+
-            |      Pending <------| next        |
+            |    Upvalue List <---| next        |
             |                     +-------------+
             |                     | location    |--+
             |                     +-------------+  |
@@ -223,12 +223,12 @@ register or a constant.
 
                            Function Prototype
                           +-------------+
-         Closure      +-->| chunk       |--> bytecode
+         Closure      +-->| chunk       |--> Bytecode Array
         +----------+  |   |-------------|
-    +---| function |--+   | constants   |--> value array
+    +---| function |--+   | constants   |--> Value Array
     |   |----------|      +-------------+
     |   | upvalues |--+
-    |   +----------+  |    UpValue Array
+    |   +----------+  |    Upvalue Pointer Array
     |                 |   +-------------+
     |                 +-->| 0           |
     |                     +-------------+
@@ -236,7 +236,7 @@ register or a constant.
     |                            V
     |                      Closed Upvalue
     |                     +-------------+
-    |      Pending <------| next        |
+    |    Upvalue List <---| next        |
     |                     +-------------+
     |                     | location    |--+
     |                     +-------------+  |
