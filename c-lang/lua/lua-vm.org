@@ -204,7 +204,7 @@ register or a constant.
             |                            V
             |                      Open Upvalue
             |                     +-------------+
-            |    Upvalue List <---| next        |
+            |   Open Upvalues <---| next        |
             |                     +-------------+
             |                     | location    |--+
             |                     +-------------+  |
@@ -236,7 +236,7 @@ register or a constant.
     |                            V
     |                      Closed Upvalue
     |                     +-------------+
-    |    Upvalue List <---| next        |
+    |   Open Upvalues <---| next        |
     |                     +-------------+
     |                     | location    |--+
     |                     +-------------+  |
