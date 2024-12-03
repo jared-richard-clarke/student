@@ -132,7 +132,6 @@ variables that have already left the stack.
        fun g() {
            print(a);
        }
-       var b = 11;
        return g;
    }
 
@@ -160,9 +159,9 @@ variables that have already left the stack.
             |                                      |
         +---|--------------------------------------+
         V   |
-  +---+---+---+---->
-  | f | 7 | g | 11 | <-- Stack
-  +---+---+---+---->
+  +---+---+--->
+  | f | 7 | g | <-- Stack
+  +---+---+--->
 
   === Closed Upvalues ===
 
