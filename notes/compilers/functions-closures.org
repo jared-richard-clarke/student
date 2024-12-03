@@ -134,7 +134,7 @@ variables that have already left the stack.
        return g;
    }
 
-   closure = f(7, 11)
+   var closure = f(7, 11)
 
                             Open Upvalue         Open Upvalue
                            +-------------+      +-------------+
