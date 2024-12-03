@@ -1,4 +1,4 @@
-* Functions and Closures
+* Functions and Closures Using Stack Semantics
 
 ** Sources
 
@@ -9,19 +9,17 @@
 
 ** Functions, Call Frames, and The Stack
 
-*** Lox Code
+*** The Stack
 
 #+begin_example
+  === Lox Code ===
+
   fun sum(a, b, c) {
     return a + b + c;
   }
 
   4 + sum(5, 6, 7);
-#+end_example
 
-*** The Stack
-
-#+begin_example
   === Calling Functions ===
 
         (base pointer)      (stack pointer)
@@ -122,93 +120,77 @@ These upvalues either point to local variables declared in surrounding functions
 variables that have already left the stack.
 
 #+begin_example
-  === Closure Data Structure ==
-                               Function
-                              +-----------+
-             Closure      +-->| chunk     |--> bytecode
-            +----------+  |   |-----------|
-        +-->| function |--+   | constants |--> value array
-        |   |----------|      +-----------+
-        |   | upvalues |--+
-        |   +----------+  |    upvalue array     Upvalue
-        |                 |   +-------------+   +----------+
-        |                 +-->| 0           |-->| location |--+
-        |                     +-------------+   +----------+  |
-    +---|-----------------------------------------------------+
-    V   |
-  +---+----+---+-->
-  | x | fn | y |
-  +---+----+---+-->
-    ^        ^
-    |        |
-    |        + argument
+  === Closures ===
+
+  1. Resolves local variables that are declared in surrounding functions.
+  2. Capture variables that have already left the stack.
+
+  === Open Upvalues ===
+
+   fun f() {
+     var a = 7
+     fun g() {
+       print(a);
+     }
+     var b = 11;
+     return g;
+   }
+
+                                   Function Prototype
+                                  +-------------+
+                 Closure      +-->| chunk       |--> Bytecode Array
+                +----------+  |   |-------------|
+            +-->| function |--+   | constants   |--> Value Array
+            |   |----------|      +-------------+
+            |   | upvalues |--+
+            |   +----------+  |    Upvalue Pointer Array
+            |                 |   +-------------+
+            |                 +-->| index 0     |
+            |                     +-------------+
+            |                            |
+            |                  +---------+
+            |                  |   Open Upvalue
+            |                  |  +-------------+
+            |  Open Upvalues <----| next        |
+            |                  |  +-------------+
+            |                  +->| location    |--+
+            |                     +-------------+  |
+            |                     | closed      |  |
+            |                     +-------------+  |
+            |                                      |
+        +---|--------------------------------------+
+        V   |
+  +---+---+---+---->
+  | f | 7 | g | 11 | <-- Stack
+  +---+---+---+---->
+
+  === Closed Upvalues ===
+
+  var closure = f()
+
+                           Function Prototype
+                          +-------------+
+         Closure      +-->| chunk       |--> Bytecode Array
+        +----------+  |   |-------------|
+    +-->| function |--+   | constants   |--> Value Array
+    |   |----------|      +-------------+
+    |   | upvalues |--+
+    |   +----------+  |    Upvalue Pointer Array
+    |                 |   +-------------+
+    |                 +-->| index 0     |
+    |                     +-------------+
+    |                            |
+    |                  +---------+
+    |                  |   Closed Upvalue
+    |                  |  +-------------+
+    |  Open Upvalues <----| next        |
+    |                  |  +-------------+
+    |                  +->| location    |--+
+    |                     +-------------+  |
+    |                     | closed 7    |<-+
+    |                     +-------------+
     |
-    + environment
-
-  === Closing UpValues ===
-
-                   open upvalues --+
-                                   |
-                                   V
-     Upvalue        Upvalue        Upvalue
-    +----------+   +----------+   +----------+
-    | next     |<--| next     |<--| next     |
-    |----------|   |----------|   |----------|
-  +-| location | +-| location | +-| location |
-  | +----------+ | +----------+ | +----------+
-  +---+          |              |
-      |        +-+      +-------+
-      V        V        V
-    +---+----+---+----+---+----+->
-    | 1 | fn | 2 | fn | 3 | fn |
-    +---+----+---+----+---+----+->
-
-   Upvalue            Upvalue
-  +----------+       +----------+
-  | next     |       | next     |
-  |----------|       |----------|
-  | closed   |       | closed z |<-+
-  |----------|       |----------|  |
-  | location |--+    | location |--+
-  +----------+  |    +----------+
-            +---+
-            V
-  +---+---+---+->    +---+---+->
-  | x | y | z |      | x | y |
-  +---+---+---+->    +---+---+->
-#+end_example
-
-*** Closure Variable Capture
-
-#+begin_example
-  === Lox Code ===
-
-  fun makeClosure() {
-    var a = "data";
-
-    fun f() { print a; }
-    return f;
-  }
-
-  var closure = makeClosure();
-
-  closure();
-
-  === compiles ===>
-                                       Function
-                                      +-----------+
-                     Closure      +-->| chunk     |--> bytecode
-                    +----------+  |   |-----------|
-                +-->| function |--+   | constants |--> value array
-                |   |----------|      +-----------+
-                |   | upvalues |--+
-                |   +----------+  |    upvalue array     Upvalue
-                |                 |   +-------------+   +----------+
-                |                 +-->| 0           |-->| location |--+    String          char array
-                |                     +-------------+   |----------|  |   +---------+     +---+---+---+---+----+
-                |                                    +->| closed   |--|-->| chars   |---->| d | a | t | a | \0 |
-                |                                    |  +----------+  |   +---------+     +---+---+---+---+----+
-  +--------+---------+-->                            +----------------+
-  | script | closure |
-  +--------+---------+-->
+  +--->
+  | g | <-- Stack
+  +--->
 #+end_example
