@@ -127,45 +127,32 @@ variables that have already left the stack.
 
   === Open Upvalues ===
 
-   fun f() {
-       var a = 7;
+   fun f(x, y) {
        fun g() {
-           print(a);
+           print(x, y)
        }
        return g;
    }
 
-                                   Function Prototype
-                                  +-------------+
-                 Closure      +-->| chunk       |--> Bytecode Array
-                +----------+  |   |-------------|
-            +-->| function |--+   | constants   |--> Value Array
-            |   |----------|      +-------------+
-            |   | upvalues |--+
-            |   +----------+  |    Upvalue Pointer Array
-            |                 |   +-------------+
-            |                 +-->| index 0     |
-            |                     +-------------+
-            |                            |
-            |                  +---------+
-            |                  |   Open Upvalue
-            |                  |  +-------------+
-            |  Open Upvalues <----| next        |
-            |                  |  +-------------+
-            |                  +->| location    |--+
-            |                     +-------------+  |
-            |                     | closed      |  |
-            |                     +-------------+  |
-            |                                      |
-        +---|--------------------------------------+
-        V   |
-  +---+---+--->
-  | f | 7 | g | <-- Stack
-  +---+---+--->
+   closure = f(7, 11)
+
+                            Open Upvalue         Open Upvalue
+                           +-------------+      +-------------+
+        Open Upvalues <----| next        |<-----| next        |
+                           +-------------+      +-------------+
+                           | location    |--+   | location    |--+
+                           +-------------+  |   +-------------+  |
+                           | closed      |  |   | closed      |  |
+                           +-------------+  |   +-------------+  |
+                                            |                    |
+        +-----------------------------------+                    |
+        |    +---------------------------------------------------+
+        V    V
+  +---+---+---->
+  | f | 7 | 11 | <-- Stack
+  +---+---+---->
 
   === Closed Upvalues ===
-
-  var closure = f()
 
                            Function Prototype
                           +-------------+
@@ -175,19 +162,19 @@ variables that have already left the stack.
     |   |----------|      +-------------+
     |   | upvalues |--+
     |   +----------+  |    Upvalue Pointer Array
-    |                 |   +-------------+
-    |                 +-->| index 0     |
-    |                     +-------------+
-    |                            |
-    |                  +---------+
-    |                  |   Closed Upvalue
-    |                  |  +-------------+
-    |  Open Upvalues <----| next        |
-    |                  |  +-------------+
-    |                  +->| location    |--+
-    |                     +-------------+  |
-    |                     | closed 7    |<-+
-    |                     +-------------+
+    |                 |   +-------------+-------------+
+    |                 +-->| index 0     | index 1     |
+    |                     +-------------+-------------+
+    |                            |           |
+    |                  +---------+           |
+    |                  |   Closed Upvalue    |   Closed Upvalue
+    |                  |  +-------------+    |  +-------------+
+    |  Open Upvalues <----| next        |<------| next        |
+    |                  |  +-------------+    |  +-------------+
+    |                  +->| location    |--+ +->| location    |--+
+    |                     +-------------+  |    +-------------+  |
+    |                     | closed 7    |<-+    | closed 11   |<-+
+    |                     +-------------+       +-------------+
     |
   +--->
   | g | <-- Stack
