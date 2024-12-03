@@ -128,12 +128,12 @@ variables that have already left the stack.
   === Open Upvalues ===
 
    fun f() {
-     var a = 7;
-     fun g() {
-       print(a);
-     }
-     var b = 11;
-     return g;
+       var a = 7;
+       fun g() {
+           print(a);
+       }
+       var b = 11;
+       return g;
    }
 
                                    Function Prototype
