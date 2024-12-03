@@ -128,7 +128,7 @@ variables that have already left the stack.
   === Open Upvalues ===
 
    fun f() {
-     var a = 7
+     var a = 7;
      fun g() {
        print(a);
      }
