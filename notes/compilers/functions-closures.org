@@ -119,6 +119,9 @@ a pointer to a precompiled function, its *prototype*, and a pointer to an array 
 These upvalues either point to local variables declared in surrounding functions or capture
 variables that have already left the stack.
 
+*Side Note*: Closures in Lox capture variables — the locations where values live.
+They do not capture values themselves as they would in a pure functional language.
+
 #+begin_example
   === Closures ===
 
@@ -128,13 +131,13 @@ variables that have already left the stack.
   === Open Upvalues ===
 
    fun f(x, y) {
-       fun g() {
-           print(x, y);
+       fun g(z) {
+           return x + y + z;
        }
        return g;
    }
 
-   var closure = f(7, 11)
+   var sum = f(7, 11);
 
                             Open Upvalue         Open Upvalue
                            +-------------+      +-------------+
@@ -153,6 +156,8 @@ variables that have already left the stack.
   +---+---+---->
 
   === Closed Upvalues ===
+
+  sum(1);
 
                            Function Prototype
                           +-------------+
@@ -176,7 +181,7 @@ variables that have already left the stack.
     |                     | closed 7    |<-+    | closed 11   |<-+
     |                     +-------------+       +-------------+
     |
-  +--->
-  | g | <-- Stack
-  +--->
+  +------->
+  | g | 1 | <-- Stack
+  +------->
 #+end_example
