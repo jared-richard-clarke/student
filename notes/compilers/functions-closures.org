@@ -129,7 +129,7 @@ variables that have already left the stack.
 
    fun f(x, y) {
        fun g() {
-           print(x, y)
+           print(x, y);
        }
        return g;
    }
