@@ -181,13 +181,13 @@ register or a constant.
   === Open Upvalues ===
 
    function f(x, y)
-       function g()
-           print(x, y)
+       function g(z)
+           return x + y + z
        end
        return g
    end
 
-   closure = f(7, 11)
+   sum = f(7, 11)
 
                             Open Upvalue         Open Upvalue
                            +-------------+      +-------------+
@@ -207,29 +207,31 @@ register or a constant.
 
   === Closed Upvalues ===
 
-                           Function Prototype
-                          +-------------+
-         Closure      +-->| chunk       |--> Bytecode Array
-        +----------+  |   |-------------|
-    +-->| function |--+   | constants   |--> Value Array
-    |   |----------|      +-------------+
-    |   | upvalues |--+
-    |   +----------+  |    Upvalue Pointer Array
-    |                 |   +-------------+-------------+
-    |                 +-->| index 0     | index 1     |
-    |                     +-------------+-------------+
-    |                            |           |
-    |                  +---------+           |
-    |                  |   Closed Upvalue    |   Closed Upvalue
-    |                  |  +-------------+    |  +-------------+
-    |  Open Upvalues <----| next        |<------| next        |
-    |                  |  +-------------+    |  +-------------+
-    |                  +->| location    |--+ +->| location    |--+
-    |                     +-------------+  |    +-------------+  |
-    |                     | closed 7    |<-+    | closed 11   |<-+
-    |                     +-------------+       +-------------+
-    |
-  +--->
-  | g | <-- Stack
-  +--->
+  sum(1)
+
+                            Function Prototype
+                           +-------------+
+          Closure      +-->| chunk       |--> Bytecode Array
+         +----------+  |   |-------------|
+     +-->| function |--+   | constants   |--> Value Array
+     |   |----------|      +-------------+
+     |   | upvalues |--+
+     |   +----------+  |    Upvalue Pointer Array
+     |                 |   +-------------+-------------+
+     |                 +-->| index 0     | index 1     |
+     |                     +-------------+-------------+
+     |                            |           |
+     |                  +---------+           |
+     |                  |   Closed Upvalue    |   Closed Upvalue
+     |                  |  +-------------+    |  +-------------+
+     |  Open Upvalues <----| next        |<------| next        |
+     |                  |  +-------------+    |  +-------------+
+     |                  +->| location    |--+ +->| location    |--+
+     |                     +-------------+  |    +-------------+  |
+     |                     | closed 7    |<-+    | closed 11   |<-+
+     |                     +-------------+       +-------------+
+     |
+  +------->
+  | g | 1 | <-- Stack
+  +------->
 #+end_example
