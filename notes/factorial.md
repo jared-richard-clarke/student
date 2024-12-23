@@ -244,6 +244,20 @@ let factorial x =
   loop x 1
 ```
 
+## PostScript
+
+```postscript
+/factorial {
+  dup 0 eq {
+    pop 1
+  }{
+    dup 1 sub
+    factorial
+    mul
+  } ifelse
+} def
+```
+
 ## Python
 
 ```python
