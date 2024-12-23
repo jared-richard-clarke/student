@@ -258,6 +258,17 @@ let factorial x =
 } def
 ```
 
+## Prolog
+
+```prolog
+% reads as "the factorial of X is Y"
+factorial(X, Y) :- 
+      X > 0, 
+      X2 is X - 1,
+      factorial(X2, Y2), 
+      Y is X * Y2.
+```
+
 ## Python
 
 ```python
@@ -273,17 +284,6 @@ def factorial(x):
 # recursive
 def factorial(x):
     return x * factorial(x - 1) if x > 1 else 1
-```
-
-## Prolog
-
-```prolog
-% reads as "the factorial of X is Y"
-factorial(X, Y) :- 
-      X > 0, 
-      X2 is X - 1,
-      factorial(X2, Y2), 
-      Y is X * Y2.
 ```
 
 ## Ruby
