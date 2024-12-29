@@ -47,6 +47,19 @@ $$x' = ax + cy$$
 
 $$y' = bx + dy$$
 
+$$
+\begin{bmatrix}
+x'\\
+y'
+\end{bmatrix} = \begin{pmatrix}
+a\\
+b
+\end{pmatrix}x + \begin{pmatrix}
+c\\
+d
+\end{pmatrix}y
+$$
+
 ## Transformations
 
 ### Identity
