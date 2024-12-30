@@ -57,7 +57,10 @@ b
 \end{pmatrix}x + \begin{pmatrix}
 c\\
 d
-\end{pmatrix}y
+\end{pmatrix}y = \begin{bmatrix}
+ax + cy\\
+bx + dy
+\end{bmatrix}
 $$
 
 ## Transformations
