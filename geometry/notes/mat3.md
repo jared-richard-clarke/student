@@ -28,12 +28,12 @@ $$
 
 ## Parameters
 
-- $a$: scale-x
-- $b$: skew-y
-- $c$: skew-x
-- $d$: scale-y
-- $e$: translate-x
-- $f$: translate-y
+- $a$: Scale-X. Horizontal scale.
+- $b$: Skew-Y. Horizontal skew.
+- $c$: Skew-X. Vertical skew.
+- $d$: Scale-Y. Vertical scale.
+- $e$: Translate-X. Horizontal move.
+- $f$: Translate-Y. Vertical move.
 
 ## Transformation of a Point
 
