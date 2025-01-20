@@ -42,64 +42,59 @@ pub unsafe trait GlobalAlloc {
     }
 }
 
-// === Implementation ===
-use std::alloc::{GlobalAlloc, Layout};
-use std::cell::UnsafeCell;
-use std::ptr::null_mut;
-use std::sync::atomic::{AtomicUsize, Ordering::Relaxed};
+// === GlobalAlloc for System ===
+use super::{MIN_ALIGN, realloc_fallback};
+use crate::alloc::{GlobalAlloc, Layout, System};
+use crate::ptr;
 
-const ARENA_SIZE: usize = 128 * 1024;
-const MAX_SUPPORTED_ALIGN: usize = 4096;
-#[repr(C, align(4096))] // 4096 == MAX_SUPPORTED_ALIGN
-struct SimpleAllocator {
-    arena: UnsafeCell<[u8; ARENA_SIZE]>,
-    remaining: AtomicUsize, // we allocate from the top, counting down
-}
-
-#[global_allocator]
-static ALLOCATOR: SimpleAllocator = SimpleAllocator {
-    arena: UnsafeCell::new([0x55; ARENA_SIZE]),
-    remaining: AtomicUsize::new(ARENA_SIZE),
-};
-
-unsafe impl Sync for SimpleAllocator {}
-
-unsafe impl GlobalAlloc for SimpleAllocator {
+#[stable(feature = "alloc_system_type", since = "1.28.0")]
+unsafe impl GlobalAlloc for System {
+    #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        let size = layout.size();
-        let align = layout.align();
-
-        // `Layout` contract forbids making a `Layout` with align = 0, or align not power of 2.
-        // So we can safely use a mask to ensure alignment without worrying about Undeined Behavior.
-        let align_mask_to_round_down = !(align - 1);
-
-        if align > MAX_SUPPORTED_ALIGN {
-            return null_mut();
-        }
-
-        let mut allocated = 0;
-        if self
-            .remaining
-            .fetch_update(Relaxed, Relaxed, |mut remaining| {
-                if size > remaining {
-                    return None;
+        // jemalloc provides alignment less than MIN_ALIGN for small allocations.
+        // So only rely on MIN_ALIGN if size >= align.
+        if layout.align() <= MIN_ALIGN && layout.align() <= layout.size() {
+            unsafe { libc::malloc(layout.size()) as *mut u8 }
+        } else {
+            // `posix_memalign` returns a non-aligned value if supplied a very
+            // large alignment on older versions of Apple's platforms (unknown
+            // exactly which version range, but the issue is definitely
+            // present in macOS 10.14 and iOS 13.3).
+            #[cfg(target_vendor = "apple")]
+            {
+                if layout.align() > (1 << 31) {
+                    return ptr::null_mut();
                 }
-                remaining -= size;
-                remaining &= align_mask_to_round_down;
-                allocated = remaining;
-                Some(remaining)
-            })
-            .is_err()
-        {
-            return null_mut();
-        };
-        self.arena.get().cast::<u8>().add(allocated)
+            }
+            unsafe { aligned_malloc(&layout) }
+        }
     }
-    unsafe fn dealloc(&self, _ptr: *mut u8, _layout: Layout) {}
-}
 
-fn main() {
-    let _s = format!("allocating a string!");
-    let currently = ALLOCATOR.remaining.load(Relaxed);
-    println!("allocated so far: {}", ARENA_SIZE - currently);
+    #[inline]
+    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
+        // See the comment above in `alloc` for why this check looks the way it does.
+        if layout.align() <= MIN_ALIGN && layout.align() <= layout.size() {
+            unsafe { libc::calloc(layout.size(), 1) as *mut u8 }
+        } else {
+            let ptr = unsafe { self.alloc(layout) };
+            if !ptr.is_null() {
+                unsafe { ptr::write_bytes(ptr, 0, layout.size()) };
+            }
+            ptr
+        }
+    }
+
+    #[inline]
+    unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
+        unsafe { libc::free(ptr as *mut libc::c_void) }
+    }
+
+    #[inline]
+    unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
+        if layout.align() <= MIN_ALIGN && layout.align() <= new_size {
+            unsafe { libc::realloc(ptr as *mut libc::c_void, new_size) as *mut u8 }
+        } else {
+            unsafe { realloc_fallback(self, ptr, layout, new_size) }
+        }
+    }
 }
