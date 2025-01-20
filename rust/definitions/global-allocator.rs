@@ -94,6 +94,7 @@ unsafe impl GlobalAlloc for System {
         if layout.align() <= MIN_ALIGN && layout.align() <= new_size {
             unsafe { libc::realloc(ptr as *mut libc::c_void, new_size) as *mut u8 }
         } else {
+            // Fallback mirrors default implementation in GlobalAlloc trait.
             unsafe { realloc_fallback(self, ptr, layout, new_size) }
         }
     }
