@@ -67,18 +67,18 @@ The core idea behind the borrow checker is that variables have three kinds of pe
 By default a variable has *RO* permissions. *RWO* if prefaced by ~let mut~.
 References temporarily remove select permissions to prevent undefined behavior.
 
-** Paths
+** Places
 
-Permissions are defined on paths and not just variables. A path is anything you
-can put on the left-hand side of an assignment. Paths include:
+Permissions are defined on *places* and not just variables. A place is anything you
+can put on the left-hand side of an assignment. Places include:
 
 - Variables, like ~a~.
 
-- Dereferences of paths, like ~*a~.
+- Dereferences of places, like ~*a~.
 
-- Array accesses of paths, like ~a[0]~.
+- Array accesses of places, like ~a[0]~.
 
-- Fields of paths, like ~a.0~ for tuples or ~a.field~ for structs.
+- Fields of places, like ~a.0~ for tuples or ~a.field~ for structs.
 
 - Any combination of the above, like ~*((*a)[0].1)~.
 
