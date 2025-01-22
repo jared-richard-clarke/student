@@ -10,6 +10,9 @@
 
 ** Ownership Rules
 
+Ownership is primarily a discipline of heap management. In another sense, ownership is
+discipline of pointer management.
+
 - Each value in Rust has a variable that's called its *owner*.
 
 - There can only be one owner at a time.
