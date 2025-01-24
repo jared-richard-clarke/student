@@ -6,6 +6,7 @@
 |-----------------------------------------+----------------|
 | *Understanding Async Await in Rust*     | eventhelix.com |
 | *Rust Standard Library*, version 1.80.1 | rust-lang.org  |
+| *Asynchronous Programming in Rust*      | rust-lang.org  |
 | *Tokio Tutorial*                        | tokio.rs       |
 
 ** Future Trait
