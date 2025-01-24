@@ -38,6 +38,11 @@
       // Required method
       fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output>;
   }
+
+  pub enum Poll<T> {
+      Ready(T),
+      Pending,
+  }
 #+end_src
 
 The return value of an ~async fn~ is an anonymous type that implements the ~Future~ trait.
