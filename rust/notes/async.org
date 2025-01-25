@@ -241,7 +241,7 @@ future's ~poll~ function.
   +----------+                  +-------------+
 #+end_example
 
-** Implementing Future: Extended Example
+** Implementing Future and Executor: Extended Example
 
 #+begin_src rust
   // === library ===
