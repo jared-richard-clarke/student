@@ -98,7 +98,7 @@
       pub fn send(self, message: T) {
           unsafe { (*self.channel.message.get()).write(message) };
           self.channel.ready.store(true, Release);
-          self.receiving_thread.unpark(); // New!
+          self.receiving_thread.unpark();
       }
   }
 
