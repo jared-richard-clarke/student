@@ -8,7 +8,7 @@
 
 ** The ~error~ Interface
 
-Package ~errors~ implements functions to manipulate errors. The entire package
+Package ~errors~ provides functions to manipulate errors in Go. The entire package
 is built around the ~error~ interface.
 
 #+begin_src go
