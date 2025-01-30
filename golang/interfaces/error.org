@@ -18,7 +18,7 @@ is built around the ~error~ interface.
       Error() string
   }
 
-  // Each call to New returns a distinct value even if the texts are identical.
+  // Each call to "New" returns a distinct value even if the texts are identical.
   func New(text string) error {
       return &errorString{text}
   }
