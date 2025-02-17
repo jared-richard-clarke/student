@@ -5,6 +5,7 @@
 | source                          | author                                                                       |
 |---------------------------------+------------------------------------------------------------------------------|
 | *The Implementation of Lua 5.0* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
+| *Lua Source Code*, 5.4          | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
 | *Crafting Interpreters*         | Robert Nystrom                                                               |
 
 There are 35 instructions in Lua's virtual machine. Most instructions correspond
@@ -110,19 +111,29 @@ register or a constant.
 ** Lua Data Types
 
 #+begin_src c
-  // tagged union (t, v)
-  // where t = integer tag identifying type
-  //       v = union of C types implementing Lua types
-  typedef struct {
-    int t;
-    Value v;
-  } TObject;
+  // tagged union (value_, tt_)
+  // where value_ = union of C types implementing Lua types
+  //       tt_    = the byte tag identifying type
 
-  typedef union {
-    GCObject *gc; // strings, tables, functions (referenced and garbage-collected data)
-    void *p;      // light user data
-    lua_Number n; // numbers (Double by default)
-    int b;        // booleans
+  typedef struct TValue {
+    Value value_;
+    lu_byte tt_;
+  } TValue;
+
+  // The union of all Lua values
+  typedef union Value {
+    // strings, tables, functions (referenced and garbage-collected data)
+    struct GCObject *gc;
+    // light userdata
+    void *p;
+    // light C functions
+    lua_CFunction f;
+    // integers
+    lua_Integer i;
+    // floating point (double)
+    lua_Number n;
+    // unused field may avoid warnings for unitialized value
+    lu_byte ub;
   } Value;
 #+end_src
 
@@ -171,6 +182,91 @@ register or a constant.
 
   — *The Implementation of Lua 5.0*
 #+end_quote
+
+*** Sample Source Code: Function Prototype and Closure
+
+#+begin_src c
+  // === source: lobject.h ===
+  
+  // Function Prototype
+  typedef struct Proto {
+    // CommonHeader -----------+
+    struct GCObject *next; // <
+    lu_byte tt;            //  |
+    lu_byte marked;        // <
+    // Number of fixed, named parameters
+    lu_byte numparams;
+    lu_byte is_vararg;
+    // Number of registers needed by this function
+    lu_byte maxstacksize;
+    int sizeupvalues;
+    int sizek;
+    int sizecode;
+    int sizelineinfo;
+    int sizep;
+    int sizelocvars;
+    int sizeabslineinfo;
+    // Debug information
+    int linedefined;
+    int lastlinedefined;
+    // List of constants used by this function
+    TValue *k;
+    // List of opcode instructions
+    Instruction *code;
+    // List of functions defined within this function
+    struct Proto **p;
+    // List of upvalue descriptions: name, kind, instack?
+    Upvaldesc *upvalues;
+    // Debug information
+    ls_byte *lineinfo;
+    // Absolute line source for a given instruction
+    AbsLineInfo *abslineinfo;
+    // List of local variable lifetimes
+    LocVar *locvars;
+    TString  *source;
+    GCObject *gclist;
+  } Proto;
+
+  // Upvalues for Lua closures
+  typedef struct UpVal {
+    // CommonHeader -----------+
+    struct GCObject *next; // <
+    lu_byte tt;            //  |
+    lu_byte marked;        // <
+    union {
+      // Pointer to stack or upvalue
+      TValue *p;
+      // Offset for stack reallocation
+      ptrdiff_t offset;
+    } v;
+    union {
+      // Open upvalue
+      struct {
+        // Linked list
+        struct UpVal *next;
+        struct UpVal **previous;
+      } open;
+      // Closed upvalue
+      TValue value;
+    } u;
+  } UpVal;
+
+  // Lua Closure
+  typedef struct LClosure {
+    // ClosureHeader -------------+
+    // CommonHeader -----------+  |
+    struct GCObject *next; // <  <
+    lu_byte tt;            //  |  |
+    lu_byte marked;        // <   |
+    u_byte nupvalues;      //     |
+    GCObject *gclist       // <---+
+    struct Proto *p;
+    // list of upvalues
+    UpVal *upvals[1];
+  } LClosure;
+#+end_src
+
+*** Closure Diagram
 
 #+begin_example
   === Closures ===
