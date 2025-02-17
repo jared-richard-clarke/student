@@ -162,7 +162,7 @@ register or a constant.
                   -- 11: SETLOCAL   0 ; a
 #+end_src
 
-** Closures and UpValues
+** Functions, Closures, and UpValues
 
 #+begin_quote
   "When Lua compiles a function it generates a *prototype* containing the virtual machine
