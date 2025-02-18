@@ -113,8 +113,7 @@ register or a constant.
 #+begin_src c
   // tagged union (value_, tt_)
   // where value_ = union of C types implementing Lua types
-  //       tt_    = the byte tag identifying type
-
+  //       tt_    = the tag identifying type
   typedef struct TValue {
     Value value_;
     lu_byte tt_;
@@ -132,7 +131,7 @@ register or a constant.
     lua_Integer i;
     // floating point (double)
     lua_Number n;
-    // unused field may avoid warnings for unitialized value
+    // unused field
     lu_byte ub;
   } Value;
 #+end_src
@@ -191,9 +190,9 @@ register or a constant.
   // Function Prototype
   typedef struct Proto {
     // CommonHeader -----------+
-    struct GCObject *next; // <
+    struct GCObject *next; //  |
     lu_byte tt;            //  |
-    lu_byte marked;        // <
+    lu_byte marked;        // <+
     // Number of fixed, named parameters
     lu_byte numparams;
     lu_byte is_vararg;
@@ -209,7 +208,7 @@ register or a constant.
     // Debug information
     int linedefined;
     int lastlinedefined;
-    // List of constants used by this function
+    // List constants used by this function
     TValue *k;
     // List of opcode instructions
     Instruction *code;
@@ -230,9 +229,9 @@ register or a constant.
   // Upvalues for Lua closures
   typedef struct UpVal {
     // CommonHeader -----------+
-    struct GCObject *next; // <
+    struct GCObject *next; //  |
     lu_byte tt;            //  |
-    lu_byte marked;        // <
+    lu_byte marked;        // <+
     union {
       // Pointer to stack or upvalue
       TValue *p;
@@ -255,13 +254,13 @@ register or a constant.
   typedef struct LClosure {
     // ClosureHeader -------------+
     // CommonHeader -----------+  |
-    struct GCObject *next; // <  <
+    struct GCObject *next; //  |  |
     lu_byte tt;            //  |  |
-    lu_byte marked;        // <   |
+    lu_byte marked;        // <+  |
     u_byte nupvalues;      //     |
     GCObject *gclist       // <---+
     struct Proto *p;
-    // list of upvalues
+    // List of upvalues
     UpVal *upvals[1];
   } LClosure;
 #+end_src
