@@ -8,71 +8,134 @@
 | *Lua Source Code*, 5.4          | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
 | *Crafting Interpreters*         | Robert Nystrom                                                               |
 
-There are 35 instructions in Lua's virtual machine. Most instructions correspond
-directly to language constructs, such as arithmetic, table creation and indexing,
+As of version 5.4, there are 83 instructions in Lua's virtual machine. Most instructions
+correspond directly to language constructs, such as arithmetic, table creation and indexing,
 function and method calls, setting variables and getting values. There are also jump
 instructions for implementing control flow.
 
 ** Notational Conventions
 
-- ~R(X)~: ~Xth~ register.
-- ~K(X)~: ~Xth~ constant.
-- ~RK(X)~: either ~R(X)~ or ~K(X-k)~, where ~R(X)~ is for values of ~X~ smaller
-   than ~k~.
-- ~G[X]~: field ~X~ in a table of globals.
-- ~U[X]~: the ~Xth~ upvalue.
-- ~Bx~ and ~sBx~: unsigned and signed 18-bit value.
+- ~R[x]~: ~xth~ register.
 
-** Op Code Instruction Set
+- ~K[x]~: ~xth~ constant.
 
-#+begin_example
-  MOVE      A B      R(A) := R(B)
-  LOADK     A Bx     R(A) := K(Bx)
-  LOADBOOL  A B C    R(A) := (Bool)B; if (C) PC++
-  LOADNIL   A B      R(A) := ... := R(B) := nil
-  GETUPVAL  A B      R(A) := U[B]
-  GETGLOBAL A Bx     R(A) := G[K(Bx)]
-  GETTABLE  A B C    R(A) := R(B)[RK(C)]
-  SETGLOBAL A Bx     G[K(Bx)] := R(A)
-  SETUPVAL  A B      U[B] := R(A)
-  SETTABLE  A B C    R(A)[RK(B)] := RK(C)
-  NEWTABLE  A B C    R(A) := {} (size = B,C)
-  SELF      A B C    R(A+1) := R(B); R(A) := R(B)[RK(C)]
-  ADD       A B C    R(A) := RK(B) + RK(C)
-  SUB       A B C    R(A) := RK(B) - RK(C)
-  MUL       A B C    R(A) := RK(B) * RK(C)
-  DIV       A B C    R(A) := RK(B) / RK(C)
-  POW       A B C    R(A) := RK(B) ^ RK(C)
-  UNM       A B      R(A) := -R(B)
-  NOT       A B      R(A) := not R(B)
-  CONCAT    A B C    R(A) := R(B) .. ... .. R(C)
-  JMP       sBx      PC += sBx
-  EQ        A B C    if ((RK(B) == RK(C)) ~= A) then PC++
-  LT        A B C    if ((RK(B) < RK(C)) ~= A) then PC++
-  LE        A B C    if ((RK(B) <= RK(C)) ~= A) then PC++
-  TEST      A B C    if (R(B) <=> C) then R(A) := R(B) else PC++
-  CALL      A B C    R(A), ... ,R(A+C-2) := R(A)(R(A+1), ... ,R(A+B-1))
-  TAILCALL  A B C    return R(A)(R(A+1), ... ,R(A+B-1))
-  RETURN    A B      return R(A), ... ,R(A+B-2)
-  FORLOOP   A sBx    R(A)+=R(A+2); if R(A) <?= R(A+1) then PC+= sBx
-  TFORLOOP  A C      R(A+2), ... ,R(A+2+C) := R(A)(R(A+1), R(A+2));
-  TFORPREP  A sBx    if type(R(A)) == table then R(A+1) := R(A), R(A) := next;
-  SETLIST   A Bx     R(A)[Bx-Bx%FPF+i] := R(A+i), 1 <= i <= Bx%FPF+1
-  SETLISTO  A Bx
-  CLOSE     A        close stack variables up to R(A)
-  CLOSURE   A Bx     R(A) := closure(KPROTO[Bx], R(A), ... ,R(A+n))
-#+end_example
+- ~RK[x]~: if ~k(i)~ then ~K[x]~ else ~R[x]~.
+
+
+** Instruction Set
+
+| opcode     | operands | description                                                      |
+|------------+----------+------------------------------------------------------------------|
+| MOVE       | A B      | R[A] := R[B]                                                     |
+| LOADI      | A sBx    | R[A] := sBx                                                      |
+| LOADF      | A sBx    | R[A] := (lua_Number)sBx                                          |
+| LOADK      | A Bx     | R[A] := K[Bx]                                                    |
+| LOADKX     | A        | R[A] := K[extra arg]                                             |
+| LOADFALSE  | A        | R[A] := false                                                    |
+| LFALSESKIP | A        | R[A] := false; pc++                                              |
+| LOADTRUE   | A        | R[A] := true                                                     |
+| LOADNIL    | A B      | R[A], R[A+1], ..., R[A+B] := nil                                 |
+| GETUPVAL   | A B      | R[A] := UpValue[B]                                               |
+| SETUPVAL   | A B      | UpValue[B] := R[A]                                               |
+|------------+----------+------------------------------------------------------------------|
+| GETTABUP   | A B C    | R[A] := UpValue[B][K[C]:shortstring]                             |
+| GETTABLE   | A B C    | R[A] := R[B][R[C]]                                               |
+| GETI       | A B C    | R[A] := R[B][C]                                                  |
+| GETFIELD   | A B C    | R[A] := R[B][K[C]:shortstring]                                   |
+|------------+----------+------------------------------------------------------------------|
+| SETTABUP   | A B C    | UpValue[A][K[B]:shortstring] := RK(C)                            |
+| SETTABLE   | A B C    | R[A][R[B]] := RK(C)                                              |
+| SETI       | A B C    | R[A][B] := RK(C)                                                 |
+| SETFIELD   | A B C    | R[A][K[B]:shortstring] := RK(C)                                  |
+|------------+----------+------------------------------------------------------------------|
+| NEWTABLE   | A B C k  | R[A] := {}                                                       |
+|------------+----------+------------------------------------------------------------------|
+| SELF       | A B C    | R[A+1] := R[B]; R[A] := R[B][RK(C):string]                       |
+|------------+----------+------------------------------------------------------------------|
+| ADDI       | A B sC   | R[A] := R[B] + sC                                                |
+|------------+----------+------------------------------------------------------------------|
+| ADDK       | A B C    | R[A] := R[B] + K[C]:number                                       |
+| SUBK       | A B C    | R[A] := R[B] - K[C]:number                                       |
+| MULK       | A B C    | R[A] := R[B] * K[C]:number                                       |
+| MODK       | A B C    | R[A] := R[B] % K[C]:number                                       |
+| POWK       | A B C    | R[A] := R[B] ^ K[C]:number                                       |
+| DIVK       | A B C    | R[A] := R[B] / K[C]:number                                       |
+| IDIVK      | A B C    | R[A] := R[B] // K[C]:number                                      |
+|------------+----------+------------------------------------------------------------------|
+| BANDK      | A B C    | R[A] := R[B] & K[C]:integer                                      |
+| BORK       | A B C    | R[A] := R[B] \vert{} K[C]:integer                                |
+| BXORK      | A B C    | R[A] := R[B] ~ K[C]:integer                                      |
+|------------+----------+------------------------------------------------------------------|
+| SHRI       | A B sC   | R[A] := R[B] >> sC                                               |
+| SHLI       | A B sC   | R[A] := sC << R[B]                                               |
+|------------+----------+------------------------------------------------------------------|
+| ADD        | A B C    | R[A] := R[B] + R[C]                                              |
+| SUB        | A B C    | R[A] := R[B] - R[C]                                              |
+| MUL        | A B C    | R[A] := R[B] * R[C]                                              |
+| MOD        | A B C    | R[A] := R[B] % R[C]                                              |
+| POW        | A B C    | R[A] := R[B] ^ R[C]                                              |
+| DIV        | A B C    | R[A] := R[B] / R[C]                                              |
+| IDIV       | A B C    | R[A] := R[B] // R[C]                                             |
+|------------+----------+------------------------------------------------------------------|
+| BAND       | A B C    | R[A] := R[B] & R[C]                                              |
+| BOR        | A B C    | R[A] := R[B] \vert{} R[C]                                        |
+| BXOR       | A B C    | R[A] := R[B] ~ R[C]                                              |
+| SHL        | A B C    | R[A] := R[B] << R[C]                                             |
+| SHR        | A B C    | R[A] := R[B] >> R[C]                                             |
+|------------+----------+------------------------------------------------------------------|
+| MMBIN      | A B C    | call C metamethod over R[A] and R[B]                             |
+| MMBINI     | A sB C k | call C metamethod over R[A] and sB                               |
+| MMBINK     | A B C k  | call C metamethod over R[A] and K[B]                             |
+|------------+----------+------------------------------------------------------------------|
+| UNM        | A B      | R[A] := -R[B]                                                    |
+| BNOT       | A B      | R[A] := ~R[B]                                                    |
+| NOT        | A B      | R[A] := not R[B]                                                 |
+| LEN        | A B      | R[A] := #R[B] (length operator)                                  |
+|------------+----------+------------------------------------------------------------------|
+| CONCAT     | A B      | R[A] := R[A].. ... ..R[A + B - 1]                                |
+|------------+----------+------------------------------------------------------------------|
+| CLOSE      | A        | close all upvalues >= R[A]                                       |
+| TBC        | A        | mark variable A "to be closed"                                   |
+| JMP        | sJ       | pc += sJ                                                         |
+| EQ         | A B k    | if ((R[A] = R[B]) ~= k) then pc++                                |
+| LT         | A B k    | if ((R[A] <  R[B]) ~= k) then pc++                               |
+| LE         | A B k    | if ((R[A] <= R[B]) ~= k) then pc++                               |
+|------------+----------+------------------------------------------------------------------|
+| EQK        | A B k    | if ((R[A] = K[B]) ~= k) then pc++                                |
+| EQI        | A sB k   | if ((R[A] = sB) ~= k) then pc++                                  |
+| LTI        | A sB k   | if ((R[A] < sB) ~= k) then pc++                                  |
+| LEI        | A sB k   | if ((R[A] <= sB) ~= k) then pc++                                 |
+| GTI        | A sB k   | if ((R[A] > sB) ~= k) then pc++                                  |
+| GEI        | A sB k   | if ((R[A] >= sB) ~= k) then pc++                                 |
+|------------+----------+------------------------------------------------------------------|
+| TEST       | A k      | if (not R[A] = k) then pc++                                      |
+| TESTSET    | A B k    | if (not R[B] = k) then pc++ else R[A] := R[B]                    |
+|------------+----------+------------------------------------------------------------------|
+| CALL       | A B C    | R[A], ... ,R[A+C-2] := R[A](R[A+1], ... ,R[A+B-1])               |
+| TAILCALL   | A B C k  | return R[A](R[A+1], ... ,R[A+B-1])                               |
+|------------+----------+------------------------------------------------------------------|
+| RETURN     | A B C k  | return R[A], ... ,R[A+B-2]                                       |
+| RETURN0    |          | return                                                           |
+| RETURN1    | A        | return R[A]                                                      |
+|------------+----------+------------------------------------------------------------------|
+| FORLOOP    | A Bx     | update counters; if loop continues then pc-=Bx;                  |
+| FORPREP    | A Bx     | <check values and prepare counters> if not to run then pc+=Bx+1; |
+|------------+----------+------------------------------------------------------------------|
+| TFORPREP   | A Bx     | create upvalue for R[A + 3]; pc+=Bx                              |
+| TFORCALL   | A C      | R[A+4], ... ,R[A+3+C] := R[A](R[A+1], R[A+2]);                   |
+| TFORLOOP   | A Bx     | if R[A+2] ~= nil then { R[A]=R[A+2]; pc -= Bx }                  |
+|------------+----------+------------------------------------------------------------------|
+| SETLIST    | A B C k  | R[A][C+i] := R[A+i], 1 <= i <= B                                 |
+|------------+----------+------------------------------------------------------------------|
+| CLOSURE    | A Bx     | R[A] := closure(KPROTO[Bx])                                      |
+|------------+----------+------------------------------------------------------------------|
+| VARARG     | A C      | R[A], R[A+1], ..., R[A+C-2] = vararg                             |
+|------------+----------+------------------------------------------------------------------|
+| VARARGPREP | A        | (adjust vararg parameters)                                       |
+|------------+----------+------------------------------------------------------------------|
+| EXTRAARG   | Ax       | extra (larger) argument for previous opcode                      |
 
 ** Instruction Layout
-
-Lua's virtual machine instructions take 32 bits divided into 3 or 4 fields.
-The 6-bit ~OP~ field identifies the instruction. 8-bit field ~A~ is always
-present. Fields ~B~ and ~C~ are 9 bits each. They can be combined into an
-18-bit field: ~Bx~ (unsigned) and ~sBx~ (signed).
-
-Most instructions use a three-address format, where ~A~ points to the register that
-will hold the result and ~B~ and ~C~ point to the operands, which can be either a
-register or a constant.
 
 #+begin_example
   +----+---+-------+
@@ -81,14 +144,66 @@ register or a constant.
   | OP | A | Bx    |
   |----|---|-------|
   | OP | A | sBx   |
-  +----+---+-------+
+  |----|-----------|
+  | OP | Ax        |
+  |----|-----------|
+  | OP | sJ        |
+  +----+-----------+
+
+  === Instruction layout as documented in source code: lopcodes.h ===
+
+  We assume that instructions are unsigned 32-bit integers.
+  All instructions have an opcode in the first 7 bits.
+  Instructions can have the following formats:
+  
+         |3 3 2 2 2 2 2 2|2 2 2 2 1 1 1 1|1|1 1 1 1 1 0 0 0|0 0 0 0 0 0 0|
+         |---------------|---------------|-|---------------|-------------|
+         |1 0 9 8 7 6 5 4|3 2 1 0 9 8 7 6|5|4 3 2 1 0 9 8 7|6 5 4 3 2 1 0|
+  -------|---------------|---------------|-|---------------|-------------|
+  iABC   |      C(8)     |      B(8)     |k|     A(8)      |   Op(7)     |
+  -------|---------------------------------|---------------|-------------|
+  iABx   |            Bx(17)               |     A(8)      |   Op(7)     |
+  -------|---------------------------------|---------------|-------------|
+  iAsBx  |           sBx (signed)(17)      |     A(8)      |   Op(7)     |
+  -------|-------------------------------------------------|-------------|
+  iAx    |                      Ax(25)                     |   Op(7)     |
+  -------|-------------------------------------------------|-------------|
+  isJ    |                      sJ (signed)(25)            |   Op(7)     |
+
+  A signed argument is represented in excess K: the represented value is
+  the written unsigned value minus K, where K is half the maximum for the
+  corresponding unsigned argument.
+
+  === Size and position of opcode arguments ===
+  
+  SIZE_C  = 8
+  SIZE_B  = 8
+  SIZE_Bx = SIZE_C + SIZE_B + 1
+  SIZE_A  = 8
+  SIZE_Ax = SIZE_Bx + SIZE_A
+  SIZE_sJ = SIZE_Bx + SIZE_A
+
+  SIZE_OP = 7
+
+  POS_OP  = 0
+
+  POS_A   = POS_OP + SIZE_OP
+  POS_k   = POS_A + SIZE_A
+  POS_B   = POS_k + 1
+  POS_C   = POS_B + SIZE_B
+
+  POS_Bx  = POS_k
+
+  POS_Ax  = POS_A
+
+  POS_sJ  = POS_A
 #+end_example
 
 ** Lua Function to Bytecode
 
 #+begin_src lua
   -- === Lua Function ===
-  
+
   function max(a, b)
       local m = a
       if b > a then
@@ -97,16 +212,40 @@ register or a constant.
       return m
   end
 
-  -- === Bytecode ===
+  -- === Bytecode: 5.0 ===
   --
-  -- 1 MOVE      2 0 0    ; R(2) = R(0)
-  -- 2 LT        0 0 1    ; R(0) < R(1) ?
-  -- 3 JMP       1        ; to 5 (4+1)
-  -- 4 MOVE      2 1 0    ; R(2) = R(1)
-  -- 5 RETURN    2 2 0    ; return R(2)
-  -- 6 RETURN    0 1 0    ; return
-#+end_src
+  --   Op      | A | B | C |
+  --  ----------------------
+  -- 1 MOVE      2   0   0    ; R(A) := R(B) local a
+  -- 2 LT        0   0   1    ; RK(B) local a < RK(C) local b ?
+  -- 3 JMP       0   1        ; sBx pc -> 5
+  -- 4 MOVE      2   1   0    ; R(A) local m := R(B) local b
+  -- 5 RETURN    2   2   0    ; return R(A) local m
+  -- 6 RETURN    0   1   0    ; return
+  --
+  -- | index | name | startpc | endpc |
+  -- |-------+------+---------+-------|
+  -- | 0     | a    | 1       | 6     |
+  -- | 1     | b    | 1       | 6     |
+  -- | 2     | m    | 1       | 6     |
 
+  -- === Bytecode: 5.4.7 ===
+  --
+  --   Op      | A | B | C |
+  --  ----------------------
+  -- 1 MOVE      2   0        ; R(A) := R(B) local a
+  -- 2 LT        0   1   0    ; RK(A) local a < RK(B) local b ?
+  -- 3 JMP       1            ; A to pc -> 5
+  -- 4 MOVE      2   1        ; R(A) local m := R(B) local b
+  -- 5 RETURN1   2            ; return R(A) local m
+  -- 6 RETURN0                ; return
+  --
+  -- | index | name | startpc | endpc |
+  -- |-------+------+---------+-------|
+  -- | 0     | a    | 1       | 7     |
+  -- | 1     | b    | 1       | 7     |
+  -- | 2     | m    | 2       | 7     |
+#+end_src
 
 ** Lua Data Types
 
@@ -214,7 +353,7 @@ register or a constant.
     Instruction *code;
     // List of functions defined within this function
     struct Proto **p;
-    // List of upvalue descriptions: name, kind, instack?
+    // List of upvalue descriptions: name, kind, In stack?
     Upvaldesc *upvalues;
     // Debug information
     ls_byte *lineinfo;
