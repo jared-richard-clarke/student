@@ -251,8 +251,8 @@ instructions for implementing control flow.
 
 #+begin_src c
   // tagged union (value_, tt_)
-  // where value_ = union of C types implementing Lua types
-  //       tt_    = the tag identifying type
+  // where value_ = the union of C types that implement a Lua value
+  //       tt_    = the type tag
   typedef struct TValue {
     Value value_;
     lu_byte tt_;
