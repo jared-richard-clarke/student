@@ -396,7 +396,7 @@ instructions for implementing control flow.
     struct GCObject *next; //  |  |
     lu_byte tt;            //  |  |
     lu_byte marked;        // <+  |
-    u_byte nupvalues;      //     |
+    lu_byte nupvalues;     //     |
     GCObject *gclist       // <---+
     struct Proto *p;
     // List of upvalues
