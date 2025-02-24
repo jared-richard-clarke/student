@@ -347,7 +347,7 @@ instructions for implementing control flow.
     // Debug information
     int linedefined;
     int lastlinedefined;
-    // List constants used by this function
+    // List of constants used by this function
     TValue *k;
     // List of opcode instructions
     Instruction *code;
@@ -389,6 +389,15 @@ instructions for implementing control flow.
     } u;
   } UpVal;
 
+  // Closures for C functions registered with Lua.
+  typedef struct CClosure {
+    ClosureHeader;
+    // typedef int (*lua_CFunction) (lua_State *L);
+    lua_CFunction f;
+    // List of upvalues
+    TValue upvalue[1];
+  } CClosure;
+
   // Lua Closure
   typedef struct LClosure {
     // ClosureHeader -------------+
@@ -402,6 +411,11 @@ instructions for implementing control flow.
     // List of upvalues
     UpVal *upvals[1];
   } LClosure;
+
+  typedef union Closure {
+    CClosure c;
+    LClosure l;
+  } Closure;
 #+end_src
 
 *** Closure Diagram
