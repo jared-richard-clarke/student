@@ -102,13 +102,13 @@ to Lua values, and place them on a virtual stack.
     // Dynamic call link.
     struct CallInfo *previous, *next;
     union {
-      // Lua functions.
+      // === Lua Function ===
       struct {
         const Instruction *savedpc;
         volatile l_signalT trap;
         int nextraargs;
       } l;
-      // C functions.
+      // === C Function ===
       struct {
         lua_KFunction k;
         ptrdiff_t old_errfunc;
