@@ -84,6 +84,7 @@ to Lua values, and place them on a virtual stack.
     volatile l_signalT hookmask;
   };
 
+  // === Stack Pointers ===
   // During reallocation, all pointers to the stack are changed
   // to their proper offsets.
   typedef union {
@@ -92,6 +93,7 @@ to Lua values, and place them on a virtual stack.
     ptrdiff_t offset;
   } StkIdRel;
 
+  // === Function Call Information ===
   struct CallInfo {
     // Function index in stack.
     StkIdRel func;
