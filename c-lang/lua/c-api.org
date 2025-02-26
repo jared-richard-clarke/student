@@ -110,10 +110,8 @@ to Lua values, and place them on a virtual stack.
       } l;
       // C functions.
       struct {
-        // Continuation in case of yields.
         lua_KFunction k;
         ptrdiff_t old_errfunc;
-        // Context information in case of yields.
         lua_KContext ctx;
       } c;
     } u;
