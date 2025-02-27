@@ -193,7 +193,7 @@ other captures using Lua strings, numbers, tables, and functions.
     Primary    = Number / tonumber + Open * Expression * Close
   }
 
-  total = lpeg.match(Grammar, "3 + 5 * 9 / (1 + 1) - 11") --> 14.5
+  total = lpeg.match(Grammar, "3 + 5 * 9 / (1 + 1) - 11 ^ 2") --> -95.5
 #+end_src
 
 ** PEG and LPEG
