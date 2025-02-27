@@ -45,7 +45,7 @@ to Lua values, and place them on a virtual stack.
     // CommonHeader -----------+
     struct GCObject *next; //  |
     lu_byte tt;            //  |
-    lu_byte marked         // <+
+    lu_byte marked;        // <+
     lu_byte status;
     lu_byte allowhook;
     // Number of items in call information list.
