@@ -106,7 +106,7 @@ to Lua values, and place them on a virtual stack.
       struct {
         // Saved pointer to bytecode instruction.
         const Instruction *savedpc;
-        // Function is tracing lines/counts.
+        // Function tracing lines/counts.
         volatile l_signalT trap;
         // Number of extra arguments in variable-argument functions.
         int nextraargs;
