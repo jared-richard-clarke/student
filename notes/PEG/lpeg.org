@@ -154,39 +154,43 @@ other captures using Lua strings, numbers, tables, and functions.
 #+begin_src lua
   lpeg = require("lpeg")
 
-  Pattern  = lpeg.P
-  Set      = lpeg.S
-  Range    = lpeg.R
-  Capture  = lpeg.C
-  Var      = lpeg.V
+  Pattern = lpeg.P
+  Set     = lpeg.S
+  Range   = lpeg.R
+  Capture = lpeg.C
+  Var     = lpeg.V
 
   -- Lexical elements
   Spaces = Set(" \n\t") ^ 0
   Number = Capture(Pattern("-") ^ -1 * Range("09") ^ 1) * Spaces
   AddSub = Capture(Set("+-")) * Spaces
   MulDiv = Capture(Set("*/")) * Spaces
+  Power  = Capture(Pattern("^")) * Spaces
   Open   = "(" * Spaces
   Close  = ")" * Spaces
 
   -- Evaluator
-  function eval(x, op, y)
+  function binary(x, op, y)
     if (op == "+") then return x + y
     elseif (op == "-") then return x - y
     elseif (op == "*") then return x * y
     elseif (op == "/") then return x / y
+    elseif (op == "^") then return x ^ y
     end
   end
 
   -- Grammar
   Term       = Var("Term")
   Factor     = Var("Factor")
+  Primary    = Var("Primary")
   Expression = Var("Expression")
-  
+
   Grammar = Pattern {
     Expression,
-    Expression = Term * (AddSub * Term % eval) ^ 0,
-    Term       = Factor * (MulDiv * Factor % eval) ^ 0,
-    Factor     = Number / tonumber + Open * Expression * Close,
+    Expression = Term * (AddSub * Term % binary) ^ 0,
+    Term       = Factor * (MulDiv * Factor % binary) ^ 0,
+    Factor     = Primary * (Power * Factor % binary) ^ 0,
+    Primary    = Number / tonumber + Open * Expression * Close
   }
 
   total = lpeg.match(Grammar, "3 + 5 * 9 / (1 + 1) - 11") --> 14.5
