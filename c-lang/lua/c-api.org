@@ -52,11 +52,12 @@ to Lua values, and place them on a virtual stack.
     unsigned short nci;
     // First free slot in the stack.
     StkIdRel top;
-    // Reference to state shared by all threads.
+    // Reference to state shared by all threads. Contains mostly data
+    // for memory allocation and garbage collection.
     global_State *l_G;
     // Call information for current function.
     CallInfo *ci;
-    // End of the stack.
+    // End of the stack (last element + 1).
     StkIdRel stack_last;
     // Stack base.
     StkIdRel stack;
@@ -94,34 +95,42 @@ to Lua values, and place them on a virtual stack.
 
   // === Function Call Information ===
   struct CallInfo {
-    // Function index in stack.
+    // Function index in the stack.
     StkIdRel func;
-    // Top for this function.
+    // Top index for this function.
     StkIdRel top;
     // Dynamic call link.
     struct CallInfo *previous, *next;
     union {
       // === Lua Function ===
       struct {
+        // Saved pointer to bytecode instruction.
         const Instruction *savedpc;
+        // Function is tracing lines/counts.
         volatile l_signalT trap;
+        // Number of extra arguments in variable-argument functions.
         int nextraargs;
       } l;
       // === C Function ===
       struct {
+        // Continuation in case of yields.
         lua_KFunction k;
         ptrdiff_t old_errfunc;
+        // Context information in case of yields.
         lua_KContext ctx;
       } c;
     } u;
     union {
-      // Called function index.
+      // Called function index. Used only by C functions during
+      // a protected call.
       int funcidx;
-      // Number of values yielded.
+      // Number of values yielded. Used only by functions
+      // that are yielding.
       int nyield;
       // Number of values returned.
       int nres;
       // Information about transferred values for call/return hooks.
+      // Used before a function starts or after it ends.
       struct {
         // Offset of first value transferred.
         unsigned short ftransfer;
