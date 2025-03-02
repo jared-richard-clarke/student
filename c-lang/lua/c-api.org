@@ -169,6 +169,43 @@ The API has a dedicated push function for each Lua type with a direct representa
   LUALIB_API void     (luaL_checkstack)       (lua_State *L, int sz, const char *msg);
 #+end_src
 
+**** Example Implementations: ~lua_pushnumber~ and ~lua_checkstack~
+
+#+begin_src c
+  // Pushes a float with value "n" onto the stack.
+  LUA_API void lua_pushnumber (lua_State *L, lua_Number n) {
+    // "lua_lock" and "lua_unlock" are placeholders for
+    // a mutex in multi-threaded environments.
+    lua_lock(L);
+    // Set the top of the stack to the given value "n".
+    setfltvalue(s2v(L->top.p), n);
+    // Increment the top of the stack, checking for overflow.
+    api_incr_top(L);
+    lua_unlock(L);
+  }
+
+  // Ensures the stack has space for at least "n" extra elements and grows it accordingly.
+  LUA_API int lua_checkstack (lua_State *L, int n) {
+    int res;
+    CallInfo *ci;
+    lua_lock(L);
+    ci = L->ci;
+    api_check(L, n >= 0, "negative 'n'");
+    // Is stack large enough?
+    if (L->stack_last.p - L->top.p > n) {
+      res = 1;
+    } else {
+      res = luaD_growstack(L, n, 0);
+    }
+    if (res && ci->top.p < L->top.p + n) {
+      // Adjust frame top.
+      ci->top.p = L->top.p + n;
+    }
+    lua_unlock(L);
+    return res;
+  }
+#+end_src
+
 *** Indexing Elements
 
 #+begin_quote
@@ -262,6 +299,45 @@ The API has a dedicated push function for each Lua type with a direct representa
 | ~lua_remove(L, -3);~              | [ true, 10, nil, "hello", nil ]       |
 | ~lua_settop(L, -5);~              | [ true ]                              |
 | ~lua_close(L);~                   |                                       |
+
+**** Example Implementations: ~lua_gettop~ and ~lua_settop~
+
+#+begin_src c 
+  // Returns the number of elements on the stack, which is also the top element's index.  
+  LUA_API int lua_gettop (lua_State *L) {
+    return cast_int(L->top.p - (L->ci->func.p + 1));
+  }
+
+  // Sets the number of elements on the stack. lua_settop(L, 0) empties the stack.
+  LUA_API void lua_settop (lua_State *L, int idx) {
+    CallInfo *ci;
+    StkId func, newtop;
+    ptrdiff_t diff;
+    lua_lock(L);
+    ci = L->ci;
+    func = ci->func.p;
+    if (idx >= 0) {
+      api_check(L, idx <= ci->top.p - (func + 1), "new top too large");
+      diff = ((func + 1) + idx) - L->top.p;
+      for (; diff > 0; diff--) {
+        // Clear new slots.
+        setnilvalue(s2v(L->top.p++));
+      }
+    } else {
+      api_check(L, -(idx+1) <= (L->top.p - (func + 1)), "invalid new top");
+      diff = idx + 1;
+    }
+    api_check(L, L->tbclist.p < L->top.p, "previous pop of an unclosed slot");
+    newtop = L->top.p + diff;
+    if (diff < 0 && L->tbclist.p >= newtop) {
+      lua_assert(hastocloseCfunc(ci->nresults));
+      newtop = luaF_close(L, newtop, CLOSEKTOP, 0);
+    }
+    // Correct top only after closing any upvalues.
+    L->top.p = newtop;
+    lua_unlock(L);
+  }
+#+end_src
 
 ** Memory Allocation
 
