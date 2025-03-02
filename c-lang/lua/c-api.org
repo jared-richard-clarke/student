@@ -198,7 +198,7 @@ The API has a dedicated push function for each Lua type with a direct representa
       res = luaD_growstack(L, n, 0);
     }
     if (res && ci->top.p < L->top.p + n) {
-      // Adjust frame top.
+      // Adjust call frame.
       ci->top.p = L->top.p + n;
     }
     lua_unlock(L);
