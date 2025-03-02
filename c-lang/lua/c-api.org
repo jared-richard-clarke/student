@@ -314,7 +314,7 @@ The API has a dedicated push function for each Lua type with a direct representa
       lua_assert(hastocloseCfunc(ci->nresults));
       newtop = luaF_close(L, newtop, CLOSEKTOP, 0);
     }
-    // Correct top only after closing any upvalues.
+    // Adjust call frame only after closing any upvalues.
     L->top.p = newtop;
     lua_unlock(L);
   }
