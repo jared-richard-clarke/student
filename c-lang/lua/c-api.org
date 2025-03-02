@@ -173,8 +173,8 @@ The API has a dedicated push function for each Lua type with a direct representa
   // === Example Implementations ===
 
   LUA_API void lua_pushnumber (lua_State *L, lua_Number n) {
-    // "lua_lock" and "lua_unlock" are placeholders for
-    // a mutex in multi-threaded environments.
+    // "lua_lock" and "lua_unlock" are placeholders for what
+    // would be a mutex in multi-threaded environments.
     lua_lock(L);
     // Set the top of the stack to the given value "n".
     setfltvalue(s2v(L->top.p), n);
