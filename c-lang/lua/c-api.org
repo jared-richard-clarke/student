@@ -149,6 +149,8 @@ to Lua values, and place them on a virtual stack.
 The API has a dedicated push function for each Lua type with a direct representation in C.
 
 #+begin_src c
+  // === API Signatures ===
+  
   LUA_API void        (lua_pushnil)           (lua_State *L);
   LUA_API void        (lua_pushboolean)       (lua_State *L, int bool);
   LUA_API void        (lua_pushnumber)        (lua_State *L, lua_Number n);
@@ -167,12 +169,9 @@ The API has a dedicated push function for each Lua type with a direct representa
   // Similar to "lua_checkstack" but raises an error with the given message
   // if unable to complete operation.
   LUALIB_API void     (luaL_checkstack)       (lua_State *L, int sz, const char *msg);
-#+end_src
 
-**** Example Implementations: ~lua_pushnumber~ and ~lua_checkstack~
+  // === Example Implementations ===
 
-#+begin_src c
-  // Pushes a float with value "n" onto the stack.
   LUA_API void lua_pushnumber (lua_State *L, lua_Number n) {
     // "lua_lock" and "lua_unlock" are placeholders for
     // a mutex in multi-threaded environments.
@@ -184,7 +183,6 @@ The API has a dedicated push function for each Lua type with a direct representa
     lua_unlock(L);
   }
 
-  // Ensures the stack has space for at least "n" extra elements and grows it accordingly.
   LUA_API int lua_checkstack (lua_State *L, int n) {
     int res;
     CallInfo *ci;
@@ -257,6 +255,8 @@ The API has a dedicated push function for each Lua type with a direct representa
 *** Basic Stack Manipulation
 
 #+begin_src c
+  // === API Signatures ===
+  
   // Returns the number of elements on the stack, which is also the top element's index.
   LUA_API int  (lua_gettop)    (lua_State *L);
 
@@ -283,32 +283,13 @@ The API has a dedicated push function for each Lua type with a direct representa
 
   // Pops n elements from the stack.
   #define lua_pop(L, n)        lua_settop(L, -(n) - 1)
-#+end_src
 
-| function                          | stack                                 |
-|-----------------------------------+---------------------------------------|
-| ~lua_State *L = luaL_newstate();~ | []                                    |
-| ~lua_pushboolean(L, 1);~          | [ true ]                              |
-| ~lua_pushnumber(L, 10);~          | [ true, 10 ]                          |
-| ~lua_pushnil(L);~                 | [ true, 10, nil ]                     |
-| ~lua_pushstring(L, "hello");~     | [ true, 10, nil, "hello" ]            |
-| ~lua_pushvalue(L, -4);~           | [ true, 10, nil, "hello", true ]      |
-| ~lua_replace(L, 3);~              | [ true, 10, true, "hello" ]           |
-| ~lua_settop(L, 6);~               | [ true, 10, true, "hello", nil, nil ] |
-| ~lua_rotate(L, 3, 1);~            | [ true, 10, nil, true, "hello", nil ] |
-| ~lua_remove(L, -3);~              | [ true, 10, nil, "hello", nil ]       |
-| ~lua_settop(L, -5);~              | [ true ]                              |
-| ~lua_close(L);~                   |                                       |
-
-**** Example Implementations: ~lua_gettop~ and ~lua_settop~
-
-#+begin_src c 
-  // Returns the number of elements on the stack, which is also the top element's index.  
+  // === Example Implementations ===
+ 
   LUA_API int lua_gettop (lua_State *L) {
     return cast_int(L->top.p - (L->ci->func.p + 1));
   }
 
-  // Sets the number of elements on the stack. lua_settop(L, 0) empties the stack.
   LUA_API void lua_settop (lua_State *L, int idx) {
     CallInfo *ci;
     StkId func, newtop;
@@ -338,6 +319,21 @@ The API has a dedicated push function for each Lua type with a direct representa
     lua_unlock(L);
   }
 #+end_src
+
+| function                          | stack                                 |
+|-----------------------------------+---------------------------------------|
+| ~lua_State *L = luaL_newstate();~ | []                                    |
+| ~lua_pushboolean(L, 1);~          | [ true ]                              |
+| ~lua_pushnumber(L, 10);~          | [ true, 10 ]                          |
+| ~lua_pushnil(L);~                 | [ true, 10, nil ]                     |
+| ~lua_pushstring(L, "hello");~     | [ true, 10, nil, "hello" ]            |
+| ~lua_pushvalue(L, -4);~           | [ true, 10, nil, "hello", true ]      |
+| ~lua_replace(L, 3);~              | [ true, 10, true, "hello" ]           |
+| ~lua_settop(L, 6);~               | [ true, 10, true, "hello", nil, nil ] |
+| ~lua_rotate(L, 3, 1);~            | [ true, 10, nil, true, "hello", nil ] |
+| ~lua_remove(L, -3);~              | [ true, 10, nil, "hello", nil ]       |
+| ~lua_settop(L, -5);~              | [ true ]                              |
+| ~lua_close(L);~                   |                                       |
 
 ** Memory Allocation
 
