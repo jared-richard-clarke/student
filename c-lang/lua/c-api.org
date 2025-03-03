@@ -401,6 +401,38 @@ Lua application.
   lua_call(L, 3, 1);
   // Set output from "f" to global "a".
   lua_setglobal(L, "a");
+
+  // === Definition: lua_call ===
+
+  #define lua_call(L, n , r) lua_callk(L, (n), (r), 0, NULL)
+
+  LUA_API void lua_callk (lua_State *L, int nargs, int nresults,
+                          lua_KContext ctx, lua_KFunction k) {
+    StkId func;
+    lua_lock(L);
+    api_check(L, k == NULL || !isLua(L->ci), "cannot use continuations inside hooks");
+    // Ensure the stack has at least "n" elements.
+    api_checknelems(L, nargs+1);
+    api_check(L, L->status == LUA_OK, "cannot do calls on non-normal thread");
+    // Ensure function results do not overflow current stack size.
+    checkresults(L, nargs, nresults);
+    func = L->top.p - (nargs+1);
+    // Need to prepare continuation?
+    if (k != NULL && yieldable(L)) {
+      // Save continuation.
+      L->ci->u.c.k = k;
+      // Save context.
+      L->ci->u.c.ctx = ctx;
+      // Call function. Allow yields.
+      luaD_call(L, func, nresults);
+    } else {
+      // Call function. Disallow yields.
+      luaD_callnoyield(L, func, nresults);
+    }
+    // Adjust the callee's stack space to accomodate results.
+    adjustresults(L, nresults);
+    lua_unlock(L);
+  }
 #+end_src
 
 ** Lua Standalone Interpreter
