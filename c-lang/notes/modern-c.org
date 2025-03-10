@@ -1008,3 +1008,39 @@ pointers more generically. These are pointers to non-type ~void~.
   .LC3:                                     ;
           .long   1093664768                ; <-- 11.0f
 #+end_src
+
+** Safety
+
+- All block-scope variables should be initialized.
+
+- Dynamic allocation should be done with ~calloc~ instead of ~malloc~.
+
+- Dedicated initialization functions should be implemented for dynamically-allocated
+  data structures.
+
+- Functions that receive pointers should use array syntax and distinguish different cases:
+
+#+begin_src c
+  // Pointer to a single object, where the pointer is expected
+  // to be non-null.
+  void function(double a[static 1]);
+
+  // Pointer to a collection of objects of known number, where the
+  // pointer is expected to be non-null.
+  void function(double a[static 7]);
+
+  // Pointer to a collection of objects of unknown number, where the
+  // pointer is expected to be non-null.
+  void function(size_t n, double a[n]);
+
+  // Pointer to a single object or a null pointer. Such a function
+  // must guarantee execution remains in a defined state when
+  // receiving a null pointer.
+  void function(double* a);
+#+end_src
+
+- Avoid taking the address of block-scope (local) variables. It is good practice to mark
+  all local variables with ~register~ in complex code. ~register~ helps avoids aliasing
+  between objects.
+
+- Use unsigned integer types for loop indices and handle wrap-around explicitly.
