@@ -1039,8 +1039,6 @@ pointers more generically. These are pointers to non-type ~void~.
   void function(double* a);
 #+end_src
 
-- Avoid taking the address of block-scope (local) variables. It is good practice to mark
-  all local variables with ~register~ in complex code. ~register~ helps avoids aliasing
-  between objects.
+- Avoid taking the address of block-scope (local) variables.
 
 - Use unsigned integer types for loop indices and handle wrap-around explicitly.
