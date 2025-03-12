@@ -1041,4 +1041,4 @@ pointers more generically. These are pointers to non-type ~void~.
 
 - Avoid taking the address of block-scope (local) variables.
 
-- Use unsigned integer types for loop indices and handle wrap-around explicitly.
+- Use unsigned integer types for loop indices. Handle wrap-around explicitly.
