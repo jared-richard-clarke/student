@@ -121,6 +121,10 @@ in an arithmetic expression.
 | sizeof            |          | @ a     | none             |            | size_t      | size, ICE      |
 | _Alignof          | alignof  | @(a)    | none             |            | size_t      | alignment, ICE |
 
+- The ~sizeof~ operator can be applied to both types (~sizeof(int)~) and expressions (~sizeof 7~).
+  Although parentheses need only wrap types, its good practice to be consistent and wrap both types
+  and expressions.
+
 ** Object Operators
 
 | operator    | alt-name | form  | type                  | result  | operation      |
