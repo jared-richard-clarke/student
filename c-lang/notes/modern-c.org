@@ -852,7 +852,7 @@ pointers more generically. These are pointers to non-type ~void~.
           mov     DWORD PTR [rbp-8], eax        ; <-- Move result into "sum" register.
           add     DWORD PTR [rbp-4], 1          ; <-- Add 1 into "index" register
   .L4:
-          cmp     DWORD PTR [rbp-4], 9          ; <-- Within "while" loop, jump to body if condition is satisfied.
+          cmp     DWORD PTR [rbp-4], 9          ; <-- If condition is satisfied, jump to "while" block.
           jl      .L5                           ; <+
           mov     eax, 0                        ; <-- Return success code 0 from "main".
           leave                                 ; <-- Exit "main".
