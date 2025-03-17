@@ -866,6 +866,8 @@ pointers more generically. These are pointers to non-type ~void~.
 #+begin_src c
   #include <stdlib.h>
 
+  #define NAME "Jared Clarke"
+
   char* copy_string(char* destination, const char* source) {
       char* base = destination;
       while (*source != '\0') {
@@ -877,11 +879,9 @@ pointers more generically. These are pointers to non-type ~void~.
       return base;
   }
 
-  const char* name = "Jared Clarke";
-
   int main(int argc, const char* argv[]) {
-      char* text = malloc(13);
-      copy_string(text, name);
+      char* text = malloc(sizeof(NAME));
+      copy_string(text, NAME);
       free(text);
       text = NULL;
       return 0;
@@ -918,8 +918,7 @@ pointers more generically. These are pointers to non-type ~void~.
           ret                              ; <+
   .LC0:
           .string "Jared Clarke"           ; <-- String literal.
-  name:
-          .quad   .LC0
+
   main:
           push    rbp                      ; <+
           mov     rbp, rsp                 ;  |
@@ -929,9 +928,8 @@ pointers more generically. These are pointers to non-type ~void~.
           mov     edi, 13                  ; <+
           call    malloc                   ;  |- Allocate a 13-part array of type "char".
           mov     QWORD PTR [rbp-8], rax   ; <+
-          mov     rdx, QWORD PTR name[rip] ; <+
-          mov     rax, QWORD PTR [rbp-8]   ;  |
-          mov     rsi, rdx                 ;  |- Call "copy_string".
+          mov     rax, QWORD PTR [rbp-8]   ; <+
+          mov     esi, OFFSET FLAT:.LC0    ;  |- Call "copy_string".
           mov     rdi, rax                 ;  |
           call    copy_string              ; <+
           mov     rax, QWORD PTR [rbp-8]   ; <+
