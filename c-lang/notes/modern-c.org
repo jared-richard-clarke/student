@@ -194,9 +194,17 @@ in an arithmetic expression.
 
 - Arrays :: Combine items that all have the same base type.
 
-  - fixed-length arrays (FLA)
+  - fixed-length arrays (FLA): ~char letters[26]~
 
-  - variable-length arrays (VLA)
+  - variable-length arrays (VLA): ~int values[size]~ where ~size~ = variable
+
+| Feature            | Fixed-Length Array  | Variable-Length Array        |
+|--------------------+---------------------+------------------------------|
+| size determination | compile time        | run time                     |
+| size expression    | constant expression | variable                     |
+| memory allocation  | static              | automatic                    |
+| scope              | global or local     | local to a function or block |
+| availability       | all C standards     | C99: required, C11: optional |
 
 - Structures :: Combine items that may have different base types.
 
