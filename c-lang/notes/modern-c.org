@@ -850,7 +850,7 @@ of ~main~ accomplishes the same.
           add     DWORD PTR [rbp-8], 1          ; <-- Add 1 into "index" register
   .L4:
           cmp     DWORD PTR [rbp-8], 9          ; <-- Compare "index" to "BOUND".
-          jle     .L5                           ; <-- Jumps to body of "for" loop if condition satisfied.
+          jle     .L5                           ; <-- Jumps to body of "for" loop if condition is satisfied.
           mov     eax, 0                        ; <-- Return success code 0 from "main".
           leave                                 ; <-- Exit "main".
           ret                                   ; <+
