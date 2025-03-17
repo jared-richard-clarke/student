@@ -789,33 +789,30 @@ pointers more generically. These are pointers to non-type ~void~.
 
 #+begin_src c
   #define BOUND 10
-  
-  int add(int x, int y) {
-      return x + y;
-  }
 
-  int main (int argc, const char* argv[]) {
-      int index = 0;
-      int sum   = 0;
+  int add(int x, int y) { return x + y; }
 
-      int numbers[BOUND] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-
-      while (index < BOUND) {
+  int main(int argc, const char* argv[]) {
+      int sum = 0;
+      int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+      for(int index = 0; index < BOUND; index += 1) {
           sum = add(sum, numbers[index]);
-          index += 1;
       }
-
       return 0;
   }
 #+end_src
 
 **** Assembly Output ~x86-64 gcc 14.2~
 
+*Side Note*: Setting the storage class of ~numbers~ to ~static~ pushes ~numbers~ out of the
+stack and into its own dedicated region of memory. Declaring and initializing ~numbers~ outside
+of ~main~ accomplishes the same.
+
 #+begin_src asm
   add:
           push    rbp                           ; <+
           mov     rbp, rsp                      ;  |
-          mov     DWORD PTR [rbp-4], edi        ;  |- Setup state for "add" function;
+          mov     DWORD PTR [rbp-4], edi        ;  |- Setup callframe for "add" function;
           mov     DWORD PTR [rbp-8], esi        ;  |
           mov     edx, DWORD PTR [rbp-4]        ;  |
           mov     eax, DWORD PTR [rbp-8]        ; <+
@@ -825,11 +822,10 @@ pointers more generically. These are pointers to non-type ~void~.
   main:
           push    rbp                           ; <+
           mov     rbp, rsp                      ;  |
-          sub     rsp, 64                       ;  |- Setup up state for "main" function.
+          sub     rsp, 64                       ;  |- Setup up callframe for "main" function.
           mov     DWORD PTR [rbp-52], edi       ;  |
           mov     QWORD PTR [rbp-64], rsi       ; <+
-          mov     DWORD PTR [rbp-4], 0          ; <-- Move 0 into "index".
-          mov     DWORD PTR [rbp-8], 0          ; <-- Move 0 into "sum".
+          mov     DWORD PTR [rbp-4], 0          ; <-- Move 0 into "sum".
           mov     DWORD PTR [rbp-48], 1         ; <+
           mov     DWORD PTR [rbp-44], 2         ;  |
           mov     DWORD PTR [rbp-40], 3         ;  |
@@ -840,20 +836,21 @@ pointers more generically. These are pointers to non-type ~void~.
           mov     DWORD PTR [rbp-20], 8         ;  |
           mov     DWORD PTR [rbp-16], 9         ;  |
           mov     DWORD PTR [rbp-12], 10        ; <+
-          jmp     .L4                           ; <-- Jump to "while" loop section of "main".
+          mov     DWORD PTR [rbp-8], 0          ; <- Start of "for" loop. Initialize "index".
+          jmp     .L4                           ; <- Jump to predicate.
   .L5:
-          mov     eax, DWORD PTR [rbp-4]        ; <-- Move "index" into register "eax".
+          mov     eax, DWORD PTR [rbp-8]        ; <-- Move "index" into register "eax".
           cdqe                                  ; <-- RAX := SignExtend(EAX)
           mov     edx, DWORD PTR [rbp-48+rax*4] ; <-- Index into "numbers" array.
-          mov     eax, DWORD PTR [rbp-8]        ; <-- Move "sum" into "eax" register.
+          mov     eax, DWORD PTR [rbp-4]        ; <-- Move "sum" into "eax" register.
           mov     esi, edx                      ; <-- Move "numbers[index]" into "esi" register
           mov     edi, eax                      ; <-- Move "sum" from "eax" register to "edi" register.
           call    add                           ; <-- Call "add" function.
-          mov     DWORD PTR [rbp-8], eax        ; <-- Move result into "sum" register.
-          add     DWORD PTR [rbp-4], 1          ; <-- Add 1 into "index" register
+          mov     DWORD PTR [rbp-4], eax        ; <-- Move result into "sum" register.
+          add     DWORD PTR [rbp-8], 1          ; <-- Add 1 into "index" register
   .L4:
-          cmp     DWORD PTR [rbp-4], 9          ; <-- If condition is satisfied, jump to "while" block.
-          jl      .L5                           ; <+
+          cmp     DWORD PTR [rbp-8], 9          ; <-- Compare "index" to "BOUND".
+          jle     .L5                           ; <-- Jumps to body of "for" loop if condition satisfied.
           mov     eax, 0                        ; <-- Return success code 0 from "main".
           leave                                 ; <-- Exit "main".
           ret                                   ; <+
