@@ -574,22 +574,22 @@ dynamically-allocated memory of the array.
 
 #+begin_src c
   typedef struct Student {
-    int id;
-    // Convention to store the size of the flexible array.
-    int size;
-    // Flexible Array Member.
-    char name[];
+      int id;
+      // Convention to store the size of the flexible array.
+      int size;
+      // Flexible Array Member.
+      char name[];
   } Student;
 
-  Student* new_student(Student* student, int id, char name[]) {
-    student = malloc(sizeof(*student) + sizeof(char) * strlen(name));
+  Student* new_student(int id, char* name) {
+      size_t size = sizeof(Student) + sizeof(char) * strlen(name);
+      Student* student = malloc(size);
 
-    student->id = id;
-    strcpy(student->name, name);
+      student->id = id;
+      strcpy(student->name, name);
+      student->size = size;
 
-    student->size = (sizeof(*student) + sizeof(char) * strlen(student->name));
-
-    return student;
+      return student;
   }
 #+end_src
 
