@@ -307,7 +307,8 @@
     return obj;
   }
 
-  // Either pulls a symbol from "symlist" or creates a new one.
+  // Either returns a symbol from "symlist" or creates and returns
+  // a new symbol object.
   fe_Object* fe_symbol(fe_Context *ctx, const char *name) {
     fe_Object *obj;
     // Try to find symbol in "symlist".
