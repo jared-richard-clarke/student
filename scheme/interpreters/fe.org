@@ -33,6 +33,7 @@
     FE_TFUNC, FE_TMACRO, FE_TPRIM, FE_TCFUNC, FE_TPTR
   };
 
+  // Macros for manipulating Fe objects. 
   #define unused(x)     ( (void) (x) )
   #define car(x)        ( (x)->car.o )
   #define cdr(x)        ( (x)->cdr.o )
