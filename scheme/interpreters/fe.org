@@ -77,7 +77,7 @@
   // === Fe Object = Cons Cell ===
   struct fe_Object { Value car, cdr; };
 
-  // Runtime environment of a Fe program.
+  // The collective state and runtime environment of a Fe program.
   struct fe_Context {
     fe_Handlers handlers;
     fe_Object *gcstack[GCSTACKSIZE];
