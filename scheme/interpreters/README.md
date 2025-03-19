@@ -12,7 +12,7 @@ one, currently, interprets Joy programs.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
 - `fe.org`: a Fe interpreter as defined by RXI.
 - `joy.org`: a Joy interpreter written in Joy by Manfred von Thun.
-- `miranda-scheme.md`: a comparison between Miranda and Scheme interpreters.
+- `miranda-scheme.org`: a comparison between Miranda and Scheme interpreters by Philip Wadler.
 - `norvig.py`: a Scheme interpreter written in Python as defined by Peter Norvig.
 - `tang.hs`: A Scheme interpreter implemented in Haskell by Jonathan Tang.
 
