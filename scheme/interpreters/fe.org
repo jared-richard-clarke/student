@@ -101,8 +101,8 @@
   // By default, an error and stack trace are printed to standard error,
   // and the program exits with an EXIT_FAILURE.
   //
-  // Can provide custom error handlers. "longjmp" can be used to exit said handlers
-  // and re-enter the context in a safe state.
+  // The user can provide custom error handlers. "longjmp" can be used
+  // to exit said handlers and re-enter the program context in a safe state.
   void fe_error(fe_Context *ctx, const char *msg) {
     fe_Object *cl = ctx->calllist;
     // Reset context state.
