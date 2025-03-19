@@ -27,6 +27,7 @@
   typedef char (*fe_ReadFn)(fe_Context *ctx, void *udata);
   typedef struct { fe_ErrorFn error; fe_CFunc mark, gc; } fe_Handlers;
 
+  // === Fe Type Tags ===
   enum {
     FE_TPAIR, FE_TFREE, FE_TNIL, FE_TNUMBER, FE_TSYMBOL, FE_TSTRING,
     FE_TFUNC, FE_TMACRO, FE_TPRIM, FE_TCFUNC, FE_TPTR
@@ -48,7 +49,7 @@
   #define GCMARKBIT     ( 0x2 )
   #define GCSTACKSIZE   ( 256 )
 
-  // === Fe Primitive Type Tags ===
+  // === Fe Primitive Tags ===
   enum {
    P_LET, P_SET, P_IF, P_FN, P_MAC, P_WHILE, P_QUOTE, P_AND, P_OR, P_DO, P_CONS,
    P_CAR, P_CDR, P_SETCAR, P_SETCDR, P_LIST, P_NOT, P_IS, P_ATOM, P_PRINT, P_LT,
