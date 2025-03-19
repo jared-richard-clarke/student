@@ -6,8 +6,7 @@ Most of these programs interpret Scheme programs, although one, currently, inter
 ## Table of Contents
 
 - `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
-- `compute-stack.scm`: a stack-based calculator.
-- `compute.scm`: an arithmetic interpreter and symbolic processor.
+- `compute.org`: arithmetic interpreters, written in Scheme.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
 - `fe.org`: a Fe interpreter as defined by RXI.
 - `joy.org`: a Joy interpreter written in Joy by Manfred von Thun.
