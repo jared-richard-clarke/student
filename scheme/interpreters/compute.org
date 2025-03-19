@@ -1,0 +1,77 @@
+* Scheme Calculators
+
+** Compute
+
+#+begin_src scheme
+  ;; Evaluates Scheme arithmetic expressions.
+  ;; (compute '(+ 1 2 3 4 5 6 7 8 9 10)) -> 55
+
+  (define compute
+    (let ([table (list [cons '+ +]
+                       [cons '- -]
+                       [cons '* *]
+                       [cons '× *]
+                       [cons '/ /]
+                       [cons '÷ /]
+                       [cons '^ expt]
+                       [cons '√ sqrt]
+                       [cons 'π 3.141592653589793]
+                       [cons 'e 2.718281828459045]
+                       [cons 'φ 1.618033988749894])]
+          [lookup (lambda (var env)
+                    (let ([result (assq var env)])
+                      (if result
+                          (cdr result)
+                          (error "undefined operator or constant:" var))))])
+      (lambda (expression)
+        (cond
+          [(symbol? expression) (lookup expression table)]
+          [(number? expression) expression]
+          [(pair? expression)
+           (apply (compute (car expression))
+                  (map compute (cdr expression)))]
+          [else (error "invalid expression:" expression)]))))
+#+end_src
+
+** Compute Stack
+
+#+begin_src scheme
+  ;; Stack Based Calculator.
+  ;; (compute-stack '(2 3 × 1 + -)) -> -7
+  ;;
+  ;; Side Note: Unlike reverse polish notation, upon which this calculator is based,
+  ;; operators have variable arity, meaning
+  ;;
+  ;; (compute-stack '(1 2 3 4 5 6 7 8 9 10 +)) -> 55.
+
+  (define compute-stack
+    ;; === calculator environment ===
+    (let ([stack '()]
+          [table (list (cons '+ +)
+                       (cons '- -)
+                       (cons '* *)
+                       (cons '× *)
+                       (cons '/ /)
+                       (cons '÷ /)
+                       (cons '^ expt)
+                       (cons '= =))]
+          [lookup (lambda (var env)
+                    (let ([result (assq var env)])
+                      (if result
+                          (cdr result)
+                          (error "undefined operator:" var))))]
+          [return (lambda (stack)
+                    (if (= (length stack) 1)
+                        (car stack)
+                        (error "incomplete expression:" (reverse stack))))])
+      ;; === calculator function ===
+      (lambda (expression)
+        (return (fold-left (lambda (x total)
+                             (if (number? x)
+                                 (cons x total)
+                                 (cons (apply (lookup x table)
+                                              (reverse total))
+                                       stack)))
+                           stack
+                           expression)))))
+#+end_src
