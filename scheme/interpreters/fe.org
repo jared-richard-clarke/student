@@ -232,6 +232,8 @@
     return *str == '\0';
   }
 
+  // Pull object from free list for use in program.
+  // Run garbage collection if free list is empty.
   static fe_Object* object(fe_Context *ctx) {
     fe_Object *obj;
     // Collect garbage if freelist has no more objects.
@@ -259,6 +261,7 @@
     return b ? ctx->t : &nil;
   }
 
+  // Create a number literal.
   fe_Object* fe_number(fe_Context *ctx, fe_Number n) {
     fe_Object *obj = object(ctx);
     settype(obj, FE_TNUMBER);
@@ -280,6 +283,7 @@
     return tail;
   }
 
+  // Create a string literal.
   fe_Object* fe_string(fe_Context *ctx, const char *str) {
     fe_Object *obj = buildstring(ctx, NULL, '\0');
     fe_Object *tail = obj;
@@ -289,15 +293,16 @@
     return obj;
   }
 
+  // Either pull a symbol from "symlist" or create a new one.
   fe_Object* fe_symbol(fe_Context *ctx, const char *name) {
     fe_Object *obj;
-    /* try to find in symlist */
+    // Try to find symbol in "symlist".
     for (obj = ctx->symlist; !isnil(obj); obj = cdr(obj)) {
       if (streq(car(cdr(car(obj))), name)) {
         return car(obj);
       }
     }
-    // Create new object, push to symlist, and return.
+    // Create new object, push to "symlist", and return.
     obj = object(ctx);
     settype(obj, FE_TSYMBOL);
     cdr(obj) = fe_cons(ctx, fe_string(ctx, name), &nil);
@@ -305,6 +310,7 @@
     return obj;
   }
 
+  // Wrap a C function within a Fe object.
   fe_Object* fe_cfunc(fe_Context *ctx, fe_CFunc fn) {
     fe_Object *obj = object(ctx);
     settype(obj, FE_TCFUNC);
@@ -312,6 +318,7 @@
     return obj;
   }
 
+  // Wrap a C pointer within a Fe object.
   fe_Object* fe_ptr(fe_Context *ctx, void *ptr) {
     fe_Object *obj = object(ctx);
     settype(obj, FE_TPTR);
@@ -421,7 +428,7 @@
     x.p = dst;
     x.n = size - 1;
     fe_write(ctx, obj, writebuf, &x, 0);
-    ,*x.p = '\0';
+    *x.p = '\0';
     return size - x.n - 1;
   }
 
@@ -482,16 +489,16 @@
         res = &nil;
         tail = &res;
         gc = fe_savegc(ctx);
-        // Causes error on deeply nested cons lists.
+        // Causes errors on deeply nested cons lists.
         fe_pushgc(ctx, res);
         while ( (v = read_(ctx, fn, udata)) != &rparen ) {
           if (v == NULL) { fe_error(ctx, "unclosed list"); }
           if (type(v) == FE_TSYMBOL && streq(car(cdr(v)), ".")) {
             // Dotted pair.
-            ,*tail = fe_read(ctx, fn, udata);
+            *tail = fe_read(ctx, fn, udata);
           } else {
             // Proper pair.
-            ,*tail = fe_cons(ctx, v, &nil);
+            *tail = fe_cons(ctx, v, &nil);
             tail = &cdr(*tail);
           }
           fe_restoregc(ctx, gc);
@@ -523,10 +530,10 @@
         p = buf;
         do {
           if (p == buf + sizeof(buf) - 1) { fe_error(ctx, "symbol too long"); }
-          ,*p++ = chr;
+          *p++ = chr;
           chr = fn(ctx, udata);
         } while (chr && !strchr(delimiter, chr));
-        ,*p = '\0';
+        *p = '\0';
         ctx->nextchr = chr;
         // Try to read as number.
         n = strtod(buf, &p);
@@ -628,7 +635,7 @@
           case P_LET:
             va = checktype(ctx, fe_nextarg(ctx, &arg), FE_TSYMBOL);
             if (newenv) {
-              ,*newenv = fe_cons(ctx, fe_cons(ctx, va, evalarg()), env);
+              *newenv = fe_cons(ctx, fe_cons(ctx, va, evalarg()), env);
             }
             break;
 
