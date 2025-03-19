@@ -74,7 +74,7 @@
   // Object, C Function, Number, or Character
   typedef union { fe_Object *o; fe_CFunc f; fe_Number n; char c; } Value;
 
-  // === Cons Cell ===
+  // === Fe Object = Cons Cell ===
   struct fe_Object { Value car, cdr; };
 
   // Runtime environment of a Fe program.
