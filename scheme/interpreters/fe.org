@@ -118,7 +118,7 @@
       if (isnil(a)) { fe_error(ctx, "too few arguments"); }
       fe_error(ctx, "dotted pair in argument list");
     }
-    ,*arg = cdr(a);
+    *arg = cdr(a);
     return car(a);
   }
 
@@ -183,12 +183,12 @@
   // Collect garbage.
   static void collectgarbage(fe_Context *ctx) {
     int i;
-    /* mark */
+    // Mark.
     for (i = 0; i < ctx->gcstack_idx; i++) {
       fe_mark(ctx, ctx->gcstack[i]);
     }
     fe_mark(ctx, ctx->symlist);
-    /* sweep and unmark */
+    // Sweep and unmark.
     for (i = 0; i < ctx->object_count; i++) {
       fe_Object *obj = &ctx->objects[i];
       if (type(obj) == FE_TFREE) { continue; }
