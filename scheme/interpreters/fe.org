@@ -110,7 +110,7 @@
     ctx->calllist = &nil;
     // Handle error.
     if (ctx->handlers.error) { ctx->handlers.error(ctx, msg, cl); }
-    // Error handler returned — print error and traceback, and then exit.
+    // Error handler returned — print error and stack trace, and then exit.
     fprintf(stderr, "error: %s\n", msg);
     for (; !isnil(cl); cl = cdr(cl)) {
       char buf[64];
