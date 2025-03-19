@@ -11,12 +11,13 @@ one, currently, interprets Joy programs.
 - `compute.scm`: an arithmetic interpreter and symbolic processor.
 - `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
 - `fe.org`: a Fe interpreter as defined by RXI.
-- `joy.md`: a Joy interpreter written in Joy by Manfred von Thun.
+- `joy.org`: a Joy interpreter written in Joy by Manfred von Thun.
 - `miranda-scheme.md`: a comparison between Miranda and Scheme interpreters.
 - `norvig.py`: a Scheme interpreter written in Python as defined by Peter Norvig.
 - `tang.hs`: A Scheme interpreter implemented in Haskell by Jonathan Tang.
 
 ## Grammar
+
 **LISP** is defined in terms of the evaluation of data structures, **not** in terms of the syntax of character streams or files.
 Most **LISP** programs begin life as text files. The reader parses text and produces the data structures for the interpreter or compiler. 
 **LISP** data is, in many ways, like **JSON** or **XML**.
@@ -43,7 +44,9 @@ Being one of the first high-level programming languages, **LISP** pioneered the 
 ```
 
 ## Scheme's Core Forms
+
 Table of core forms pulled from [The Scheme Programming Language: Fourth Edition](https://www.scheme.com/tspl4/) by R. Kent Dybvig.
+
 | Head                | Body        |
 | ------------------- | ----------- |
 | program             | form\* |
