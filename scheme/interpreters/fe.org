@@ -572,6 +572,7 @@
     return (chr = fgetc(udata)) == EOF ? '\0' : chr;
   }
 
+  // Convenience function for reading from a file pointer.
   fe_Object* fe_readfp(fe_Context *ctx, FILE *fp) {
     return fe_read(ctx, readfp, fp);
   }
