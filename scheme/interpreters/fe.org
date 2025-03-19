@@ -78,6 +78,8 @@
   struct fe_Object { Value car, cdr; };
 
   // The collective state and runtime environment of a Fe program.
+  // A Fe program consists of a fixed block of memory. The head of
+  // that memory stores the context. The tail stores the objects.
   struct fe_Context {
     fe_Handlers handlers;
     fe_Object *gcstack[GCSTACKSIZE];
