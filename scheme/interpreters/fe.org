@@ -246,7 +246,7 @@
     return *str == '\0';
   }
 
-  // Pulls an object from "freelist" for use in program.
+  // Pops an object from "freelist" for use in program.
   // Runs garbage collection if "freelist" is empty.
   static fe_Object* object(fe_Context *ctx) {
     fe_Object *obj;
