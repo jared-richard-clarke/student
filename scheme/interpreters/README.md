@@ -12,7 +12,7 @@ Most of these programs interpret Scheme programs, although one, currently, inter
 - `joy.org`: a Joy interpreter written in Joy by Manfred von Thun.
 - `miranda-scheme.org`: a comparison between Miranda and Scheme interpreters by Philip Wadler.
 - `norvig.org`: a Scheme interpreter written in Python as defined by Peter Norvig.
-- `tang.org`: A Scheme interpreter implemented in Haskell by Jonathan Tang.
+- `tang.org`: a Scheme interpreter implemented in Haskell by Jonathan Tang.
 
 ## Grammar
 
