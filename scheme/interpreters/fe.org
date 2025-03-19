@@ -452,6 +452,8 @@
     return cdr(sym);
   }
 
+  // (= symbol expression)
+  // Bind a Fe expression to an identifier.
   void fe_set(fe_Context *ctx, fe_Object *sym, fe_Object *v) {
     unused(ctx);
     cdr(getbound(sym, &nil)) = v;
