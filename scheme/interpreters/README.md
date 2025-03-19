@@ -5,11 +5,10 @@ Most of these programs interpret Scheme programs, although one, currently, inter
 
 ## Table of Contents
 
-- `byrd.scm`: a minimal Scheme interpreter as defined by Bill Byrd.
 - `compute.org`: arithmetic interpreters, written in Scheme.
-- `dybvig.scm`: a Scheme interpreter as defined by R. Kent Dybvig.
 - `fe.org`: a Fe interpreter as defined by RXI.
 - `joy.org`: a Joy interpreter written in Joy by Manfred von Thun.
+- `meta-scheme.org`: meta-circular interpreters as implemented by William Byrd and R. Kent Dybvig.
 - `miranda-scheme.org`: a comparison between Miranda and Scheme interpreters by Philip Wadler.
 - `norvig.org`: a Scheme interpreter written in Python as defined by Peter Norvig.
 - `tang.org`: a Scheme interpreter implemented in Haskell by Jonathan Tang.
