@@ -1,8 +1,7 @@
 # Interpreters
 
-This repository contains a collection of meta-circular interpreters and symbolic processors
-as written by others and myself. Most of these programs interpret Scheme programs, although
-one, currently, interprets Joy programs.
+This repository contains a collection of LISP interpreters as written by others and myself.
+Most of these programs interpret Scheme programs, although one, currently, interprets Joy programs.
 
 ## Table of Contents
 
@@ -14,7 +13,7 @@ one, currently, interprets Joy programs.
 - `joy.org`: a Joy interpreter written in Joy by Manfred von Thun.
 - `miranda-scheme.org`: a comparison between Miranda and Scheme interpreters by Philip Wadler.
 - `norvig.org`: a Scheme interpreter written in Python as defined by Peter Norvig.
-- `tang.hs`: A Scheme interpreter implemented in Haskell by Jonathan Tang.
+- `tang.org`: A Scheme interpreter implemented in Haskell by Jonathan Tang.
 
 ## Grammar
 
