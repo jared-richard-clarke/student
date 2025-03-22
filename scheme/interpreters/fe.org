@@ -6,7 +6,69 @@
 |-------------------+--------|
 | *fe.h* and *fe.c* | rxi    |
 
-** The Fe Programming Language
+** Fe Language
+
+*** Forms
+
+| Form                           | Description                                                          |
+|--------------------------------+----------------------------------------------------------------------|
+| ~(= symbol value)~             | Either binds ~symbol~ to a new ~value~ or creates a global variable. |
+|--------------------------------+----------------------------------------------------------------------|
+| ~(let symbol value)~           | Binds a ~value~ to ~symbol~ in the current environment.              |
+|--------------------------------+----------------------------------------------------------------------|
+| ~(if condition then else ...)~ | If ~condition~ = true, evaluate ~then~ expression, otherwise ~else~. |
+|--------------------------------+----------------------------------------------------------------------|
+| ~(while condition body)~       | While ~condition~ ≠ ~nil~, evaluates expressions in ~body~.          |
+|--------------------------------+----------------------------------------------------------------------|
+| ~(and ...)~                    | If all expressions evaluate not ~nil~, returns last expression.      |
+|--------------------------------+----------------------------------------------------------------------|
+| ~(or ...)~                     | If one expression evaluates not ~nil~, returns that expression.      |
+|--------------------------------+----------------------------------------------------------------------|
+| ~(fn parameters body)~         | Creates a function expression.                                       |
+|--------------------------------+----------------------------------------------------------------------|
+| ~(mac parameters body)~        | Creates a macro expression.                                          |
+|--------------------------------+----------------------------------------------------------------------|
+| ~(quote value)~                | Evaluates expression as data.                                        |
+|--------------------------------+----------------------------------------------------------------------|
+| ~(do ...)~                     | Evaluates each expression, returning the last as its value.          |
+
+*** Primitive Functions
+
+| Function                        | Description                                                          |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(cons car cdr)~ -> ~(car cdr)~ | Creates a cons cell.                                                 |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(car pair)~ -> ~car~ or ~nil~  | Returns the ~car~ of pair or ~nil~ if pair is ~nil~.                 |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(cdr pair)~ -> ~cdr~ or ~nil~  | Returns the ~cdr~ of pair or ~nil~ if pair is ~nil~.                 |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(setcar pair value)~           | Sets the ~car~ of pair to value.                                     |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(setcdr pair value)~           | Sets the ~cdr~ of pair to value.                                     |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(list ...)~ -> ~(...)~         | Creates a list of zero or more expressions.                          |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(not value)~ -> ~t~ or ~nil~   | Returns true if value is ~nil~, otherwise returns ~nil~.             |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(is x y)~  -> ~t~ or ~nil~     | Checks strings and numbers for equivalency. Identity checks objects. |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(atom value)~ -> ~t~ or ~nil~  | Returns true if expression not pair. Otherwise ~nil~.                |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(print ...)~                   | Prints expressions to standard output.                               |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(< x y)~ -> ~t~ or ~nil~       | Returns true if x less than y.                                       |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(<= x y)~ -> ~t~ or ~nil~      | Returns true if x less than or equal to y.                           |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(+ x y ...)~ -> number         | Adds one or more numbers.                                            |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(- x y ...)~ -> number         | Subtracts one or more numbers, left to right.                        |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(* x y ...)~ -> number         | Multiplies one or more numbers.                                      |
+|---------------------------------+----------------------------------------------------------------------|
+| ~(/ x y ...)~ -> number         | Divides one or more numbers, left to right.                          |
+
+** Fe Source Code
 
 #+begin_src c
   // === The Fe Programming Language ===
@@ -71,7 +133,7 @@
   };
 
   // === Fe Value ===
-  // Object, C Function, Number, or Character
+  // Object Pointer, C Function, Number, or Character
   typedef union { fe_Object *o; fe_CFunc f; fe_Number n; char c; } Value;
 
   // === Fe Object = Cons Cell ===
