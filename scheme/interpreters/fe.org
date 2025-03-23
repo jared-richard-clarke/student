@@ -148,10 +148,27 @@
   };
 
   // === Fe Value ===
-  // Object Pointer, C Function, Number, or Character
+  // Fe Object Pointer | C Function Pointer | Number | Character
+  //
+  // Memory Layout: Assumes a 64-bit, little-endian architecture.
+  //
+  //
+  // 8        7        6        5        4        3        2        1        0
+  // +--------+--------+--------+--------+--------+--------+--------+--------+
+  // | byte-8 | byte-7 | byte-6 | byte-5 | byte-4 | byte-3 | byte-2 | byte-1 |
+  // +--------+--------+--------+--------+--------+--------+--------+--------+
+  // ^--------------------------------------------------- Fe Object Pointer -^
+  // ^-------------------------------------------------- C Function Pointer -^
+  //                                     ^-------------------------- Number -^
+  //                                                                ^- Char -^
+  //
   typedef union { fe_Object *o; fe_CFunc f; fe_Number n; char c; } Value;
 
   // === Fe Object = Cons Cell ===
+  //
+  // Cons cells provide fixed storage for all Fe data. A pair is a cons cell
+  // whose car and cdr contain object pointers.
+  //
   struct fe_Object { Value car, cdr; };
 
   // The collective state and runtime environment of a Fe program.
