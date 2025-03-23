@@ -151,7 +151,7 @@
   };
 
   // === Fe Value ===
-  // Fe Object Pointer | C Function Pointer | Number | Character
+  // Fe Object Pointer | C Function Pointer | Number | Char
   //
   // Memory Layout: Assumes a 64-bit, little-endian architecture.
   //
@@ -171,7 +171,6 @@
   //
   // Cons cells provide fixed storage for all Fe data. A pair is a cons cell
   // whose car and cdr contain object pointers.
-  //
   struct fe_Object { Value car, cdr; };
 
   // The collective state and runtime environment of a Fe program.
