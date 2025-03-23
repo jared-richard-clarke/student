@@ -25,7 +25,7 @@
 
 - ~(= symbol value)~ :: Either binds a ~symbol~ to a new ~value~ or creates a global variable.
 
-- ~(let symbol> value)~ :: Binds a ~value~ to a ~symbol~ in the current lexical environment.
+- ~(let symbol value)~ :: Binds a ~value~ to a ~symbol~ in the current lexical environment.
 
 - ~(if condition then else+)~ :: If ~condition~ evaluates true, form evaluates the ~then~
   expression, otherwise evaluates ~else~, which is either an alternative ~expression~ or
