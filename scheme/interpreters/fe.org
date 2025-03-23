@@ -197,6 +197,7 @@
   }
 
   // === Error Handling ===
+  //
   // By default, an error message and stack trace are printed to standard error,
   // and the program exits with an EXIT_FAILURE.
   //
