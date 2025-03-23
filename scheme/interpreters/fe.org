@@ -209,7 +209,7 @@
     ctx->calllist = &nil;
     // Handle error.
     if (ctx->handlers.error) { ctx->handlers.error(ctx, msg, cl); }
-    // Error handler returned — print error and stack trace, and then exit.
+    // If error handler returns, print error, print stack trace, and exit.
     fprintf(stderr, "error: %s\n", msg);
     for (; !isnil(cl); cl = cdr(cl)) {
       char buf[64];
