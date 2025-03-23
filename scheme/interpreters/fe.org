@@ -15,9 +15,9 @@
 | ~condition~  | Predicate expression.                                                     |
 | ~then~       | Consequent expression. Evaluated if ~condition~ evaluates to truth value. |
 | ~else~       | Alternative expression. Evaluated if ~condition~ evaluates ~nil~.         |
-| ~expression~ | An unevaluated Fe expression.                                             |
-| ~car~        | The head of a cons cell. A Fe value or expression.                        |
-| ~cdr~        | The tail of a cons cell. A Fe value or expression.                        |
+| ~expression~ | Unevaluated Fe expression.                                                |
+| ~car~        | Head of a cons cell. A Fe value or expression.                            |
+| ~cdr~        | Tail of a cons cell. A Fe value or expression.                            |
 | ~*~          | Suffix denotes zero or more expressions.                                  |
 | ~+~          | Suffix denotes one or more expressions.                                   |
 
