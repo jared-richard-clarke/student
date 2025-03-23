@@ -8,65 +8,80 @@
 
 ** Fe Language
 
+| notation     | definition                                                                |
+|--------------+---------------------------------------------------------------------------|
+| ~symbol~     | A Fe identifier.                                                          |
+| ~value~      | A Fe value, often the output of a Fe expression.                          |
+| ~condition~  | Predicate expression.                                                     |
+| ~then~       | Consequent expression. Evaluated if ~condition~ evaluates to truth value. |
+| ~else~       | Alternative expression. Evaluated if ~condition~ evaluates ~nil~.         |
+| ~expression~ | An unevaluated Fe expression.                                             |
+| ~car~        | The head of a cons cell. A Fe value or expression.                        |
+| ~cdr~        | The tail of a cons cell. A Fe value or expression.                        |
+| ~*~          | Suffix denotes zero or more expressions.                                  |
+| ~+~          | Suffix denotes one or more expressions.                                   |
+
 *** Forms
 
-| Form                           | Description                                                          |
-|--------------------------------+----------------------------------------------------------------------|
-| ~(= symbol value)~             | Either binds ~symbol~ to a new ~value~ or creates a global variable. |
-|--------------------------------+----------------------------------------------------------------------|
-| ~(let symbol value)~           | Binds a ~value~ to ~symbol~ in the current environment.              |
-|--------------------------------+----------------------------------------------------------------------|
-| ~(if condition then else ...)~ | If ~condition~ = true, evaluate ~then~ expression, otherwise ~else~. |
-|--------------------------------+----------------------------------------------------------------------|
-| ~(while condition body)~       | While ~condition~ ≠ ~nil~, evaluates expressions in ~body~.          |
-|--------------------------------+----------------------------------------------------------------------|
-| ~(and ...)~                    | If all expressions evaluate not ~nil~, returns last expression.      |
-|--------------------------------+----------------------------------------------------------------------|
-| ~(or ...)~                     | If one expression evaluates not ~nil~, returns that expression.      |
-|--------------------------------+----------------------------------------------------------------------|
-| ~(fn parameters body)~         | Creates a function expression.                                       |
-|--------------------------------+----------------------------------------------------------------------|
-| ~(mac parameters body)~        | Creates a macro expression.                                          |
-|--------------------------------+----------------------------------------------------------------------|
-| ~(quote value)~                | Evaluates expression as data.                                        |
-|--------------------------------+----------------------------------------------------------------------|
-| ~(do ...)~                     | Evaluates each expression, returning the last as its value.          |
+- ~(= symbol value)~ :: Either binds a ~symbol~ to a new ~value~ or creates a global variable.
+
+- ~(let symbol> value)~ :: Binds a ~value~ to a ~symbol~ in the current lexical environment.
+
+- ~(if condition then else+)~ :: If ~condition~ evaluates true, form evaluates the ~then~
+  expression, otherwise evaluates ~else~, which is either an alternative ~expression~ or
+  a chain of one or more ~condition-then~ expressions.
+
+- ~(while condition expression+)~ :: While ~condition~ ≠ ~nil~, evaluates a sequence of one
+  or more expressions.
+
+- ~(and expression*)~ :: Evaluates a sequence of zero or more expressions. Short-circuits on ~nil~,
+  returning ~nil~. If all expressions evaluate not ~nil~, form returns the last evaluated expression.
+
+- ~(or expression*)~ :: Evaluates a sequence of zero or more expressions. Short-circuits on not ~nil~,
+  returning the value of the current expression. If all expression evaluate ~nil~, form returns ~nil~.
+
+- ~(fn symbol* expression+)~ :: Defines a function procedure.
+
+- ~(mac symbol* expression+)~ :: Defines a macro expander.
+
+- ~(quote expression)~ :: Returns expression unevaluated — essentially data.
+
+- ~(do expression+)~ :: Evaluates one or more expressions, returning the last as its value.
 
 *** Primitive Functions
 
-| Function                        | Description                                                          |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(cons car cdr)~ -> ~(car cdr)~ | Creates a cons cell.                                                 |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(car pair)~ -> ~car~ or ~nil~  | Returns the ~car~ of pair or ~nil~ if pair is ~nil~.                 |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(cdr pair)~ -> ~cdr~ or ~nil~  | Returns the ~cdr~ of pair or ~nil~ if pair is ~nil~.                 |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(setcar pair value)~           | Sets the ~car~ of pair to ~value~.                                   |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(setcdr pair value)~           | Sets the ~cdr~ of pair to ~value~.                                   |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(list ...)~ -> ~(...)~         | Creates a list of zero or more expressions.                          |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(not value)~ -> ~t~ or ~nil~   | Returns true if ~value~ is ~nil~, otherwise returns ~nil~.           |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(is x y)~  -> ~t~ or ~nil~     | Checks strings and numbers for equivalency. Identity checks objects. |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(atom value)~ -> ~t~ or ~nil~  | Returns true if expression not pair. Otherwise ~nil~.                |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(print ...)~                   | Prints expressions to standard output.                               |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(< x y)~ -> ~t~ or ~nil~       | Returns true if ~x~ less than ~y~.                                   |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(<= x y)~ -> ~t~ or ~nil~      | Returns true if ~x~ less than or equal to ~y~.                       |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(+ x y ...)~ -> number         | Adds one or more numbers.                                            |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(- x y ...)~ -> number         | Subtracts one or more numbers, left to right.                        |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(* x y ...)~ -> number         | Multiplies one or more numbers.                                      |
-|---------------------------------+----------------------------------------------------------------------|
-| ~(/ x y ...)~ -> number         | Divides one or more numbers, left to right.                          |
+- ~(cons car cdr)~ -> ~(car cdr)~ :: Creates a cons cell, otherwise known as a pair.
+
+- ~(car (car cdr))~ -> ~car~ or ~nil~ :: Returns the ~car~ of a cons cell, or ~nil~ if the cons cell is ~nil~.
+
+- ~(cdr (car cdr))~ -> ~cdr~ or ~nil~ :: Returns the ~cdr~ of a cons cell, or ~nil~ if the cons cell is ~nil~.
+
+- ~(setcar (car cdr) value)~ :: Sets the ~car~ of a cons cell to ~value~.
+
+- ~(setcdr (car cdr) value)~ :: Sets the ~cdr~ of a cons cell to ~value~.
+
+- ~(list value*)~ -> ~(value*)~ :: Creates a cons list of zero or more values. The bottom
+  value of a proper list is ~nil~.
+
+- ~(not value)~ -> ~t~ or ~nil~ :: Returns true if ~value~ is ~nil~, otherwise returns ~nil~.
+
+- ~(is value value)~ -> ~t~ or ~nil~ :: Checks strings and numbers for equivalency. Identity checks objects.
+
+- ~(atom value)~ -> ~t~ or ~nil~ :: Returns true if value is not cons cell. Otherwise returns ~nil~.
+
+- ~(print value+)~ :: Prints one or more values to the standard output.
+
+- ~(< value value)~ -> ~t~ or ~nil~ :: Returns true if first ~value~ is less than second ~value~.
+
+- ~(<= value value)~ -> ~t~ or ~nil~ :: Returns true if first ~value~ is less than or equal to second ~value~.
+
+- ~(+ number+)~ -> ~number~ :: Adds one or more numbers.
+
+- ~(- number+)~ -> ~number~ :: Subtracts one or more numbers, left to right.
+
+- ~(* number+)~ -> ~number~ :: Multiplies one or more numbers.
+
+- ~(/ number+)~ -> ~number~ :: Divides one or more numbers, left to right.
 
 ** Fe Source Code
 
