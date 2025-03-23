@@ -14,7 +14,7 @@
 | ~value~      | Fe value, often the output of a Fe expression.                            |
 | ~condition~  | Predicate expression.                                                     |
 | ~then~       | Consequent expression. Evaluated if ~condition~ evaluates to truth value. |
-| ~else~       | Alternative expression. Evaluated if ~condition~ evaluates ~nil~.         |
+| ~else~       | Alternative expression. Evaluated if ~condition~ evaluates to ~nil~.      |
 | ~expression~ | Unevaluated Fe expression.                                                |
 | ~car~        | Head of a cons cell. A Fe value or expression.                            |
 | ~cdr~        | Tail of a cons cell. A Fe value or expression.                            |
@@ -40,9 +40,12 @@
 - ~(or expression*)~ :: Evaluates a sequence of zero or more expressions. Short-circuits on not ~nil~,
   returning the value of the current expression. If all expression evaluate ~nil~, form returns ~nil~.
 
-- ~(fn symbol* expression+)~ :: Defines a function procedure.
+- ~(fn symbol* expression+)~ :: Defines a function abstraction, a Fe program that can be called
+  within another Fe program. Arguments are bound to their corresponding symbols. Free variables,
+  variables defined outside a function's parameters, are lexically scoped.
 
-- ~(mac symbol* expression+)~ :: Defines a macro expander.
+- ~(mac symbol* expression+)~ :: Defines a macro, a Fe program that transforms the syntactic
+  structure of a Fe expression prior to evaluation.
 
 - ~(quote expression)~ :: Returns expression unevaluated — essentially data.
 
@@ -50,24 +53,24 @@
 
 *** Primitive Functions
 
-- ~(cons car cdr)~ -> ~(car cdr)~ :: Creates a cons cell, otherwise known as a pair.
+- ~(cons car cdr)~ -> ~(car cdr)~ :: Combines two values to create a pair.
 
-- ~(car (car cdr))~ -> ~car~ or ~nil~ :: Returns the ~car~ of a cons cell, or ~nil~ if the cons cell is ~nil~.
+- ~(car (car cdr))~ -> ~car~ or ~nil~ :: Returns the ~car~ of a pair, or ~nil~ if the pair is ~nil~.
 
-- ~(cdr (car cdr))~ -> ~cdr~ or ~nil~ :: Returns the ~cdr~ of a cons cell, or ~nil~ if the cons cell is ~nil~.
+- ~(cdr (car cdr))~ -> ~cdr~ or ~nil~ :: Returns the ~cdr~ of a pair, or ~nil~ if the pair is ~nil~.
 
-- ~(setcar (car cdr) value)~ :: Sets the ~car~ of a cons cell to ~value~.
+- ~(setcar (car cdr) value)~ :: Sets the ~car~ of a pair to ~value~.
 
-- ~(setcdr (car cdr) value)~ :: Sets the ~cdr~ of a cons cell to ~value~.
+- ~(setcdr (car cdr) value)~ :: Sets the ~cdr~ of a pair to ~value~.
 
-- ~(list value*)~ -> ~(value*)~ :: Creates a cons list of zero or more values. The bottom
-  value of a proper list is ~nil~.
+- ~(list value*)~ -> ~(value*)~ :: Creates a list of zero or more values. The bottom value
+  of a proper list is ~nil~.
 
 - ~(not value)~ -> ~t~ or ~nil~ :: Returns true if ~value~ is ~nil~, otherwise returns ~nil~.
 
 - ~(is value value)~ -> ~t~ or ~nil~ :: Checks strings and numbers for equivalency. Identity checks objects.
 
-- ~(atom value)~ -> ~t~ or ~nil~ :: Returns true if value is not cons cell. Otherwise returns ~nil~.
+- ~(atom value)~ -> ~t~ or ~nil~ :: Returns true if value is not a pair. Otherwise returns ~nil~.
 
 - ~(print value+)~ :: Prints one or more values to the standard output.
 
