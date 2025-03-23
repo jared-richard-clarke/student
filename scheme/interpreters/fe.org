@@ -10,8 +10,8 @@
 
 | notation     | definition                                                                |
 |--------------+---------------------------------------------------------------------------|
-| ~symbol~     | A Fe identifier.                                                          |
-| ~value~      | A Fe value, often the output of a Fe expression.                          |
+| ~symbol~     | Fe identifier.                                                            |
+| ~value~      | Fe value, often the output of a Fe expression.                            |
 | ~condition~  | Predicate expression.                                                     |
 | ~then~       | Consequent expression. Evaluated if ~condition~ evaluates to truth value. |
 | ~else~       | Alternative expression. Evaluated if ~condition~ evaluates ~nil~.         |
