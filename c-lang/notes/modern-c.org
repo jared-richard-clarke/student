@@ -725,10 +725,11 @@ pointers more generically. These are pointers to non-type ~void~.
   program execution, either being completely defined at compile time or resolved by a system's
   startup procedure.
 
-  - *static storage duration* is not the same as declaring a variable with the *storage class*
-    ~static~. The latter ensures that a variable or function has internal linkage.
-
-  - Objects with static storage duration are always initialized.
+| class                  | scope                                  | duration                             |
+|------------------------+----------------------------------------+--------------------------------------|
+| Static Local Variable  | Function block                         | Retains value between function calls |
+| Global Variable        | Accessible everywhere, unless shadowed | Entire duration of program           |
+| Static Global Variable | File where it is declared              | Entire duration of program           |
 
 - Automatic :: Any block-scope variables that are not declared ~static~, block-scope compound
   literals, and some temporary objects that are returned by function calls. They are typically
