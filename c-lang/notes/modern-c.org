@@ -805,10 +805,6 @@ pointers more generically. These are pointers to non-type ~void~.
 
 **** Assembly Output ~x86-64 gcc 14.2~
 
-*Side Note*: Setting the storage class of ~numbers~ to ~static~ pushes ~numbers~ out of the
-stack and into its own dedicated region of memory. Declaring and initializing ~numbers~ outside
-of ~main~ accomplishes the same.
-
 #+begin_src asm
   add:
           push    rbp                           ; <+
