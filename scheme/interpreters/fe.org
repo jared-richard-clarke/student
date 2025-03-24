@@ -204,6 +204,7 @@
     // Interned symbols and identifiers. A symbol represents itself,
     // whereas an identifier points to a value.
     fe_Object *symlist;
+    // The universal truth value within Fe.
     fe_Object *t;
     int nextchr;
   };
@@ -399,6 +400,10 @@
     return obj;
   }
 
+  // Evaluates the truth value of a C data type within the context of Fe.
+  //
+  // example: fe_bool(ctx, number(x) operator number(y)) -> ctx->t | &nil
+  //
   fe_Object* fe_bool(fe_Context *ctx, int b) {
     return b ? ctx->t : &nil;
   }
