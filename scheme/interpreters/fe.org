@@ -448,8 +448,11 @@
   // Either returns a symbol from "symlist" or creates and returns
   // a new symbol object.
   //
+  //     symlist
+  //        |
+  //        V
   // +-------------+-----+    +-----+-----+
-  // | car: Symbol | cdr | -> | car | cdr | -> symlist
+  // | car: Symbol | cdr | -> | car | cdr | -> object: nil | value
   // +-------------+-----+    +-----+-----+
   //                             |
   //                             V
