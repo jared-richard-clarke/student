@@ -312,7 +312,7 @@
       fe_mark(ctx, ctx->gcstack[i]);
     }
     fe_mark(ctx, ctx->symlist);
-    // Sweep and unmark.
+    // Sweep unmarked objects.
     for (i = 0; i < ctx->object_count; i++) {
       fe_Object *obj = &ctx->objects[i];
       if (type(obj) == FE_TFREE) { continue; }
