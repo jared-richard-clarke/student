@@ -201,7 +201,8 @@
     fe_Object *calllist;
     // Linked list of unused objects.
     fe_Object *freelist;
-    // Interned symbols and identifiers.
+    // Interned symbols and identifiers. A symbol represents itself,
+    // whereas an identifier points to a value.
     fe_Object *symlist;
     fe_Object *t;
     int nextchr;
