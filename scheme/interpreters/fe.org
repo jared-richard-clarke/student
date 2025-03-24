@@ -188,6 +188,7 @@
   // that memory stores the context. The tail stores the objects.
   struct fe_Context {
     // struct { error, mark, gc }
+    // Each field is a function either provided by the runtime or the user.
     fe_Handlers handlers;
     // Stack protects reachable objects from garbage collection.
     fe_Object *gcstack[GCSTACKSIZE];
