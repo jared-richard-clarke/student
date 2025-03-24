@@ -137,7 +137,7 @@
    P_LTE, P_ADD, P_SUB, P_MUL, P_DIV, P_MAX
   };
 
-  // === Fe Primitive List ===
+  // === Fe Primitive Name List ===
   static const char *primnames[] = {
     "let", "=", "if", "fn", "mac", "while", "quote", "and", "or", "do", "cons",
     "car", "cdr", "setcar", "setcdr", "list", "not", "is", "atom", "print", "<",
