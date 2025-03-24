@@ -1029,6 +1029,8 @@
   #include <setjmp.h>
 
   static jmp_buf toplevel;
+  // Set aside approximately 64 kilobytes of digital storage
+  // for Fe context and associated objects.
   static char buf[64000];
 
   static void onerror(fe_Context *ctx, const char *msg, fe_Object *cl) {
