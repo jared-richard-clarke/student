@@ -113,7 +113,7 @@
     FE_TFUNC, FE_TMACRO, FE_TPRIM, FE_TCFUNC, FE_TPTR
   };
 
-  // Macros for manipulating Fe objects. 
+  // Macros for manipulating Fe objects.
   #define unused(x)     ( (void) (x) )
   #define car(x)        ( (x)->car.o )
   #define cdr(x)        ( (x)->cdr.o )
@@ -151,7 +151,7 @@
   };
 
   // === Fe Value ===
-  // Fe Object Pointer | C Function Pointer | Number | Char
+  // Fe Object Pointer | C Function | Number | Char
   //
   // Memory Layout: Assumes a 64-bit, little-endian architecture.
   //
@@ -161,9 +161,19 @@
   // | byte-8 | byte-7 | byte-6 | byte-5 | byte-4 | byte-3 | byte-2 | byte-1 |
   // +--------+--------+--------+--------+--------+--------+--------+--------+
   // ^--------------------------------------------------- Fe Object Pointer -^
-  // ^-------------------------------------------------- C Function Pointer -^
+  // ^---------------------------------------------------------- C Function -^
   //                                     ^-------------------------- Number -^
   //                                                                ^- Char -^
+  //
+  // The first byte of an Object's car field contains
+  // book-keeping and type information.
+  //
+  //  Byte 1
+  // +-------------------------------+
+  // | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | <- Cons Cell Marker
+  // +-------------------------------+
+  //   ^-------------------^   ^
+  //    Type Tag               + GC Marker
   //
   typedef union { fe_Object *o; fe_CFunc f; fe_Number n; char c; } Value;
 
@@ -363,6 +373,16 @@
 
   // (cons car cdr) -> (car cdr)
   // Creates a new pair with the given "car" and "cdr" values.
+  //
+  // +-----+-----+    +-----+-----+
+  // | car | cdr | -> | car | cdr |
+  // +-----+-----+    +-----+-----+
+  //    |
+  //    V
+  // +-----+-----+
+  // | car | cdr |
+  // +-----+-----+
+  //
   fe_Object* fe_cons(fe_Context *ctx, fe_Object *car, fe_Object *cdr) {
     fe_Object *obj = object(ctx);
     car(obj) = car;
@@ -375,6 +395,11 @@
   }
 
   // Creates a number literal.
+  //
+  // +-------------+------------+
+  // | car: Number | cdr: float |
+  // +-------------+------------+
+  //
   fe_Object* fe_number(fe_Context *ctx, fe_Number n) {
     fe_Object *obj = object(ctx);
     settype(obj, FE_TNUMBER);
@@ -397,6 +422,11 @@
   }
 
   // Creates a string literal.
+  //
+  // +----------------------+-----+    +----------------------+-----+
+  // | car: char[] | String | cdr | -> | car: char[] | String | cdr |
+  // +----------------------+-----+    +----------------------+-----+
+  //
   fe_Object* fe_string(fe_Context *ctx, const char *str) {
     fe_Object *obj = buildstring(ctx, NULL, '\0');
     fe_Object *tail = obj;
@@ -408,6 +438,14 @@
 
   // Either returns a symbol from "symlist" or creates and returns
   // a new symbol object.
+  //
+  // +-------------+-----+    +-----+-----+
+  // | car: Symbol | cdr | -> | car | cdr | -> symlist
+  // +-------------+-----+    +-----+-----+
+  //                             |
+  //                             V
+  //                           String
+  //
   fe_Object* fe_symbol(fe_Context *ctx, const char *name) {
     fe_Object *obj;
     // Try to find symbol in "symlist".
@@ -425,6 +463,11 @@
   }
 
   // Wraps a C function within a Fe object.
+  //
+  // +-----------------+-----+
+  // | car: C Function | cdr | -> function
+  // +-----------------+-----+
+  //
   fe_Object* fe_cfunc(fe_Context *ctx, fe_CFunc fn) {
     fe_Object *obj = object(ctx);
     settype(obj, FE_TCFUNC);
@@ -435,6 +478,11 @@
   // Wraps a C pointer within a Fe object.
   // The Fe pointer type allows the creation of custom objects.
   // Pointers must be wrapped by users and tagged to ensure type safety.
+  //
+  // +--------------+-----+
+  // | car: Pointer | cdr | -> void
+  // +--------------+-----+
+  //
   fe_Object* fe_ptr(fe_Context *ctx, void *ptr) {
     fe_Object *obj = object(ctx);
     settype(obj, FE_TPTR);
@@ -444,6 +492,16 @@
 
   // (list ...) -> (...)
   // Transforms zero or more values into a list.
+  //
+  // +-----+-----+    +-----+-----+     +----------+-----+   
+  // | car | cdr | -> | car | cdr | ... | car: Nil | cdr | -> NULL
+  // +-----+-----+    +-----+-----+     +----------+-----+
+  //    |                |
+  //    V                V
+  // +-----+-----+    +-----+-----+
+  // | car | cdr |    | car | cdr |
+  // +-----+-----+    +-----+-----+
+  //
   fe_Object* fe_list(fe_Context *ctx, fe_Object **objs, int n) {
     fe_Object *res = &nil;
     while (n--) {
@@ -685,7 +743,7 @@
     fe_Object *res = &nil;
     fe_Object **tail = &res;
     while (!isnil(lst)) {
-      ,*tail = fe_cons(ctx, eval(ctx, fe_nextarg(ctx, &lst), env, NULL), &nil);
+      *tail = fe_cons(ctx, eval(ctx, fe_nextarg(ctx, &lst), env, NULL), &nil);
       tail = &cdr(*tail);
     }
     return res;
