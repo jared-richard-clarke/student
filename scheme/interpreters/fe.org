@@ -307,7 +307,7 @@
   // Mark and sweep garbage collection.
   static void collectgarbage(fe_Context *ctx) {
     int i;
-    // Mark.
+    // Mark objects protected by "gcstack".
     for (i = 0; i < ctx->gcstack_idx; i++) {
       fe_mark(ctx, ctx->gcstack[i]);
     }
