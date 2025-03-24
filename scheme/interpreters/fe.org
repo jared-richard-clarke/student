@@ -187,13 +187,20 @@
   // A Fe program consists of a fixed block of memory. The head of
   // that memory stores the context. The tail stores the objects.
   struct fe_Context {
+    // struct { error, mark, gc }
     fe_Handlers handlers;
+    // Stack protects reachable objects from garbage collection.
     fe_Object *gcstack[GCSTACKSIZE];
+    // Stack top.
     int gcstack_idx;
+    // Fixed block of Fe objects. Allocated at program start.
     fe_Object *objects;
+    // Total allocated objects.
     int object_count;
     fe_Object *calllist;
+    // Linked list of unused objects.
     fe_Object *freelist;
+    // Interned symbols and identifiers.
     fe_Object *symlist;
     fe_Object *t;
     int nextchr;
