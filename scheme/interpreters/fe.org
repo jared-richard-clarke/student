@@ -542,6 +542,8 @@
     return cdr(checktype(ctx, obj, FE_TPAIR));
   }
 
+ // === Fe Data -> String ===
+
   static void writestr(fe_Context *ctx, fe_WriteFn fn, void *udata, const char *s) {
     while (*s) { fn(ctx, udata, *s++); }
   }
