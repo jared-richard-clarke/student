@@ -206,6 +206,7 @@
     fe_Object *symlist;
     // The universal truth value within Fe.
     fe_Object *t;
+    // Tracks character position for reader.
     int nextchr;
   };
 
