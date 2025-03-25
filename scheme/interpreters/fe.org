@@ -198,6 +198,8 @@
     fe_Object *objects;
     // Total allocated objects.
     int object_count;
+    // A Fe program is a list of cons cells. The instruction pointer
+    // is a pointer to a Fe object within that list of cons cells.
     fe_Object *calllist;
     // Linked list of unused objects.
     fe_Object *freelist;
