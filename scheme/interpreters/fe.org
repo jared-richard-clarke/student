@@ -1071,7 +1071,6 @@
     FILE *volatile fp = stdin;
     fe_Context *ctx = fe_open(buf, sizeof(buf));
 
-    // === Fe Script ===
     if (argc > 1) {
       fp = fopen(argv[1], "rb");
       if (!fp) { fe_error(ctx, "could not open input file"); }
@@ -1081,7 +1080,6 @@
     gc = fe_savegc(ctx);
     setjmp(toplevel);
 
-    // === Fe REPL ===
     for (;;) {
       fe_restoregc(ctx, gc);
       if (fp == stdin) { printf("> "); }
