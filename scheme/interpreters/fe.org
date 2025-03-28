@@ -450,7 +450,7 @@
   // +----------------------+-----+
   //
   // where char[] = 7 bytes of character storage on a 64-bit machine.
-  //       String = 1 byte type tag.
+  //       String = 1 byte of type tags and GC markers.
   //
   fe_Object* fe_string(fe_Context *ctx, const char *str) {
     fe_Object *obj = buildstring(ctx, NULL, '\0');
