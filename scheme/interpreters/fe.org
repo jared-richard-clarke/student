@@ -773,7 +773,7 @@
   // === The Fe Evaluator ===
   //
   // Interprets Fe data as a Fe program.
-  //
+
   static fe_Object* eval(fe_Context *ctx, fe_Object *obj, fe_Object *env, fe_Object **bind);
 
   static fe_Object* evallist(fe_Context *ctx, fe_Object *lst, fe_Object *env) {
