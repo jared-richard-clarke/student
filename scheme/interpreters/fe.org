@@ -413,7 +413,7 @@
 
   // Creates a number literal. By default, Number is a float,
   // although this type can be changed as long as its storage
-  // fits within an Object pointer.
+  // fits within an object pointer.
   //
   // +-------------+------------+
   // | car: Number | cdr: float |
