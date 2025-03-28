@@ -411,7 +411,9 @@
     return b ? ctx->t : &nil;
   }
 
-  // Creates a number literal.
+  // Creates a number literal. By default, Number is a float,
+  // although this type can be changed as long as its storage
+  // fits within an Object pointer.
   //
   // +-------------+------------+
   // | car: Number | cdr: float |
