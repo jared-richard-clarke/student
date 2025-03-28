@@ -440,11 +440,17 @@
     return tail;
   }
 
-  // Creates a string literal.
+  // Creates a string literal. Strings are stored in a list of cons cells.
   //
-  // +----------------------+-----+    +----------------------+-----+     +----------------------+-----+
-  // | car: char[] | String | cdr | -> | car: char[] | String | cdr | ... | car: char[] | String | cdr | -> nil
-  // +----------------------+-----+    +----------------------+-----+     +----------------------+-----+
+  // +----------------------+-----+    +----------------------+-----+
+  // | car: char[] | String | cdr | -> | car: char[] | String | cdr | ...
+  // +----------------------+-----+    +----------------------+-----+
+  // +----------------------+-----+
+  // | car: char[] | String | cdr | -> nil
+  // +----------------------+-----+
+  //
+  // where char[] = 7 bytes of character storage on a 64-bit machine.
+  //       String = 1 byte type tag.
   //
   fe_Object* fe_string(fe_Context *ctx, const char *str) {
     fe_Object *obj = buildstring(ctx, NULL, '\0');
