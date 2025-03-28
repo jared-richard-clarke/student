@@ -664,6 +664,9 @@
   static fe_Object rparen;
 
   // === The Fe Reader ===
+  //
+  // Transforms a stream of character data into Fe data,
+  // data that can later be evaluated as a Fe program.
 
   static fe_Object* read_(fe_Context *ctx, fe_ReadFn fn, void *udata) {
     const char *delimiter = " \n\t\r();";
@@ -768,6 +771,9 @@
   }
 
   // === The Fe Evaluator ===
+  //
+  // Interprets Fe data as a Fe program.
+  //
   static fe_Object* eval(fe_Context *ctx, fe_Object *obj, fe_Object *env, fe_Object **bind);
 
   static fe_Object* evallist(fe_Context *ctx, fe_Object *lst, fe_Object *env) {
