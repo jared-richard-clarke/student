@@ -9,7 +9,7 @@
 
 ** Terminology
 
-- flex container :: Either a block, ~flex~, or inline-block, ~inline-flex~, element that creates
+- flex container :: Either a block (~flex~) or inline-block (~inline-flex~) element that creates
   a flex formatting context wherein its children become flex items. Floats cannot intrude. Margins
   will not collapse. Items are ordered independent of source.
 
