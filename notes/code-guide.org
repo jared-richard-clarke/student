@@ -264,7 +264,7 @@ For an example, see the one in Bootstrap.
 - Don't prefix property values or color parameters with a leading zero
   (e.g., ~.5~ instead of ~0.5~ and ~-.5px~ instead of ~-0.5px~).
   
-- Lowercase all hex values, e.g., `#fff`. Lowercase letters are much easier to discern
+- Lowercase all hex values, e.g., ~#fff~. Lowercase letters are much easier to discern
   when scanning a document as they tend to have more unique shapes.
   
 - Use shorthand hex values where available, e.g., ~#fff~ instead of ~#ffffff~.
