@@ -369,8 +369,8 @@ so the writing mode needs to be flexible. With logical properties, you can easil
 support languages that can be written horizontally or vertically
 (like Chinese, Japanese, and Korean). Plus, they're usually shorter and simpler to write.
 
-#+begin_src scss
-  // Without logical properties
+#+begin_src css
+  /* Without logical properties */
   .element {
     margin-right: auto;
     margin-left: auto;
@@ -378,7 +378,7 @@ support languages that can be written horizontally or vertically
     border-bottom: 1px solid #eee;
   }
 
-  // With logical properties
+  /* With logical properties */
   .element {
     margin-inline: auto;
     border-block: 1px solid #eee;
