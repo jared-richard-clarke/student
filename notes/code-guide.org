@@ -322,7 +322,7 @@ Preprocessor mixins and functions should appear wherever most appropriate. For e
 a ~border-top-radius()~ mixin would go in place of ~border-radius~ properties, while a
 ~responsive-font-size()~ function would go in place of ~font-size~ properties.
 
-#+begin_src css
+#+begin_src scss
   .declaration-order {
     // Positioning
     position: absolute;
@@ -369,7 +369,7 @@ so the writing mode needs to be flexible. With logical properties, you can easil
 support languages that can be written horizontally or vertically
 (like Chinese, Japanese, and Korean). Plus, they're usually shorter and simpler to write.
 
-#+begin_src css
+#+begin_src scss
   // Without logical properties
   .element {
     margin-right: auto;
