@@ -453,12 +453,12 @@ syntax error on Line 183. With a single declaration, there's no missing it.
 With multiple declarations, separate lines is a must for your sanity.
 
 #+begin_src css
-  // Single declarations on one line
+  /* Single declarations on one line */
   .span1 { width: 60px; }
   .span2 { width: 140px; }
   .span3 { width: 220px; }
 
-  // Multiple declarations, one per line
+  /* Multiple declarations, one per line */
   .sprite {
     display: inline-block;
     width: 16px;
