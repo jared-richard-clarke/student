@@ -241,7 +241,7 @@ For an example, see the one in Bootstrap.
 
 *** Syntax
 
-- Use soft tabs with two spaces—they're the only way to guarantee code renders
+- Use soft tabs with two spaces — they're the only way to guarantee code renders
   the same in any environment.
   
 - When grouping selectors, keep individual selectors to a single line.
@@ -254,7 +254,7 @@ For an example, see the one in Bootstrap.
   
 - Each declaration should appear on its own line for more accurate error reporting.
   
-- End all declarations with a semi-colon. The last declaration's is optional,
+- End all declarations with a semi-colon. The last declaration's semi-colon is optional,
   but your code is more error prone without it.
   
 - Comma-separated property values should include a space after each comma (e.g., ~box-shadow~).
