@@ -387,7 +387,7 @@ support languages that can be written horizontally or vertically
 
 *** Colors
 
-With the support of CSS Color Levels 4in all major browsers, ~rgba()~ and ~hsla()~
+With the support of CSS Color Levels 4 in all major browsers, ~rgba()~ and ~hsla()~
 are now aliases for ~rgb()~ and ~hsl()~, meaning you can modify alpha values in
 ~rgb()~ and ~hsl()~. Along with this comes support for new space-separated syntax
 for color values. For compability with future CSS color functions, use this new syntax.
