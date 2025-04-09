@@ -431,14 +431,14 @@ Doing so only makes it easier for folks to miss them in the future. Here's a
 typical setup.
 
 #+begin_src css
-  .element { ... }
-  .element-avatar { ... }
-  .element-selected { ... }
+  .element { /* ... */ }
+  .element-avatar { /* ... */ }
+  .element-selected { /* ... */ }
 
   @media (min-width: 480px) {
-    .element { ... }
-    .element-avatar { ... }
-    .element-selected { ... }
+    .element { /* ... */ }
+    .element-avatar { /* ... */ }
+    .element-selected { /* ... */ }
   }
 #+end_src
 
@@ -495,7 +495,7 @@ Excessive use of shorthand properties leads to sloppier code with unnecessary ov
 and unintended side effects.
 
 #+begin_src css
-  // Bad example
+  /* Bad example */
   .element {
     margin: 0 0 10px;
     background: red;
@@ -503,7 +503,7 @@ and unintended side effects.
     border-radius: 3px 3px 0 0;
   }
 
-  // Good example
+  /* Good example */
   .element {
     margin-bottom: 10px;
     background-color: red;
@@ -520,14 +520,14 @@ reverse nesting. Consider nesting only if you must scope styles to a parent and 
 are multiple elements to be nested.
 
 #+begin_src css
-  // Without nesting
-  .table > thead > tr > th { … }
-  .table > thead > tr > td { … }
+  /* Without nesting */
+  .table > thead > tr > th { /* ... */ }
+  .table > thead > tr > td { /* ... */ }
 
-  // With nesting
+  /* With nesting */
   .table > thead > tr {
-    > th { … }
-    > td { … }
+    > th { /* ... */ }
+    > td { /* ... */ }
   }
 #+end_src
 
@@ -537,12 +537,12 @@ For improved readability, wrap all math operations in parentheses with a single 
 between values, variables, and operators.
 
 #+begin_src css
-  // Bad example
+  /* Bad example */
   .element {
     margin: 10px 0 @variable*2 10px;
   }
 
-  // Good example
+  /* Good example */
   .element {
     margin: 10px 0 (@variable * 2) 10px;
   }
@@ -559,16 +559,16 @@ Be sure to write in complete sentences for larger comments and succinct phrases
 for general notes.
 
 #+begin_src css
-  // Bad example
-  // Modal header
+  /* Bad example
+     Modal header */
   .modal-header {
-    ...
+    /* ... */
   }
 
-  // Good example
-  // Wrapping element for .modal-title and .modal-close
+  /* Good example
+     Wrapping element for .modal-title and .modal-close */
   .modal-header {
-    ...
+    /* ... */
   }
 #+end_src
 
@@ -593,15 +593,15 @@ It's also useful to apply many of these same rules when creating custom properti
 and preprocessor variable names.
 
 #+begin_src css
-  // Bad example
-  .t { ... }
-  .red { ... }
-  .header { ... }
+  /* Bad example */
+  .t { /* ... */ }
+  .red { /* ... */ }
+  .header { /* ... */ }
 
-  // Good example
-  .tweet { ... }
-  .important { ... }
-  .tweet-header { ... }
+  /* Good example */
+  .tweet { /* ... */ }
+  .important { /* ... */ }
+  .tweet-header { /* ... */ }
 #+end_src
 
 *** Selectors
@@ -617,15 +617,15 @@ and preprocessor variable names.
 - Scope classes to the closest parent *only* when necessary (e.g., when not using prefixed classes).
 
 #+begin_src css
-  // Bad example
-  span { ... }
-  .page-container #stream .stream-item .tweet .tweet-header .username { ... }
-  .avatar { ... }
+  /* Bad example */
+  span { /* ... */ }
+  .page-container #stream .stream-item .tweet .tweet-header .username { /* ... */ }
+  .avatar { /* ... */ }
 
-  // Good example
-  .avatar { ... }
-  .tweet-header .username { ... }
-  .tweet .avatar { ... }
+  /* Good example */
+  .avatar { /* ... */ }
+  .tweet-header .username { /* ... */ }
+  .tweet .avatar { /* ... */ }
 #+end_src
 
 *** Child and Descendant Selectors
