@@ -21,7 +21,7 @@ function isVisible(element) {
   if (!isElement(element) || element.getClientRects().length === 0) {
     return false
   }
-  const elementIsVisible = getComputedStyle(element).getPropertyValue("visibility") === "visible";
+  const elementIsVisible = window.getComputedStyle(element).getPropertyValue("visibility") === "visible";
   const closedDetails = element.closest("details:not([open])");
   if (!closedDetails) {
     return elementIsVisible
