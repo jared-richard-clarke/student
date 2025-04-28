@@ -29,8 +29,8 @@ $$
 ## Parameters
 
 - $a$: Scale-X. Horizontal scale.
-- $b$: Skew-Y. Horizontal skew.
-- $c$: Skew-X. Vertical skew.
+- $b$: Skew-Y. Horizontal shear.
+- $c$: Skew-X. Vertical shear.
 - $d$: Scale-Y. Vertical scale.
 - $e$: Translate-X. Horizontal move.
 - $f$: Translate-Y. Vertical move.
