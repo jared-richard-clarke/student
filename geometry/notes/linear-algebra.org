@@ -1,0 +1,53 @@
+* Practical Linear Algebra
+
+** Sources
+
+| source                     | author                           |
+|----------------------------+----------------------------------|
+| *Practical Linear Algebra* | Gerald Farin and Dianne Hansford |
+
+** Global and Local Coordinate Systems
+
+#+begin_example
+  === Mapping ===
+  
+  local    -> global
+  (u₁, u₂) -> (x₁, x₂)
+
+  === Aspect Ratio ===
+
+  u₁ - 0 / 1 - 0 = x₁ - min₁ / max₁ - min₁
+  u₂ - 0 / 1 - 0 = x₂ - min₂ / max₂ - min₂
+
+  === Interpolation ===
+  
+  x₁ = (1 - u₁) * min₁ + u₁ * max₁
+  x₂ = (1 - u₂) * min₂ + u₂ * max₂
+
+  === local ===
+  
+  d₂^
+    |
+  1 |--------+
+    |        |
+  u₂------●  |
+    |     |  |
+    |     |  |
+  0 +-----|------ >
+    0     u₁ 1   d₁
+
+  === global ===
+
+    e₂ ^
+       |
+  max₂ |   +-----------+
+       |   |           |
+    x₂ ----|-------●   |
+       |   |       |   |
+       |   |       |   |
+       |   |       |   |
+  min₂ ----+-----------+
+       |   |       |   |
+       +---|-------|---|---- >
+          min₁     x₁  max₁  e₁
+#+end_example
