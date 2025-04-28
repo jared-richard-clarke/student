@@ -6,7 +6,7 @@
 |----------------------------+----------------------------------|
 | *Practical Linear Algebra* | Gerald Farin and Dianne Hansford |
 
-** Global and Local Coordinate Systems
+** Local and Global Coordinate Systems: 2D
 
 #+begin_example
   === Mapping ===
@@ -24,7 +24,17 @@
   x₁ = (1 - u₁) * min₁ + u₁ * max₁
   x₂ = (1 - u₂) * min₂ + u₂ * max₂
 
+  ======
+  
+  x₁ = min₁ + u₁ * ∆₁
+  x₂ = min₂ + u₂ * ∆₂
+  
+  where ∆₁ = max₁ - min₁
+        ∆₂ = max₂ - min₂
+
   === local ===
+
+  normalized coordinates = (0, 0) to (1, 1)
   
   d₂^
     |
@@ -51,3 +61,80 @@
        +---|-------|---|---- >
           min₁     x₁  max₁  e₁
 #+end_example
+
+** Points and Vectors: 2D
+
+#+begin_quote
+  "The primary reason for differentiating between points and vectors is to achieve
+   geometric constructions [that] are /coordinate independent/. Such constructions
+   are manipulations applied to geometric objects that produce the same result
+   regardless of the location of the coordinate origin."
+
+  — *Practical Linear Algebra*, Gerald Farin and Dianne Hansford
+#+end_quote
+
+- scalar :: A quantity that has size but no direction.
+
+- point :: A fixed position in space. Has neither size nor shape. Points are equal
+  if they have the same coordinates.
+
+- vector :: A quantity that has both size and direction but no fixed position in space.
+  Vectors are equal if they have the same length.
+
+#+begin_example
+  === 2D point ===
+  
+  p ∈ 𝔼²
+ 
+  p = ⎡p₁⎤
+      ⎣p₂⎦
+
+  === 2D vector ===
+
+  v ∈ ℝ²
+
+  v = q - p
+  
+  where p ∈ 𝔼²
+        q ∈ 𝔼²
+
+  === magnitude ===
+  
+  |v|² = v₁² + v₂²
+
+  |v| = √(v₁² + v₂²)
+
+  where |v| = vector length
+
+  |kv| = k|v|
+
+  where k = scalar
+
+  === normalization ===
+
+  |w| = 1
+  
+  w = v / |v|
+
+  where  w  = normalized (unit) vector
+        |w| = unit length
+#+end_example
+
+*** Coordinate Independent Operations
+
+*s = scalar*, *p, q ∈ 𝔼²* and *v, w ∈ ℝ²*
+
+- Subtracting two points (*p - q*) yields a vector.
+
+- Adding or subtracting two vectors (*v + w* or *v - w*) yields another vector.
+
+- Multiplying a vector by a scalar (*s * v*) yields another vector. Also known
+  as scaling.
+
+*** Coordinate Dependent Operations
+
+- Scaling a point (*s * p*) is an ambiguous operation. Scaling by two different coordinate
+  systems yields two different points.
+
+- Adding two points (*p + q*) is an ambiguous operation. Adding two points depends on the
+  coordinate origin.
