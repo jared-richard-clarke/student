@@ -168,7 +168,7 @@
 
   l(t) = p + tv
 
-  l(t) = (1 - t) * p + t * q ◀- linear interpolation
+  l(t) = (1 - t) * p + t * q <- linear interpolation
 
   where p ∈ 𝔼²
         v ∈ ℝ²
