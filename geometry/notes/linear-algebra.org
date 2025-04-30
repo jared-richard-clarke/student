@@ -16,8 +16,8 @@
 
   === Aspect Ratio ===
 
-  u₁ - 0 / 1 - 0 = x₁ - min₁ / max₁ - min₁
-  u₂ - 0 / 1 - 0 = x₂ - min₂ / max₂ - min₂
+  (u₁ - 0) / (1 - 0) = (x₁ - min₁) / (max₁ - min₁)
+  (u₂ - 0) / (1 - 0) = (x₂ - min₂) / (max₂ - min₂)
 
   === Interpolation ===
   
@@ -118,23 +118,22 @@
 
   where  w  = normalized (unit) vector
         |w| = unit length
+
+  === Barycentric Coordinates ===
+
+  r = p + t * v
+
+  r = p + t * (q - p)
+
+  r = (1 - t) * p + t * q
+      ^-----^       ^
+         |          |
+         +----------+---- Barycentric coordinates
+
+  where r = point
+        p = point
+        v = vector
+        t = |r - p| / |q - p|
+
+  ratio = |r - p| / |q - r|
 #+end_example
-
-*** Coordinate Independent Operations
-
-*s = scalar*, *p, q ∈ 𝔼²* and *v, w ∈ ℝ²*
-
-- Subtracting two points (*p - q*) yields a vector.
-
-- Adding or subtracting two vectors (*v + w* or *v - w*) yields another vector.
-
-- Multiplying a vector by a scalar (*s * v*) yields another vector. Also known
-  as scaling.
-
-*** Coordinate Dependent Operations
-
-- Scaling a point (*s * p*) is an ambiguous operation. Scaling by two different coordinate
-  systems yields two different points.
-
-- Adding two points (*p + q*) is an ambiguous operation. Adding two points depends on the
-  coordinate origin.
