@@ -137,3 +137,41 @@
 
   ratio = |r - p| / |q - r|
 #+end_example
+
+** Lines
+
+#+begin_example
+  === Elements to Define a Line ===
+  
+  1. Two points.
+  
+  ●
+  |
+  |
+  ●
+
+  2. A point and a vector parallel to a line.
+  
+  ▲
+  |
+  |
+  ●
+
+  3. A point and a vector perpendicular to a line.
+     A unit vector perpendicular to a line is the
+     "normal" of that line.
+  |
+  ●----▶
+  |
+
+  === Parametric Equation of a Line ===
+
+  l(t) = p + tv
+
+  l(t) = (1 - t) * p + t * q ◀- linear interpolation
+
+  where p ∈ 𝔼²
+        v ∈ ℝ²
+
+  === Implicit Equation of a Line ===
+#+end_example
