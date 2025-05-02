@@ -2,10 +2,51 @@
 
 ** Sources
 
-| source                     | author                           |
-|----------------------------+----------------------------------|
-| *Practical Linear Algebra* | Gerald Farin and Dianne Hansford |
-| *Line (Geometry)*          | Wikipedia                        |
+| source                              | author                            |
+|-------------------------------------+-----------------------------------|
+| *Practical Linear Algebra*          | Gerald Farin and Dianne Hansford  |
+| *Line (Geometry)*                   | Wikipedia                         |
+| *Fundamentals of Computer Graphics* | Peter Shirley and Steve Marschner |
+
+** Sets and Mappings
+
+#+begin_example
+  === Set Map = Function ===
+
+  ƒ: ℝ ↦ ℤ
+     ^   ^
+     |   +- Target
+     +- Domain
+
+  ƒ(a)      = image of a
+  ƒ(domain) = range
+  
+  === Set Membership ===
+  
+  a ∈ S
+
+  Element "a" is a member of set "S".
+
+  === Cartesian Product ===
+
+  A x B
+
+  Set A x B is composed of all possible ordered pairs
+  (a, b) where a ∈ A and b ∈ B.
+
+  A² = A x A
+#+end_example
+
+*** Common Sets
+
+| set | meaning                                |
+|-----+----------------------------------------|
+| ℝ   | real numbers                           |
+| ℝ⁺  | non-negative real numbers (includes 0) |
+| ℝ²  | 2D ordered pairs                       |
+| ℝⁿ  | points in n-dimensional space          |
+| ℤ   | integers                               |
+| S²  | 3D points on unit sphere               |
 
 ** Local and Global Coordinate Systems: 2D
 
