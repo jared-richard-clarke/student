@@ -5,6 +5,7 @@
 | source                     | author                           |
 |----------------------------+----------------------------------|
 | *Practical Linear Algebra* | Gerald Farin and Dianne Hansford |
+| *Line (Geometry)*          | Wikipedia                        |
 
 ** Local and Global Coordinate Systems: 2D
 
@@ -21,13 +22,13 @@
 
   === Interpolation ===
   
-  x₁ = (1 - u₁) * min₁ + u₁ * max₁
-  x₂ = (1 - u₂) * min₂ + u₂ * max₂
+  x₁ = (1 - u₁)min₁ + u₁max₁
+  x₂ = (1 - u₂)min₂ + u₂max₂
 
   ======
   
-  x₁ = min₁ + u₁ * ∆₁
-  x₂ = min₂ + u₂ * ∆₂
+  x₁ = min₁ + u₁∆₁
+  x₂ = min₂ + u₂∆₂
   
   where ∆₁ = max₁ - min₁
         ∆₂ = max₂ - min₂
@@ -121,14 +122,14 @@
 
   === Barycentric Coordinates ===
 
-  r = p + t * v
+  r = p + tv
 
-  r = p + t * (q - p)
+  r = p + t(q - p)
 
-  r = (1 - t) * p + t * q
-      ^-----^       ^
-         |          |
-         +----------+---- Barycentric coordinates
+  r = (1 - t)p + tq
+      ^-----^     ^
+         |        |
+         +--------+---- Barycentric coordinates
 
   where r = point
         p = point
@@ -140,26 +141,47 @@
 
 ** Lines
 
+#+begin_quote
+  "In geometry, a *straight line*, usually abbreviated *line*, is an infinitely
+   long object with no width, depth, or curvature, an idealization of such
+   physical objects as a straightedge, a taut string, or a ray of light.
+   Lines are spaces of dimension one, which may be embedded in spaces of
+   dimension two, three, or higher. The word line may also refer, in everyday
+   life, to a line segment, which is a part of a line delimited by two points
+   (its endpoints)."
+
+   — *Line (Geometry)*, Wikipedia
+#+end_quote
+
 #+begin_example
-  === Elements to Define a Line ===
+  === Subset of Euclidean Space ===
+
+  L = { (1 - t)a + tb | t ∈ ℝ }
+
+  === Linear Equation ===
+
+  L = { (x, y) | ax + by = c }
   
-  1. Two points.
+  === Elements that Define a Line ===
+  
+  - Two points.
   
   ●
   |
   |
   ●
 
-  2. A point and a vector parallel to a line.
+  - A point and a vector parallel to a line.
   
   ▲
   |
   |
   ●
 
-  3. A point and a vector perpendicular to a line.
-     A unit vector perpendicular to a line is the
-     "normal" of that line.
+  - A point and a vector perpendicular to a line.
+    A unit vector perpendicular to a line is the
+    "normal" of that line.
+    
   |
   ●----▶
   |
@@ -168,10 +190,36 @@
 
   l(t) = p + tv
 
-  l(t) = (1 - t) * p + t * q <- linear interpolation
+  l(t) = (1 - t)p + tq <- linear interpolation
 
   where p ∈ 𝔼²
+        q ∈ 𝔼²
         v ∈ ℝ²
 
   === Implicit Equation of a Line ===
+
+  ax₁ + bx₂ + c = 0
+
+  where a = a₁
+        b = a₂
+        c = -a₁p₁ - a₂p₂
+
+  === Explicit Equation of a Line ===
+
+  x₂ = -(a / b)x₁ - (c / b)
+
+  x₂ = âx₁ + b̂
+
+  where â = slope
+        b̂ = e₂ intercept (0, b̂)
+
+  e₂ ^    /
+     |   ●
+     |  /|
+     | / |
+     |/  |
+     ●---+
+    /|
+     +--------->
+              e₁
 #+end_example
