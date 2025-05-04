@@ -48,6 +48,90 @@
 | ℤ   | integers                               |
 | S²  | 3D points on unit sphere               |
 
+** Intervals
+
+#+begin_example
+  === Notation ===
+
+  -(----]-
+   a    b
+
+  a < x ≤ b
+
+  (a, b]
+
+  === Operations ===
+
+  A: [1, 3)
+
+     --[----+----)----+--
+       1    2    3    4
+
+  B: [2, 4]
+
+     --+----[----+----]--
+       1    2    3    4
+
+  A ∩ B: [2, 3)
+
+     --+----[----)----+--
+       1    2    3    4
+
+  A ∪ B: [1, 4]
+
+     --[----+----+----]--
+       1    2    3    4
+
+  A - B: [1, 2)
+
+     --[----)----+----+--
+       1    2    3    4
+
+  B - A: [3, 4]
+
+     --+----+----[----]--
+       1    2    3    4
+#+end_example
+
+** Logarithms
+
+#+begin_example
+  logb(n) = p
+
+  where b = base
+        n = number
+        p = power
+
+   n
+   △
+  b p
+
+  y = logₓz ⇔ xʸ = z
+
+  === x to the y ===
+
+        y
+  xʸ =  △ = z
+       x
+
+  === yth root of z ===
+
+        y
+  ʸ√z = △ = x
+         z
+
+  === log base x of z ===
+
+  logₓz = △ = y
+         x z
+
+  === natural logarithm ===
+
+  e = 2.71828...
+
+  ln x ≡ logₑx
+#+end_example
+
 ** Local and Global Coordinate Systems: 2D
 
 #+begin_example
