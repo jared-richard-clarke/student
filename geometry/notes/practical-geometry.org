@@ -286,18 +286,18 @@
   === Linear Equation ===
 
   L = { (x, y) | ax + by = c }
-  
+
   === Elements that Define a Line ===
-  
+
   - Two points.
-  
+
   ●
   |
   |
   ●
 
   - A point and a vector parallel to a line.
-  
+
   ▲
   |
   |
@@ -306,7 +306,7 @@
   - A point and a vector perpendicular to a line.
     A unit vector perpendicular to a line is the
     "normal" of that line.
-    
+
   |
   ●----▶
   |
@@ -333,10 +333,10 @@
 
   x₂ = -(a / b)x₁ - (c / b)
 
-  x₂ = âx₁ + b̂
+  x₂ = Ax₁ + B
 
-  where â = slope
-        b̂ = e₂ intercept (0, b̂)
+  where A = slope
+        B = e₂ intercept (0, B)
 
   e₂ ^    /
      |   ●
