@@ -35,9 +35,9 @@
 
 | hint | function | meaning               |
 |------+----------+-----------------------|
-| SOH  | sine     | opposite / hypotenuse |
-| CAH  | cosine   | adjacent / hypotenuse |
-| TOA  | tangent  | opposite / adjacent   |
+| SOH  | sin      | opposite / hypotenuse |
+| CAH  | cos      | adjacent / hypotenuse |
+| TOA  | tan      | opposite / adjacent   |
 
 
 ** Trigonometric Functions
