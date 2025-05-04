@@ -17,9 +17,6 @@
      ^   ^
      |   +- Target
      +- Domain
-
-  ƒ(a)      = image of a
-  ƒ(domain) = range
   
   === Set Membership ===
   
