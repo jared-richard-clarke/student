@@ -7,6 +7,7 @@
 | *Practical Linear Algebra*          | Gerald Farin and Dianne Hansford  |
 | *Line (Geometry)*                   | Wikipedia                         |
 | *Fundamentals of Computer Graphics* | Peter Shirley and Steve Marschner |
+| *The Trouble with Trigonometry*     | Douglas Crockford                 |
 
 ** Sets and Mappings
 
@@ -128,6 +129,68 @@
 
   ln x ≡ logₑx
 #+end_example
+
+** Trigonometry
+
+*** Degrees and Radians
+
+#+begin_example
+  degrees = (180 / π) * radians
+
+  radians = (π / 180) * degrees
+
+  360 degrees = 2π radians
+#+end_example
+
+*** Vocabulary
+
+| name       | alternative   |
+|------------+---------------|
+| hypotenuse | long          |
+| opposite   | far           |
+| adjacent   | near          |
+| right      | lateral       |
+| acute      | sub-lateral   |
+| obtuse     | super-lateral |
+
+** Lateral Triangle
+
+#+begin_example
+              +
+             /|
+            / |
+           /  |
+    long  /   | far
+         /    |
+        /     |
+ angle +------+
+         near
+
+ n² + f² = l²
+
+ √(n² + f²) = l
+
+ where n = near
+       f = far
+       l = long
+#+end_example
+
+*** SOH-CAH-TOA
+
+| hint | function | meaning               |
+|------+----------+-----------------------|
+| SOH  | sin(Φ)   | opposite / hypotenuse |
+| CAH  | cos(Φ)   | adjacent / hypotenuse |
+| TOA  | tan(Φ)   | opposite / adjacent   |
+
+
+*** Trigonometric Functions
+
+| name    | function | meaning     |
+|---------+----------+-------------|
+| sine    | fol(Φ)   | far  / long |
+| cosine  | nol(Φ)   | near / long |
+| tangent | fon(Φ)   | far  / near |
 
 ** Local and Global Coordinate Systems: 2D
 
