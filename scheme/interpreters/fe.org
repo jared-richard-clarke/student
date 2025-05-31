@@ -86,6 +86,51 @@
 
 - ~(/ number+)~ -> ~number~ :: Divides one or more numbers, left to right.
 
+** Fe Programs
+
+#+begin_example
+  ;; === functions ===
+
+  ;; (reverse list) -> list
+  ;; (reverse '(a b c)) -> '(c b a)
+  
+  (= reverse (fn (xs)
+    (let result nil)
+    (while xs
+      (= result (cons (car xs) result))
+      (= xs (cdr xs)))
+    result))
+
+  ;; (map function list) -> list
+  ;; (map (fn (x) (+ x 1)) '(1 2 3)) -> '(2 3 4)
+  
+  (= map (fn (function xs)
+    (let result nil)
+    (while xs
+      (= result (cons (function (car xs)) result))
+      (= xs (cdr xs)))
+    (reverse result)))
+
+  ;; === macros ===
+
+  ;; (for value list body)
+  ;; - expands ->
+  ;; (do
+  ;;   (let iter list)
+  ;;   (while iter
+  ;;     (let value (car iter))
+  ;;     (= iter (cdr iter))
+  ;;     (do body)))
+  
+  (= for (mac (x xs . body)
+    (list 'do
+      (list 'let 'iter xs)
+      (list 'while 'iter
+        (list 'let x '(car iter))
+        '(= iter (cdr iter))
+        (cons 'do body)))))
+#+end_example
+
 ** Fe Source Code
 
 #+begin_src c
