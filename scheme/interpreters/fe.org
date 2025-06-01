@@ -196,7 +196,7 @@
   };
 
   // === Fe Value ===
-  // Fe Object Pointer | C Function | Number | Char
+  // Fe Object Pointer | C Function Pointer | Number | Char
   //
   // Memory Layout: Assumes a 64-bit, little-endian architecture.
   //
@@ -206,7 +206,7 @@
   // | byte-8 | byte-7 | byte-6 | byte-5 | byte-4 | byte-3 | byte-2 | byte-1 |
   // +--------+--------+--------+--------+--------+--------+--------+--------+
   // ^--------------------------------------------------- Fe Object Pointer -^
-  // ^---------------------------------------------------------- C Function -^
+  // ^-------------------------------------------------- C Function Pointer -^
   //                                     ^-------------------------- Number -^
   //                                                                ^- Char -^
   //
