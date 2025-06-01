@@ -27,6 +27,9 @@
 
 - ~(let symbol value)~ :: Binds a ~value~ to a ~symbol~ in the current lexical environment.
 
+Lexical environments are stored as association lists: ~'((x . 7) (y . 11))~. Globally bound values
+are stored directly in their ~symbol~ objects.
+
 - ~(if condition then else+)~ :: If ~condition~ evaluates true, form evaluates the ~then~
   expression, otherwise evaluates ~else~, which is either an alternative ~expression~ or
   a chain of one or more ~condition-then~ expressions.
@@ -45,7 +48,9 @@
   variables defined outside a function's parameters, are lexically scoped.
 
 - ~(mac symbol* expression+)~ :: Defines a macro, a Fe program that transforms the syntactic
-  structure of a Fe expression prior to evaluation.
+  structure of a Fe expression. Macros in Fe work similarly to functions, but receive their
+  arguments unevaluated, returning code that is evaluated in the scope of the caller. Fe macros
+  are called only once. Afterward, only their generated code is run.
 
 - ~(quote expression)~ :: Returns expression unevaluated — essentially data.
 
