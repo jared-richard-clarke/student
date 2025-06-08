@@ -56,7 +56,7 @@ are stored directly in their ~symbol~ objects.
 
 - ~(do expression+)~ :: Evaluates one or more expressions, returning the last as its value.
 
-*** Primitive Functions
+** Primitive Functions
 
 - ~(cons car cdr)~ -> ~(car cdr)~ :: Combines two values to create a pair.
 
@@ -91,7 +91,7 @@ are stored directly in their ~symbol~ objects.
 
 - ~(/ number+)~ -> ~number~ :: Divides one or more numbers, left to right.
 
-** Fe Programs
+*** Fe Programs
 
 #+begin_example
   ;; === functions ===
@@ -136,11 +136,99 @@ are stored directly in their ~symbol~ objects.
         (cons 'do body)))))
 #+end_example
 
+** C API
+
+To use Fe in a project, initialize a ~fe_Context~ by calling ~fe_open~, whose arguments are
+a pre-allocated block of memory and its size. Call ~fe_Close~ at the end of a Fe program to
+ensure all ~ptr~ objects are properly garbage collected.
+
+#+begin_src c
+  int size   = 1024 * 1024;
+  void* data = malloc(size);
+
+  feContext* ctx = fe_open(data, size);
+
+  /* ... */
+
+  fe_close(ctx);
+  free(data);
+#+end_src
+
+*** Running a Script
+
+#+begin_src c
+  FILE* fp = fopen("script.fe", "rb");
+  int gc   = fe_savegc(ctx);
+
+  /*
+     Read and evaluate in a loop if the script contains two or more
+     Root-level expressions.
+  */
+  for (;;) {
+    fe_Object* object = fe_readfp(ctx, fp);
+
+    /* Break of eof. */
+    if (!object) { break; }
+
+    /* Evaluate read object. */
+    fe_eval(ctx, obj);
+
+    /*
+       Restore GC stack. It now contains both
+       a read object and an evaluated expression.
+    */
+    fe_restore_gc(ctx, gc);
+  }
+#+end_src
+
+*** Calling a Function
+
+A Fe function can be called by creating a list and evaluating it.
+
+#+begin_src c
+  int gc = fe_savegc(ctx);
+
+  fe_Object* objects[3];
+  objects[0] = fe_symbol(ctx, "+");
+  objects[1] = fe_number(ctx, 1);
+  objects[2] = fe_number(ctx, 6);
+
+  fe_Object* result = fe_eval(ctx, fe_list(ctx, objects, 3));
+
+  /* "result: 7" */
+  printf("result: %g\n", fe_tonumber(ctx, result));
+
+  /* Discard all objects pushed to GC stack. */
+  fe_restoregc(ctx, gc);
+#+end_src
+
+*** Using a C Function in Fe
+
+#+begin_src c
+  #include <math.h>
+  
+  static fe_Object* f_pow(fe_Context* ctx, fe_Object* arg) {
+    float x = fe_tonumber(ctx, fe_nextarg(ctx, &arg));
+    float y = fe_tonumber(ctx, fe_nextarg(ctx, &arg));
+    return fe_number(ctx, pow(x, y));
+  }
+
+  fe_set(ctx, fe_symbol(ctx, "pow"), fe_cfunc(ctx, f_pow));
+
+  /*
+     === Fe Program ===
+  
+     (pow 2 8) -> 256
+  */
+#+end_src
+
 ** Fe Source Code
 
 #+begin_src c
-  // === The Fe Programming Language ===
-  // === created by rxi ===
+  /*
+     === The Fe Programming Language ===
+     === created by rxi ===
+  */
 
   #include <stdlib.h>
   #include <stdio.h>
@@ -157,13 +245,13 @@ are stored directly in their ~symbol~ objects.
   typedef char (*fe_ReadFn)(fe_Context *ctx, void *udata);
   typedef struct { fe_ErrorFn error; fe_CFunc mark, gc; } fe_Handlers;
 
-  // === Fe Type Tags ===
+  /* === Fe Type Tags === */
   enum {
     FE_TPAIR, FE_TFREE, FE_TNIL, FE_TNUMBER, FE_TSYMBOL, FE_TSTRING,
     FE_TFUNC, FE_TMACRO, FE_TPRIM, FE_TCFUNC, FE_TPTR
   };
 
-  // Macros for manipulating Fe objects.
+  /* Macros for manipulating Fe objects. */
   #define unused(x)     ( (void) (x) )
   #define car(x)        ( (x)->car.o )
   #define cdr(x)        ( (x)->cdr.o )
@@ -180,109 +268,121 @@ are stored directly in their ~symbol~ objects.
   #define GCMARKBIT     ( 0x2 )
   #define GCSTACKSIZE   ( 256 )
 
-  // === Fe Primitive Tags ===
+  /* === Fe Primitive Tags === */
   enum {
    P_LET, P_SET, P_IF, P_FN, P_MAC, P_WHILE, P_QUOTE, P_AND, P_OR, P_DO, P_CONS,
    P_CAR, P_CDR, P_SETCAR, P_SETCDR, P_LIST, P_NOT, P_IS, P_ATOM, P_PRINT, P_LT,
    P_LTE, P_ADD, P_SUB, P_MUL, P_DIV, P_MAX
   };
 
-  // === Fe Primitive Name List ===
+  /* === Fe Primitive Name List === */
   static const char *primnames[] = {
     "let", "=", "if", "fn", "mac", "while", "quote", "and", "or", "do", "cons",
     "car", "cdr", "setcar", "setcdr", "list", "not", "is", "atom", "print", "<",
     "<=", "+", "-", "*", "/"
   };
 
-  // === Fe Type List ===
+  /* === Fe Type List === */
   static const char *typenames[] = {
     "pair", "free", "nil", "number", "symbol", "string",
     "func", "macro", "prim", "cfunc", "ptr"
   };
 
-  // === Fe Value ===
-  // Fe Object Pointer | C Function Pointer | Number | Char
-  //
-  // Memory Layout: Assumes a 64-bit, little-endian architecture.
-  //
-  //
-  // 8        7        6        5        4        3        2        1        0
-  // +--------+--------+--------+--------+--------+--------+--------+--------+
-  // | byte-8 | byte-7 | byte-6 | byte-5 | byte-4 | byte-3 | byte-2 | byte-1 |
-  // +--------+--------+--------+--------+--------+--------+--------+--------+
-  // ^--------------------------------------------------- Fe Object Pointer -^
-  // ^-------------------------------------------------- C Function Pointer -^
-  //                                     ^-------------------------- Number -^
-  //                                                                ^- Char -^
-  //
-  // The first byte of an Object's car field contains
-  // book-keeping and type information.
-  //
-  //  Byte 1
-  // +-------------------------------+
-  // | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | <- Cons Cell Marker ( 0 = pair )
-  // +-------------------------------+
-  //   ^-------------------^   ^
-  //    Type Tag               + GC Marker
-  //
+  /*
+     === Fe Value ===
+     Fe Object Pointer | C Function Pointer | Number | Char
+  
+     Memory Layout: Assumes a 64-bit, little-endian architecture.
+  
+  
+     8        7        6        5        4        3        2        1        0
+     +--------+--------+--------+--------+--------+--------+--------+--------+
+     | byte-8 | byte-7 | byte-6 | byte-5 | byte-4 | byte-3 | byte-2 | byte-1 |
+     +--------+--------+--------+--------+--------+--------+--------+--------+
+     ^--------------------------------------------------- Fe Object Pointer -^
+     ^-------------------------------------------------- C Function Pointer -^
+                                         ^-------------------------- Number -^
+                                                                    ^- Char -^
+  
+     The first byte of an Object's car field contains
+     book-keeping and type information.
+  
+      Byte 1
+     +-------------------------------+
+     | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | <- Cons Cell Marker ( 0 = pair )
+     +-------------------------------+
+       ^-------------------^   ^
+        Type Tag               + GC Marker
+  */
   typedef union { fe_Object *o; fe_CFunc f; fe_Number n; char c; } Value;
 
-  // === Fe Object = Cons Cell ===
-  //
-  // Cons cells provide fixed storage for all Fe data. A pair is a cons cell
-  // whose car and cdr contain object pointers.
+  /*
+     === Fe Object = Cons Cell ===
+  
+     Cons cells provide fixed storage for all Fe data. A pair is a cons cell
+     whose car and cdr contain object pointers.
+  */
   struct fe_Object { Value car, cdr; };
 
-  // The collective state and runtime environment of a Fe program.
-  // A Fe program consists of a fixed block of memory. The head of
-  // that memory stores the context. The tail stores the objects.
+  /*
+     The collective state and runtime environment of a Fe program.
+     A Fe program consists of a fixed block of memory. The head of
+     that memory stores the context. The tail stores the objects.
+  */
   struct fe_Context {
-    // struct { error, mark, gc }
-    // Each field is a function either provided by the runtime or the user.
+    /*
+       struct { error, mark, gc }
+       Each field is a function either provided by the runtime or the user.
+    */
     fe_Handlers handlers;
-    // Stack protects reachable objects from garbage collection.
+    /* Stack protects reachable objects from garbage collection. */
     fe_Object *gcstack[GCSTACKSIZE];
-    // Stack top.
+    /* Stack top. */
     int gcstack_idx;
-    // Fixed block of Fe objects. Allocated at program start.
+    /* Fixed block of Fe objects. Allocated at program start. */
     fe_Object *objects;
-    // Total allocated objects.
+    /* Total allocated objects. */
     int object_count;
-    // A Fe program is a list of cons cells. The instruction pointer
-    // is a pointer to a Fe object within that list of cons cells.
+    /*
+       A Fe program is a list of cons cells. The instruction pointer
+       is a pointer to a Fe object within that list of cons cells.
+    */
     fe_Object *calllist;
-    // Linked list of unused objects.
+    /* Linked list of unused objects. */
     fe_Object *freelist;
-    // Interned symbols and identifiers. A symbol represents itself,
-    // whereas an identifier is a symbol that points to a value.
+    /*
+       Interned symbols and identifiers. A symbol represents itself,
+       whereas an identifier is a symbol that points to a value.
+    */
     fe_Object *symlist;
-    // The universal truth value within Fe.
+    /* The universal truth value within Fe. */
     fe_Object *t;
-    // Tracks textual position within the Fe reader.
+    /* Tracks textual position within the Fe reader. */
     int nextchr;
   };
 
-  // === nil: Bottom Value for all Fe Objects ===
+  /* === nil: Bottom Value for all Fe Objects === */
   static fe_Object nil = {{ (void*) (FE_TNIL << 2 | 1) }, { NULL }};
 
   fe_Handlers* fe_handlers(fe_Context *ctx) {
     return &ctx->handlers;
   }
 
-  // === Error Handling ===
-  //
-  // By default, an error message and stack trace are printed to standard error,
-  // and the program exits with an EXIT_FAILURE.
-  //
-  // The user can provide custom error handlers. "longjmp" can be used
-  // to exit said handlers and re-enter the program context in a safe state.
+  /* === Error Handling ===
+  
+     By default, an error message and stack trace are printed to standard error,
+     and the program exits with an EXIT_FAILURE.
+  
+     The user can provide custom error handlers. "longjmp" can be used
+     to exit said handlers and re-enter the program context in a safe state.
+  */
   void fe_error(fe_Context *ctx, const char *msg) {
     fe_Object *cl = ctx->calllist;
-    // Reset context state.
+    /* Reset context state. */
     ctx->calllist = &nil;
-    // Handle error.
+    /* Handle error. */
     if (ctx->handlers.error) { ctx->handlers.error(ctx, msg, cl); }
-    // If error handler returns, print error, print stack trace, and exit.
+    /* If error handler returns, print error, print stack trace, and exit. */
     fprintf(stderr, "error: %s\n", msg);
     for (; !isnil(cl); cl = cdr(cl)) {
       char buf[64];
@@ -292,7 +392,7 @@ are stored directly in their ~symbol~ objects.
     exit(EXIT_FAILURE);
   }
 
-  // Return the next argument of a function call.
+  /* Return the next argument of a function call. */
   fe_Object* fe_nextarg(fe_Context *ctx, fe_Object **arg) {
     fe_Object *a = *arg;
     if (type(a) != FE_TPAIR) {
@@ -303,8 +403,10 @@ are stored directly in their ~symbol~ objects.
     return car(a);
   }
 
-  // Dynamic type checking. Throws error if current type does not match
-  // expected type.
+  /*
+     Dynamic type checking. Throws error if current type does not match
+     expected type.
+  */
   static fe_Object* checktype(fe_Context *ctx, fe_Object *obj, int type) {
     char buf[64];
     if (type(obj) != type) {
@@ -314,19 +416,19 @@ are stored directly in their ~symbol~ objects.
     return obj;
   }
 
-  // Extracts the type tag from a Fe object.
+  /* Extracts the type tag from a Fe object. */
   int fe_type(fe_Context *ctx, fe_Object *obj) {
     unused(ctx);
     return type(obj);
   }
 
-  // Checks if an object is "nil".
+  /* Checks if an object is "nil". */
   int fe_isnil(fe_Context *ctx, fe_Object *obj) {
     unused(ctx);
     return isnil(obj);
   }
 
-  // Pushes a Fe object onto "gcstack". Checks for overflow.
+  /* Pushes a Fe object onto "gcstack". Checks for overflow. */
   void fe_pushgc(fe_Context *ctx, fe_Object *obj) {
     if (ctx->gcstack_idx == GCSTACKSIZE) {
       fe_error(ctx, "gc stack overflow");
@@ -334,29 +436,29 @@ are stored directly in their ~symbol~ objects.
     ctx->gcstack[ctx->gcstack_idx++] = obj;
   }
 
-  // Sets the top of "gcstack" to the provided index.
+  /* Sets the top of "gcstack" to the provided index. */
   void fe_restoregc(fe_Context *ctx, int idx) {
     ctx->gcstack_idx = idx;
   }
 
-  // Returns the top of the "gcstack".
+  /* Returns the top of the "gcstack". */
   int fe_savegc(fe_Context *ctx) {
     return ctx->gcstack_idx;
   }
 
-  // Marks objects for garbage collection.
+  /* Marks objects for garbage collection. */
   void fe_mark(fe_Context *ctx, fe_Object *obj) {
     fe_Object *car;
   begin:
     if (tag(obj) & GCMARKBIT) { return; }
-    // Store car before modifying it with GCMARKBIT.
+    /* Store car before modifying it with GCMARKBIT. */
     car = car(obj);
     tag(obj) |= GCMARKBIT;
 
     switch (type(obj)) {
       case FE_TPAIR:
         fe_mark(ctx, car);
-        // Fall through.
+        /* Fall through. */
       case FE_TFUNC: case FE_TMACRO: case FE_TSYMBOL: case FE_TSTRING:
         obj = cdr(obj);
         goto begin;
@@ -367,15 +469,15 @@ are stored directly in their ~symbol~ objects.
     }
   }
 
-  // Mark and sweep garbage collection.
+  /* Mark and sweep garbage collection. */
   static void collectgarbage(fe_Context *ctx) {
     int i;
-    // Mark objects protected by "gcstack".
+    /* Mark objects protected by "gcstack". */
     for (i = 0; i < ctx->gcstack_idx; i++) {
       fe_mark(ctx, ctx->gcstack[i]);
     }
     fe_mark(ctx, ctx->symlist);
-    // Sweep unmarked objects. Unmark protected objects.
+    /* Sweep unmarked objects. Unmark protected objects. */
     for (i = 0; i < ctx->object_count; i++) {
       fe_Object *obj = &ctx->objects[i];
       if (type(obj) == FE_TFREE) { continue; }
@@ -392,7 +494,7 @@ are stored directly in their ~symbol~ objects.
     }
   }
 
-  // General equality for Fe values.
+  /* General equality for Fe values. */
   static int equal(fe_Object *a, fe_Object *b) {
     if (a == b) { return 1; }
     if (type(a) != type(b)) { return 0; }
@@ -418,34 +520,37 @@ are stored directly in their ~symbol~ objects.
     return *str == '\0';
   }
 
-  // Pops an object from "freelist" for use in program.
-  // Runs garbage collection if "freelist" is empty.
+  /*
+     Pops an object from "freelist" for use in program.
+     Runs garbage collection if "freelist" is empty.
+  */
   static fe_Object* object(fe_Context *ctx) {
     fe_Object *obj;
-    // Collects garbage if free list has no more objects.
+    /* Collects garbage if free list has no more objects. */
     if (isnil(ctx->freelist)) {
       collectgarbage(ctx);
       if (isnil(ctx->freelist)) { fe_error(ctx, "out of memory"); }
     }
-    // Gets object from "freelist" and pushes said object to "gcstack".
+    /* Gets object from "freelist" and pushes said object to "gcstack". */
     obj = ctx->freelist;
     ctx->freelist = cdr(obj);
     fe_pushgc(ctx, obj);
     return obj;
   }
 
-  // (cons car cdr) -> (car cdr)
-  // Creates a new pair with the given "car" and "cdr" values.
-  //
-  // +-----+-----+    +-----+-----+
-  // | car | cdr | -> | car | cdr |
-  // +-----+-----+    +-----+-----+
-  //    |
-  //    V
-  // +-----+-----+
-  // | car | cdr |
-  // +-----+-----+
-  //
+  /*
+     (cons car cdr) -> (car cdr)
+     Creates a new pair with the given "car" and "cdr" values.
+  
+     +-----+-----+    +-----+-----+
+     | car | cdr | -> | car | cdr |
+     +-----+-----+    +-----+-----+
+        |
+        V
+     +-----+-----+
+     | car | cdr |
+     +-----+-----+
+  */
   fe_Object* fe_cons(fe_Context *ctx, fe_Object *car, fe_Object *cdr) {
     fe_Object *obj = object(ctx);
     car(obj) = car;
@@ -453,22 +558,24 @@ are stored directly in their ~symbol~ objects.
     return obj;
   }
 
-  // Evaluates the truth value of a C data type within the context of Fe.
-  //
-  // example: fe_bool(ctx, number(x) operator number(y)) -> ctx->t | &nil
-  //
+  /*
+     Evaluates the truth value of a C data type within the context of Fe.
+  
+     example: fe_bool(ctx, number(x) operator number(y)) -> ctx->t | &nil
+  */
   fe_Object* fe_bool(fe_Context *ctx, int b) {
     return b ? ctx->t : &nil;
   }
 
-  // Creates a number literal. By default, Number is a float,
-  // although this type can be changed as long as its storage
-  // fits within an object pointer.
-  //
-  // +-------------+------------+
-  // | car: Number | cdr: float |
-  // +-------------+------------+
-  //
+  /*
+     Creates a number literal. By default, Number is a float,
+     although this type can be changed as long as its storage
+     fits within an object pointer.
+  
+     +-------------+------------+
+     | car: Number | cdr: float |
+     +-------------+------------+
+  */
   fe_Object* fe_number(fe_Context *ctx, fe_Number n) {
     fe_Object *obj = object(ctx);
     settype(obj, FE_TNUMBER);
@@ -490,18 +597,19 @@ are stored directly in their ~symbol~ objects.
     return tail;
   }
 
-  // Creates a string literal. Strings are stored in a list of cons cells.
-  //
-  // +----------------------+-----+    +----------------------+-----+
-  // | car: char[] | String | cdr | -> | car: char[] | String | cdr | ...
-  // +----------------------+-----+    +----------------------+-----+
-  // +----------------------+-----+
-  // | car: char[] | String | cdr | -> nil
-  // +----------------------+-----+
-  //
-  // where char[] = 7 bytes of character storage on a 64-bit machine.
-  //       String = 1 byte of type tags and GC markers.
-  //
+  /*
+     Creates a string literal. Strings are stored in a list of cons cells.
+  
+     +----------------------+-----+    +----------------------+-----+
+     | car: char[] | String | cdr | -> | car: char[] | String | cdr | ...
+     +----------------------+-----+    +----------------------+-----+
+     +----------------------+-----+
+     | car: char[] | String | cdr | -> nil
+     +----------------------+-----+
+  
+     where char[] = 7 bytes of character storage on a 64-bit machine.
+           String = 1 byte of type tags and GC markers.
+  */
   fe_Object* fe_string(fe_Context *ctx, const char *str) {
     fe_Object *obj = buildstring(ctx, NULL, '\0');
     fe_Object *tail = obj;
@@ -511,19 +619,20 @@ are stored directly in their ~symbol~ objects.
     return obj;
   }
 
-  // Either returns a symbol from "symlist" or creates and returns
-  // a new symbol object.
-  //
-  //     symlist
-  //        |
-  //        V
-  // +-------------+-----+    +-----+-----+
-  // | car: Symbol | cdr | -> | car | cdr | -> object: nil | value
-  // +-------------+-----+    +-----+-----+
-  //                             |
-  //                             V
-  //                           String
-  //
+  /*
+     Either returns a symbol from "symlist" or creates and returns
+     a new symbol object.
+  
+         symlist
+            |
+            V
+     +-------------+-----+    +-----+-----+
+     | car: Symbol | cdr | -> | car | cdr | -> object: nil | value
+     +-------------+-----+    +-----+-----+
+                                 |
+                                 V
+                               String
+  */
   fe_Object* fe_symbol(fe_Context *ctx, const char *name) {
     fe_Object *obj;
     // Try to find symbol in "symlist".
@@ -532,7 +641,7 @@ are stored directly in their ~symbol~ objects.
         return car(obj);
       }
     }
-    // Creates new object, pushes to "symlist", and returns.
+    /* Creates new object, pushes to "symlist", and returns. */
     obj = object(ctx);
     settype(obj, FE_TSYMBOL);
     cdr(obj) = fe_cons(ctx, fe_string(ctx, name), &nil);
@@ -540,12 +649,13 @@ are stored directly in their ~symbol~ objects.
     return obj;
   }
 
-  // Wraps a C function within a Fe object.
-  //
-  // +-----------------+-----+
-  // | car: C Function | cdr | -> function
-  // +-----------------+-----+
-  //
+  /*
+     Wraps a C function within a Fe object.
+  
+     +-----------------+-----+
+     | car: C Function | cdr | -> function
+     +-----------------+-----+
+  */
   fe_Object* fe_cfunc(fe_Context *ctx, fe_CFunc fn) {
     fe_Object *obj = object(ctx);
     settype(obj, FE_TCFUNC);
@@ -553,14 +663,14 @@ are stored directly in their ~symbol~ objects.
     return obj;
   }
 
-  // Wraps a C pointer within a Fe object.
-  // The Fe pointer type allows the creation of custom objects.
-  // Pointers must be wrapped by users and tagged to ensure type safety.
-  //
-  // +--------------+-----+
-  // | car: Pointer | cdr | -> void
-  // +--------------+-----+
-  //
+  /* Wraps a C pointer within a Fe object.
+     The Fe pointer type allows the creation of custom objects.
+     Pointers must be wrapped by users and tagged to ensure type safety.
+  
+     +--------------+-----+
+     | car: Pointer | cdr | -> void
+     +--------------+-----+
+  */
   fe_Object* fe_ptr(fe_Context *ctx, void *ptr) {
     fe_Object *obj = object(ctx);
     settype(obj, FE_TPTR);
@@ -568,18 +678,19 @@ are stored directly in their ~symbol~ objects.
     return obj;
   }
 
-  // (list ...) -> (...)
-  // Transforms zero or more values into a list.
-  //
-  // +-----+-----+    +-----+-----+     +----------+-----+   
-  // | car | cdr | -> | car | cdr | ... | car: Nil | cdr | -> NULL
-  // +-----+-----+    +-----+-----+     +----------+-----+
-  //    |                |
-  //    V                V
-  // +-----+-----+    +-----+-----+
-  // | car | cdr |    | car | cdr |
-  // +-----+-----+    +-----+-----+
-  //
+  /*
+     (list ...) -> (...)
+     Transforms zero or more values into a list.
+  
+     +-----+-----+    +-----+-----+     +----------+-----+   
+     | car | cdr | -> | car | cdr | ... | car: Nil | cdr | -> NULL
+     +-----+-----+    +-----+-----+     +----------+-----+
+        |                |
+        V                V
+     +-----+-----+    +-----+-----+
+     | car | cdr |    | car | cdr |
+     +-----+-----+    +-----+-----+
+  */
   fe_Object* fe_list(fe_Context *ctx, fe_Object **objs, int n) {
     fe_Object *res = &nil;
     while (n--) {
@@ -588,22 +699,26 @@ are stored directly in their ~symbol~ objects.
     return res;
   }
 
-  // (car (car cdr)) -> car
-  // Returns the "car" of a cons list.
+  /*
+     (car (car cdr)) -> car
+     Returns the "car" of a cons list.
+  */
   fe_Object* fe_car(fe_Context *ctx, fe_Object *obj) {
     if (isnil(obj)) { return obj; }
     return car(checktype(ctx, obj, FE_TPAIR));
   }
 
-  // (cdr (car cdr)) -> cdr
-  // Returns the "cdr" of a cons list.
+  /*
+     (cdr (car cdr)) -> cdr
+     Returns the "cdr" of a cons list.
+  */
   fe_Object* fe_cdr(fe_Context *ctx, fe_Object *obj) {
     if (isnil(obj)) { return obj; }
     return cdr(checktype(ctx, obj, FE_TPAIR));
   }
 
- // === Fe Data -> String ===
-
+  /* === Fe Data -> String === */
+  
   static void writestr(fe_Context *ctx, fe_WriteFn fn, void *udata, const char *s) {
     while (*s) { fn(ctx, udata, *s++); }
   }
@@ -704,8 +819,10 @@ are stored directly in their ~symbol~ objects.
     return cdr(sym);
   }
 
-  // (= symbol expression)
-  // Binds a Fe expression to an identifier.
+  /*
+     (= symbol expression)
+     Binds a Fe expression to an identifier.
+  */
   void fe_set(fe_Context *ctx, fe_Object *sym, fe_Object *v) {
     unused(ctx);
     cdr(getbound(sym, &nil)) = v;
@@ -713,11 +830,12 @@ are stored directly in their ~symbol~ objects.
 
   static fe_Object rparen;
 
-  // === The Fe Reader ===
-  //
-  // Transforms a stream of character data into Fe data,
-  // data that can later be evaluated as a Fe program.
-
+  /*
+     === The Fe Reader ===
+  
+     Transforms a stream of character data into Fe data,
+     data that can later be evaluated as a Fe program.
+  */
   static fe_Object* read_(fe_Context *ctx, fe_ReadFn fn, void *udata) {
     const char *delimiter = " \n\t\r();";
     fe_Object *v, *res, **tail;
@@ -725,11 +843,11 @@ are stored directly in their ~symbol~ objects.
     int chr, gc;
     char buf[64], *p;
 
-    // Get next character.
+    /* Get next character. */
     chr = ctx->nextchr ? ctx->nextchr : fn(ctx, udata);
     ctx->nextchr = '\0';
 
-    // Skip whitespace.
+    /* Skip whitespace. */
     while (chr && strchr(" \n\t\r", chr)) {
       chr = fn(ctx, udata);
     }
@@ -749,15 +867,15 @@ are stored directly in their ~symbol~ objects.
         res = &nil;
         tail = &res;
         gc = fe_savegc(ctx);
-        // Causes errors on deeply nested cons lists.
+        /* Causes errors on deeply nested cons lists. */
         fe_pushgc(ctx, res);
         while ( (v = read_(ctx, fn, udata)) != &rparen ) {
           if (v == NULL) { fe_error(ctx, "unclosed list"); }
           if (type(v) == FE_TSYMBOL && streq(car(cdr(v)), ".")) {
-            // Dotted pair.
+            /* Dotted pair. */
             *tail = fe_read(ctx, fn, udata);
           } else {
-            // Proper pair.
+            /* Proper pair. */
             *tail = fe_cons(ctx, v, &nil);
             tail = &cdr(*tail);
           }
@@ -795,7 +913,7 @@ are stored directly in their ~symbol~ objects.
         } while (chr && !strchr(delimiter, chr));
         *p = '\0';
         ctx->nextchr = chr;
-        // Try to read as number.
+        /* Try to read as number. */
         n = strtod(buf, &p);
         if (p != buf && strchr(delimiter, *p)) { return fe_number(ctx, n); }
         if (!strcmp(buf, "nil")) { return &nil; }
@@ -815,15 +933,16 @@ are stored directly in their ~symbol~ objects.
     return (chr = fgetc(udata)) == EOF ? '\0' : chr;
   }
 
-  // Convenience function for reading from a file pointer.
+  /* Convenience function for reading from a file pointer. */
   fe_Object* fe_readfp(fe_Context *ctx, FILE *fp) {
     return fe_read(ctx, readfp, fp);
   }
 
-  // === The Fe Evaluator ===
-  //
-  // Interprets Fe data as a Fe program.
-
+  /*
+     === The Fe Evaluator ===
+  
+     Interprets Fe data as a Fe program.
+  */
   static fe_Object* eval(fe_Context *ctx, fe_Object *obj, fe_Object *env, fe_Object **bind);
 
   static fe_Object* evallist(fe_Context *ctx, fe_Object *lst, fe_Object *env) {
@@ -1016,19 +1135,19 @@ are stored directly in their ~symbol~ objects.
 
       case FE_TFUNC:
         arg = evallist(ctx, arg, env);
-        // Environment parameters.
+        /* Environment parameters. */
         va = cdr(fn);
-        // Parameters.
+        /* Parameters. */
         vb = cdr(va);
         res = dolist(ctx, cdr(vb), argstoenv(ctx, car(vb), arg, car(va)));
         break;
 
       case FE_TMACRO:
-        // Environment parameters.
+        /* Environment parameters. */
         va = cdr(fn);
-        // Parameters.
+        /* Parameters. */
         vb = cdr(va);
-        // Replace caller object with code generated by macro and re-evaluate.
+        /* Replace caller object with code generated by macro and re-evaluate. */
         *obj = *dolist(ctx, cdr(vb), argstoenv(ctx, car(vb), arg, car(va)));
         fe_restoregc(ctx, gc);
         ctx->calllist = cdr(&cl);
@@ -1052,22 +1171,22 @@ are stored directly in their ~symbol~ objects.
     int i, save;
     fe_Context *ctx;
 
-    // Initialize context.
+    /* Initialize context. */
     ctx = ptr;
     memset(ctx, 0, sizeof(fe_Context));
     ptr = (char*) ptr + sizeof(fe_Context);
     size -= sizeof(fe_Context);
 
-    // Initialize objects in memory region.
+    /* Initialize objects in memory region. */
     ctx->objects = (fe_Object*) ptr;
     ctx->object_count = size / sizeof(fe_Object);
 
-    // Initialize lists.
+    /* Initialize lists. */
     ctx->calllist = &nil;
     ctx->freelist = &nil;
     ctx->symlist = &nil;
 
-    // Populate freelist.
+    /* Populate freelist. */
     for (i = 0; i < ctx->object_count; i++) {
       fe_Object *obj = &ctx->objects[i];
       settype(obj, FE_TFREE);
@@ -1075,11 +1194,11 @@ are stored directly in their ~symbol~ objects.
       ctx->freelist = obj;
     }
 
-    // Initialize objects.
+    /* Initialize objects. */
     ctx->t = fe_symbol(ctx, "t");
     fe_set(ctx, ctx->t, ctx->t);
 
-    // Register built-in primitives.
+    /* Register built-in primitives. */
     save = fe_savegc(ctx);
     for (i = 0; i < P_MAX; i++) {
       fe_Object *v = object(ctx);
@@ -1093,7 +1212,7 @@ are stored directly in their ~symbol~ objects.
   }
 
   void fe_close(fe_Context *ctx) {
-    // Clear "gcstack" and "symlist". Make all objects unreachable.
+    /* Clear "gcstack" and "symlist". Make all objects unreachable. */
     ctx->gcstack_idx = 0;
     ctx->symlist = &nil;
     collectgarbage(ctx);
@@ -1104,8 +1223,10 @@ are stored directly in their ~symbol~ objects.
   #include <setjmp.h>
 
   static jmp_buf toplevel;
-  // Set aside approximately 64 kilobytes of digital storage
-  // for Fe context and associated objects.
+  /*
+     Set aside 64 kilobytes of digital storage
+     for Fe context and associated objects.
+  */
   static char buf[64000];
 
   static void onerror(fe_Context *ctx, const char *msg, fe_Object *cl) {
@@ -1143,3 +1264,4 @@ are stored directly in their ~symbol~ objects.
 
   #endif
 #+end_src
+
