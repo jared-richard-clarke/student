@@ -1,0 +1,63 @@
+* Class-Based OOP in Lua
+
+** Sources
+
+| source        | author |
+|---------------+--------|
+| ~classic.lua~ | rxi    |
+
+** ~classic.lua~
+
+#+begin_src lua
+  local Object = {}
+  Object.__index = Object
+
+  function Object:new()
+  end
+
+  function Object:extend()
+      local class = {}
+      for key, value in pairs(self) do
+          if key:find("__") == 1 then
+              class[key] = value
+          end
+      end
+      class.__index = class
+      class.super = self
+      setmetatable(class, self)
+      return class
+  end
+
+  function Object:implement(...)
+      for _, class in pairs({...}) do
+          for key, value in pairs(class) do
+              if self[key] == nil and type(value) == "function" then
+                  self[key] = value
+              end
+          end
+      end
+  end
+
+  function Object:is(T)
+      local meta = getmetatable(self)
+      while meta do
+          if meta == T then
+              return true
+          end
+          meta = getmetatable(meta)
+      end
+      return false
+  end
+
+  function Object:__tostring()
+      return "Object"
+  end
+
+  function Object:__call(...)
+      local object = setmetatable({}, self)
+      object:new(...)
+      return object
+  end
+
+  return Object
+#+end_src
