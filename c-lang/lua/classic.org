@@ -1,4 +1,6 @@
-* Class-Based OOP in Lua
+* ~classic.lua~
+
+Class-based object orientation in Lua.
 
 ** Sources
 
@@ -6,7 +8,7 @@
 |---------------+--------|
 | ~classic.lua~ | rxi    |
 
-** ~classic.lua~: Implementation
+** Implementation
 
 #+begin_src lua
   -- === Base Class ===
@@ -72,7 +74,7 @@
   return Object
 #+end_src
 
-** ~classic.lua~: Usage
+** Usage
 
 #+begin_src lua
   -- === Base Class ===
