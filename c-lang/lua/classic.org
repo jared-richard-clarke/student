@@ -6,14 +6,18 @@
 |---------------+--------|
 | ~classic.lua~ | rxi    |
 
-** ~classic.lua~
+** ~classic.lua~: Implementation
 
 #+begin_src lua
+  -- === Base Class ===
+
   local Object = {}
   Object.__index = Object
 
   function Object:new()
   end
+
+  -- === Class Creation and Extension ===
 
   function Object:extend()
       local class = {}
@@ -28,6 +32,8 @@
       return class
   end
 
+  -- === Mixins ===
+
   function Object:implement(...)
       for _, class in pairs({...}) do
           for key, value in pairs(class) do
@@ -37,6 +43,8 @@
           end
       end
   end
+
+  -- === Object Reflection ===
 
   function Object:is(T)
       local meta = getmetatable(self)
@@ -53,6 +61,8 @@
       return "Object"
   end
 
+  -- === Object Creation ===
+
   function Object:__call(...)
       local object = setmetatable({}, self)
       object:new(...)
@@ -60,4 +70,59 @@
   end
 
   return Object
+#+end_src
+
+** ~classic.lua~: Usage
+
+#+begin_src lua
+  -- === Base Class ===
+
+  Object = require("classic")
+
+  -- === Class Creation ===
+
+  Point = Object.extend()
+
+  function Point:new(x, y)
+      self.x = x or 0
+      self.y = y or 0
+  end
+
+  local point = Point(3, 4)
+
+  -- === Class Extension ===
+
+  Rectangle = Point:extend()
+
+  function Rectangle:new(x, y, width, height)
+      Rectangle.super.new(self, x, y)
+      self.width  = width or 0
+      self.height = height or 0
+  end
+
+  -- === Object Reflection ===
+
+  point:is(Object)    --> true
+  point:is(Point)     --> true
+  point:is(Rectangle) --> false
+
+  -- === Mixins ===
+
+  Printer = Object:extend()
+
+  function Printer:print()
+      for key, value in pairs(self) do
+          print(key, value)
+      end
+  end
+
+  Point:implement(Printer)
+
+  point.print()
+
+  -- === Meta Methods ===
+
+  function Point:__tostring()
+      return "(" .. self.x .. ", " self.y ")"
+  end
 #+end_src
