@@ -60,11 +60,13 @@
 
 *** C89: x86_64 arch
 
-| ~signed char~    | ~int8~                    |
-| ~long int~       | ~int32~ or ~int64~        |
-| ~long long~      | ~int64~                   |
-| ~unsigned short~ | ~uint16~                  |
-| ~char~           | ~uint8~, ~int8~, or other |
+| name             | type                    |
+|------------------+-------------------------|
+| ~signed char~    | ~int8~                  |
+| ~long int~       | ~int32~ or ~int64~      |
+| ~long long~      | ~int64~                 |
+| ~unsigned short~ | ~uint16~                |
+| ~char~           | maybe ~uint8~ or ~int8~ |
 
 *** C99: ~<stdint.h>~
 
