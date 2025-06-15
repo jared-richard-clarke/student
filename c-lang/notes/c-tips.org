@@ -210,3 +210,21 @@ checking.
   +--------+--------+--------+--------+
       0        1        2        3      <- Indexes
 #+end_example
+
+** Arenas
+
+Generally, the lifetimes of C data fall into three categories:
+
+1. *Static*: Data that lives for the duration of a program.
+
+2. *Function Calls*: Local data that has a scope and lifetime dictated
+   by their calling function. Such data is automatically allocated and
+   deallocated on the call stack.
+
+3. *Tasks*: Distinct parts of a program that require dedicated data
+   for their duration. In this case, it is more helpful to allocate
+   and deallocate memory in one large block — an arena — than it is
+   to allocate and deallocate memory piecemeal. Such tasks might
+   include importing a file, rendering a frame, or editing a document,
+   where the lifetimes of associated data live within the lifetime
+   of their task.
