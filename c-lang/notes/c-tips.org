@@ -91,7 +91,7 @@ to be signed and sized according to their identifier.
 - ~-fsanitize=address~ :: Use address sanitization during development to catch
   silent memory corruption.
 
-* Unity Builds
+** Unity Builds
 
 Compile program within a single translation unit to avoid complex interdependencies.
 
