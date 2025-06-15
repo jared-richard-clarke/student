@@ -125,7 +125,7 @@ Compile program within a single translation unit to avoid complex interdependenc
 
 ** ASAN
 
-- ASAN (Address Sanitizatizer) :: A compiler program used to catch silent memory-corruption errors.
+- ASAN (Address Sanitizer) :: A compiler program used to catch silent memory-corruption errors.
 
 With every call to ~malloc~ an address sanitizer typically inserts meta-data around the boundaries
 of allocated memory. Reads and writes to these boundaries will throw an error.
