@@ -222,9 +222,9 @@ Generally, the lifetimes of C data fall into three categories:
    deallocated on the call stack.
 
 3. *Tasks*: Distinct parts of a program that require dedicated data
-   for their duration. In this case, it is more helpful to allocate
-   and deallocate memory in one large block — an arena — than it is
-   to allocate and deallocate memory piecemeal. Such tasks might
-   include importing a file, rendering a frame, or editing a document,
-   where the lifetimes of associated data live within the lifetime
-   of their task.
+   for their duration. In this case, it is simpler and more efficient
+   to allocate and deallocate memory in one large block — an arena —
+   than it is to allocate and deallocate memory piecemeal. Such tasks
+   might include importing a file, rendering a frame, or editing a
+   document, where the lifetimes of associated data live within the
+   lifetime of their task.
