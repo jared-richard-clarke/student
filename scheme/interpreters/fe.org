@@ -1,4 +1,4 @@
-* Fe LISP
+* The Fe Programming Language
 
 ** Sources
 
@@ -56,7 +56,7 @@ are stored directly in their ~symbol~ objects.
 
 - ~(do expression+)~ :: Evaluates one or more expressions, returning the last as its value.
 
-** Primitive Functions
+*** Primitive Functions
 
 - ~(cons car cdr)~ -> ~(car cdr)~ :: Combines two values to create a pair.
 
@@ -98,7 +98,7 @@ are stored directly in their ~symbol~ objects.
 
   ;; (reverse list) -> list
   ;; (reverse '(a b c)) -> '(c b a)
-  
+
   (= reverse (fn (xs)
     (let result nil)
     (while xs
@@ -108,7 +108,7 @@ are stored directly in their ~symbol~ objects.
 
   ;; (map function list) -> list
   ;; (map (fn (x) (+ x 1)) '(1 2 3)) -> '(2 3 4)
-  
+
   (= map (fn (function xs)
     (let result nil)
     (while xs
@@ -126,7 +126,7 @@ are stored directly in their ~symbol~ objects.
   ;;     (let value (car iter))
   ;;     (= iter (cdr iter))
   ;;     (do body)))
-  
+
   (= for (mac (x xs . body)
     (list 'do
       (list 'let 'iter xs)
@@ -167,15 +167,15 @@ ensure all ~ptr~ objects are properly garbage collected.
   for (;;) {
     fe_Object* object = fe_readfp(ctx, fp);
 
-    /* Break of eof. */
+    /* Break if no more objects. */
     if (!object) { break; }
 
     /* Evaluate read object. */
-    fe_eval(ctx, obj);
+    fe_eval(ctx, object);
 
     /*
-       Restore GC stack. It now contains both
-       a read object and an evaluated expression.
+       The GC stack now contains both a read object and an evaluated
+       expression. Restore stack to its original state.
     */
     fe_restore_gc(ctx, gc);
   }
@@ -206,7 +206,7 @@ A Fe function can be called by creating a list and evaluating it.
 
 #+begin_src c
   #include <math.h>
-  
+
   static fe_Object* f_pow(fe_Context* ctx, fe_Object* arg) {
     float x = fe_tonumber(ctx, fe_nextarg(ctx, &arg));
     float y = fe_tonumber(ctx, fe_nextarg(ctx, &arg));
@@ -217,7 +217,7 @@ A Fe function can be called by creating a list and evaluating it.
 
   /*
      === Fe Program ===
-  
+
      (pow 2 8) -> 256
   */
 #+end_src
@@ -291,10 +291,10 @@ A Fe function can be called by creating a list and evaluating it.
   /*
      === Fe Value ===
      Fe Object Pointer | C Function Pointer | Number | Char
-  
-     Memory Layout: Assumes a 64-bit, little-endian architecture.
-  
-  
+
+     Memory Layout: Diagram assumes a 64-bit, little-endian architecture.
+
+
      8        7        6        5        4        3        2        1        0
      +--------+--------+--------+--------+--------+--------+--------+--------+
      | byte-8 | byte-7 | byte-6 | byte-5 | byte-4 | byte-3 | byte-2 | byte-1 |
@@ -303,10 +303,10 @@ A Fe function can be called by creating a list and evaluating it.
      ^-------------------------------------------------- C Function Pointer -^
                                          ^-------------------------- Number -^
                                                                     ^- Char -^
-  
+
      The first byte of an Object's car field contains
      book-keeping and type information.
-  
+
       Byte 1
      +-------------------------------+
      | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | <- Cons Cell Marker ( 0 = pair )
@@ -318,7 +318,7 @@ A Fe function can be called by creating a list and evaluating it.
 
   /*
      === Fe Object = Cons Cell ===
-  
+
      Cons cells provide fixed storage for all Fe data. A pair is a cons cell
      whose car and cdr contain object pointers.
   */
@@ -369,10 +369,10 @@ A Fe function can be called by creating a list and evaluating it.
   }
 
   /* === Error Handling ===
-  
+
      By default, an error message and stack trace are printed to standard error,
      and the program exits with an EXIT_FAILURE.
-  
+
      The user can provide custom error handlers. "longjmp" can be used
      to exit said handlers and re-enter the program context in a safe state.
   */
@@ -428,7 +428,7 @@ A Fe function can be called by creating a list and evaluating it.
     return isnil(obj);
   }
 
-  /* Pushes a Fe object onto "gcstack". Checks for overflow. */
+  /* Pushes a pointer to a Fe object onto "gcstack". Checks for overflow. */
   void fe_pushgc(fe_Context *ctx, fe_Object *obj) {
     if (ctx->gcstack_idx == GCSTACKSIZE) {
       fe_error(ctx, "gc stack overflow");
@@ -482,6 +482,12 @@ A Fe function can be called by creating a list and evaluating it.
       fe_Object *obj = &ctx->objects[i];
       if (type(obj) == FE_TFREE) { continue; }
       if (~tag(obj) & GCMARKBIT) {
+        /*
+          For "ptr" types - user-provided, custom objects -
+          An optional, user-provided "gc" function can be
+          called to free any additional resources used
+          by custom objects.
+        */
         if (type(obj) == FE_TPTR && ctx->handlers.gc) {
           ctx->handlers.gc(ctx, obj);
         }
@@ -521,7 +527,7 @@ A Fe function can be called by creating a list and evaluating it.
   }
 
   /*
-     Pops an object from "freelist" for use in program.
+     Pops an object from "freelist" for use in a program.
      Runs garbage collection if "freelist" is empty.
   */
   static fe_Object* object(fe_Context *ctx) {
@@ -529,6 +535,10 @@ A Fe function can be called by creating a list and evaluating it.
     /* Collects garbage if free list has no more objects. */
     if (isnil(ctx->freelist)) {
       collectgarbage(ctx);
+      /*
+        If, after garbage collection, there is still no memory
+        to allocate, throw an error.
+      */
       if (isnil(ctx->freelist)) { fe_error(ctx, "out of memory"); }
     }
     /* Gets object from "freelist" and pushes said object to "gcstack". */
@@ -541,7 +551,7 @@ A Fe function can be called by creating a list and evaluating it.
   /*
      (cons car cdr) -> (car cdr)
      Creates a new pair with the given "car" and "cdr" values.
-  
+
      +-----+-----+    +-----+-----+
      | car | cdr | -> | car | cdr |
      +-----+-----+    +-----+-----+
@@ -560,7 +570,7 @@ A Fe function can be called by creating a list and evaluating it.
 
   /*
      Evaluates the truth value of a C data type within the context of Fe.
-  
+
      example: fe_bool(ctx, number(x) operator number(y)) -> ctx->t | &nil
   */
   fe_Object* fe_bool(fe_Context *ctx, int b) {
@@ -571,7 +581,7 @@ A Fe function can be called by creating a list and evaluating it.
      Creates a number literal. By default, Number is a float,
      although this type can be changed as long as its storage
      fits within an object pointer.
-  
+
      +-------------+------------+
      | car: Number | cdr: float |
      +-------------+------------+
@@ -599,14 +609,14 @@ A Fe function can be called by creating a list and evaluating it.
 
   /*
      Creates a string literal. Strings are stored in a list of cons cells.
-  
+
      +----------------------+-----+    +----------------------+-----+
      | car: char[] | String | cdr | -> | car: char[] | String | cdr | ...
      +----------------------+-----+    +----------------------+-----+
      +----------------------+-----+
      | car: char[] | String | cdr | -> nil
      +----------------------+-----+
-  
+
      where char[] = 7 bytes of character storage on a 64-bit machine.
            String = 1 byte of type tags and GC markers.
   */
@@ -622,7 +632,7 @@ A Fe function can be called by creating a list and evaluating it.
   /*
      Either returns a symbol from "symlist" or creates and returns
      a new symbol object.
-  
+
          symlist
             |
             V
@@ -651,7 +661,7 @@ A Fe function can be called by creating a list and evaluating it.
 
   /*
      Wraps a C function within a Fe object.
-  
+
      +-----------------+-----+
      | car: C Function | cdr | -> function
      +-----------------+-----+
@@ -666,7 +676,7 @@ A Fe function can be called by creating a list and evaluating it.
   /* Wraps a C pointer within a Fe object.
      The Fe pointer type allows the creation of custom objects.
      Pointers must be wrapped by users and tagged to ensure type safety.
-  
+
      +--------------+-----+
      | car: Pointer | cdr | -> void
      +--------------+-----+
@@ -681,8 +691,8 @@ A Fe function can be called by creating a list and evaluating it.
   /*
      (list ...) -> (...)
      Transforms zero or more values into a list.
-  
-     +-----+-----+    +-----+-----+     +----------+-----+   
+
+     +-----+-----+    +-----+-----+     +----------+-----+
      | car | cdr | -> | car | cdr | ... | car: Nil | cdr | -> NULL
      +-----+-----+    +-----+-----+     +----------+-----+
         |                |
@@ -718,7 +728,7 @@ A Fe function can be called by creating a list and evaluating it.
   }
 
   /* === Fe Data -> String === */
-  
+
   static void writestr(fe_Context *ctx, fe_WriteFn fn, void *udata, const char *s) {
     while (*s) { fn(ctx, udata, *s++); }
   }
@@ -832,7 +842,7 @@ A Fe function can be called by creating a list and evaluating it.
 
   /*
      === The Fe Reader ===
-  
+
      Transforms a stream of character data into Fe data,
      data that can later be evaluated as a Fe program.
   */
@@ -940,7 +950,7 @@ A Fe function can be called by creating a list and evaluating it.
 
   /*
      === The Fe Evaluator ===
-  
+
      Interprets Fe data as a Fe program.
   */
   static fe_Object* eval(fe_Context *ctx, fe_Object *obj, fe_Object *env, fe_Object **bind);
@@ -1264,4 +1274,3 @@ A Fe function can be called by creating a list and evaluating it.
 
   #endif
 #+end_src
-
