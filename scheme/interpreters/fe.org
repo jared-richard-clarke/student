@@ -457,6 +457,7 @@ A Fe function can be called by creating a list and evaluating it.
 
     switch (type(obj)) {
       case FE_TPAIR:
+        /* Recursion here may cause overflow. */
         fe_mark(ctx, car);
         /* Fall through. */
       case FE_TFUNC: case FE_TMACRO: case FE_TSYMBOL: case FE_TSTRING:
