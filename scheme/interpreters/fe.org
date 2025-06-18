@@ -463,7 +463,12 @@ A Fe function can be called by creating a list and evaluating it.
       case FE_TFUNC: case FE_TMACRO: case FE_TSYMBOL: case FE_TSTRING:
         obj = cdr(obj);
         goto begin;
-
+      /*
+          For "ptr" types - user-provided, custom objects -
+          An optional, user-provided "mark" function can be
+          called to mark any additional resources used
+          by custom objects.
+      */
       case FE_TPTR:
         if (ctx->handlers.mark) { ctx->handlers.mark(ctx, obj); }
         break;
