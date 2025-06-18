@@ -880,7 +880,7 @@ A Fe function can be called by creating a list and evaluating it.
         res = &nil;
         tail = &res;
         gc = fe_savegc(ctx);
-        /* Causes errors on deeply nested cons lists. */
+        /* Can cause errors on deeply nested cons lists. */
         fe_pushgc(ctx, res);
         while ( (v = read_(ctx, fn, udata)) != &rparen ) {
           if (v == NULL) { fe_error(ctx, "unclosed list"); }
