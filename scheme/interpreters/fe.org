@@ -695,9 +695,9 @@ A Fe function can be called by creating a list and evaluating it.
      (list ...) -> (...)
      Transforms zero or more values into a list.
 
-     +-----+-----+    +-----+-----+     +----------+-----+
-     | car | cdr | -> | car | cdr | ... | car: Nil | cdr | -> NULL
-     +-----+-----+    +-----+-----+     +----------+-----+
+     +-----+-----+    +-----+-----+
+     | car | cdr | -> | car | cdr | ... nil
+     +-----+-----+    +-----+-----+ 
         |                |
         V                V
      +-----+-----+    +-----+-----+
@@ -713,7 +713,7 @@ A Fe function can be called by creating a list and evaluating it.
   }
 
   /*
-     (car (car cdr)) -> car
+     (car '(car cdr)) -> car
      Returns the "car" of a cons list.
   */
   fe_Object* fe_car(fe_Context *ctx, fe_Object *obj) {
@@ -722,7 +722,7 @@ A Fe function can be called by creating a list and evaluating it.
   }
 
   /*
-     (cdr (car cdr)) -> cdr
+     (cdr '(car cdr)) -> cdr
      Returns the "cdr" of a cons list.
   */
   fe_Object* fe_cdr(fe_Context *ctx, fe_Object *obj) {
