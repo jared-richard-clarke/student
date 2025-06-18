@@ -634,16 +634,17 @@ A Fe function can be called by creating a list and evaluating it.
   /*
      Either returns a symbol from "symlist" or creates and returns
      a new symbol object.
-
-         symlist
-            |
-            V
-     +-------------+-----+    +-----+-----+
-     | car: Symbol | cdr | -> | car | cdr | -> object: nil | value
-     +-------------+-----+    +-----+-----+
-                                 |
-                                 V
-                               String
+  
+     '((symbol) ...)
+  
+     +-----+-----+
+     | car | cdr | -> Symbol | nil
+     +-----+-----+
+        |
+        V
+     +-------------+-----+    +-------------+-----+
+     | car: Symbol | cdr | -> | car: String | cdr | -> nil
+     +-------------+-----+    +-------------+-----+
   */
   fe_Object* fe_symbol(fe_Context *ctx, const char *name) {
     fe_Object *obj;
