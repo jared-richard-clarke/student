@@ -224,6 +224,8 @@ A Fe function can be called by creating a list and evaluating it.
 
 ** Fe Source Code
 
+*Compiler Settings*: ~gcc src/fe.c -DFE_STANDALONE -O3 -o fe -Wall -Wextra -std=c89 -pedantic~
+
 #+begin_src c
   /*
      === The Fe Programming Language ===
