@@ -368,7 +368,8 @@ A Fe function can be called by creating a list and evaluating it.
     return &ctx->handlers;
   }
 
-  /* === Error Handling ===
+  /*
+     === Error Handling ===
 
      By default, an error message and stack trace are printed to standard error,
      and the program exits with an EXIT_FAILURE.
