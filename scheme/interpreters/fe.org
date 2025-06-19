@@ -715,8 +715,8 @@ A Fe function can be called by creating a list and evaluating it.
   }
 
   /*
-     (car '(car cdr)) -> car
-     Returns the "car" of a cons list.
+     (car (car cdr)) -> car | nil
+     Returns the "car" of a cons list. Returns "nil" if the list is empty.
   */
   fe_Object* fe_car(fe_Context *ctx, fe_Object *obj) {
     if (isnil(obj)) { return obj; }
@@ -724,8 +724,8 @@ A Fe function can be called by creating a list and evaluating it.
   }
 
   /*
-     (cdr '(car cdr)) -> cdr
-     Returns the "cdr" of a cons list.
+     (cdr (car cdr)) -> cdr | nil
+     Returns the "cdr" of a cons list. Returns "nil" if the list is empty.
   */
   fe_Object* fe_cdr(fe_Context *ctx, fe_Object *obj) {
     if (isnil(obj)) { return obj; }
