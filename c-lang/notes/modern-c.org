@@ -94,55 +94,46 @@ in an arithmetic expression.
 |-------------+------------+--------------------------------------|
 | ~clock_t~   | ~time.h~   | processor time                       |
 
-** Value Operators
+** Operator Precedence (Descending Order)
 
-| operator          | alt-name | form    | type a           | type b     | type result | operation      |
-|-------------------+----------+---------+------------------+------------+-------------+----------------|
-|                   |          | a       | narrow           |            | Wide        | promotion      |
-| + -               |          | a@b     | pointer          | integer    | pointer     | arithmetic     |
-| + - * /           |          | a@b     | arithmetic       | arithmetic | arithmetic  | arithmetic     |
-| + -               |          | @a      | arithmetic       |            | arithmetic  | arithmetic     |
-| %                 |          | a@b     | integer          | integer    | integer     | arithmetic     |
-| ~                 | compl    | @a      | integer          |            | integer     | bitwise        |
-| &                 | bitand   | a@b     | integer          | integer    | integer     | bitwise        |
-| \vert{}           | bitor    | a@b     | integer          | integer    | integer     | bitwise        |
-| ^                 | xor      | a@b     | integer          | integer    | integer     | bitwise        |
-| << >>             |          | a@b     | integer          | positive   | integer     | bitwise        |
-| == < > <= >=      |          | a@b     | scalar           | scalar     | 0, 1        | comparison     |
-| !=                | not_eq   | a@b     | scalar           | scalar     | 0, 1        | comparsion     |
-|                   | !!a      | a       | scalar           |            | 0, 1        | logic          |
-| !a                | not      | @a      | scalar           |            | 0, 1        | logic          |
-| && \vert{}\vert{} | and or   | a@b     | scalar           | scalar     | 0, 1        | logic          |
-| .                 |          | a@m     | struct           |            | value       | member         |
-| \star{}           |          | @a      | pointer          |            | object      | reference      |
-| []                |          | a[b]    | pointer          | integer    | object      | member         |
-| ->                |          | a@m     | struct pointer   |            | object      | member         |
-| ()                |          | a(b...) | function pointer |            | value       | call           |
-| sizeof            |          | @ a     | none             |            | size_t      | size, ICE      |
-| _Alignof          | alignof  | @(a)    | none             |            | size_t      | alignment, ICE |
-
-** Object Operators
-
-| operator    | alt-name | form  | type                  | result  | operation      |
-|-------------+----------+-------+-----------------------+---------+----------------|
-|             |          | o     | array*                | pointer | array decay    |
-|             |          | o     | function              | pointer | function decay |
-|             |          | o     | other                 | value   | evaluation     |
-| =           |          | o@a   | non-array             | value   | assignment     |
-| += -= *= /= |          | o@a   | arithmetic            | value   | arithmetic     |
-| += -=       |          | o@a   | pointer               | value   | arithmetic     |
-| %=          |          | o@a   | integer               | value   | arithmetic     |
-| ++ --       |          | @o o@ | arithmetic or pointer | value   | arithmetic     |
-| &=          | and_eq   | o@a   | integer               | value   | bitwise        |
-| \vert{}=    | or_eq    | o@a   | integer               | value   | bitwise        |
-| ^=          | xor_eq   | o@a   | integer               | value   | bitwise        |
-| <<= >>=     |          | o@a   | integer               | value   | bitwise        |
-| .           |          | o@m   | struct                | object  | member         |
-| []          |          | o[a]  | array*                | object  | member         |
-| &           |          | @o    | any*                  | pointer | address        |
-| sizeof      |          | @ o   | data object, non-VLA  | size_t  | size, ICE      |
-| sizeof      |          | @ o   | VLA                   | size_t  | size           |
-| _Alignof    | alignof  | @(o)  | non-function          | size_t  | alignment, ICE |
+| precedence | operator             | description                                       | associativity |
+|------------+----------------------+---------------------------------------------------+---------------|
+|          1 | ~++~ ~--~            | Postfix increment and decrement                   | left-to-right |
+|            | ~()~                 | Function call                                     |               |
+|            | ~[]~                 | Array subscripting                                |               |
+|            | ~.~                  | Structure and union member access                 |               |
+|            | ~->~                 | Structure and union member access through pointer |               |
+|            | ~(type){list}~       | Compound literal (C99)                            |               |
+|------------+----------------------+---------------------------------------------------+---------------|
+|          2 | ~++~ ~--~            | Prefix increment and decrement                    | right-to-left |
+|            | ~+~ ~-~              | Unary plus and minus                              |               |
+|            | ~!~ ~                | Logical and bitwise NOT                           |               |
+|            | ~(type)~             | Cast                                              |               |
+|            | ~*~                  | Indirection (dereference)                         |               |
+|            | ~&~                  | Address-of                                        |               |
+|            | ~sizeof~             | Size-of                                           |               |
+|            | ~_Alignof~           | Alignment requirement (C11)                       |               |
+|------------+----------------------+---------------------------------------------------+---------------|
+|          3 | ~*~ ~/~ ~%~          | Multiplication, division, and remainder           | left-to-right |
+|          4 | ~+~ ~-~              | Addition and subtraction                          |               |
+|          5 | ~>>~ ~<<~            | Bitwise right shift and left shift                |               |
+|          6 | ~<~ ~<=~             | Relational operators *<* and *≤*                  |               |
+|            | ~>~ ~>=~             | Relational operators *>* and *≥*                  |               |
+|          7 | ~==~ ~!=~            | Relational operators *=* and *≠*                  |               |
+|          8 | ~&~                  | Bitwise AND                                       |               |
+|          9 | ~^~                  | Bitwise XOR                                       |               |
+|         10 | ~|~                  | Bitwise OR                                        |               |
+|         11 | ~&&~                 | Logical AND                                       |               |
+|         12 | ~||~                 | Logical OR                                        |               |
+|------------+----------------------+---------------------------------------------------+---------------|
+|         13 | ~?:~                 | Ternary conditional                               | right-to-left |
+|         14 | ~=~                  | Assignment                                        |               |
+|            | ~+=~ ~-=~            | Assignment by sum and difference                  |               |
+|            | ~*=~ ~/=~ ~%=~       | Assignment by product, quotient, and remainder    |               |
+|            | ~>>=~ ~<<=~          | Assignment by bitwise right shift and left shift  |               |
+|            | ~&=~ ~^=~ ~|=~       | Assignment by bitwise AND, XOR, and OR            |               |
+|------------+----------------------+---------------------------------------------------+---------------|
+|         15 | ~,~                  | Comma                                             | left-to-right |
 
 ** Type Operators
 
