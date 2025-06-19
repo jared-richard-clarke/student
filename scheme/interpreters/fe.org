@@ -139,14 +139,14 @@ are stored directly in their ~symbol~ objects.
 ** C API
 
 To use Fe in a project, initialize a ~fe_Context~ by calling ~fe_open~, whose arguments are
-both a pre-allocated block of memory and its size. Call ~fe_Close~ at the end of a Fe program
+both a pre-allocated block of memory and its size. Call ~fe_close~ at the end of a Fe program
 to ensure all ~ptr~ objects are properly garbage collected.
 
 #+begin_src c
   int size   = 1024 * 1024;
   void* data = malloc(size);
 
-  feContext* ctx = fe_open(data, size);
+  fe_Context* ctx = fe_open(data, size);
 
   /* ... */
 
