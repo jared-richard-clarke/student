@@ -198,7 +198,7 @@ A Fe function can be called by creating a list and evaluating it.
   /* "result: 7" */
   printf("result: %g\n", fe_tonumber(ctx, result));
 
-  /* Discard all objects pushed to GC stack. */
+  /* Discard all objects pushed on to GC stack. */
   fe_restoregc(ctx, gc);
 #+end_src
 
