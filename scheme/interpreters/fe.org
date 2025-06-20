@@ -73,15 +73,17 @@ are stored directly in their ~symbol~ objects.
 
 - ~(not value)~ -> ~t~ or ~nil~ :: Returns true if ~value~ is ~nil~, otherwise returns ~nil~.
 
-- ~(is value value)~ -> ~t~ or ~nil~ :: Checks strings and numbers for equivalency. Identity checks objects.
+- ~(is value value)~ -> ~true~ or ~nil~ :: Checks strings and numbers for equivalency. Identity checks objects.
 
-- ~(atom value)~ -> ~t~ or ~nil~ :: Returns true if value is not a pair. Otherwise returns ~nil~.
+- ~(atom value)~ -> ~true~ or ~nil~ :: Returns true if value is not a pair. Otherwise returns ~nil~.
 
 - ~(print value+)~ :: Prints one or more values to the standard output.
 
-- ~(< value value)~ -> ~t~ or ~nil~ :: Returns true if first ~value~ is less than second ~value~.
+- ~(< number number)~ -> ~true~ or ~nil~ :: Returns true if first ~number~ is less than second ~number~.
+  Otherwise returns ~nil~.
 
-- ~(<= value value)~ -> ~t~ or ~nil~ :: Returns true if first ~value~ is less than or equal to second ~value~.
+- ~(<= number number)~ -> ~true~ or ~nil~ :: Returns true if first ~number~ is less than or equal to second ~number~.
+  Otherwise returns ~nil~.
 
 - ~(+ number+)~ -> ~number~ :: Adds one or more numbers.
 
