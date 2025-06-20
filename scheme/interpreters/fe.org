@@ -1038,20 +1038,36 @@ A Fe function can be called by creating a list and evaluating it.
     res = &nil;
 
     switch (type(fn)) {
+      /* Primitive Fe functions and forms. */
       case FE_TPRIM:
         switch (prim(fn)) {
+          /*
+            (let symbol value)
+  
+            Binds a value to a symbol in the current lexical environment.
+          */
           case P_LET:
             va = checktype(ctx, fe_nextarg(ctx, &arg), FE_TSYMBOL);
             if (newenv) {
               *newenv = fe_cons(ctx, fe_cons(ctx, va, evalarg()), env);
             }
             break;
-
+          /*
+            (= symbol value)
+  
+            Either binds a symbol to a new value or creates a global variable.
+          */
           case P_SET:
             va = checktype(ctx, fe_nextarg(ctx, &arg), FE_TSYMBOL);
             cdr(getbound(va, env)) = evalarg();
             break;
-
+          /*
+            (if condition then else+)
+  
+            If condition evaluates true, form evaluates the then expression,
+            otherwise evaluates else, which is either an alternative expression
+            or a chain of one or more condition-then expressions.
+          */
           case P_IF:
             while (!isnil(arg)) {
               va = evalarg();
@@ -1063,7 +1079,22 @@ A Fe function can be called by creating a list and evaluating it.
               arg = cdr(arg);
             }
             break;
+          /*
+            (fn symbol* expression+)
 
+            Defines a function abstraction, a Fe program that can be called within
+            another Fe program. Arguments are bound to their corresponding symbols.
+            Free variables, variables defined outside a function’s parameters, are
+            lexically scoped.
+  
+            (mac symbol* expression+)
+
+            Defines a macro, a Fe program that transforms the syntactic structure
+            of a Fe expression. Macros in Fe work similarly to functions, but
+            receive their arguments unevaluated, returning code that is evaluated
+            in the scope of the caller. Fe macros are called only once. Afterward,
+            only their generated code is run.
+          */
           case P_FN: case P_MAC:
             va = fe_cons(ctx, env, arg);
             fe_nextarg(ctx, &arg);
@@ -1071,7 +1102,11 @@ A Fe function can be called by creating a list and evaluating it.
             settype(res, prim(fn) == P_FN ? FE_TFUNC : FE_TMACRO);
             cdr(res) = va;
             break;
+          /*
+            (while condition expression+)
 
+            While condition ≠ nil, evaluates a sequence of one or more expressions.
+          */
           case P_WHILE:
             va = fe_nextarg(ctx, &arg);
             n = fe_savegc(ctx);
@@ -1080,63 +1115,124 @@ A Fe function can be called by creating a list and evaluating it.
               fe_restoregc(ctx, n);
             }
             break;
+          /*
+            (quote expression)
 
+            Returns expression unevaluated — essentially data.
+          */
           case P_QUOTE:
             res = fe_nextarg(ctx, &arg);
             break;
+          /*
+            (and expression*)
 
+            Evaluates a sequence of zero or more expressions. Short-circuits on nil,
+            returning nil. If all expressions evaluate not nil, form returns the last
+            evaluated expression.
+          */
           case P_AND:
             while (!isnil(arg) && !isnil(res = evalarg()));
             break;
+          /*
+            (or expression*)
 
+            Evaluates a sequence of zero or more expressions. Short-circuits on not nil,
+            returning the value of the current expression. If all expression evaluate nil,
+            form returns nil.
+          */
           case P_OR:
             while (!isnil(arg) && isnil(res = evalarg()));
             break;
+          /*
+            (do expression+)
 
+            Evaluates one or more expressions, returning the last as its value.
+          */
           case P_DO:
             res = dolist(ctx, arg, env);
             break;
+          /*
+            (cons car cdr) -> (car cdr)
 
+            Combines two values to create a pair.
+          */
           case P_CONS:
             va = evalarg();
             res = fe_cons(ctx, va, evalarg());
             break;
+          /*
+            (car (car cdr)) -> car | nil
 
+            Returns the car of a pair, or nil if the pair is nil.
+          */
           case P_CAR:
             res = fe_car(ctx, evalarg());
             break;
+          /*
+            (cdr (car cdr)) -> cdr | nil
 
+            Returns the cdr of a pair, or nil if the pair is nil.
+          */
           case P_CDR:
             res = fe_cdr(ctx, evalarg());
             break;
+          /*
+            (setcar (car cdr) value)
 
+            Sets the car of a pair to value.
+          */
           case P_SETCAR:
             va = checktype(ctx, evalarg(), FE_TPAIR);
             car(va) = evalarg();
             break;
+          /*
+            (setcdr (car cdr) value)
 
+            Sets the cdr of a pair to value.
+          */
           case P_SETCDR:
             va = checktype(ctx, evalarg(), FE_TPAIR);
             cdr(va) = evalarg();
             break;
+          /*
+            (list value*) -> (value*)
 
+            Creates a list of zero or more values. The bottom value
+            of a proper list is nil.
+          */
           case P_LIST:
             res = evallist(ctx, arg, env);
             break;
+          /*
+            (not value) -> true | nil
 
+            Returns true if value is nil, otherwise returns nil.
+          */
           case P_NOT:
             res = fe_bool(ctx, isnil(evalarg()));
             break;
+          /*
+            (is value value) -> true | nil
 
+            Checks strings and numbers for equivalency. Identity checks objects.
+          */
           case P_IS:
             va = evalarg();
             res = fe_bool(ctx, equal(va, evalarg()));
             break;
+          /*
+            (atom value) -> true | nil
 
+            Returns true if value is not a pair. Otherwise returns nil.
+          */
           case P_ATOM:
             res = fe_bool(ctx, fe_type(ctx, evalarg()) != FE_TPAIR);
             break;
+          /*
+            (print value+)
 
+            Prints one or more values to the standard output.
+          */
           case P_PRINT:
             while (!isnil(arg)) {
               fe_writefp(ctx, evalarg(), stdout);
@@ -1144,20 +1240,51 @@ A Fe function can be called by creating a list and evaluating it.
             }
             printf("\n");
             break;
+          /*
+            (< number number) -> true | nil
 
+            Returns true if the first number is less than the second number.
+            Returns nil otherwise.
+          */
           case P_LT: numcmpop(<); break;
+          /*
+            (<= number number) -> true | nil
+
+            Returns true if the first number is less than or equal to the second number.
+            Returns nil otherwise.
+          */
           case P_LTE: numcmpop(<=); break;
+          /*
+            (+ number+) -> number
+
+            Adds one or more numbers.
+          */
           case P_ADD: arithop(+); break;
+          /*
+            (- number+) -> number
+
+            Subtracts one or more numbers, left to right.
+          */
           case P_SUB: arithop(-); break;
+          /*
+            (* number+) -> number
+
+            Multiplies one or more numbers.
+          */
           case P_MUL: arithop(*); break;
+          /*
+            (/ number+) -> number
+
+            Divides one or more numbers, left to right.
+          */
           case P_DIV: arithop(/); break;
         }
         break;
-
+      /* Evaluate embedded C functions. */
       case FE_TCFUNC:
         res = cfunc(fn)(ctx, evallist(ctx, arg, env));
         break;
-
+      /* Evaluate Fe functions. */
       case FE_TFUNC:
         arg = evallist(ctx, arg, env);
         /* Environment parameters. */
@@ -1166,7 +1293,7 @@ A Fe function can be called by creating a list and evaluating it.
         vb = cdr(va);
         res = dolist(ctx, cdr(vb), argstoenv(ctx, car(vb), arg, car(va)));
         break;
-
+      /* Evaluate Fe macros. */
       case FE_TMACRO:
         /* Environment parameters. */
         va = cdr(fn);
@@ -1177,14 +1304,18 @@ A Fe function can be called by creating a list and evaluating it.
         fe_restoregc(ctx, gc);
         ctx->calllist = cdr(&cl);
         return eval(ctx, obj, env, NULL);
-
+      /* Throw error on undefined operation. */
       default:
         fe_error(ctx, "tried to call non-callable value");
     }
 
+    /* Pop intermediate values off of stack. */
     fe_restoregc(ctx, gc);
+    /* Push new value to stack. */
     fe_pushgc(ctx, res);
+    /* Move to next object in call list. */
     ctx->calllist = cdr(&cl);
+    /* Return value. */
     return res;
   }
 
