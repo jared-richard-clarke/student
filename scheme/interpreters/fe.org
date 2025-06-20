@@ -1043,7 +1043,6 @@ A Fe function can be called by creating a list and evaluating it.
         switch (prim(fn)) {
           /*
             (let symbol value)
-  
             Binds a value to a symbol in the current lexical environment.
           */
           case P_LET:
@@ -1054,7 +1053,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (= symbol value)
-  
             Either binds a symbol to a new value or creates a global variable.
           */
           case P_SET:
@@ -1104,7 +1102,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (while condition expression+)
-
             While condition ≠ nil, evaluates a sequence of one or more expressions.
           */
           case P_WHILE:
@@ -1117,7 +1114,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (quote expression)
-
             Returns expression unevaluated — essentially data.
           */
           case P_QUOTE:
@@ -1145,7 +1141,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (do expression+)
-
             Evaluates one or more expressions, returning the last as its value.
           */
           case P_DO:
@@ -1153,7 +1148,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (cons car cdr) -> (car cdr)
-
             Combines two values to create a pair.
           */
           case P_CONS:
@@ -1162,7 +1156,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (car (car cdr)) -> car | nil
-
             Returns the car of a pair, or nil if the pair is nil.
           */
           case P_CAR:
@@ -1170,7 +1163,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (cdr (car cdr)) -> cdr | nil
-
             Returns the cdr of a pair, or nil if the pair is nil.
           */
           case P_CDR:
@@ -1178,7 +1170,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (setcar (car cdr) value)
-
             Sets the car of a pair to value.
           */
           case P_SETCAR:
@@ -1187,7 +1178,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (setcdr (car cdr) value)
-
             Sets the cdr of a pair to value.
           */
           case P_SETCDR:
@@ -1205,7 +1195,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (not value) -> true | nil
-
             Returns true if value is nil, otherwise returns nil.
           */
           case P_NOT:
@@ -1213,7 +1202,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (is value value) -> true | nil
-
             Checks strings and numbers for equivalency. Identity checks objects.
           */
           case P_IS:
@@ -1222,7 +1210,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (atom value) -> true | nil
-
             Returns true if value is not a pair. Otherwise returns nil.
           */
           case P_ATOM:
@@ -1230,7 +1217,6 @@ A Fe function can be called by creating a list and evaluating it.
             break;
           /*
             (print value+)
-
             Prints one or more values to the standard output.
           */
           case P_PRINT:
@@ -1256,13 +1242,11 @@ A Fe function can be called by creating a list and evaluating it.
           case P_LTE: numcmpop(<=); break;
           /*
             (+ number+) -> number
-
             Adds one or more numbers.
           */
           case P_ADD: arithop(+); break;
           /*
             (- number+) -> number
-
             Subtracts one or more numbers, left to right.
           */
           case P_SUB: arithop(-); break;
@@ -1274,12 +1258,12 @@ A Fe function can be called by creating a list and evaluating it.
           case P_MUL: arithop(*); break;
           /*
             (/ number+) -> number
-
             Divides one or more numbers, left to right.
           */
           case P_DIV: arithop(/); break;
         }
         break;
+  
       /* Evaluate embedded C functions. */
       case FE_TCFUNC:
         res = cfunc(fn)(ctx, evallist(ctx, arg, env));
@@ -1309,13 +1293,9 @@ A Fe function can be called by creating a list and evaluating it.
         fe_error(ctx, "tried to call non-callable value");
     }
 
-    /* Pop intermediate values off of stack. */
     fe_restoregc(ctx, gc);
-    /* Push new value to stack. */
     fe_pushgc(ctx, res);
-    /* Move to next object in call list. */
     ctx->calllist = cdr(&cl);
-    /* Return value. */
     return res;
   }
 
