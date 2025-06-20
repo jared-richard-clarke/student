@@ -875,7 +875,7 @@ A Fe function can be called by creating a list and evaluating it.
       case '\0':
         return NULL;
   
-      /* line comment. */
+      /* line comment */
       case ';':
         while (chr && chr != '\n') { chr = fn(ctx, udata); }
         return read_(ctx, fn, udata);
