@@ -1026,7 +1026,9 @@ A Fe function can be called by creating a list and evaluating it.
     fe_Object cl, *va, *vb;
     int n, gc;
 
+    /* Find symbol in environment and return associated value. */
     if (type(obj) == FE_TSYMBOL) { return cdr(getbound(obj, env)); }
+    /* Return literals. */
     if (type(obj) != FE_TPAIR) { return obj; }
 
     car(&cl) = obj, cdr(&cl) = ctx->calllist;
@@ -1042,7 +1044,7 @@ A Fe function can be called by creating a list and evaluating it.
       case FE_TPRIM:
         switch (prim(fn)) {
           /*
-            (let symbol value)
+            === (let symbol value) ===
             Binds a value to a symbol in the current lexical environment.
           */
           case P_LET:
@@ -1052,7 +1054,7 @@ A Fe function can be called by creating a list and evaluating it.
             }
             break;
           /*
-            (= symbol value)
+            === (= symbol value) ===
             Either binds a symbol to a new value or creates a global variable.
           */
           case P_SET:
@@ -1060,8 +1062,7 @@ A Fe function can be called by creating a list and evaluating it.
             cdr(getbound(va, env)) = evalarg();
             break;
           /*
-            (if condition then else+)
-  
+            === (if condition then else+) ===
             If condition evaluates true, form evaluates the then expression,
             otherwise evaluates else, which is either an alternative expression
             or a chain of one or more condition-then expressions.
@@ -1078,15 +1079,13 @@ A Fe function can be called by creating a list and evaluating it.
             }
             break;
           /*
-            (fn symbol* expression+)
-
+            === (fn symbol* expression+) ===
             Defines a function abstraction, a Fe program that can be called within
             another Fe program. Arguments are bound to their corresponding symbols.
             Free variables, variables defined outside a function’s parameters, are
             lexically scoped.
   
-            (mac symbol* expression+)
-
+            === (mac symbol* expression+) ===
             Defines a macro, a Fe program that transforms the syntactic structure
             of a Fe expression. Macros in Fe work similarly to functions, but
             receive their arguments unevaluated, returning code that is evaluated
@@ -1101,7 +1100,7 @@ A Fe function can be called by creating a list and evaluating it.
             cdr(res) = va;
             break;
           /*
-            (while condition expression+)
+            === (while condition expression+) ===
             While condition ≠ nil, evaluates a sequence of one or more expressions.
           */
           case P_WHILE:
@@ -1113,15 +1112,14 @@ A Fe function can be called by creating a list and evaluating it.
             }
             break;
           /*
-            (quote expression)
+            === (quote expression) ===
             Returns expression unevaluated — essentially data.
           */
           case P_QUOTE:
             res = fe_nextarg(ctx, &arg);
             break;
           /*
-            (and expression*)
-
+            === (and expression*) ===
             Evaluates a sequence of zero or more expressions. Short-circuits on nil,
             returning nil. If all expressions evaluate not nil, form returns the last
             evaluated expression.
@@ -1130,8 +1128,7 @@ A Fe function can be called by creating a list and evaluating it.
             while (!isnil(arg) && !isnil(res = evalarg()));
             break;
           /*
-            (or expression*)
-
+            === (or expression*) ===
             Evaluates a sequence of zero or more expressions. Short-circuits on not nil,
             returning the value of the current expression. If all expression evaluate nil,
             form returns nil.
@@ -1140,14 +1137,14 @@ A Fe function can be called by creating a list and evaluating it.
             while (!isnil(arg) && isnil(res = evalarg()));
             break;
           /*
-            (do expression+)
+            === (do expression+) ===
             Evaluates one or more expressions, returning the last as its value.
           */
           case P_DO:
             res = dolist(ctx, arg, env);
             break;
           /*
-            (cons car cdr) -> (car cdr)
+            === (cons car cdr) -> (car cdr) ===
             Combines two values to create a pair.
           */
           case P_CONS:
@@ -1155,21 +1152,21 @@ A Fe function can be called by creating a list and evaluating it.
             res = fe_cons(ctx, va, evalarg());
             break;
           /*
-            (car (car cdr)) -> car | nil
+            === (car (car cdr)) -> car | nil ===
             Returns the car of a pair, or nil if the pair is nil.
           */
           case P_CAR:
             res = fe_car(ctx, evalarg());
             break;
           /*
-            (cdr (car cdr)) -> cdr | nil
+            === (cdr (car cdr)) -> cdr | nil ===
             Returns the cdr of a pair, or nil if the pair is nil.
           */
           case P_CDR:
             res = fe_cdr(ctx, evalarg());
             break;
           /*
-            (setcar (car cdr) value)
+            === (setcar (car cdr) value) ===
             Sets the car of a pair to value.
           */
           case P_SETCAR:
@@ -1177,7 +1174,7 @@ A Fe function can be called by creating a list and evaluating it.
             car(va) = evalarg();
             break;
           /*
-            (setcdr (car cdr) value)
+            === (setcdr (car cdr) value) ===
             Sets the cdr of a pair to value.
           */
           case P_SETCDR:
@@ -1185,8 +1182,7 @@ A Fe function can be called by creating a list and evaluating it.
             cdr(va) = evalarg();
             break;
           /*
-            (list value*) -> (value*)
-
+            === (list value*) -> (value*) ===
             Creates a list of zero or more values. The bottom value
             of a proper list is nil.
           */
@@ -1194,14 +1190,14 @@ A Fe function can be called by creating a list and evaluating it.
             res = evallist(ctx, arg, env);
             break;
           /*
-            (not value) -> true | nil
+            === (not value) -> true | nil ===
             Returns true if value is nil, otherwise returns nil.
           */
           case P_NOT:
             res = fe_bool(ctx, isnil(evalarg()));
             break;
           /*
-            (is value value) -> true | nil
+            === (is value value) -> true | nil ===
             Checks strings and numbers for equivalency. Identity checks objects.
           */
           case P_IS:
@@ -1209,14 +1205,14 @@ A Fe function can be called by creating a list and evaluating it.
             res = fe_bool(ctx, equal(va, evalarg()));
             break;
           /*
-            (atom value) -> true | nil
+            === (atom value) -> true | nil ===
             Returns true if value is not a pair. Otherwise returns nil.
           */
           case P_ATOM:
             res = fe_bool(ctx, fe_type(ctx, evalarg()) != FE_TPAIR);
             break;
           /*
-            (print value+)
+            === (print value+) ===
             Prints one or more values to the standard output.
           */
           case P_PRINT:
@@ -1227,37 +1223,34 @@ A Fe function can be called by creating a list and evaluating it.
             printf("\n");
             break;
           /*
-            (< number number) -> true | nil
-
+            === (< number number) -> true | nil ===
             Returns true if the first number is less than the second number.
             Returns nil otherwise.
           */
           case P_LT: numcmpop(<); break;
           /*
-            (<= number number) -> true | nil
-
+            === (<= number number) -> true | nil ===
             Returns true if the first number is less than or equal to the second number.
             Returns nil otherwise.
           */
           case P_LTE: numcmpop(<=); break;
           /*
-            (+ number+) -> number
+            === (+ number+) -> number ===
             Adds one or more numbers.
           */
           case P_ADD: arithop(+); break;
           /*
-            (- number+) -> number
+            === (- number+) -> number ===
             Subtracts one or more numbers, left to right.
           */
           case P_SUB: arithop(-); break;
           /*
-            (* number+) -> number
-
+            === (* number+) -> number ===
             Multiplies one or more numbers.
           */
           case P_MUL: arithop(*); break;
           /*
-            (/ number+) -> number
+            === (/ number+) -> number ===
             Divides one or more numbers, left to right.
           */
           case P_DIV: arithop(/); break;
