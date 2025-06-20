@@ -71,7 +71,7 @@ are stored directly in their ~symbol~ objects.
 - ~(list value*)~ -> ~(value*)~ :: Creates a list of zero or more values. The bottom value
   of a proper list is ~nil~.
 
-- ~(not value)~ -> ~t~ or ~nil~ :: Returns true if ~value~ is ~nil~, otherwise returns ~nil~.
+- ~(not value)~ -> ~true~ or ~nil~ :: Returns true if ~value~ is ~nil~, otherwise returns ~nil~.
 
 - ~(is value value)~ -> ~true~ or ~nil~ :: Checks strings and numbers for equivalency. Identity checks objects.
 
