@@ -1026,6 +1026,16 @@ A Fe function can be called by creating a list and evaluating it.
     }
 
   static fe_Object* eval(fe_Context *ctx, fe_Object *obj, fe_Object *env, fe_Object **newenv) {
+    /*
+      fn  = operation
+      arg = arguments
+      res = result
+      cl  = call list
+      va  = variable a
+      vb  = variable b
+      n   =
+      gc  = saved index into GC stack.
+    */
     fe_Object *fn, *arg, *res;
     fe_Object cl, *va, *vb;
     int n, gc;
