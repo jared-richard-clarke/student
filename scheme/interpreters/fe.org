@@ -195,6 +195,7 @@ A Fe function can be called by creating a list and evaluating it.
   objects[1] = fe_number(ctx, 1);
   objects[2] = fe_number(ctx, 6);
 
+  /* Convert C array to cons list prior to evaluation. */
   fe_Object* result = fe_eval(ctx, fe_list(ctx, objects, 3));
 
   /* "result: 7" */
