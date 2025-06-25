@@ -517,6 +517,7 @@ A Fe function can be called by creating a list and evaluating it.
     if (a == b) { return 1; }
     if (type(a) != type(b)) { return 0; }
     if (type(a) == FE_TNUMBER) { return number(a) == number(b); }
+    /* Because Fe strings are interned, they need only be compared by address. */
     if (type(a) == FE_TSTRING) {
       for (; !isnil(a); a = cdr(a), b = cdr(b)) {
         if (car(a) != car(b)) { return 0; }
@@ -526,6 +527,7 @@ A Fe function can be called by creating a list and evaluating it.
     return 0;
   }
 
+  /* Prior to internment, strings must be compared char by char. */
   static int streq(fe_Object *obj, const char *str) {
     while (!isnil(obj)) {
       int i;
