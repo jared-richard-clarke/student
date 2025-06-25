@@ -754,15 +754,23 @@ A Fe function can be called by creating a list and evaluating it.
     char buf[32];
 
     switch (type(obj)) {
+      /* Writes Fe's bottom value, nil. */
       case FE_TNIL:
         writestr(ctx, fn, udata, "nil");
         break;
-
+      /*
+         Writes a Fe number (floating point) in its most compact representation
+         — either fixed point or scientific notation — with a precision of
+         seven significant digits.
+      */
       case FE_TNUMBER:
         sprintf(buf, "%.7g", number(obj));
         writestr(ctx, fn, udata, buf);
         break;
-
+      /*
+        Writes a Fe list. Start at an open parenthesis and both loops and recurses
+        through its contents. Terminates with a closing parenthesis.
+      */
       case FE_TPAIR:
         fn(ctx, udata, '(');
         for (;;) {
@@ -771,17 +779,18 @@ A Fe function can be called by creating a list and evaluating it.
           if (type(obj) != FE_TPAIR) { break; }
           fn(ctx, udata, ' ');
         }
+        /* Writes a dotted list if the final element is NOT nil. */
         if (!isnil(obj)) {
           writestr(ctx, fn, udata, " . ");
           fe_write(ctx, obj, fn, udata, 1);
         }
         fn(ctx, udata, ')');
         break;
-
+      /* Writes a Fe symbol. */
       case FE_TSYMBOL:
         fe_write(ctx, car(cdr(obj)), fn, udata, 0);
         break;
-
+      /* Writes a Fe string. If "qt" is set to true, write a string wrapped in quotes. */
       case FE_TSTRING:
         if (qt) { fn(ctx, udata, '"'); }
         while (!isnil(obj)) {
@@ -794,7 +803,7 @@ A Fe function can be called by creating a list and evaluating it.
         }
         if (qt) { fn(ctx, udata, '"'); }
         break;
-
+      /* For all other Fe objects, writes both type name and object pointer. */
       default:
         sprintf(buf, "[%s %p]", typenames[type(obj)], (void*) obj);
         writestr(ctx, fn, udata, buf);
@@ -802,11 +811,16 @@ A Fe function can be called by creating a list and evaluating it.
     }
   }
 
+  /*
+     Function wraps "fputc", which writes a character (unsigned char)
+     to a stream and advances the position indicator.
+  */
   static void writefp(fe_Context *ctx, void *udata, char chr) {
     unused(ctx);
     fputc(chr, udata);
   }
 
+  /* Writes a Fe expression to a file object using the function "writefp". */
   void fe_writefp(fe_Context *ctx, fe_Object *obj, FILE *fp) {
     fe_write(ctx, obj, writefp, fp, 0);
   }
@@ -828,10 +842,12 @@ A Fe function can be called by creating a list and evaluating it.
     return size - x.n - 1;
   }
 
+  /* Extract a number from a Fe number object. */
   fe_Number fe_tonumber(fe_Context *ctx, fe_Object *obj) {
     return number(checktype(ctx, obj, FE_TNUMBER));
   }
 
+  /* Extract a pointer from a Fe ptr object. */
   void* fe_toptr(fe_Context *ctx, fe_Object *obj) {
     return cdr(checktype(ctx, obj, FE_TPTR));
   }
