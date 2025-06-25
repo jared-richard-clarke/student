@@ -660,7 +660,10 @@ A Fe function can be called by creating a list and evaluating it.
         return car(obj);
       }
     }
-    /* Creates new object, pushes to "symlist", and returns. */
+    /*
+      Creates new object. Pushes object pointer to "symlist".
+      Returns object pointer to caller.
+    */
     obj = object(ctx);
     settype(obj, FE_TSYMBOL);
     cdr(obj) = fe_cons(ctx, fe_string(ctx, name), &nil);
