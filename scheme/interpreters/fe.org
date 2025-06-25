@@ -1063,7 +1063,7 @@ A Fe function can be called by creating a list and evaluating it.
 
     /* Find symbol in environment and return associated value. */
     if (type(obj) == FE_TSYMBOL) { return cdr(getbound(obj, env)); }
-    /* Return literals. */
+     /* Return literals, which evaluate to themselves. */
     if (type(obj) != FE_TPAIR) { return obj; }
 
     car(&cl) = obj, cdr(&cl) = ctx->calllist;
