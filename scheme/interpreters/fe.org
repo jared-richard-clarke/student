@@ -768,7 +768,7 @@ A Fe function can be called by creating a list and evaluating it.
         writestr(ctx, fn, udata, buf);
         break;
       /*
-        Writes a Fe list. Start at an open parenthesis and both loops and recurses
+        Writes a Fe list. Starts at an open parenthesis and both loops and recurses
         through its contents. Terminates with a closing parenthesis.
       */
       case FE_TPAIR:
