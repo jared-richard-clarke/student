@@ -125,6 +125,6 @@ Class-based object orientation in Lua.
   -- === Meta Methods ===
 
   function Point:__tostring()
-      return "(" .. self.x .. ", " .. self.y ")"
+      return "(" .. self.x .. ", " .. self.y .. ")"
   end
 #+end_src
