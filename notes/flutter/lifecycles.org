@@ -1,0 +1,408 @@
+* Lifecycles in Flutter
+
+** Sources
+
+| source                        | author       |
+|-------------------------------+--------------|
+| *Lifecycle of a Widget*       | Craig Labenz |
+| *Lifecycle of a RenderObject* | Craig Labenz |
+| *How Flutter Works*           | Craig Labenz |
+
+** The Three Trees
+
+- Widget :: A discrete block of an app's UI, containing
+  - A static configuration (Stateless and Stateful)
+  - Optionally persistent state (~State~ class)
+  - A *render* method (~RenderObject~)
+
+- Widget Tree :: Configuration.
+
+- Element Tree :: Lifecycle.
+
+- RenderObject :: Layout.
+
+#+begin_example
+  Container(
+    color: Colors.blue,
+    padding: const EdgeInsets.all(10),
+    child: Text("Hello, World!")
+  );
+
+  Widget Tree        Element Tree                 RenderObject Tree
+
+  +------------+     +----------------------+
+  | Container  | <-> | Stateless Element    |
+  +------------+     +----------------------+
+        |                       |
+        V                       V
+  +------------+     +----------------------+     +------------------+
+  | ColoredBox | <-> | RenderObject Element | <-> | RenderColoredBox |
+  +------------+     +----------------------+     +------------------+
+        |                       |                          |
+        V                       V                          V
+  +------------+     +----------------------+     +------------------+
+  | Padding    | <-> | RenderObject Element | <-> | RenderPadding    |
+  +------------+     +----------------------+     +------------------+
+        |                       |                          |
+        V                       V                          |
+  +------------+     +----------------------+              |
+  | Text       | <-> | Stateless Element    |              |
+  +------------+     +----------------------+              |
+        |                       |                          |
+        V                       V                          V
+  +------------+     +----------------------+     +------------------+
+  | RichText   | <-> | RenderObject Element | <-> | RenderParagraph  |
+  +------------+     +----------------------+     +------------------+
+#+end_example
+
+** Widgets
+
+#+begin_src dart
+  // === Stateless and Stateful Widgets: Combinatorial Concepts ===
+  //
+  // | Stateless     | Stateful     |
+  // |---------------+--------------|
+  // | Text          | Checkbox     |
+  // | Dialog        | EditableText |
+  // | Drawer        | Form         |
+  // | FlutterLogo   | Navigator    |
+  // | Icon          | Scaffold     |
+  // | ListTile      | TextButton   |
+  // | NavigationBar | TabBar       |
+  // | SafeArea      | TextField    |
+  // | Scrollbar     | AppBar       |
+  // | Spacer        | Scaffold     |
+  // | Theme         | WidgetsApp   |
+
+  abstract class StatelessWidget extends Widget {
+    // Widget calls StatelessElement constructor with itself as its argument.
+    @override
+    StatelessElement createElement() => StatelessElement(this);
+
+    Widget build(BuildContext context);
+  }
+
+  abstract class StatefulWidget extends Widget {
+    @override
+    StatefulElement createElement() => StatefulElement(this);
+
+    State createState();
+  }
+  abstract class RenderObjectWidget extends Widget {
+    RenderObject createRenderObject(BuildContext context);
+    void updateRenderObject (
+      BuildContext context,
+      RenderObject renderObject
+    );
+  }
+
+  abstract class StatelessElement extends ComponentElement {
+    StatelessElement(StatelessWidget super.widget);
+
+    // A StatelessElement calls its widget's build method with itself
+    // as the widget's BuildContext.
+    @override
+    Widget build() => (widget as StatelessWidget).build(this);
+  }
+
+  abstract class StatefulElement extends ComponentElement {
+    // It is the StatefuleElement that manages the lifecycle of State objects
+    // — objects that may persist and mutate through multiple widget configurations.
+    StatefulElement(StatefulWidget super.widget) {
+      // StatefulElements create their initial state through their configuring widget's
+      // createState() method.
+      state = widget.createState();
+      // State objects hold a reference to their managing element.
+      state.element = this;
+    }
+
+    @override
+    Widget build() => state.build(this);
+  }
+
+  // === RenderObject Widgets: Visual Primitives ===
+  //
+  // | RenderObject |
+  // |--------------|
+  // | Align        |
+  // | AspectRation |
+  // | ColoredBox   |
+  // | CustomPaint  |
+  // | FittedBox    |
+  // | Opacity      |
+  // | Padding      |
+  // | SizedBox     |
+  // | Transform    |
+  // | Flex         |
+  // | Flow         |
+  // | ListBody     |
+  // | RichText     |
+  // | Stack        |
+  // | Viewport     |
+  // | Wrap         |
+
+  abstract class RenderObjectElement extends Element {
+    RenderObjectElement(RenderObjectWidget super.widget);
+
+    void performUpdate();
+    List<Element> updateChildren(...) { ... }
+  }
+#+end_src
+
+** Render Phases
+
+#+begin_src dart
+  // scheduler/binding.dart
+
+  // Side Note: The "on" clause defines the type that "super" calls are resolved
+  // against. Forces any class that uses a mixin to also be a subclass of the
+  // type in the "on" clause.
+
+  // Manages the rendering phases.
+  mixin SchedulerBinding on BindingBase {
+    void handleAppLifecycleStateChanged(AppLifecycleState state) {}
+
+    int schedulerFrameCallback(FrameCallback callback, { ... }) {}
+
+    void addPersistentFrameCallback(FrameCallback callback) {}
+
+    void addPostFrameCallback(FrameCallback callback) {}
+
+    void ensureVisualUpdate() {}
+
+    void scheduleFrame() {}
+
+    void handleDrawFrame() {}
+  }
+
+  // Render Phases.
+  enum SchedulerPhase {
+    // Where Flutter waits between frames.
+    //
+    // The only phase where Futures and Streams are allowed to resolve.
+    // Asynchronous code is NOT allowed to interrupt synchronous code.
+    idle,
+    // Callbacks that spring in and out of existence within a Flutter application.
+    transientCallbacks,
+    // After all synchronous tasks are resolved, Flutter exhausts the micro task queue
+    // before resolving any futures.
+    midFrameMicrotasks,
+    // Callbacks that last for the duration of a Flutter application.
+    persistentCallbacks,
+    // Schedules code to run at the end of the current frame.
+    postFrameCallbacks
+  }
+#+end_src
+
+** Lifecycles
+
+*** Element
+
+#+begin_src dart
+  enum _ElementLifeCycle {
+    // Element creation.
+    initial,
+    // Elements in use.
+    active,
+    // Elements possibly at the end of their lifecycle.
+    inactive,
+    // Inactive Elements that are ready for disposal.
+    defunct,
+  }
+
+  abstract class StatefulElement {
+    Element(Widget widget) {
+      state = widget.createState();
+      state.element = this;
+    }
+  }
+
+  _ElementLifecycle _lifecycleState = _ElemeontLifecycle.initial;
+
+  void mount(Element? parent) {
+    state.initState();
+    _lifecycleState = ElementLifecycle.active;
+  }
+
+  void unmount() {
+    state.dispose();
+    state.element = null;
+    state = null;
+    _lifecycleState = _ElementLifecycle.defunct;
+  }
+#+end_src
+
+*** State
+
+#+begin_example
+
+  - Handshake between the framework and underlying engine.
+  ui.PlatformDispatcher.instance.scheduleFrame()
+
+  WidgetsBinding.instance.drawFrame()
+
+  - buildOwner: manager class for the Widgets framework.
+  - buildScope: Rebuilds all Elements beneath the given Element.
+  WidgetsBinding.buildOwner.buildScope(Element element)
+
+  - Code that either creates or updates Elements ...
+
+  State.setState(closure)
+        |
+        +------------+
+                     V
+                    Rendering                  + Tracks InheritedWidgets
+                   +-----------------------+   |
+   Initialization  | didChangeDependencies | <-+
+  +-----------+    |-----------------------|    +------------+    +---------+
+  | initState | -> | didUpdateWidget       | -> | deactivate | -> | dispose |
+  +-----------+    |-----------------------| -+ +------------+    +---------+
+         +-------> | build                 |  |       |
+         |         +-----------------------+ <+       |
+    +----------+                                      |
+    | activate | <------------------------------------+
+    +----------+
+
+  void buildScope(Element context) {
+    for (Element element in _dirtyElements) {
+      element.rebuild();
+    }
+    for (Element element in _dirtyElements) {
+      element._inDirtyList = false;
+    }
+    _dirtyElements.clear();
+  }
+#+end_example
+
+*** RenderObject
+
+#+begin_example
+  +-----------------------------+      +----------------+
+  | widget.createRenderObject() | ---> | initialization |
+  +-----------------------------+      +----------------+
+
+  +-----------------------+            +------------------------------------+
+  | pipelineOwner.flush() | ---------> | flush ( layout, paint, semantics ) |
+  +-----------------------+        +-> +------------------------------------+
+                                   |
+                                   |
+  +-----------------------------+  +-- +-----------+
+  | Widget.updateRenderObject() | ---> | markNeeds |
+  +-----------------------------+ <-+  +-----------+
+                                    |
+  +--------------+                  +- +---------+
+  | user gesture | ------------------> | hitTest |
+  +--------------+                     +---------+
+
+  +-------------+                      +---------+
+  | end of life | -------------------> | dispose |
+  +-------------+                      +---------+
+#+end_example
+
+** RenderObject -> RenderBox
+
+- Semantics / Accessiblity
+
+- Layout: Computes sizes through constraint passing.
+
+- Painting: produces drawing commands to be rendered by Skia or Impeller.
+
+- Hit Testing
+
+Constraints go down, sizes go up, parent sets position.
+
+#+begin_src dart
+  abstract class RenderObject extends AbstractNode {
+    void layout(Constraints constraints);
+    void performLayout();
+    void markNeedsLayout();
+
+    // PaintingContext manages Canvases. A Canvas stores graphical operations
+    // that will be later rasterized by Skia or Impeller. In this step, parent
+    // objects dictate the positions of their children.
+    void paint(PaintingContext context, Offset offset);
+    void markNeedsPaint();
+
+    void describSemanticsConfiguration(SemanticsConfiguration config);
+    void markNeedsSemanticsUpdate();
+
+    void dispose() {
+      layer?.dispose();
+      textPainter?.dispose();
+      super.dispose();
+    }
+  }
+
+  // Implements a 2D cartesian coordinate system.
+  abstract class RenderBox extends RenderObject {
+    Size? size;
+    BoxConstraints constraints;
+
+    // Determines the size of a RenderBox given the constraints of its parent.
+    void layout() {
+      size = calculate(constraints);
+    }
+
+    // Defined on RenderBox because a coordinate system is required
+    // to locate user interactions. Of the three trees, only RenderBoxes
+    // know their size and position.
+    bool hitTest(BoxHitTestResult result. {required Offset position}) {
+      if (!size.contains(position)) return false;
+      if (hitTestChildren(result, position) || hitTestSelf(result, position)) {
+        result.add(BoxHitTestEntry(this, position));
+        return true;
+      }
+      return false;
+    }
+  }
+#+end_src
+
+*** Layers
+
+- Divides render objects into groups that are repainted in unison.
+  Quarantines repaint operations within group.
+
+- To change paint operation precedence, like parentheses in math.
+
+#+begin_src dart
+  // +---------------------------+
+  // | RootLayer                 |
+  // |---------------------------|
+  // |       RenderObject        |
+  // |          /   \            |
+  // | RenderObject RenderObject |
+  // |       |            |      |
+  // |       |      RenderObject |
+  // +-------|-------------------+
+  //         |
+  //         |
+  // +-------|------+
+  // | Layer |      |
+  // |-------|------|
+  // | RenderObject |
+  // |       |      |
+  // | RenderObject |
+  // +--------------+
+
+  class WidgetsFlutterBinding with RenderBinding {
+    ui.Layer rootLayer;
+    ui.SceneBuilder builder;
+    ui.FlutterView view;
+
+    // A persistent callback.
+    void drawFrame() {
+      pipelinerOwner.flush();
+      // A list of drawing commands and shaders.
+      final ui.Scene scene = builder.build(rootLayer);
+      // Passes instructions and shaders off to the GPU to be rasterized.
+      // Where Skia — increasingly Impeller — runs.
+      view.render(scene);
+    }
+  }
+
+  // Shader A -+
+  //           |
+  // Shader B -+-> Pixel Buffer -> Composite Pixel Buffer -> Operating System
+  //           |
+  // Shader C -+
+#+end_src
