@@ -1,6 +1,0 @@
-* Flutter: Building User Interfaces
-
-Flutter is an open-source, cross-platform, UI framework created by Google.
-Although large and complicated, Flutter is a well-documented framework
-— a useful tool for learning about user interfaces, data structures,
-and rasterization. I keep notes on Flutter within this directory.
