@@ -1,4 +1,4 @@
-* Lua Operators and Syntax
+* Lua Syntax, Operators, and Types
 
 ** Sources
 
