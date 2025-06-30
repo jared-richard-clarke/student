@@ -107,17 +107,35 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
 
 ** Operator Precedence
 
-| precedence | operators            |
-|------------+----------------------|
-|          1 | or                   |
-|          2 | and                  |
-|          3 | <  >  <=  >=  ~=  == |
-|          4 | \vert{}              |
-|          5 | ~                    |
-|          6 | &                    |
-|          7 | <<  >>               |
-|          8 | ..                   |
-|          9 | +  -                 |
-|         10 | *  /  //  %          |
-|         11 | unary (not # - ~)    |
-|         12 | ^                    |
+| precedence | operators            | associativity |
+|------------+----------------------+---------------|
+|         12 | ^                    | right         |
+|         11 | unary (not # - ~)    | left          |
+|         10 | *  /  //  %          | left          |
+|          9 | +  -                 | left          |
+|          8 | ..                   | right         |
+|          7 | <<  >>               | left          |
+|          6 | &                    | left          |
+|          5 | ~                    | left          |
+|          4 | \vert{}              | left          |
+|          3 | <  >  <=  >=  ~=  == | left          |
+|          2 | and                  | left          |
+|          1 | or                   | left          |
+
+** Types
+
+- Starting in version 5.3, Lua uses two alternative representations for numbers:
+  64-bit integers and double-precision floating-point numbers.
+  
+  - More often than not, these two number types are interchangeable. ~type(x)~
+    returns ~number~. The function ~math.type~ distinguishes between the two.
+
+  - For mathematical operations, if both operands are integers, the operation returns
+    an integer result, otherwise the operation returns a float. With mixed operands,
+    Lua converts the integer value to float prior to evaluation.
+  
+- In conditions and relational expressions, only boolean *false* and bottom value *nil*
+  evaluate to false values. All other data evaluates to true values.
+
+| nil      | boolean | number | string   |
+| function | table   | thread | userdata |
