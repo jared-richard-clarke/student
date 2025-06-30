@@ -96,25 +96,24 @@ in an arithmetic expression.
 
 ** Operator Precedence
 
-| precedence | operator             | description                                       | associativity |
 |------------+----------------------+---------------------------------------------------+---------------|
-|          1 | ~++~ ~--~            | Postfix increment and decrement                   | left-to-right |
+|          1 | ~++~ ~--~            | Postfix increment and decrement                   | left          |
 |            | ~()~                 | Function call                                     |               |
 |            | ~[]~                 | Array subscripting                                |               |
 |            | ~.~                  | Structure and union member access                 |               |
 |            | ~->~                 | Structure and union member access through pointer |               |
 |            | ~(type){list}~       | Compound literal (C99)                            |               |
 |------------+----------------------+---------------------------------------------------+---------------|
-|          2 | ~++~ ~--~            | Prefix increment and decrement                    | right-to-left |
+|          2 | ~++~ ~--~            | Prefix increment and decrement                    | right         |
 |            | ~+~ ~-~              | Unary plus and minus                              |               |
-|            | ~!~ ~                | Logical and bitwise NOT                           |               |
+|            | ~!~ ~~~              | Logical and bitwise NOT                           |               |
 |            | ~(type)~             | Cast                                              |               |
 |            | ~*~                  | Indirection (dereference)                         |               |
 |            | ~&~                  | Address-of                                        |               |
 |            | ~sizeof~             | Size-of                                           |               |
 |            | ~_Alignof~           | Alignment requirement (C11)                       |               |
 |------------+----------------------+---------------------------------------------------+---------------|
-|          3 | ~*~ ~/~ ~%~          | Multiplication, division, and remainder           | left-to-right |
+|          3 | ~*~ ~/~ ~%~          | Multiplication, division, and remainder           | left          |
 |          4 | ~+~ ~-~              | Addition and subtraction                          |               |
 |          5 | ~>>~ ~<<~            | Bitwise right shift and left shift                |               |
 |          6 | ~<~ ~<=~             | Relational operators *<* and *≤*                  |               |
@@ -122,18 +121,18 @@ in an arithmetic expression.
 |          7 | ~==~ ~!=~            | Relational operators *=* and *≠*                  |               |
 |          8 | ~&~                  | Bitwise AND                                       |               |
 |          9 | ~^~                  | Bitwise XOR                                       |               |
-|         10 | ~|~                  | Bitwise OR                                        |               |
+|         10 | ~\vert{}~            | Bitwise OR                                        |               |
 |         11 | ~&&~                 | Logical AND                                       |               |
-|         12 | ~||~                 | Logical OR                                        |               |
+|         12 | ~\vert{}\vert{}~     | Logical OR                                        |               |
 |------------+----------------------+---------------------------------------------------+---------------|
-|         13 | ~?:~                 | Ternary conditional                               | right-to-left |
+|         13 | ~?:~                 | Ternary conditional                               | right         |
 |         14 | ~=~                  | Assignment                                        |               |
 |            | ~+=~ ~-=~            | Assignment by sum and difference                  |               |
 |            | ~*=~ ~/=~ ~%=~       | Assignment by product, quotient, and remainder    |               |
 |            | ~>>=~ ~<<=~          | Assignment by bitwise right shift and left shift  |               |
-|            | ~&=~ ~^=~ ~|=~       | Assignment by bitwise AND, XOR, and OR            |               |
+|            | ~&=~ ~^=~ ~\vert{}=~ | Assignment by bitwise AND, XOR, and OR            |               |
 |------------+----------------------+---------------------------------------------------+---------------|
-|         15 | ~,~                  | Comma                                             | left-to-right |
+|         15 | ~,~                  | Comma                                             | left          |
 
 ** Type Operators
 
