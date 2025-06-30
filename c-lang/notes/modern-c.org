@@ -94,7 +94,7 @@ in an arithmetic expression.
 |-------------+------------+--------------------------------------|
 | ~clock_t~   | ~time.h~   | processor time                       |
 
-** Operator Precedence (Descending Order)
+** Operator Precedence
 
 | precedence | operator             | description                                       | associativity |
 |------------+----------------------+---------------------------------------------------+---------------|
