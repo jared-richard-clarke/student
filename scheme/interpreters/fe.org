@@ -1054,8 +1054,8 @@ A Fe function can be called by creating a list and evaluating it.
       cl  = call list
       va  = variable a
       vb  = variable b
-      n   =
-      gc  = saved index into GC stack.
+      n   = saved index into GC stack
+      gc  = saved index into GC stack
     */
     fe_Object *fn, *arg, *res;
     fe_Object cl, *va, *vb;
