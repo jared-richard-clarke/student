@@ -331,7 +331,7 @@ A Fe function can be called by creating a list and evaluating it.
   /*
      === Fe Object = Cons Cell ===
 
-     Cons cells provide fixed storage for all Fe data. A pair is a cons cell
+     Cons cells provide storage for all Fe data. A pair is a cons cell
      whose car and cdr contain Fe Values.
 
      fe_Object (size: 16 bytes, alignment: 8 bytes)
