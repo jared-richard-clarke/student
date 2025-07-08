@@ -293,7 +293,7 @@ A Fe function can be called by creating a list and evaluating it.
     "func", "macro", "prim", "cfunc", "ptr"
   };
 
-  /*
+ /*
      === Fe Value ===
      Fe Object Pointer | C Function Pointer | Number | Char
 
@@ -319,13 +319,22 @@ A Fe function can be called by creating a list and evaluating it.
        ^-------------------^   ^
         Type Tag               + GC Marker
   */
-  typedef union { fe_Object *o; fe_CFunc f; fe_Number n; char c; } Value;
+
+  /* Value (size: 8 bytes, alignment: 8 bytes) */
+  typedef union {
+    fe_Object *o; /* (size: 8 bytes, alignment: 8 bytes) */
+    fe_CFunc   f; /* (size: 8 bytes, alignment: 8 bytes) */
+    fe_Number  n; /* (size: 4 bytes, alignment: 4 bytes, padding: 4 bytes) */
+    char       c; /* (size: 1 byte,  alignment: 1 byte,  padding: 7 bytes) */
+  } Value;
 
   /*
      === Fe Object = Cons Cell ===
 
      Cons cells provide fixed storage for all Fe data. A pair is a cons cell
-     whose car and cdr contain object pointers.
+     whose car and cdr contain Fe values.
+
+     fe_Object (size: 16 bytes, alignment: 8 bytes)
   */
   struct fe_Object { Value car, cdr; };
 
