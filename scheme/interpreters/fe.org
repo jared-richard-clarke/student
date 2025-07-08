@@ -868,19 +868,24 @@ A Fe function can be called by creating a list and evaluating it.
     return cdr(checktype(ctx, obj, FE_TPTR));
   }
 
+  /* Find bound value, where "sym" = global and "env" = local. */
   static fe_Object* getbound(fe_Object *sym, fe_Object *env) {
-    // Try to find symbol in environment.
+    /* Check local environment. */
     for (; !isnil(env); env = cdr(env)) {
       fe_Object *x = car(env);
       if (car(x) == sym) { return x; }
     }
-    // Return global.
+    /* Return global value. */
     return cdr(sym);
   }
 
   /*
      (= symbol expression)
-     Binds a Fe expression to an identifier.
+     Binds the value of a Fe expression to an identifier.
+
+     +--------+---+  +--------+---+
+     | Symbol | ●-|->| String | ●-|-> value
+     +--------+---+  +--------+---+
   */
   void fe_set(fe_Context *ctx, fe_Object *sym, fe_Object *v) {
     unused(ctx);
