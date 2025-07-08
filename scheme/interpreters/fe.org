@@ -332,9 +332,16 @@ A Fe function can be called by creating a list and evaluating it.
      === Fe Object = Cons Cell ===
 
      Cons cells provide fixed storage for all Fe data. A pair is a cons cell
-     whose car and cdr contain Fe values.
+     whose car and cdr contain Fe Values.
 
      fe_Object (size: 16 bytes, alignment: 8 bytes)
+     +-------------------------------+-------------------------------+
+     | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 |
+     +-------------------------------+-------------------------------+
+     ^-------------------------------^-------------------------------^
+      car                        ^---^ cdr
+                                   |
+                 (type, GC, pair) -+
   */
   struct fe_Object { Value car, cdr; };
 
