@@ -382,7 +382,10 @@ A Fe function can be called by creating a list and evaluating it.
     int nextchr;
   };
 
-  /* === nil: Bottom Value for all Fe Objects === */
+  /*
+    === nil: Bottom Value for all Fe Objects ===
+    Only one nil exists in memory. Persists for the duration of a Fe program.
+  */
   static fe_Object nil = {{ (void*) (FE_TNIL << 2 | 1) }, { NULL }};
 
   fe_Handlers* fe_handlers(fe_Context *ctx) {
