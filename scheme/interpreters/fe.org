@@ -95,7 +95,7 @@ are stored directly in their ~symbol~ objects.
 
 *** Fe Programs
 
-#+begin_example
+#+begin_src clojure
   ;; === functions ===
 
   ;; (reverse list) -> list
@@ -136,7 +136,7 @@ are stored directly in their ~symbol~ objects.
         (list 'let x '(car iter))
         '(= iter (cdr iter))
         (cons 'do body)))))
-#+end_example
+#+end_src
 
 ** C API
 
