@@ -858,7 +858,7 @@ A Fe function can be called by creating a list and evaluating it.
     return size - x.n - 1;
   }
 
-  /* Extract a number from a Fe number object. */
+  /* Extract a number — by default, a C float — from a Fe number object. */
   fe_Number fe_tonumber(fe_Context *ctx, fe_Object *obj) {
     return number(checktype(ctx, obj, FE_TNUMBER));
   }
