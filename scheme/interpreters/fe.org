@@ -880,8 +880,8 @@ A Fe function can be called by creating a list and evaluating it.
   }
 
   /*
-     (= symbol expression)
-     Binds the value of a Fe expression to an identifier.
+     (= symbol value)
+     Binds a Fe value to an identifier.
 
      +--------+---+  +--------+---+
      | Symbol | ●-|->| String | ●-|-> value
