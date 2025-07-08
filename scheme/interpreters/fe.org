@@ -293,7 +293,7 @@ A Fe function can be called by creating a list and evaluating it.
     "func", "macro", "prim", "cfunc", "ptr"
   };
 
- /*
+  /*
      === Fe Value ===
      Fe Object Pointer | C Function Pointer | Number | Char
 
@@ -585,14 +585,14 @@ A Fe function can be called by creating a list and evaluating it.
      (cons car cdr) -> (car cdr)
      Creates a new pair with the given "car" and "cdr" values.
 
-     +-----+-----+    +-----+-----+
-     | car | cdr | -> | car | cdr |
-     +-----+-----+    +-----+-----+
-        |
-        V
-     +-----+-----+
-     | car | cdr |
-     +-----+-----+
+     +---+---+  +---+---+
+     | ● | ●-|->| ● | ● |
+     +-|-+---+  +---+---+
+       |
+       V
+     +---+---+
+     | ● | ● |
+     +---+---+
   */
   fe_Object* fe_cons(fe_Context *ctx, fe_Object *car, fe_Object *cdr) {
     fe_Object *obj = object(ctx);
@@ -611,9 +611,9 @@ A Fe function can be called by creating a list and evaluating it.
      although this type can be changed as long as its storage
      fits within an object pointer.
 
-     +-------------+------------+
-     | car: Number | cdr: float |
-     +-------------+------------+
+     +--------+-------+
+     | Number | float |
+     +--------+-------+
   */
   fe_Object* fe_number(fe_Context *ctx, fe_Number n) {
     fe_Object *obj = object(ctx);
@@ -638,16 +638,13 @@ A Fe function can be called by creating a list and evaluating it.
 
   /*
      Creates a string literal. Strings are stored in a list of cons cells.
-
-     +----------------------+-----+    +----------------------+-----+
-     | car: char[] | String | cdr | -> | car: char[] | String | cdr | ...
-     +----------------------+-----+    +----------------------+-----+
-     +----------------------+-----+
-     | car: char[] | String | cdr | -> nil
-     +----------------------+-----+
-
-     where char[] = 7 bytes of character storage on a 64-bit machine.
-           String = 1 byte of type tags and GC markers.
+  
+     +------------------+---+  +------------------+---+
+     | char[7] | String | ●-|->| char[7] | String | ●-| ...
+     +------------------+---+  +------------------+---+
+     +------------------+---+
+     | char[7] | String | ●-|-> nil
+     +------------------+---+
   */
   fe_Object* fe_string(fe_Context *ctx, const char *str) {
     fe_Object *obj = buildstring(ctx, NULL, '\0');
@@ -662,14 +659,14 @@ A Fe function can be called by creating a list and evaluating it.
      Either returns a symbol from "symlist" or creates and returns
      a new symbol object.
   
-     +-----+-----+
-     | car | cdr | -> Symbol | nil
-     +-----+-----+
-        |
-        V
-     +-------------+-----+    +-------------+-----+
-     | car: Symbol | cdr | -> | car: String | cdr | -> nil
-     +-------------+-----+    +-------------+-----+
+     +---+---+
+     | ● | ●-|-> Symbol | nil
+     +-|-+---+
+       |
+       V
+     +--------+---+  +--------+---+
+     | Symbol | ●-|->| String | ●-|-> nil
+     +--------+---+  +--------+---+
   */
   fe_Object* fe_symbol(fe_Context *ctx, const char *name) {
     fe_Object *obj;
@@ -690,13 +687,13 @@ A Fe function can be called by creating a list and evaluating it.
     return obj;
   }
 
-   /*
+  /*
      Wraps a C function (fe_CFunc) within a Fe object, where
      fe_CFunc = fe_Object *(*)(fe_Context *, fe_Object *)
 
-     +-----------------+-----+
-     | car: C Function | cdr | -> function
-     +-----------------+-----+
+     +------------+---+
+     | C Function | ●-|-> function
+     +------------+---+
   */
   fe_Object* fe_cfunc(fe_Context *ctx, fe_CFunc fn) {
     fe_Object *obj = object(ctx);
@@ -705,14 +702,14 @@ A Fe function can be called by creating a list and evaluating it.
     return obj;
   }
 
-  /* 
+  /*
      Wraps a C pointer within a Fe object.
      The Fe pointer type allows the creation of custom objects.
      Pointers must be wrapped by users and tagged to ensure type safety.
 
-     +--------------+-----+
-     | car: Pointer | cdr | -> void
-     +--------------+-----+
+     +---------+---+
+     | Pointer | ●-|-> void
+     +---------+---+
   */
   fe_Object* fe_ptr(fe_Context *ctx, void *ptr) {
     fe_Object *obj = object(ctx);
@@ -725,14 +722,14 @@ A Fe function can be called by creating a list and evaluating it.
      (list ...) -> (...)
      Transforms zero or more values into a list.
 
-     +-----+-----+    +-----+-----+
-     | car | cdr | -> | car | cdr | ... nil
-     +-----+-----+    +-----+-----+ 
-        |                |
-        V                V
-     +-----+-----+    +-----+-----+
-     | car | cdr |    | car | cdr |
-     +-----+-----+    +-----+-----+
+     +---+---+  +---+---+
+     | ● | ●-|->| ● | ●-| ... nil
+     +-|-+---+  +-|-+---+ 
+       |          |
+       V          V
+     +---+---+  +---+---+
+     | ● | ● |  | ● | ● |
+     +---+---+  +---+---+
   */
   fe_Object* fe_list(fe_Context *ctx, fe_Object **objs, int n) {
     fe_Object *res = &nil;
@@ -905,11 +902,11 @@ A Fe function can be called by creating a list and evaluating it.
     int chr, gc;
     char buf[64], *p;
 
-    /* Get next character. */
+    /* === next character === */
     chr = ctx->nextchr ? ctx->nextchr : fn(ctx, udata);
     ctx->nextchr = '\0';
 
-    /* Skip whitespace. */
+    /* === skip whitespace === */
     while (chr && strchr(" \n\t\r", chr)) {
       chr = fn(ctx, udata);
     }
@@ -919,16 +916,16 @@ A Fe function can be called by creating a list and evaluating it.
       case '\0':
         return NULL;
   
-      /* line comment */
+      /* === line comment === */
       case ';':
         while (chr && chr != '\n') { chr = fn(ctx, udata); }
         return read_(ctx, fn, udata);
   
-      /* closing parenthesis */
+      /* === closing parenthesis === */
       case ')':
         return &rparen;
 
-      /* cons list */
+      /* === cons list === */
       case '(':
         res = &nil;
         tail = &res;
@@ -950,13 +947,13 @@ A Fe function can be called by creating a list and evaluating it.
         }
         return res;
 
-      /* quote form */
+      /* === quote form === */
       case '\'':
         v = fe_read(ctx, fn, udata);
         if (!v) { fe_error(ctx, "stray '''"); }
         return fe_cons(ctx, fe_symbol(ctx, "quote"), fe_cons(ctx, v, &nil));
 
-      /* string */
+      /* === string === */
       case '"':
         res = buildstring(ctx, NULL, '\0');
         v = res;
@@ -1082,7 +1079,7 @@ A Fe function can be called by creating a list and evaluating it.
 
     /* Find symbol in environment and return associated value. */
     if (type(obj) == FE_TSYMBOL) { return cdr(getbound(obj, env)); }
-     /* Return literals, which evaluate to themselves. */
+    /* Return literals, which evaluate to themselves. */
     if (type(obj) != FE_TPAIR) { return obj; }
 
     car(&cl) = obj, cdr(&cl) = ctx->calllist;
