@@ -974,7 +974,7 @@ A Fe function can be called by creating a list and evaluating it.
         }
         return res;
 
-      /* number | symbol | nil */
+      /* === number | symbol | nil === */
       default:
         p = buf;
         do {
