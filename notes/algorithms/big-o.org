@@ -11,9 +11,21 @@ For example, function *f(n) = 4n² - 2n + 2* grows at an order of *n²* or *f(n)
 More informally, Big O describes the complexity of an algorithm, specifically its upper bound,
 as its input size grows towards infinity.
 
-- Time Complexity :: How execution time increases with input size.
+- Time Complexity :: How run time increases with input size.
 
 - Space Complexity :: How memory usage increases with input size.
+
+#+begin_example
+  Y
+  ^
+  |
+  |
+  |
+  +---------> X
+
+  where X = input
+        Y = time or space
+#+end_example
 
 ** Orders of Common Functions
 
