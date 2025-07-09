@@ -8,6 +8,9 @@ and lowest terms.
 
 For example, function *f(n) = 4n² - 2n + 2* grows at an order of *n²* or *f(n) ∈ O(n²)*.
 
+Describes the complexity of an algorithm, specifically its upper bound, as its
+input size grows towards infinity.
+
 ** Orders of Common Functions
 
 | Big-O        | Informal     |
