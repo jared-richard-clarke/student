@@ -8,8 +8,12 @@ and lowest terms.
 
 For example, function *f(n) = 4n² - 2n + 2* grows at an order of *n²* or *f(n) ∈ O(n²)*.
 
-Describes the complexity of an algorithm, specifically its upper bound, as its
-input size grows towards infinity.
+More informally, Big O describes the complexity of an algorithm, specifically its upper bound,
+as its input size grows towards infinity.
+
+- Time Complexity :: How execution time increases with input size.
+
+- Space Complexity :: How memory usage increases with input size.
 
 ** Orders of Common Functions
 
@@ -23,19 +27,3 @@ input size grows towards infinity.
 | O(n³)        | cubic        |
 | O(2ⁿ)        | exponential  |
 | O(n!)        | factorial    |
-
-** Graphing Functions
-
-How does the number of operations change as the number of elements increase?
-
-#+begin_example
-  Y
-  ^
-  |
-  |
-  |
-  + — — — — — — > X
-
-  where X = number of elements
-        Y = number of operations
-#+end_example
