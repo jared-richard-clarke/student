@@ -287,7 +287,7 @@ A Fe function can be called by creating a list and evaluating it.
     "<=", "+", "-", "*", "/"
   };
 
-  /* === Fe Type List === */
+  /* === Fe Type Name List === */
   static const char *typenames[] = {
     "pair", "free", "nil", "number", "symbol", "string",
     "func", "macro", "prim", "cfunc", "ptr"
