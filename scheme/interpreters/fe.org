@@ -905,6 +905,17 @@ A Fe function can be called by creating a list and evaluating it.
      data that can later be evaluated as a Fe program.
   */
   static fe_Object* read_(fe_Context *ctx, fe_ReadFn fn, void *udata) {
+    /*
+      delimiter = delimiters
+      v         = value
+      res       = result
+      tail      = list
+      n         = number
+      chr       = character
+      gc        = GC index
+      buf[64]   = 64-byte buffer
+      p         = buffer pointer
+    */
     const char *delimiter = " \n\t\r();";
     fe_Object *v, *res, **tail;
     fe_Number n;
