@@ -584,7 +584,9 @@ A Fe function can be called by creating a list and evaluating it.
 
   /*
      (cons car cdr) -> (car cdr)
-     Creates a new pair with the given "car" and "cdr" values.
+     Creates a new pair with the given car and cdr values.
+     A pair is a Fe Object whose car and cdr are pointers
+     to Fe Objects.
 
      +---+---+  +---+---+
      | ● | ●-|->| ● | ● |
@@ -678,7 +680,7 @@ A Fe function can be called by creating a list and evaluating it.
       }
     }
     /*
-      Creates new object. Pushes object pointer to "symlist".
+      Creates new object. Pushes object pointer onto "symlist".
       Returns object pointer to caller.
     */
     obj = object(ctx);
@@ -721,7 +723,8 @@ A Fe function can be called by creating a list and evaluating it.
 
   /*
      (list ...) -> (...)
-     Transforms zero or more values into a list.
+     Transforms zero or more values into a list. A Fe list is
+     a pair of zero or more Fe Objects, where the final Fe Object is nil.
 
      +---+---+  +---+---+
      | ● | ●-|->| ● | ●-| ... nil
