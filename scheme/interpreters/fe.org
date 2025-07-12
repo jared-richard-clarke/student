@@ -1422,6 +1422,11 @@ A Fe function can be called by creating a list and evaluating it.
 
   #include <setjmp.h>
 
+  /*
+    "toplevel" of the type "jmp_buf" holds the saved execution environment,
+     including the stack context and registers. It must have been previously
+     populated by a call to "setjmp".
+  */
   static jmp_buf toplevel;
   /*
      Set aside 64 kilobytes of digital storage
@@ -1434,7 +1439,6 @@ A Fe function can be called by creating a list and evaluating it.
     fprintf(stderr, "error: %s\n", msg);
     longjmp(toplevel, -1);
   }
-
 
   int main(int argc, char **argv) {
     int gc;
@@ -1449,6 +1453,10 @@ A Fe function can be called by creating a list and evaluating it.
 
     if (fp == stdin) { fe_handlers(ctx)->error = onerror; }
     gc = fe_savegc(ctx);
+    /*
+      Saves the current execution environment in "toplevel". On errors,
+      Fe will return to this state.
+    */
     setjmp(toplevel);
 
     for (;;) {
