@@ -643,10 +643,10 @@ A Fe function can be called by creating a list and evaluating it.
      Creates a string literal. Strings are stored in a list of cons cells.
   
      +------------------+---+  +------------------+---+
-     | char[7] | String | ●-|->| char[7] | String | ●-| ...
+     | String | char[7] | ●-|->| String | char[7] | ●-| ...
      +------------------+---+  +------------------+---+
      +------------------+---+
-     | char[7] | String | ●-|-> nil
+     | String | char[7] | ●-|-> nil
      +------------------+---+
   */
   fe_Object* fe_string(fe_Context *ctx, const char *str) {
