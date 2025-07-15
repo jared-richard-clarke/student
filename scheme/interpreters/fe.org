@@ -659,16 +659,16 @@ A Fe function can be called by creating a list and evaluating it.
   }
 
   /*
-     Either returns a symbol from "symlist" or creates and returns
-     a new symbol object.
+     Either returns a pointer to symbol from "symlist" or creates a new symbol,
+     appends it to "symlist", and returns a pointer to the new symbol object.
   
      +---+---+
-     | ● | ●-|-> Symbol | nil
+     | ● | ●-|-> nil | Symbol
      +-|-+---+
        |
        V
      +--------+---+  +--------+---+
-     | Symbol | ●-|->| String | ●-|-> nil
+     | Symbol | ●-|->| String | ●-|-> nil | Value
      +--------+---+  +--------+---+
   */
   fe_Object* fe_symbol(fe_Context *ctx, const char *name) {
