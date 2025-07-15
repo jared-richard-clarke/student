@@ -845,6 +845,10 @@ A Fe function can be called by creating a list and evaluating it.
     fe_write(ctx, obj, writefp, fp, 0);
   }
 
+  /*
+    CharPtrInt: A utility data structure for tracking both a string's
+    pointer and length.
+  */
   typedef struct { char *p; int n; } CharPtrInt;
 
   static void writebuf(fe_Context *ctx, void *udata, char chr) {
