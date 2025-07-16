@@ -659,8 +659,8 @@ A Fe function can be called by creating a list and evaluating it.
   }
 
   /*
-     Either returns a pointer to symbol from "symlist" or creates a new symbol,
-     appends it to "symlist", and returns a pointer to the new symbol object.
+     Either returns an existing symbol from "symlist" or creates a new symbol
+     and appends it to "symlist" before returning said symbol to caller.
   
      +---+---+
      | ● | ●-|-> nil | Symbol
