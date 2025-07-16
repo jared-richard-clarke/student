@@ -871,7 +871,7 @@ A Fe function can be called by creating a list and evaluating it.
     if (x->n) { *x->p++ = chr; x->n--; }
   }
 
-  /* Writes a Fe expression to a string using the function "writebuf". *
+  /* Writes a Fe expression to a string using the function "writebuf". */
   int fe_tostring(fe_Context *ctx, fe_Object *obj, char *dst, int size) {
     CharPtrInt x;
     x.p = dst;
