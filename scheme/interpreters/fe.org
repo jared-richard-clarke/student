@@ -777,12 +777,12 @@ A Fe function can be called by creating a list and evaluating it.
   */
   void fe_write(fe_Context *ctx, fe_Object *obj, fe_WriteFn fn, void *udata, int qt) {
     /*
-      ctx     = Fe Context
-      obj     = Fe Object
-      fn      = Write Function
-      udata   = User Data | Buffer
-      qt      = Add quotes?
-      buf[32] = 32-byte Buffer
+      ctx     = Fe context
+      obj     = Fe object
+      fn      = write function
+      udata   = user data | buffer
+      qt      = add quotes?
+      buf[32] = 32-byte buffer
     */
     char buf[32];
 
@@ -898,7 +898,7 @@ A Fe function can be called by creating a list and evaluating it.
       fe_Object *x = car(env);
       if (car(x) == sym) { return x; }
     }
-    /* Return global value. */
+    /* If not in local environment, return global value. */
     return cdr(sym);
   }
 
@@ -925,6 +925,9 @@ A Fe function can be called by creating a list and evaluating it.
   */
   static fe_Object* read_(fe_Context *ctx, fe_ReadFn fn, void *udata) {
     /*
+      ctx       = Fe context
+      fn        = read function
+      udata     = user data
       delimiter = delimiters
       v         = value
       res       = result
