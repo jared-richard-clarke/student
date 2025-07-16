@@ -1175,7 +1175,7 @@ A Fe function can be called by creating a list and evaluating it.
             === (fn symbol* expression+) ===
             Defines a function abstraction, a Fe program that can be called within
             another Fe program. Arguments are bound to their corresponding symbols.
-            Free variables, variables defined outside a function’s parameters, are
+            Free variables, variables defined outside a given function, are
             lexically scoped.
   
             === (mac symbol* expression+) ===
