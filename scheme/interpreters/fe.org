@@ -766,11 +766,24 @@ A Fe function can be called by creating a list and evaluating it.
     Transforms Fe data into a human-readable string.
   */
 
+  /* Writes a string to a given buffer via the provided write function. */
   static void writestr(fe_Context *ctx, fe_WriteFn fn, void *udata, const char *s) {
     while (*s) { fn(ctx, udata, *s++); }
   }
 
+  /*
+    Transforms a Fe expression into string data, which it writes to the given buffer
+    via the provided write function.
+  */
   void fe_write(fe_Context *ctx, fe_Object *obj, fe_WriteFn fn, void *udata, int qt) {
+    /*
+      ctx     = Fe Context
+      obj     = Fe Object
+      fn      = Write Function
+      udata   = user data | buffer
+      qt      = add quote?
+      buf[32] = 32-byte buffer
+    */
     char buf[32];
 
     switch (type(obj)) {
@@ -851,12 +864,14 @@ A Fe function can be called by creating a list and evaluating it.
   */
   typedef struct { char *p; int n; } CharPtrInt;
 
+  /* Function writes a char datum to a string using "CharPtrInt". */
   static void writebuf(fe_Context *ctx, void *udata, char chr) {
     CharPtrInt *x = udata;
     unused(ctx);
     if (x->n) { *x->p++ = chr; x->n--; }
   }
 
+  /* Writes a Fe expression to a string using the function "writebuf". *
   int fe_tostring(fe_Context *ctx, fe_Object *obj, char *dst, int size) {
     CharPtrInt x;
     x.p = dst;
