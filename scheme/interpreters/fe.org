@@ -781,7 +781,7 @@ A Fe function can be called by creating a list and evaluating it.
       obj     = Fe Object
       fn      = Write Function
       udata   = user data | buffer
-      qt      = add quote?
+      qt      = add quotes?
       buf[32] = 32-byte buffer
     */
     char buf[32];
