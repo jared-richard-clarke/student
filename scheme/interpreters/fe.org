@@ -680,8 +680,8 @@ A Fe function can be called by creating a list and evaluating it.
       }
     }
     /*
-      Creates new object. Pushes object pointer onto "symlist".
-      Returns object pointer to caller.
+      Creates new symbol object. Pushes symbol object onto "symlist".
+      Returns symbol object to caller.
     */
     obj = object(ctx);
     settype(obj, FE_TSYMBOL);
