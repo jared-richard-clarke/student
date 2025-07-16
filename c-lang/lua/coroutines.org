@@ -1,0 +1,66 @@
+* Coroutines in Lua
+
+** Sources
+
+| source                     | author                                                             |
+|----------------------------+--------------------------------------------------------------------|
+| *Programming in Lua*       | Roberto Ierusalimschy                                              |
+| *Lua 5.4 Reference Manual* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, Waldemar Celes |
+
+
+** About
+
+#+begin_quote
+  "A coroutine is similar to a thread (in the sense of multithreading): a line of execution,
+   with its own stack, its own local variables, and its own instruction pointer; but sharing
+   global variables and mostly anything else with other coroutines. The main difference
+   between threads and coroutines is that, conceptually (or literally, in a multiprocessor
+   machine), a program with threads runs several threads concurrently. Coroutines, on the
+   other hand, are collaborative: A program with coroutines is, at any given time, running
+   only one of its coroutines and this running coroutine only suspends its execution when it
+   explicitly requests to be suspended."
+
+  — *Programming in Lua*, Roberto Ierusalimschy
+#+end_quote
+
+** API
+  
+- ~coroutine.create(function) -> thread~ :: Inputs a *function* and returns a *thread*,
+  a coroutine that is in a suspended state.
+
+- ~coroutine.close(thread) -> boolean, error~ :: Closes all pending to-be-closed variables and
+  switches coroutine to a *dead* state. The given coroutine must be in a *dead* or *suspended*
+  state.
+
+- ~coroutine.resume(thread, ...value) -> boolean, ...value | error~ :: Starts or restarts the
+  execution of a coroutine. Zero or more values can be inputted and outputted by the yieldable
+  calls within the function body of the provided coroutine.
+
+- ~coroutine.isyieldable(thread) -> boolean~ :: Returns *true* when the coroutine can yield.
+  Unless provided a coroutine, the function queries the currently running coroutine. A coroutine
+  is yieldable if it is not the main thread and is not inside a non-yieldable C function.
+
+- ~coroutine.running() -> thread, boolean~ :: Returns a running coroutine plus a boolean.
+  Returns *true* when the running coroutine is the primary thread.
+
+- ~coroutine.status(thread) -> string~ :: Returns the status of the coroutine, a string,
+  in one of four states:
+
+  1. ~"running"~: The coroutine is running.
+     
+  2. ~"suspended"~: The coroutine is either suspended in a call to ~yield~ or it has yet to start
+     running.
+     
+  3. ~"normal"~: The coroutine is active but not running. It has resumed another coroutine.
+     
+  4. ~"dead"~: The coroutine has either finished running its provided function or has stopped with
+     an error.
+
+- ~coroutine.yield(...value) -> ...value~ :: Suspends execution of the calling coroutine and passes
+  zero or more values to ~coroutine.resume~.
+
+- ~coroutine.wrap(function) -> function(...value) return coroutine.resume(thread, ...value) end~ ::
+  Inputs a function, wraps that function in a coroutine, then wraps that coroutine in a function.
+  The returned function resumes the coroutine every time it is called. Except for the first boolean,
+  the function inputs and outputs values like ~coroutine.resume~. In case of errors, the function
+  closes its coroutine and propogates errors to the caller.
