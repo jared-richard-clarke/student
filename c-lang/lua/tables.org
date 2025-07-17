@@ -2,10 +2,65 @@
 
 ** Sources
 
-| source                        | author                                                                 |
-|-------------------------------+------------------------------------------------------------------------|
-| *A Look at the Design of Lua* | Roberto Ierusalimschy, Luiz Henrique De Figueiredo, and Waldemar Celes |
-| *Programming in Lua*          | Roberto Ierusalimschy                                                  |
+| source                                  | author                                                                 |
+|-----------------------------------------+------------------------------------------------------------------------|
+| *A Look at the Design of Lua*           | Roberto Ierusalimschy, Luiz Henrique De Figueiredo, and Waldemar Celes |
+| *Programming in Lua*                    | Roberto Ierusalimschy                                                  |
+| *Lua: An Extensible Extension Language* | Roberto Ierusalimschy, Luiz Henrique De Figueiredo, and Waldemar Celes |
+| *The Implementation of Lua 5.0*         | Roberto Ierusalimschy, Luiz Henrique De Figueiredo, and Waldemar Celes |
+
+** Definition
+
+#+begin_quote
+  "Lua combines procedural features with powerful data description facilities,
+   by using a simple, yet powerful, mechanism of tables. This mechanism implements
+   the concepts of records, arrays, and recursive data types (pointers), and adds
+   some object-oriented facilities, such as methods with dynamic dispatching.
+   Lua presents a mechanism of fallbacks that allows programmers to extend the
+   semantics of the language in some unconventional ways."
+
+  — *Lua: An Extensible Extension Language*, by Roberto Ierusalimschy,
+    Luiz Henrique De Figueiredo, and Waldemar Celes
+
+  "...[T]ables are implemented as hybrid data structures: they contain a hash part
+   and an array part...This division is made only at a low implementation level;
+   access to table fields is transparent, even to the virtual machine. Tables
+   automatically and dynamically adapt their two parts according to their contents:
+   the array part tries to store the values corresponding to integer keys from 1
+   to some limit n. Values corresponding to non-integer keys or to integer keys
+   outside the array range are stored in the hash part."
+
+  — *The Implementation of Lua 5.0*, by Roberto Ierusalimschy,
+    Luiz Henrique De Figueiredo, and Waldemar Celes
+#+end_quote
+
+*** Configuration
+
+#+begin_example
+  table = {
+    x = 7,
+    "Gandalf",
+    "the",
+    "Gray"
+  }
+                  key   value
+                 +-----------+
+             +-->| "x" | 7   |
+             |   |-----+-----|
+             |   | nil |     |
+  +--------+ |   +-----------+
+  | header |-+   
+  +--------+ |    value
+             |   +-----------+
+             +-->| "Gandalf" |
+                 |-----------|
+                 | "the"     |
+                 |-----------|
+                 | "Gray"    |
+                 |-----------|
+                 | nil       |
+                 +-----------+
+#+end_example
 
 ** Implementing Modules
 
