@@ -34,8 +34,6 @@
     Luiz Henrique De Figueiredo, and Waldemar Celes
 #+end_quote
 
-*** Configuration
-
 #+begin_example
   table = {
     x = 7,
