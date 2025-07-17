@@ -64,3 +64,40 @@
   The returned function resumes the coroutine every time it is called. Except for the first boolean,
   the function inputs and outputs values like ~coroutine.resume~. In case of errors, the function
   closes its coroutine and propogates errors to the caller.
+
+#+begin_src lua
+  -- Embodies the semantics of "wrap", not its implementation.
+  function wrap(fn)
+    local thread = coroutine.create(fn)
+    return function(x)
+             status, value = coroutine.resume(thread, x)
+             if status then
+               return value
+             else
+               error(value)
+            end
+    end
+  end
+#+end_src
+
+** Coroutine as Generator: Binary Tree
+
+#+begin_src lua
+  -- node = {
+  --   key   = string,
+  --   left  = node,
+  --   right = node
+  -- }
+
+  function traverse(node)
+    if node then
+      traverse(node.left)
+      coroutine.yield(node.key)
+      traverse(node.right)
+    end
+  end
+
+  function iterator(tree)
+    return coroutine.wrap(function() traverse(tree) end)
+  end
+#+end_src
