@@ -9,6 +9,13 @@
 
 ** Introduction
 
+- generator :: A control abstraction that produces a sequence of values, returning a new value
+  to its caller with each invocation.
+
+- iterator :: A control abstraction that allows traversing a data structure independently of
+  its internal implementation. Generators can implement iterators, where the generator is
+  producer, and the iterator is consumer.
+
 #+begin_quote
   "The name "iterator" is a little misleading, because our iterators do not iterate:
    What iterates is the *for* loop. Iterators only provide the successive values for
