@@ -114,10 +114,9 @@ Pulled from ~lobject.h~ of Lua 5.4, many of these examples are simplified and re
 
 ** Implementing Modules
 
-Lua encloses a chunk within the body of an anonymous function. A module is an anonymous
-function that provides side effects and/or returns a value when called. Lexical scoping
-ensures only returned values can access data within the lexical environment of their
-parent function.
+Lua encloses a chunk within the body of an anonymous function. A module is a populated table returned
+by this anonymous function. Lexical scoping ensures only code within this table can access data within
+the lexical environment of its parent function. 
 
 *** Tables
 
