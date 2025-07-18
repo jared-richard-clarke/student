@@ -34,31 +34,83 @@
     Luiz Henrique De Figueiredo, and Waldemar Celes
 #+end_quote
 
-#+begin_example
-  table = {
-    x = 7,
-    "Gandalf",
-    "the",
-    "Gray"
-  }
-                  key   value
-                 +-----------+
-             +-->| "x" | 7   |
-             |   |-----+-----|
-             |   | nil |     |
-  +--------+ |   +-----------+
-  | header |-+   
-  +--------+ |    value
-             |   +-----------+
-             +-->| "Gandalf" |
-                 |-----------|
-                 | "the"     |
-                 |-----------|
-                 | "Gray"    |
-                 |-----------|
-                 | nil       |
-                 +-----------+
-#+end_example
+** Implementation
+
+Pulled from ~lobject.h~ of Lua 5.4, I simplified and renamed many of these examples for clarity.
+
+#+begin_src c
+  /* Side Note: "lu_byte" alias for "unsigned char" */
+
+  /* === Lua Value === */
+  typedef union Value {
+      /* Collectable Objects */
+      struct GCObject *gc;
+      /* Light Userdata */
+      void *p;
+      /* Light C Functions */
+      lua_CFunction f;
+      /* Integers */
+      lua_Integer i;
+      /* Doubles */
+      lua_Number n;
+      /* Type may suppress warnings for uninitialized values. */
+      lu_byte ub;
+  } Value;
+
+  typedef struct TValue {
+      /* One of five Lua values. */
+      Value value;
+      /* Type Tag */
+      lu_byte tt;
+  } TValue;
+
+  /*
+    Nodes for Hash tables: A pack of key-value pairs plus a "next"
+    field to link colliding entries. The distribution of the key's
+    fields ("key_tt" and "key_val") not forming a proper "TValue"
+    allows for a smaller size for "Node" both in 4-byte and 8-byte
+    alignments.
+  */
+  typedef union Node {
+      struct NodeKey {
+          /* One of five Lua values. */
+          Value value;
+          /* Value Type Tag */
+          lu_byte tt;
+          /* Key Type Tag */
+          lu_byte key_tt;
+          /* Chained Entries */
+          int next;
+          /* Key Value */
+          Value key_val;
+      } u;
+      /* Direct access to node's value as a proper "TValue" */
+      TValue i_val;
+  } Node;
+
+  /* === Lua Table === */
+  typedef struct Table {
+      /* CommonHeader */
+      struct GCObject *next;
+      lu_byte tt;
+      lu_byte marked;
+      /* 1<<p means tagmethod(p) is not present. */
+      lu_byte flags;
+      /* log2 size of "node" array. */
+      lu_byte lsizenode;
+      /* array limit */
+      unsigned int alimit;
+      /* array part */
+      TValue *array;
+      /* Pointer to hashtable node. */
+      Node *node;
+      /* Any free position is before this position. */
+      Node *lastfree;
+      /* Pointer to table's metatable. */
+      struct Table *metatable;
+      GCObject *gclist;
+  } Table;
+#+end_src
 
 ** Implementing Modules
 
