@@ -115,9 +115,9 @@ Pulled from ~lobject.h~ of Lua 5.4, many of these examples are simplified and re
 ** Implementing Modules
 
 Lua loads any chunk as the body of an enclosing anonymous function. A module
-is a chunk — an anonymous function — that creates and returns a table.
-The table provides the namespace, lexical scoping provides encapsulation, and
-first-class functions allow exportation.
+is a chunk — an anonymous function — that can either provide a side effect
+or return a value when called. Lexical scoping protects any code not returned
+by the anonymous function.
 
 *** Tables
 
