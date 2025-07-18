@@ -94,13 +94,13 @@ Pulled from ~lobject.h~ of Lua 5.4, many of these examples are simplified and re
       struct GCObject *next;
       lu_byte tt;
       lu_byte marked;
-      /* 1<<p means tagmethod(p) is not present. */
+      /* 1 << p means tagmethod(p) is not present. */
       lu_byte flags;
       /* log2 size of "node" array. */
       lu_byte lsizenode;
-      /* array limit */
+      /* Array limit. */
       unsigned int alimit;
-      /* array part */
+      /* Pointer to array. */
       TValue *array;
       /* Pointer to hashtable node. */
       Node *node;
