@@ -36,7 +36,7 @@
 
 ** Implementation
 
-Pulled from ~lobject.h~ of Lua 5.4, I simplified and renamed many of these examples for clarity.
+Pulled from ~lobject.h~ of Lua 5.4, many of these examples are simplified and renamed for clarity.
 
 #+begin_src c
   /* Side Note: "lu_byte" alias for "unsigned char" */
