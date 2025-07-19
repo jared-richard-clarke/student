@@ -1,10 +1,11 @@
-* Functions
+* Functions in Lua
 
 ** Sources
 
-| source               | author                |
-|----------------------+-----------------------|
-| *Programming in Lua* | Roberto Ierusalimschy |
+| source                                         | author                |
+|------------------------------------------------+-----------------------|
+| *Programming in Lua*                           | Roberto Ierusalimschy |
+| *First-Class Functions in an Imperative World* | Roberto Ierusalimschy |
 
 ** Function Syntax
 
@@ -14,6 +15,29 @@
 | ~function a.b.c () body end~      | ~a.b.c = function () body end~      |
 | ~local function f () body end~    | ~local f; f = function () body end~ |
 | ~function object:f (xs) body end~ | ~f = function (self, xs) body end~  |
+
+** Lambdas / Closures / Anonymous Functions
+
+- Properties of a lambda:
+
+  - The function is a value. It can be passed as a parameter, returned as a result, assigned
+    to a variable, and be a field in structured data.
+
+  - The function can be nested, that is, it can be defined inside other functions.
+
+  - The anonymous function has a dedicated syntax, the function literal. A function literal
+    can be created and invoked inside any expression.
+
+  - The function respects *lexical scoping*. It has full access to variables defined within
+    its enclosing functions, even when the function is returned from its enclosing function.
+
+| language        | first-class values      | nested | anonymous                | lexical scoping |
+|-----------------+-------------------------+--------+--------------------------+-----------------|
+| C               | yes (function pointers) | no     | no                       | no              |
+| LISP (original) | yes                     | yes    | yes                      | no              |
+| Pascal          | no                      | yes    | no                       | yes             |
+| Modula-2        | yes (only non-nested)   | yes    | yes                      | yes             |
+| Python 3        | yes                     | yes    | yes (single expressions) | yes             |
 
 ** Local Functions
 
@@ -111,6 +135,33 @@ closing over a different ~y~ variable while sharing the same ~x~.
   function sub (x, y) return x - y end
 #+end_src
 
+** Iterators
+
+In Lua, an iterator can be implemented using an impure function that returns
+the next element of an iteration each time it is called.
+
+#+begin_src lua
+  -- Factory function returns an anonymous function, the generator.
+  function range(x, y)
+      return function()
+                 if x > y then
+                     return nil
+                 else
+                     x = x + 1
+                     return x - 1
+                 end
+             end
+  end
+
+  sum = 0
+
+  for number in range(1, 10) do
+      sum = sum + number
+  end
+
+  print(sum) --> 55
+#+end_src
+
 ** Tail Calls
 
 #+begin_src lua
@@ -124,4 +175,34 @@ closing over a different ~y~ variable while sharing the same ~x~.
       end
       return loop(x, 1)
   end
+#+end_src
+
+** The Z Combinator
+
+#+begin_src lua
+  -- === Z Combinator ===
+  -- let Z = λf.(λx.f(λx.f(λv.((x x) v)))(λx.f(λv.((x x) v)))
+  --     F = λf.λn. if n = 0 then 1 else n x f(n - 1)
+  -- in
+  --    (Z F) 4
+
+  local Z = function (f)
+      return
+          (function (x) return f (function (v) return x(x)(v) end) end)
+          (function (x) return f (function (v) return x(x)(v) end) end)
+  end
+
+  -- factorial function
+
+  local F = function (f)
+                return function (n)
+                           if n == 0 then
+                               return 1
+                           else
+                               return n * f(n - 1)
+                           end
+                       end
+  end
+
+  Z(F)(4) --> 24
 #+end_src
