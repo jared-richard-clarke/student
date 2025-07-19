@@ -8,6 +8,7 @@
 | *A Look at the Design of Lua*                    | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
 | *Passing a Language through the Eye of a Needle* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
 | *Programming in Lua*                             | Roberto Ierusalimschy                                                  |
+| *First-Class Functions in an Imperative World*   | Roberto Ierusalimschy                                                  |
 
 ** Introduction
 
@@ -28,13 +29,15 @@ to Lua values, and place them on a virtual stack.
    it changes only the top part of the stack. Our C code has more freedom; specifically, it can
    inspect any element in the stack and even insert and delete elements at any position."
 
-   — *Programming in Lua*, Roberto Ierusalimschy
+  — *Programming in Lua*, Roberto Ierusalimschy
 
-  "...the stack allows the programmer to control the lifetime of any object in a safe way. While an
-   object is in the stack, it cannot be collected; once out of the stack, it cannot be manipulated.
-   Moreover, the stack offers a natural way to pass parameters and results."
+  "All data exchange between Lua and C goes through a stack of Lua values. This stack has two purposes.
+   The first one is to solve the mismatch between the dynamic typing in Lua and the static typing in C:
+   all projections and injections between C values and Lua values go through the stack. The second
+   purpose is to control garbage collection: C has direct access only to values in the stack, which
+   cannot be collected while there."
 
-   — *Passing a Language through the Eye of a Needle*, Ierusalimschy, Henrique de Figueiredo, and Celes
+  — *First-Class Functions in an Imperative World*, Roberto Ierusalimschy
 #+end_quote
 
 *** Lua State
