@@ -124,6 +124,20 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
 
 ** Types
 
+| nil      | boolean | number | string   |
+| function | table   | thread | userdata |
+
+#+begin_quote
+  "Lua is a dynamically typed language. This means that variables do not have types;
+   only values do. There are no type definitions in the language. All values carry
+   their own type.
+
+   All values in Lua are first-class values. This means that all values can be stored
+   in variables, passed as arguments to other functions, and returned as results."
+
+  — *Lua 5.4 Reference Manual*
+#+end_quote
+
 - Starting in version 5.3, Lua uses two alternative representations for numbers:
   64-bit integers and double-precision floating-point numbers.
   
@@ -136,6 +150,3 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
   
 - In conditions and relational expressions, only boolean *false* and bottom value *nil*
   evaluate false. All other data evaluates true.
-
-| nil      | boolean | number | string   |
-| function | table   | thread | userdata |
