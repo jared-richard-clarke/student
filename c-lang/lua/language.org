@@ -138,15 +138,47 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
   — *Lua 5.4 Reference Manual*
 #+end_quote
 
-- Starting in version 5.3, Lua uses two alternative representations for numbers:
-  64-bit integers and double-precision floating-point numbers.
-  
+- nil :: A single value whose main property is to be different from any other value. It often
+  represents the absence of a value.
+
+- boolean :: Two values: *true* and *false*. Both *nil* and *false* make a condition *false*.
+  All other values make a condition *true*.
+
+- number :: Represents two subtypes: *integer* and *float*. Standard Lua uses 64-bit integers and
+  double-precision (64-bit) floats.
+
   - More often than not, these two number types are interchangeable. ~type(x)~
     returns ~number~. The function ~math.type~ distinguishes between the two.
 
   - For mathematical operations, if both operands are integers, the operation returns
     an integer result, otherwise the operation returns a float. With mixed operands,
     Lua converts the integer value to float prior to evaluation.
-  
-- In conditions and relational expressions, only boolean *false* and bottom value *nil*
-  evaluate false. All other data evaluates true.
+
+- string :: Immutable sequence of bytes. Strings are 8-bit clean, meaning any 8-bit value,
+  including embedded zeros (~'\0'~). Lua is encoding-agnostic, meaning it makes no assumptions
+  about the contents of a string.
+
+- function :: A function in Lua is a callable, nestable, anonymous, lexically-scoped,
+  first-class expression. Lua can call and manipulate functions implemented both in Lua and in C.
+
+- userdata :: Arbitrary C data stored in Lua variables. A block of raw memory. Userdata has
+  no predefined operations in Lua, except assignment and identity testing. Metatables can
+  define operations for full userdata values. Userdata can only be created and modified through
+  Lua's C API.
+
+  - *full userdata*: A block of memory managed by Lua.
+
+  - *light userdata*: A C pointer value.
+
+- thread :: Independent threads of execution used to implement coroutines. Lua threads are not
+  operating system threads, meaning Lua supports coroutines on all systems
+
+- table :: Heterogeneous, associative arrays. Tables are the sole data-structuring mechanism
+  in Lua. They are capable of containing any value except *nil* and *NaN*.
+
+  - Any key associated to the value *nil* is not considered part of the table. Conversely,
+    any key that is not part of the table has an associated *nil* value.
+
+  - Table indexing implements raw equality. Expressions ~table[i]~ and ~table[j]~ denote the
+    same element if and only if indexes ~i~ and ~j~ are raw equal, meaning they are equal
+    without delegating to metamethods.
