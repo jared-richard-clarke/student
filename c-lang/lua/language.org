@@ -158,7 +158,7 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
   including embedded zeros (~'\0'~). Lua is encoding-agnostic, meaning it makes no assumptions
   about the contents of a string.
 
-- function :: A function in Lua is a callable, nestable, anonymous, lexically-scoped,
+- function :: A function in Lua is a callable, nestable, anonymous, lexically-scoped, tail-recursive,
   first-class expression. Lua can call and manipulate functions implemented both in Lua and in C.
 
 - userdata :: Arbitrary C data stored in Lua variables. A block of raw memory. Userdata has
