@@ -463,6 +463,31 @@ Lua application.
 Lua is implemented not as a standalone program, but as a C library. The standalone Lua interpreter
 is an interface that feeds files and strings from the user to the Lua library.
 
+- *usage*: lua [options] [script [args]]
+
+- *options*:
+  
+  - ~-e stat~: execute string ~stat~.
+    
+  - ~-i~: enter interactive mode after running script.
+    
+  - ~-l mod~: "require" ~mod~ and assign it to global ~mod~.
+    
+  - ~-l g=mod~: "require" ~mod~ and assign it to global ~g~.
+    
+  - ~-v~: print version information.
+    
+  - ~-E~: ignore environment variables.
+    
+  - ~-W~: turn warnings on.
+    
+  - ~--~: stop handling options.
+    
+  - ~-~: execute stdin as a file and stop handling options.
+
+After handling its options, Lua runs the given script. When called without arguments, Lua behaves
+as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
+
 #+begin_src c
   // === Standard Libraries ===
   // Portions from "linit.c" and "lauxlib.c".
