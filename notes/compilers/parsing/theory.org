@@ -65,8 +65,9 @@ two completely separate sets.
 
 - A finite set of *P* of production rules, each rule of the form
   *(Σ ∪ N)\star{}N(Σ ∪ N)\star{} → (Σ ∪ N)\star{}*
-  where *\star{}* is the Kleene star operator, denoting *concatenation*,
-  and *∪* denotes *set union*.
+  where *\star{}* is the Kleene star operator, denoting *concatenation*, and *∪* denotes *set union*.
+  Each production rule maps from one string of symbols to another, where the first string (the *head*)
+  contains an arbitrary number of symbols provided at least one of them is a non-terminal.
 
 - In the case that the body consists solely of an empty string, the body may be denoted with
   a special notation, usually *Λ*, *e* or *ε*.
