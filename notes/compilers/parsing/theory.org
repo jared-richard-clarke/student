@@ -59,15 +59,22 @@ two completely separate sets.
 
 *** A Classic Formalization of Generative Grammars
 
+Each production rule maps from one string of symbols to another, where the first string (the head)
+contains an arbitrary number of symbols provided at least one of them is a non-terminal.
+
 - A finite set *N* of non-terminal symbols.
 
 - A finite set *Σ* of terminal symbols that is disjoint from *N*.
 
-- A finite set of *P* of production rules, each rule of the form
-  *(Σ ∪ N)\star{}N(Σ ∪ N)\star{} → (Σ ∪ N)\star{}*
-  where *\star{}* is the Kleene star operator, denoting *repetition*, and *∪* denotes *set union*.
-  Each production rule maps from one string of symbols to another, where the first string (the *head*)
-  contains an arbitrary number of symbols provided at least one of them is a non-terminal.
+- A finite set *P* of production rules: *(Σ ∪ N)\star{}N(Σ ∪ N)\star{} → (Σ ∪ N)\star{}*
+
+  - *·*: Denotes *concatenation*. Implicit in sequences. *ABC* implies *A · B · C*.
+    
+  - *\star{}*: Denotes *repetition*. The Kleene star operator.
+    
+  - *∪*: Denotes a *set union*.
+    
+  - *→*: Denotes a *function*.
 
 - In the case that the body consists solely of an empty string, the body may be denoted with
   a special notation, usually *Λ*, *e* or *ε*.
