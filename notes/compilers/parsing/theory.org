@@ -68,13 +68,13 @@ contains an arbitrary number of symbols provided at least one of them is a non-t
 
 - A finite set *P* of production rules: *(Σ ∪ N)\star{}N(Σ ∪ N)\star{} → (Σ ∪ N)\star{}*
 
-  - *·*: Denotes *concatenation*. Implicit in sequences. *ABC* implies *A · B · C*.
+  - *·*: Concatenation. Implicit in sequences. *ABC* implies *A · B · C*.
     
-  - *\star{}*: Denotes *repetition*. The Kleene star operator.
+  - *\star{}*: Repetition. The Kleene star operator.
     
-  - *∪*: Denotes a *set union*.
+  - *∪*: (Set) Union.
     
-  - *→*: Denotes a *function*.
+  - *→*: Function.
 
 - In the case that the body consists solely of an empty string, the body may be denoted with
   a special notation, usually *Λ*, *e* or *ε*.
