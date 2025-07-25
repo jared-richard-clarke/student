@@ -223,6 +223,32 @@ function factorial (x)
     end
     return product
 end
+
+-- === Z Combinator: The Y Combinator for Applicative Languages ===
+-- let Z = λf.(λx.f(λx.f(λv.((x x) v)))(λx.f(λv.((x x) v)))
+--     F = λf.λn. if n = 0 then 1 else n x f(n - 1)
+-- in
+--    (Z F) 4
+
+local Z = function (f)
+    return
+        (function (x) return f (function (v) return x(x)(v) end) end)
+        (function (x) return f (function (v) return x(x)(v) end) end)
+end
+
+-- factorial function
+
+local F = function (f)
+              return function (n)
+                         if n == 0 then
+                             return 1
+                         else
+                             return n * f(n - 1)
+                         end
+                     end
+end
+
+Z(F)(4) --> 24
 ```
 
 ## OCaml
