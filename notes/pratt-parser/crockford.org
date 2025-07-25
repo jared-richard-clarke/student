@@ -338,7 +338,7 @@
 
       // "The `statement` function parses one statement. If the current token has
       // a `std` method, the token is reserved and the `std` is invoked.
-      // Otherwise,we assume an expression statement terminated with a semi-colon.
+      // Otherwise, we assume an expression statement terminated with a semi-colon.
       // For reliability, we will reject an expression statement that is not an
       // assignment or invocation."
 
