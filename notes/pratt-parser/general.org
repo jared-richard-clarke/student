@@ -2,11 +2,12 @@
 
 ** Sources
 
-| source                               | author            |
-|--------------------------------------+-------------------|
-| Top Down Operator Precedence         | Douglas Crockford |
-| Top-Down Operator Precedence Parsing | Eli Bendersky     |
-| Crafting Interpreters                | Bob Nystrom       |
+| source                                 | author            |
+|----------------------------------------+-------------------|
+| *Top Down Operator Precedence*         | Douglas Crockford |
+| *Top-Down Operator Precedence Parsing* | Eli Bendersky     |
+| *Crafting Interpreters*                | Bob Nystrom       |
+| *Demystifying Pratt Parsers*           | Martin Janiczek   |
 
 ** Summary
 
@@ -186,3 +187,23 @@ semantic code of each lexeme in turn from left to right.
   //                 expression(60)
   //                 c.nud()
 #+end_src
+
+** Visual Intuition
+
+~1 + 2 - 3 × 4 + 5 ÷ 6 ^ 7 - 8 × 9~ → ~(1 + 2 - (3 × 4) + (5 ÷ (6 ^ 7)) - (8 × 9))~
+
+| BP | N   | OP | N | OP | N   | OP | N   | OP | N   | OP | N   | OP | N     | OP | N   | OP | N     |
+|----+-----+----+---+----+-----+----+-----+----+-----+----+-----+----+-------+----+-----+----+-------|
+|  0 | ( 1 |    | 2 |    | ( 3 |    | 4 ) |    | ( 5 |    | ( 6 |    | 7 ) ) |    | ( 8 |    | 9 ) ) |
+|----+-----+----+---+----+-----+----+-----+----+-----+----+-----+----+-------+----+-----+----+-------|
+|  1 |     | +  |   | -  |     |    |     | +  |     |    |     |    |       | -  |     |    |       |
+|----+-----+----+---+----+-----+----+-----+----+-----+----+-----+----+-------+----+-----+----+-------|
+|  2 |     |    |   |    |     | ×  |     |    |     | ÷  |     |    |       |    |     | ×  |       |
+|----+-----+----+---+----+-----+----+-----+----+-----+----+-----+----+-------+----+-----+----+-------|
+|  3 |     |    |   |    |     |    |     |    |     |    |     | ^  |       |    |     |    |       |
+
+- BP :: Binding Power (Precedence)
+
+- N :: Number
+
+- OP :: Operator
