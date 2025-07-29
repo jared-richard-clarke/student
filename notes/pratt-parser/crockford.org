@@ -276,6 +276,11 @@
 
       let advance = function (id) {
           let a, o, t, v;
+          // where a = arity | type
+          //       o = object
+          //       t = token
+          //       v = value
+
           if (id && token.id !== id) {
               token.error("Expected '" + id + "'.");
           }
