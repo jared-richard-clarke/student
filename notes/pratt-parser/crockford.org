@@ -380,7 +380,7 @@
       let statements = function () {
           let a = [],
               s;
-          // where a = list of statements (AST)
+          // where a = array of statements (AST)
           //       s = current statement
 
           while (true) {
