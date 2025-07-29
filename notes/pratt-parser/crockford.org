@@ -212,6 +212,9 @@
           find: function (n) {
               let e = this,
                   o;
+              // where e = environment
+              //       o = symbol object
+
               while (true) {
                   o = e.def[n];
                   if (o && typeof o !== "function") {
@@ -331,7 +334,7 @@
       let expression = function (rbp) {
           let left;
           let t = token;
-          // where left = expression AST
+          // where left = expression (AST)
           //       t    = previous token
           advance();
           left = t.nud();
@@ -353,7 +356,7 @@
           let n = token,
               v;
           // where n = statement identifier token
-          //       v = statement AST
+          //       v = statement (AST)
 
           if (n.std) {
               advance();
@@ -377,7 +380,7 @@
       let statements = function () {
           let a = [],
               s;
-          // where a = list of statements AST
+          // where a = list of statements (AST)
           //       s = current statement
 
           while (true) {
