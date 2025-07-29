@@ -326,7 +326,7 @@
       // power of the next token, the `led` method is invoked on the
       // following token. The `led` is used to process infix and suffix
       // operators. This process can be recursive because the `nud` and
-      // `led` methods can call expression."
+      // `led` methods can call `expression`."
 
       let expression = function (rbp) {
           let left;
