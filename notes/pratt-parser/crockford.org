@@ -331,6 +331,8 @@
       let expression = function (rbp) {
           let left;
           let t = token;
+          // where left = expression AST
+          //       t    = previous token
           advance();
           left = t.nud();
           while (rbp < token.lbp) {
@@ -350,6 +352,8 @@
       let statement = function () {
           let n = token,
               v;
+          // where n = statement identifier token
+          //       v = statement AST
 
           if (n.std) {
               advance();
@@ -373,6 +377,9 @@
       let statements = function () {
           let a = [],
               s;
+          // where a = list of statements AST
+          //       s = current statement
+
           while (true) {
               if (token.id === "}" || token.id === "(end)") {
                   break;
