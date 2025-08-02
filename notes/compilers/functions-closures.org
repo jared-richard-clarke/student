@@ -216,6 +216,10 @@ They do not capture values themselves as they would in a pure functional languag
   0008    | OP_CONSTANT         5 '11'
   0010    | OP_CALL             2
   0012    | OP_DEFINE_GLOBAL    2 'sum'
-  0014    | OP_NIL
-  0015    | OP_RETURN
+  0014    9 OP_GET_GLOBAL       6 'sum'
+  0016    | OP_CONSTANT         7 '1'
+  0018    | OP_CALL             1
+  0020    | OP_POP
+  0021    | OP_NIL
+  0022    | OP_RETURN
 #+end_example
