@@ -58,32 +58,32 @@ and *Y*      = *{ x : W(x) }*
 
 - complement :: *A^{C} = { x ∈ U | x ∉ A }*
 
-| rule                         | algebra                         |
-|------------------------------+---------------------------------|
-| double complement            | (A^{C})^{C} = A                 |
-| miscellaneous                | A ∪ A^{C} = U                   |
-|                              | A ∩ A^{C} = Ø                   |
-|                              | A \ (B ∪ C) = (A \ B) \ C       |
-| unit element of union        | Ø ∪ A = A                       |
-| zero element of intersection | Ø ∩ A = Ø                       |
-| idempotent                   | A ∩ A = A                       |
-|                              | A ∪ A = A                       |
-| commutative                  | A ∩ B = B ∩ A                   |
-|                              | A ∪ B = B ∪ A                   |
-| associative                  | A ∩ (B ∩ C) = (A ∩ B) ∩ C       |
-|                              | A ∪ (B ∪ C) = (A ∪ B) ∪ C       |
-| distributive                 | A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) |
-|                              | A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) |
-| DeMorgan's laws              | (A ∩ B)^{C} = A^{C} ∪ B^{C}     |
-|                              | (A ∪ B)^{C} = A^{C} ∩ B^{C}     |
+| rule                         | algebra                           |
+|------------------------------+-----------------------------------|
+| double complement            | *(A^{C})^{C} = A*                 |
+| miscellaneous                | *A ∪ A^{C} = U*                   |
+|                              | *A ∩ A^{C} = Ø*                   |
+|                              | *A \ (B ∪ C) = (A \ B) \ C*       |
+| unit element of union        | *Ø ∪ A = A*                       |
+| zero element of intersection | *Ø ∩ A = Ø*                       |
+| idempotent                   | *A ∩ A = A*                       |
+|                              | *A ∪ A = A*                       |
+| commutative                  | *A ∩ B = B ∩ A*                   |
+|                              | *A ∪ B = B ∪ A*                   |
+| associative                  | *A ∩ (B ∩ C) = (A ∩ B) ∩ C*       |
+|                              | *A ∪ (B ∪ C) = (A ∪ B) ∪ C*       |
+| distributive                 | *A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)* |
+|                              | *A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)* |
+| DeMorgan's laws              | *(A ∩ B)^{C} = A^{C} ∪ B^{C}*     |
+|                              | *(A ∪ B)^{C} = A^{C} ∩ B^{C}*     |
 
 *** Subset Relations
 
-| union         | A ⊆ B ⇔ A ∪ B = B     |
-| intersection  | A ⊆ B ⇔ A ∩ B = A     |
-| difference    | A ⊆ B ⇔ A \ B = Ø     |
-| antisymmetric | A ⊆ B ∧ B ⊆ A ⇔ B     |
-| transitive    | A ⊆ B ∧ B ⊆ C ⇔ A ⊆ C |
+| union         | *A ⊆ B ⇔ A ∪ B = B*     |
+| intersection  | *A ⊆ B ⇔ A ∩ B = A*     |
+| difference    | *A ⊆ B ⇔ A \ B = Ø*     |
+| antisymmetric | *A ⊆ B ∧ B ⊆ A ⇔ B*     |
+| transitive    | *A ⊆ B ∧ B ⊆ C ⇔ A ⊆ C* |
 
 *** Logic and Set Theory
 
@@ -103,11 +103,11 @@ and *B* = set
 
 | Logic   | Set Theory |
 |---------+------------|
-| T       | U          |
-| F       | Ø          |
-| p ∧ q   | A ∩ B      |
-| p ∨ q   | A ∪ B      |
-| ¬p      | A^{C}      |
+| *T*     | *U*        |
+| *F*     | *Ø*        |
+| *p ∧ q* | *A ∩ B*    |
+| *p ∨ q* | *A ∪ B*    |
+| *¬p*    | *A^{C}*    |
 
 ** Functions
 
