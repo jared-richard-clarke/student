@@ -40,16 +40,16 @@ and *W(x)*   = *x* is wise
 
 and *domain* = people
 
-and *X*      = *{ x | L(x) }*
+and *X*      = *{ x : L(x) }*
 
-and *Y*      = *{ x | W(x) }*
+and *Y*      = *{ x : W(x) }*
 
-| set                                | translation                        |
-|------------------------------------+------------------------------------|
-| X ∪ Y = { x \vert{} L(x) ∨  W(x) } | People who are lucky or wise.      |
-| X ∩ Y = { x \vert{} L(x) ∧  W(x) } | People who are lucky and wise.     |
-| X \ Y = { x \vert{} L(x) ∧ ¬W(x) } | People who are lucky but not wise. |
-| Y \ X = { x \vert{} W(x) ∧ ¬L(x) } | People who are wise but not lucky. |
+| set                            | translation                        |
+|--------------------------------+------------------------------------|
+| *X ∪ Y = { x : L(x) ∨  W(x) }* | People who are lucky or wise.      |
+| *X ∩ Y = { x : L(x) ∧  W(x) }* | People who are lucky and wise.     |
+| *X \ Y = { x : L(x) ∧ ¬W(x) }* | People who are lucky but not wise. |
+| *Y \ X = { x : W(x) ∧ ¬L(x) }* | People who are wise but not lucky. |
 
 ** The Boolean Algebra of Sets
 
