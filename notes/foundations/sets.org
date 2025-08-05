@@ -5,6 +5,7 @@
 | source                       | author                        |
 |------------------------------+-------------------------------|
 | *Foundations of Computation* | Carol Critchlow and David Eck |
+| *Basics of Compiler Design*  | Torben Ægidius Mogensen       |
 
 ** Basic Concepts
 
@@ -16,19 +17,20 @@ and *a* = entity
 
 *** Definitions
 
-| name            | notation    | definition                                                      |
-|-----------------+-------------+-----------------------------------------------------------------|
-| binary relation | *a ∈ A*     | Object *a* is a member of set *A*.                              |
-| binary relation | *a ∉ A*     | *¬(a ∈ A)*, *a* is not a member of *A*                          |
-| empty set       | *Ø* or *{}* | The empty set, which contains no elements.                      |
-| subset          | *A ⊆ B*     | *A* is a subset of *B*, *∀x(x ∈ A → x ∈ B)*                     |
-| proper subset   | *A ⊂ B*     | *A* is a subset of *B* but not equal to *B*, *A ⊆ B ∧ A ≠ B*    |
-| superset        | *A ⊇ B*     | *A* is a superset of *B*.                                       |
-| proper superset | *A ⊃ B*     | *A* is a superset of *B* but not equal to *B*.                  |
-| equality        | *A = B*     | *A* and *B* have the same members, *A ⊆ B ∧ B ⊆ A*              |
-| union           | *A ∪ B*     | Members of *A* and *B* or both, *{ x \vert{} x ∈ A ∨ x ∈ B }*   |
-| intersection    | *A ∩ B*     | Only members of both *A* and *B*, *{ x \vert{} x ∈ A ∧ x ∈ B }* |
-| difference      | *A \ B*     | Members of *A* but not *B*,  *{ x \vert{} x ∈ A ∧ x ∉ B }*      |
+| name             | notation                        | definition                                                   |
+|------------------+---------------------------------+--------------------------------------------------------------|
+| binary relation  | *a ∈ A*                         | Object *a* is a member of set *A*.                           |
+| binary relation  | *a ∉ A*                         | *¬(a ∈ A)*, *a* is not a member of *A*                       |
+| empty set        | *Ø* or *{}*                     | The empty set, which contains no elements.                   |
+| subset           | *A ⊆ B*                         | *A* is a subset of *B*, *∀x(x ∈ A → x ∈ B)*                  |
+| proper subset    | *A ⊂ B*                         | *A* is a subset of *B* but not equal to *B*, *A ⊆ B ∧ A ≠ B* |
+| superset         | *A ⊇ B*                         | *A* is a superset of *B*.                                    |
+| proper superset  | *A ⊃ B*                         | *A* is a superset of *B* but not equal to *B*.               |
+| equality         | *A = B*                         | *A* and *B* have the same members, *A ⊆ B ∧ B ⊆ A*           |
+| union            | *A ∪ B*                         | Members of *A* and *B* or both, *{ x : x ∈ A ∨ x ∈ B }*      |
+| intersection     | *A ∩ B*                         | Only members of both *A* and *B*, *{ x : x ∈ A ∧ x ∈ B }*    |
+| difference       | *A \ B* or *A - B*              | Members of *A* but not *B*,  *{ x : x ∈ A ∧ x ∉ B }*         |
+| set-builder      | *{ e : p }*                     | The set of all expressions *e* where predicates *p* hold.    |
 
 *** Examples
 
@@ -56,23 +58,32 @@ and *Y*      = *{ x | W(x) }*
 
 - complement :: *A^{C} = { x ∈ U | x ∉ A }*
 
-| rule               | algebra                         |
-|--------------------+---------------------------------|
-| double complement  | (A^{C})^{C} = A                 |
-| miscellaneous laws | A ∪ A^{C} = U                   |
-|                    | A ∩ A^{C} = Ø                   |
-|                    | Ø ∪ A^{C} = A                   |
-|                    | Ø ∩ A^{C} = Ø                   |
-| idempotent laws    | A ∩ A = A                       |
-|                    | A ∪ A = A                       |
-| commutative laws   | A ∩ B = B ∩ A                   |
-|                    | A ∪ B = B ∪ A                   |
-| associative laws   | A ∩ (B ∩ C) = (A ∩ B) ∩ C       |
-|                    | A ∪ (B ∪ C) = (A ∪ B) ∪ C       |
-| distributive laws  | A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) |
-|                    | A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) |
-| DeMorgan's laws    | (A ∩ B)^{C} = A^{C} ∪ B^{C}     |
-|                    | (A ∪ B)^{C} = A^{C} ∩ B^{C}     |
+| rule                         | algebra                         |
+|------------------------------+---------------------------------|
+| double complement            | (A^{C})^{C} = A                 |
+| miscellaneous                | A ∪ A^{C} = U                   |
+|                              | A ∩ A^{C} = Ø                   |
+|                              | A \ (B ∪ C) = (A \ B) \ C       |
+| unit element of union        | Ø ∪ A = A                       |
+| zero element of intersection | Ø ∩ A = Ø                       |
+| idempotent                   | A ∩ A = A                       |
+|                              | A ∪ A = A                       |
+| commutative                  | A ∩ B = B ∩ A                   |
+|                              | A ∪ B = B ∪ A                   |
+| associative                  | A ∩ (B ∩ C) = (A ∩ B) ∩ C       |
+|                              | A ∪ (B ∪ C) = (A ∪ B) ∪ C       |
+| distributive                 | A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) |
+|                              | A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) |
+| DeMorgan's laws              | (A ∩ B)^{C} = A^{C} ∪ B^{C}     |
+|                              | (A ∪ B)^{C} = A^{C} ∩ B^{C}     |
+
+*** Subset Relations
+
+| union         | A ⊆ B ⇔ A ∪ B = B     |
+| intersection  | A ⊆ B ⇔ A ∩ B = A     |
+| difference    | A ⊆ B ⇔ A \ B = Ø     |
+| antisymmetric | A ⊆ B ∧ B ⊆ A ⇔ B     |
+| transitive    | A ⊆ B ∧ B ⊆ C ⇔ A ⊆ C |
 
 *** Logic and Set Theory
 
@@ -106,7 +117,7 @@ If *(a, b)* is that ordered pair, then *b* is called the value of the function a
 *f(a)*. If *b = f(a)*, then we also say that the function *f* maps *a* to *b*. The fact that *f* is
 a function from *A* to *B* is indicated by the notation *f: A → B*.
 
-*A* is the *domain* and *B* is the *range*. The *image* of *f* is the set *{ f(a) | a ∈ A }*.
+*A* is the *domain* and *B* is the *range*. The *image* of *f* is the set *{ f(a) : a ∈ A }*.
 
 A formula by itself is not a function, although it might well specify a function between two given
 sets of numbers. Functions can apply to all kinds of sets, not just sets of numbers.
@@ -124,22 +135,22 @@ the *value* of the function *f* at *a*.
 - composition :: If *f: A → B* and *g: B → C* are functions, then *g ◦ f: A → C* is the function that
   is defined by *(g ◦ f)(a) = g(f(a))* for each *a ∈ A*.
 
-- cross/cartesian product :: *A × B = { (a, b) | a ∈ A and b ∈ B }*
+- cross/cartesian product :: *A × B = { (a, b) : a ∈ A and b ∈ B }*
 
 - tuple :: The general term for the member of a cross product. More specifically called
   an *ordered n-tuple*.
 
-- graph :: The graph of function *f: A → B* is the set *{ (a, b) ∈ A × B | a ∈ A and b = f(a) }*
+- graph :: The graph of function *f: A → B* is the set *{ (a, b) ∈ A × B : a ∈ A and b = f(a) }*
 
 - first-class objects :: A set, ordered pair, or function that can be used just like any other entity.
 
 #+begin_example
-function add(x: integer, y: integer) -> integer
-            ^----------------------^    ^-----^
-	             domain              range
--- equivalent ->
+  function add(x: integer, y: integer) -> integer
+              ^----------------------^    ^-----^
+                       domain              range
+  -- equivalent ->
 
-add: integer × integer → integer
+  add: integer × integer → integer
 #+end_example
 
 ** Counting Past Infinity
@@ -156,10 +167,10 @@ used to indicate the cardinality of *A*. That is, if *A* is a finite set, then *
 number *n* such that there is a one-to-one correspondence between *A* and *N_{n}*. A set *B* is
 *infinite* if for every *n ∈ N*, there is no one-to-one correspondence between *B* and *N_{n}*.
 
-** Relations
+* Relations
 
 - relation :: Given a set *X*, a relation over *X* is a set of ordered pairs of elements from *X*:
-  *R ⊆ { (x, y) | x, y ∈ X }*. The statement *(x, y) ∈ R* reads "*x* is *R*-related to *y*" and can
+  *R ⊆ { (x, y) : x, y ∈ X }*. The statement *(x, y) ∈ R* reads "*x* is *R*-related to *y*" and can
   be written as *yRx*.
 
 A function is a relation, however, relations are more general than functions. Any subset of *A × B*
