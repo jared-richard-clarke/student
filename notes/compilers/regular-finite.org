@@ -1,17 +1,13 @@
-* Scanning
+* Lexical Analysis
 
 ** Sources
 
-| source                                          | author        |
-|-------------------------------------------------+---------------|
-| *Introduction to Compilers and Language Design* | Douglas Thain |
+| source                                          | author                  |
+|-------------------------------------------------+-------------------------|
+| *Introduction to Compilers and Language Design* | Douglas Thain           |
+| *Basics of Compiler Design*                     | Torben Ægidius Mogensen |
 
 ** Regular Expressions
-
-- *s* = string
-- *L(s)* = language of *s*, a set of strings drawn from alphabet *Σ*.
-
-*** Inductive Definition
 
 - If *a ∈ Σ* then *a* is a regular expression and *L(a) = {a}*.
 
@@ -19,16 +15,19 @@
 
 Then for regular expressions *s* and *t*:
 
-1. *s|t* is a *RE* such that *L(s|t) = L(s) ∪ L(t)*.
+1. *s|t* is a regular expression such that *L(s|t) = L(s) ∪ L(t)*.
 
-2. *st* is *RE* such that *L(st)* contains all strings formed by the concatenation
-   of a string in *L(s)* followed by a string in *L(t)*.
+2. *st* or *s · t* is regular expression such that *L(st)* contains all strings
+   formed by the concatenation of a string in *L(s)* followed by a string in *L(t)*.
 
-3. *s\star{}* is a *RE* such that *L(s\star{}) = L(s)* concatenated zero or more times.
+3. *s\star{}* is a regular expression such that *L(s\star{}) = L(s)* concatenated
+   zero or more times.
 
-*Rule #3* is known as the *Kleene closure* and has the highest precedence. *Rule #2*
-is known as *concatenation*. *Rule #1* has the lowest precedence and is known as *alternation*.
-Parentheses can be added to adjust the order of operations in the usual way.
+| precedence | name          | operator  |
+|------------+---------------+-----------|
+|          3 | alternation   | *\vert{}* |
+|          2 | concatenation | *•*       |
+|          1 | Kleene star   | *\star{}* |
 
 *** Examples
 
@@ -51,12 +50,14 @@ Parentheses can be added to adjust the order of operations in the usual way.
 
 *** Algebraic Properties
 
-| property      | value                                     |
-|---------------+-------------------------------------------|
-| Associativity | a\vert{}(b\vert{}c) = (a\vert{}b)\vert{}c |
-| Commutativity | a\vert{}b = b\vert{}a                     |
-| Distribution  | a(b\vert{}c) = ab\vert{}ac                |
-| Idempotency   | a** = a*                                  |
+| property     | value                                     |
+|--------------+-------------------------------------------|
+| Associative  | a\vert{}(b\vert{}c) = (a\vert{}b)\vert{}c |
+| Commutative  | a\vert{}b = b\vert{}a                     |
+| Distributive | a(b\vert{}c) = ab\vert{}ac                |
+| Idempotent   | a** = a*                                  |
+|              | a*a* = a*                                 |
+|              | a\vert{}a = a                             |
 
 ** Finite Automata
 
