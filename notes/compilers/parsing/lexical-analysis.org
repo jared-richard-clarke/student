@@ -1,0 +1,233 @@
+* Lexical Analysis
+
+** Sources
+
+| source                                          | author                  |
+|-------------------------------------------------+-------------------------|
+| *Introduction to Compilers and Language Design* | Douglas Thain           |
+| *Basics of Compiler Design*                     | Torben Ægidius Mogensen |
+
+** Regular Expressions
+
+- If *a ∈ Σ* then *a* is a regular expression and *L(a) = {a}*.
+
+- *ε* is a regular expression and *L(ε)* contains only the empty string.
+
+Then for regular expressions *s* and *t*:
+
+1. *s|t* is a regular expression such that *L(s|t) = L(s) ∪ L(t)*.
+
+2. *st* or *s · t* is regular expression such that *L(st)* contains all strings
+   formed by the concatenation of a string in *L(s)* followed by a string in *L(t)*.
+
+3. *s\star{}* is a regular expression such that *L(s\star{}) = L(s)* concatenated
+   zero or more times.
+
+| precedence | name          | operator  |
+|------------+---------------+-----------|
+|          3 | alternation   | *\vert{}* |
+|          2 | concatenation | *•*       |
+|          1 | Kleene star   | *\star{}* |
+
+*** Examples
+
+| Regular Expression  | Language L(s)               |
+|---------------------+-----------------------------|
+| hello               | { hello }                   |
+| d(o\vert{}i)g       | { dog, dig }                |
+| moo*                | { mo, moo, mooo, ... }      |
+| (moo)*              | { ε, moo, moomoo, ... }     |
+| a(b\vert{}a)*a      | { aa, aaa, aba, aaaa, ... } |
+
+*** Derived Syntax
+
+| derivation | semantics   | base syntax                   |
+|------------+-------------+-------------------------------|
+| s?         | optional    | (s\vert{}ε)                   |
+| s+         | one or more | ss*                           |
+| [a-z]      | one of      | (a\vert{}b\vert{}...\vert{}z) |
+| [^x]       | any except  | Σ - x                         |
+
+*** Algebraic Properties
+
+| property     | value                                     |
+|--------------+-------------------------------------------|
+| Associative  | a\vert{}(b\vert{}c) = (a\vert{}b)\vert{}c |
+| Commutative  | a\vert{}b = b\vert{}a                     |
+| Distributive | a(b\vert{}c) = ab\vert{}ac                |
+| Idempotent   | a** = a*                                  |
+|              | a*a* = a*                                 |
+|              | a\vert{}a = a                             |
+
+** Finite Automata
+
+A *Finite Automaton* is an abstract machine consisting of a number of states
+and a number of edges between those states. Each edge is labeled with one or
+more symbols drawn from alphabet *Σ*. For each input symbol, *FA* moves to the state
+connected by the matching edge.
+
+*Deterministic Finite Automaton* are a special case of *FA* where every state
+has no more than one outgoing edge for a given symbol. A *DFA* has no ambiguity.
+For every combination of state and input symbol, there is exactly one choice of what
+to do next.
+
+The transitions between states can be represented by a matrix *M[s, i]*, which
+encodes the next state, given the current state and input symbol. If the transition
+is not allowed, we mark it with *E* to indicate an error. For each symbol, we
+compute *c = M[s, i]* where *c* represents the current state until all the input is
+consumed or an error state is reached.
+
+Every *RE* can be written as an *FA* and vice versa.
+
+*** Deterministic Finite Automata
+
+**** *FA*: "for"
+
+#+begin_example
+  ->⓪-f->①-o->②-r->⓷
+#+end_example
+
+**** *RE* to *FA*: identifier
+
+#+begin_example
+  RE: [a-z][a-z0-9]+
+                                 -[a-z][0-9]->
+                                 <------------
+  FA: ->⓪-[a-z]->①-[a-z][0-9]->⓶
+#+end_example
+
+**** *FA*: number
+
+#+begin_example
+  RE: ([1-9][0-9]*)|0
+
+                      -[0-9]->
+                      <-------
+            ⓵-[0-9]->⓶
+     [1-9]-/
+  FA:   --⓪
+         0-\
+            ⓷
+#+end_example
+
+*** Nondeterministic Finite Automata
+
+An *NFA* presents a variety of ambiguous choices. There are two common ways to interpret
+ambiguity.
+
+1. *Crystal Ball Interpretation*: the *NFA* somehow knows what the best choice is by some
+   means external to itself. Impossible in a real implementation.
+
+2. *Many Worlds Interpretation*: the *NFA* exists in all allowable states simultaneously.
+
+**** Ambiguity
+
+*State 0* allows for two different transitions on symbol *i*. There is no simple rule
+by which we can pick one path over another. One is to stay in *state 0* matching *[a-z]*
+and the other is to move to *state 1* matching *i*.
+
+#+begin_example
+  RE: [a-z]*ing
+
+       -[a-z]->
+       <-------
+       |
+  FA: -⓪-i->①-n->②-g->⓷
+#+end_example
+
+**** Many Worlds Interpretation
+
+Consume string *aaac*.
+
+| states        | action      |
+|---------------+-------------|
+| 0, 1, 4       | consume *a* |
+| 0, 1, 2, 4, 5 | consume *a* |
+| 0, 1, 2, 4, 5 | consume *a* |
+| 0, 1, 2, 4, 5 | consume *c* |
+| 6             | accept      |
+
+#+begin_example
+RE: a*(ab|ac)
+
+       -a->
+       <---
+       | ①-a->②-b->⓷
+       |/-ε
+  FA: -⓪
+        \-ε
+         ④-a->⑤-c->⓺
+#+end_example
+
+** REs to NFAs
+
+#+begin_example
+  === characters and epsilon ===
+
+     a        ε
+  >○-a->◎  >○-ε->◎
+
+  === concatenation ===
+
+  AB or A•B
+
+  >○-A->○-ε->○-B->◎
+
+  === alternation ===
+
+  A|B
+
+     ○-A->○
+    /-ε    \-ε
+  >○        ◎
+    \-ε    /-ε
+     ○-B->○
+
+  === Kleene closure ===
+
+  A*
+
+     ○-A->○
+    /-ε    \-ε
+  >○---ε--->◎
+    \      /
+     <-ε--+
+#+end_example
+
+** NFA to DFA Conversion
+
+- epsilon closure :: The set of *NFA* states reachable from *NFA* state *n* by zero or more
+  *ε* transitions.
+
+*** Subset Construction Algorithm
+
+#+begin_example
+  while there is an unmarked state T in D-states {
+      mark T
+      for each input symbol a {
+          U := ε-closure(move(T, a))
+          if U is not in D-states {
+              add U as unmarked state to D-states
+          }
+          D-transitions[T, a] := U
+      }
+  }
+#+end_example
+
+*** Example: *abab|abbb*
+
+#+begin_example
+   === NFA ===
+
+   +->②-a->④-b->⑥-a->⑧-b-+
+   |                        |
+  >①                       ⓾
+   |                        |
+   +->③-a->⑤-b->⑦-b->⑨-b-+
+
+   === DFA ===                +-a->{⑧}-b-+
+                              |           |
+   >{① ② ③}-a->{④ ⑤}-b->{⑥ ⑦}        ⓾
+                              |           |
+                              +-b->{⑨}-b-+
+#+end_example
