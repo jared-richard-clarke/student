@@ -128,11 +128,8 @@ input string *w*.
 
 *** NFA to DFA Conversion
 
-- epsilon closure :: The set of *NFA* states reachable from *NFA* state *n* by zero or more
-  *ε* transitions.
-
-The epsilon closure *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the set of all states
-that can be reached from *q* via one or more *ε* transitions.
+- epsilon closure :: *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the
+  set of all states that can be reached from *q* via one or more *ε* transitions.
 
 If *R* is a set of states from *Q*, the epsilon closure *E(R)* is defined as the union of the epsilon
 closures of all the states in *R*.
