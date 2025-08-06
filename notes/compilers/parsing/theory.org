@@ -66,14 +66,14 @@ contains an arbitrary number of symbols provided at least one of them is a non-t
 
 - A finite set *Σ* of terminal symbols that is disjoint from *N*.
 
-- A finite set *P* of production rules: *(Σ ∪ N)\star{} · N · (Σ ∪ N)\star{} → (Σ ∪ N)\star{}*
+- A finite set *P* of production rules: *(Σ ∪ N)\star{} • N • (Σ ∪ N)\star{} → (Σ ∪ N)\star{}*
 
-  - *·*: Concatenation. Usually implicit in sequences. *ABC* implies *A · B · C*.
-    
+  - *•*: Concatenation. Usually implicit in sequences. *ABC* implies *A • B • C*.
+
   - *\star{}*: Repetition. The Kleene star operator.
-    
+
   - *∪*: (Set) Union.
-    
+
   - *→*: Function.
 
 - In the case that the body consists solely of an empty string, the body may be denoted with
