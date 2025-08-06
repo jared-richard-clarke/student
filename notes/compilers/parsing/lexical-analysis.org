@@ -76,6 +76,29 @@ The collection of regular languages over an alphabet *Σ* is defined recursively
 
 - transition function :: Determines the next state according to the current state and symbol.
 
+** Non-deterministic Finite-State Automaton
+
+*M* is specified by five components: *M = (Q, Σ, δ, q₀, F)* where
+
+- Q :: A finite set of states.
+
+- Σ :: Input alphabet, a finite set.
+
+- δ : Q × (Σ ∪ {ε}) → P(Q) :: The transition function.
+
+- q₀ ∈ Q :: The start state.
+
+- F ⊆ Q :: A subset of *Q*. The states designated as *final* or *accepting* states.
+
+*δ* is a transition function that takes *(state, input symbol)* pairs and maps each one to a set
+of states. To say *δ(q, a) = { q₁, q₂, ..., qn }* means that if the machine is in state *q* and
+the input symbol *a* is consumed, then the machine may move directly into any one of states
+*q₁, q₂, ..., qn*. The function *δ* must also be defined for every *(state, ε)* pair, where state
+may change but no input is consumed. The formal description of *δ* is *δ: Q × (Σ ∪ {ε}) → P(Q)*.
+
+The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ Σ\star{}* that are
+accepted by *M: L(M) = { w ∈ Σ\star{} | δ\star{}(q₀, w) ∩ F ≠ Ø }*.
+
 ** Deterministic Finite-State Automaton
 
 *M* is specified by five components: *M = (Q, Σ, δ, q₀, F)* where
@@ -102,29 +125,6 @@ accepted by *M: L(M) = { w ∈ Σ\star{} | δ\star{}(q₀, w) ∈ F }*.
 
 *δ\star{}(q, w)* denotes the state that a DFA will be in if it starts in state *q* and consumes
 input string *w*.
-
-** Non-deterministic Finite-State Automaton
-
-*M* is specified by five components: *M = (Q, Σ, δ, q₀, F)* where
-
-- Q :: A finite set of states.
-
-- Σ :: Input alphabet, a finite set.
-
-- δ : Q × (Σ ∪ {ε}) → P(Q) :: The transition function.
-
-- q₀ ∈ Q :: The start state.
-
-- F ⊆ Q :: A subset of *Q*. The states designated as *final* or *accepting* states.
-
-*δ* is a transition function that takes *(state, input symbol)* pairs and maps each one to a set
-of states. To say *δ(q, a) = { q₁, q₂, ..., qn }* means that if the machine is in state *q* and
-the input symbol *a* is consumed, then the machine may move directly into any one of states
-*q₁, q₂, ..., qn*. The function *δ* must also be defined for every *(state, ε)* pair, where state
-may change but no input is consumed. The formal description of *δ* is *δ: Q × (Σ ∪ {ε}) → P(Q)*.
-
-The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ Σ\star{}* that are
-accepted by *M: L(M) = { w ∈ Σ\star{} | δ\star{}(q₀, w) ∩ F ≠ Ø }*.
 
 ** NFA to DFA Conversion
 
