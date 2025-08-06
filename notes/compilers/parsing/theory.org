@@ -104,7 +104,7 @@ The Kleene Closure is defined for any monoid, not just strings.
 LL(1) ⊂ SLR ⊂ LALR ⊂ LR(1) ⊂ CFG
 #+end_example
 
-- Context-Free Grammar :: Any grammar whose rules have the form *A -> α*. Requires a parse
+- Context-Free Grammar :: Any grammar whose rules have the form *A → α*. Requires a parse
   table and a stack to track parser state. An ambiguous CFG creates a non-deterministic finite
   automaton.
 
