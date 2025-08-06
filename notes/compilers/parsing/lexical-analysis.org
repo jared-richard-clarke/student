@@ -17,21 +17,18 @@
 
   - If *Σ = {0, 1}* is an alphabet, then *001*, *1*, and *11* are all strings over *Σ*.
 
-- L(s) :: Language of *s*, a set of strings drawn from alphabet *Σ*.
+The collection of regular languages over an alphabet *Σ* is defined recursively as follows:
 
-- If *a ∈ Σ* then *a* is a regular expression and *L(a) = {a}*.
+1. The empty language *Ø* is a regular language.
 
-- *ε* is a regular expression and *L(ε)* contains only the empty string.
+2. For each *a ∈ Σ*, the singleton language *{a}* is a regular language.
 
-Then for regular expressions *s* and *t*:
+3. If *A* is a regular language, *A\star{}* is a regular language. Due to this, the empty string
+   language *{ε}* is also regular.
 
-1. *s|t* is a regular expression such that *L(s|t) = L(s) ∪ L(t)*.
+4. If *A* and *B* are regular languages, then *A ∪ B* and *A • B* are regular languages.
 
-2. *st* or *s · t* is regular expression such that *L(st)* contains all strings
-   formed by the concatenation of a string in *L(s)* followed by a string in *L(t)*.
-
-3. *s\star{}* is a regular expression such that *L(s\star{}) = L(s)* concatenated
-   zero or more times.
+5. No other languages over *Σ* are regular.
 
 | precedence | name          | operator  |
 |------------+---------------+-----------|
