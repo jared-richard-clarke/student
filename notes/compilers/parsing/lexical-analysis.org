@@ -193,7 +193,6 @@ final state of the NFA.
   === Kleene closure ===
 
   A*
-
         +-ε--+
         V    |
   >○-ε->○-A->○-ε->◎
