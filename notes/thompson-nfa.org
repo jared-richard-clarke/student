@@ -9,6 +9,7 @@
 | *Regular Expression Matching Can Be Simple and Fast* | Russ Cox        |
 | *Theory of Computation*                              | Michael Sipser  |
 | *Visualizing Thompson's Construction*                | Gregory Cernera |
+| ~regex-almost.py~                                    | Kay Lack        |
 
 ** NFA Fragments
 
@@ -999,4 +1000,131 @@ at least one final state of the *NFA*.
       clear(nlist);
     }
   }
+#+end_src
+
+** Kay Lack's NFA Constructor
+
+#+begin_src python
+  from dataclasses import dataclass
+  from typing import Callable, List, Set
+
+  # This is an example Python 'regex without the parsing part' implementation.
+  # It uses Thompson's Construction and simulates the non-deterministic finite
+  # automaton (NFA).
+
+  # ---------------------------------- MODEL ---------------------------------- #
+
+  class State:
+    pass
+
+  @dataclass
+  class Rule:
+    start: State
+    matcher: Callable[[str], bool]
+    end: State
+
+    def match(self, character: str) -> bool:
+      return self.matcher(character)
+
+    def is_epsilon(self) -> bool:
+      return self.matcher == EPSILON
+
+  @dataclass
+  class Graph:
+    label: str
+    start: State
+    end: State
+    rules: List[Rule]
+
+  # ------------------------------- EVALUATION -------------------------------- #
+
+  @dataclass
+  class Evaluator():
+    graph: Graph
+
+    def match(self, string: str) -> bool:
+      states = self.follow_epsilons(self.graph.start)
+      for char in string:
+        next_states = set()
+        for rule in self.matching_rules(states, char):
+          next_states.update(self.follow_epsilons(rule.end))
+        states = next_states
+      return self.graph.end in states
+
+    def follow_epsilons(self, state: State) -> Set[State]:
+      resolved = {state}
+      for rule in self.graph.rules:
+        if rule.is_epsilon() and rule.start == state:
+          resolved.update(self.follow_epsilons(rule.end))
+      return resolved
+
+    def matching_rules(self, states: Set[State], char: str):
+      matching_rules = []
+      for rule in self.graph.rules:
+        if rule.start in states and rule.match(char):
+          matching_rules.append(rule)
+      return matching_rules
+
+
+  # -------------------------------- MATCHERS --------------------------------- #
+
+  EPSILON = lambda _: False
+
+  def match_eq(c: str):
+    return lambda x: x == c
+
+  def match_any():
+    return lambda _: True
+
+  # ------------------------------ CONSTRUCTORS ------------------------------- #
+
+  def single_char(character: str) -> Graph:
+    start, end = State(), State()
+    return Graph(character, start, end, [
+      Rule(start, match_eq(character), end)
+    ])
+
+  def any_char(_: str) -> Graph:
+    start, end = State(), State()
+    return Graph(".", start, end, [
+      Rule(start, match_any(), end)
+    ])
+
+  def zero_or_more(subject: Graph) -> Graph:
+    start, end = State(), State()
+    label = "(" + subject.label + ")"
+    return Graph(label, start, end, [
+      *subject.rules,
+      Rule(start, EPSILON, end),
+      Rule(start, EPSILON, subject.start),
+      Rule(subj.end, EPSILON, end),
+      Rule(subj.end, EPSILON, subject.start),
+    ])
+
+  def concat(left: Graph, right: Graph):
+    label = left.label + right.label
+    return Graph(label, left.start, right.end, [
+      *left.rules,
+      *right.rules,
+      Rule(left.end, EPSILON, right.start),
+    ])
+
+
+  # --------------------------------- EXAMPLE ----------------------------------- #
+
+  # Regex: (lo)*l*
+  regex = Evaluator(
+    concat(
+      zero_or_more(
+        concat(
+          single_char("l"),
+          single_char("o")
+        )
+      ),
+      zero_or_more(single_char("l"))
+    )
+  )
+
+  regex.match("lol")  # -> True
+  regex.match("lool") # -> False
 #+end_src
