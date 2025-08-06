@@ -131,6 +131,9 @@ accepted by *M: L(M) = { w ∈ Σ\star{} | δ\star{}(q₀, w) ∩ F ≠ Ø }*.
 
 ** NFA to DFA Conversion
 
+- epsilon closure :: The set of *NFA* states reachable from *NFA* state *n* by zero or more
+  *ε* transitions.
+
 The epsilon closure *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the set of all states
 that can be reached from *q* via one or more *ε* transitions.
 
@@ -146,6 +149,25 @@ closures of all the states in *R*.
 
 The set of accepting states *F* of the DFA is defined to be the set of all states containing at least one
 final state of the NFA.
+
+#+begin_example
+   === RE ===
+   abab|abbb
+
+   === NFA ===
+
+   +->②-a->④-b->⑥-a->⑧-b-+
+   |                        |
+  >①                       ⓾
+   |                        |
+   +->③-a->⑤-b->⑦-b->⑨-b-+
+
+   === DFA ===                +-a->{⑧}-b-+
+                              |           |
+   >{① ② ③}-a->{④ ⑤}-b->{⑥ ⑦}        ⓾
+                              |           |
+                              +-b->{⑨}-b-+
+#+end_example
 
 *** Deterministic Finite Automata
 
@@ -260,42 +282,4 @@ RE: a*(ab|ac)
   >○---ε--->◎
     \      /
      <-ε--+
-#+end_example
-
-** NFA to DFA Conversion
-
-- epsilon closure :: The set of *NFA* states reachable from *NFA* state *n* by zero or more
-  *ε* transitions.
-
-*** Subset Construction Algorithm
-
-#+begin_example
-  while there is an unmarked state T in D-states {
-      mark T
-      for each input symbol a {
-          U := ε-closure(move(T, a))
-          if U is not in D-states {
-              add U as unmarked state to D-states
-          }
-          D-transitions[T, a] := U
-      }
-  }
-#+end_example
-
-*** Example: *abab|abbb*
-
-#+begin_example
-   === NFA ===
-
-   +->②-a->④-b->⑥-a->⑧-b-+
-   |                        |
-  >①                       ⓾
-   |                        |
-   +->③-a->⑤-b->⑦-b->⑨-b-+
-
-   === DFA ===                +-a->{⑧}-b-+
-                              |           |
-   >{① ② ③}-a->{④ ⑤}-b->{⑥ ⑦}        ⓾
-                              |           |
-                              +-b->{⑨}-b-+
 #+end_example
