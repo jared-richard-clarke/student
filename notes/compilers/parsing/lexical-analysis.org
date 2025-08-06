@@ -175,7 +175,7 @@ final state of the NFA.
 
   AB or A•B
 
-  >○-A->○-B->◎
+  >○-A->○-ε->○-B->◎
 
   === alternation ===
 
