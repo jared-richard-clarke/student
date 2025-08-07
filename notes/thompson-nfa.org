@@ -36,7 +36,11 @@
 #+end_quote
 
 #+begin_example
-  === empty ===
+  === empty set ===
+
+  >◯      ◎
+
+  === empty string | epsilon ===
 
   >◯--ε-->◎
    ^      ^
