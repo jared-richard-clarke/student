@@ -9,6 +9,15 @@
 
 ** Regular Expressions
 
+| regular expression | regular language                     |
+|--------------------+--------------------------------------|
+| Ø                  | {}                                   |
+| ε                  | {""}                                 |
+| a                  | {"a"}                                |
+| s\vert{}t          | L(s) ∪ L(t)                          |
+| st or s • t        | { vw : v ∈ L(s) ∧ w ∈ L(t) }         |
+| s*                 | {""} ∪ { vw : v ∈ L(s) ∧ w ∈ L(s*) } |
+
 - alphabet :: A finite, non-empty set.
 
 - symbols :: The elements of a set.
@@ -143,6 +152,18 @@ closures of all the states in *R*.
 
 The set of accepting states *F* of the DFA is defined to be the set of all states containing at least one
 final state of the NFA.
+
+*** Subset Construction
+
+- q₀' = ε-closure({q₀})
+
+- δ(q', c) = ε-closure({ q ∈ q' ∧ (q, c) ∈ T })
+
+- Q' = { q₀' } ∪ { δ(q', c) : q' ∈ Q' ∧ c ∈ Σ }
+
+- F' = { q' ∈ Q' : q' ∩ F ≠ ∅ }
+
+- ε-closure(X) = M ∪ { t : q ∈ X ∧ (q, ε) ∈ T }
 
 #+begin_example
   === RE ===
