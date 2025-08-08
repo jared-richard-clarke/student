@@ -9,6 +9,14 @@
 
 ** Regular Expressions
 
+- alphabet :: A finite, non-empty set.
+
+- symbols :: The elements of a set.
+
+- string :: A finite sequence of symbols from an alphabet. Called a *string over an alphabet*.
+
+  - If *Σ = {0, 1}* is an alphabet, then *001*, *1*, and *11* are all strings over *Σ*.
+
 | regular expression | regular language                     |
 |--------------------+--------------------------------------|
 | Ø                  | {}                                   |
@@ -17,14 +25,6 @@
 | s\vert{}t          | L(s) ∪ L(t)                          |
 | st or s • t        | { vw : v ∈ L(s) ∧ w ∈ L(t) }         |
 | s*                 | {""} ∪ { vw : v ∈ L(s) ∧ w ∈ L(s*) } |
-
-- alphabet :: A finite, non-empty set.
-
-- symbols :: The elements of a set.
-
-- string :: A finite sequence of symbols from an alphabet. Called a *string over an alphabet*.
-
-  - If *Σ = {0, 1}* is an alphabet, then *001*, *1*, and *11* are all strings over *Σ*.
 
 The collection of regular languages over an alphabet *Σ* is defined recursively as follows:
 
