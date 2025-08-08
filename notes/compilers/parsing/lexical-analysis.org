@@ -155,15 +155,19 @@ final state of the NFA.
 
 *** Subset Construction
 
-- q₀' = ε-closure({q₀})
+- *q₀'* = ε-closure({q₀})
 
-- δ(q', c) = ε-closure({ q ∈ q' ∧ (q, c) ∈ T })
+- *δ(q', c)* = ε-closure({ q ∈ q' ∧ (q, c) ∈ T })
 
-- Q' = { q₀' } ∪ { δ(q', c) : q' ∈ Q' ∧ c ∈ Σ }
+- *Q'* = { q₀' } ∪ { δ(q', c) : q' ∈ Q' ∧ c ∈ Σ }
 
-- F' = { q' ∈ Q' : q' ∩ F ≠ ∅ }
+- *F'* = { q' ∈ Q' : q' ∩ F ≠ ∅ }
 
-- ε-closure(X) = M ∪ { t : q ∈ X ∧ (q, ε) ∈ T }
+- *ε-closure(x)* = M ∪ { t : q ∈ x ∧ (q, ε) ∈ T }
+
+- *T* = Transitions in *M*.
+
+- *M* = (Q, Σ, δ, q₀, F)
 
 #+begin_example
   === RE ===
