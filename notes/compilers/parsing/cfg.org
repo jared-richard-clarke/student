@@ -1,8 +1,13 @@
 * Context Free Grammars
 
-*Introduction to Compilers and Language Design*, Douglas Thain
+** Sources
 
-*Formal Languages* and *Set Theory*, Wikipedia
+| source                                          | author        |
+|-------------------------------------------------+---------------|
+| *Introduction to Compilers and Language Design* | Douglas Thain |
+| *Formal Languages* and *Set Theory*             | Wikipedia     |
+
+** Definitions
 
 Grammars in which the left-hand side of each production rule is always a single non-terminal.
 The right-hand side of a rule is a sentential form that describes the allowable forms of the
@@ -89,7 +94,7 @@ E → E + E | id | 1
         S
         |
         E
-        |
+	|
       E + E
       /   \
    E + E   1
@@ -113,9 +118,9 @@ E → E + E | id | 1
 
 ** Removing Ambiguity
 
-It is possible to re-write a grammar so that it is not ambiguous. With binary operators, we can require
-one side of an expression to be an atomic term (*T*). The grammar below is no longer ambiguous, because
-it allows only a left-most derivation.
+It is possible to re-write a grammar so that it is not ambiguous. With binary operators,
+we can require one side of an expression to be an atomic term (*T*). The grammar below
+is no longer ambiguous, because it allows only a left-most derivation.
 
 | rule | production |
 |------+------------|
@@ -125,10 +130,10 @@ it allows only a left-most derivation.
 |    4 | T → id     |
 |    5 | T → 1      |
 
-Further modification to the grammar is required to account for multiple levels of precedence. The usual
-approach is to construct a grammar with multiple levels, each reflecting the intended precedence of
-operators. Addition combined with multiplication can be expressed as the sum of terms (*T*) that consist
-of multiplied factors (*F*).
+Further modification to the grammar is required to account for multiple levels of precedence.
+The usual approach is to construct a grammar with multiple levels, each reflecting the
+intended precedence of operators. Addition combined with multiplication can be expressed
+as the sum of terms (*T*) that consist of multiplied factors (*F*).
 
 | rule | production |
 |------+------------|
