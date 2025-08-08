@@ -2,10 +2,11 @@
 
 ** Sources
 
-| source                                          | author        |
-|-------------------------------------------------+---------------|
-| *Introduction to Compilers and Language Design* | Douglas Thain |
-| *Formal Languages* and *Set Theory*             | Wikipedia     |
+| source                                          | author                  |
+|-------------------------------------------------+-------------------------|
+| *Introduction to Compilers and Language Design* | Douglas Thain           |
+| *Formal Languages* and *Set Theory*             | Wikipedia               |
+| *Basics of Compiler Design*                     | Torben Ægidius Mogensen |
 
 ** Definitions
 
@@ -45,7 +46,41 @@ corresponding non-terminal.
 
 - production :: A rewrite rule specifying symbol substitution to generate new symbol sequences.
 
+** RE to CFG
+
+| RE          | CFG    |
+|-------------+--------|
+| ε           | I → ε  |
+|-------------+--------|
+| a           | I → a  |
+|-------------+--------|
+| st or s • t | I → ST |
+|-------------+--------|
+| s\vert{}t   | I → S  |
+|             | I → T  |
+| s*          | I → SI |
+|             | I → ε  |
+|-------------+--------|
+| s+          | I → SI |
+|             | I → S  |
+|-------------+--------|
+| s?          | I → S  |
+|             | I → ε  |
+
 ** Derivation
+
+1. *αNβ ⇒ αγβ* if there is a production *N → γ*
+
+   - Using a production as a rewrite rule anywhere in a sequence of grammar symbols
+     is a derivation step.
+
+2. *α ⇒ α*
+
+   - A derivation relation is reflexive. A sequence derives itself.
+
+3. *α ⇒ γ* if there is a *β* such that *α ⇒ β* and *β ⇒ γ*
+
+   - Transitive: A sequence of derivations is in itself a derivation.
 
 | rule | production |
 |------+------------|
