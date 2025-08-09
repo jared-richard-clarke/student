@@ -427,7 +427,7 @@
 
   // Represents a DFA state: a cached NFA state list.
   typedef struct DState DState;
-  
+
   struct DState {
       List l;
       DState *next[256];
@@ -447,7 +447,7 @@
       }
       for(i=0; i<l1->n; i++){
           if(l1->s[i] < l2->s[i]) {
-	      return -1;
+              return -1;
           } else if (l1->s[i] > l2->s[i]) {
               return 1;
           }
@@ -471,7 +471,7 @@
   // Allocate DStates from a cached list.
   DState* allocdstate(void) {
       DState *d;
-	
+
       if((d = freelist) != NULL) {
           freelist = d->left;
       } else {
@@ -506,16 +506,16 @@
   }
 
   int maxstates = 32;
-  
+
   // Return the cached DState for list l, creating a new one if needed.
   DState* dstate(List *l, DState **nextp) {
       int i;
       DState **dp, *d;
 
       qsort(l->s, l->n, sizeof l->s[0], ptrcmp);
-  
+
       dp = &alldstates;
-  
+
       while((d = *dp) != NULL) {
           i = listcmp(l, &d->l);
           if (i < 0) {
@@ -529,15 +529,15 @@
 
       if (nstates >= maxstates) {
           freecache();
-	  dp = &alldstates;
+          dp = &alldstates;
           nextp = NULL;
       }
-  
+
       d = allocdstate();
       memmove(d->l.s, l->s, l->n*sizeof l->s[0]);
       d->l.n = l->n;
       *dp = d;
-  
+
       nstates++;
       if(nextp != NULL) {
           *nextp = d;
@@ -564,7 +564,7 @@
   int match(DState *start, char *s) {
       DState *d, *next;
       int c, i;
-	
+
       d = start;
       for (; *s; s++) {
           c = *s & 0xFF;
