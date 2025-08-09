@@ -36,11 +36,11 @@
 #+end_quote
 
 #+begin_example
-  === empty set ===
+  === empty set (∅) ===
 
   >◯      ◎
 
-  === empty string | epsilon ===
+  === empty string | epsilon (ε) ===
 
   >◯--ε-->◎
    ^      ^
