@@ -77,7 +77,7 @@
 
   S⁰   = {ε}
   S¹   = S
-  Sⁿ⁺¹ = { xy | x ∈ Sⁿ ∧ y ∈ S } for each n > 0
+  Sⁿ⁺¹ = { xy | x ∈ S ∧ y ∈ Sⁿ }
 
              <+
             /  \
