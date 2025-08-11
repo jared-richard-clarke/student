@@ -280,6 +280,19 @@
 ** Simulating the NFA
 
 #+begin_src c
+  enum {
+      Split = 256,
+      Match = 257
+  };
+
+  // An NFA is represented by a linked collection of State structures.
+  typedef struct State {
+      int c;
+      State *out;
+      State *out1;
+      int lastlist;
+  } State;
+
   // The simulation of the NFA requires tracking State sets,
   // which are stored as an array list.
   typedef struct List {
@@ -365,6 +378,19 @@
 ** Simulating a DFA over a Cached NFA
 
 #+begin_src c
+  enum {
+      Split = 256,
+      Match = 257
+  };
+
+  // An NFA is represented by a linked collection of State structures.
+  typedef struct State {
+      int c;
+      State *out;
+      State *out1;
+      int lastlist;
+  } State;
+
   // The simulation of the NFA requires tracking State sets,
   // which are stored as an array list.
   typedef struct List {
