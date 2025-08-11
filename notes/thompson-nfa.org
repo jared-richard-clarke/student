@@ -425,11 +425,15 @@
       }
   }
 
-  // Represents a DFA state: a cached NFA state list.
   typedef struct DState DState;
 
+  // Represents a DFA state: a cached copy of list "l".
+  // All computed DStates are placed in a binary tree, using
+  // the sorted "List" as its key.
   struct DState {
       List l;
+      // Contains pointers to the next state for each possible
+      // input character.
       DState *next[256];
       DState *left;
       DState *right;
@@ -507,7 +511,7 @@
 
   int maxstates = 32;
 
-  // Return the cached DState for list l, creating a new one if needed.
+  // Return the cached "DState" for list "l", creating a new one if needed.
   DState* dstate(List *l, DState **nextp) {
       int i;
       DState **dp, *d;
