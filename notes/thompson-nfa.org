@@ -429,7 +429,7 @@
 
   // Represents a DFA state: a cached copy of list "l".
   // All computed DStates are placed in a binary tree, using
-  // the sorted "List" as its key.
+  // the sorted "List" for each node's key.
   struct DState {
       List l;
       // Contains pointers to the next state for each possible
