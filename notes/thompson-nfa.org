@@ -293,6 +293,11 @@
       int lastlist;
   } State;
 
+  // Matching state.
+  State matchstate = { Match };
+  // State counter.
+  int nstate;
+
   // The simulation of the NFA requires tracking State sets,
   // which are stored as an array list.
   typedef struct List {
@@ -390,6 +395,11 @@
       State *out1;
       int lastlist;
   } State;
+
+  // Matching state.
+  State matchstate = { Match };
+  // State counter.
+  int nstate;
 
   // The simulation of the NFA requires tracking State sets,
   // which are stored as an array list.
