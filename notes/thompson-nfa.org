@@ -469,7 +469,10 @@
   struct DState {
       List l;
       // Contains pointers to the next state for each possible
-      // input character.
+      // input character. If the current state is "d" and the
+      // next input character is "c", then "d->next[c]" is the
+      // next state. If "d->next[c]" is null, then the next state
+      // has not been computed yet.
       DState *next[256];
       DState *left;
       DState *right;
