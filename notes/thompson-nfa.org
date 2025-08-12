@@ -555,6 +555,7 @@
       int i;
       DState **dp, *d;
 
+      // void qsort(void *base, size_t count, size_t size, int (*comp)(const void *, const void *));
       qsort(l->s, l->n, sizeof l->s[0], ptrcmp);
 
       dp = &alldstates;
