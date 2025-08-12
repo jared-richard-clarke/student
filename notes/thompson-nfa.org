@@ -414,7 +414,7 @@
   void addstate(List*, State*);
   void step(List*, int, List*);
 
-  // Computes initial state set.
+  // Computes initial state list.
   List* startlist(State *start, List *l) {
       l->n = 0;
       listid++;
