@@ -1179,9 +1179,11 @@ at least one final state of the *NFA*.
 
   # ---------------------------------- MODEL ---------------------------------- #
 
+  # The empty class "State" creates unique identifiers.
   class State:
     pass
 
+  # The transition of one state to another.
   @dataclass
   class Rule:
     start: State
@@ -1194,6 +1196,7 @@ at least one final state of the *NFA*.
     def is_epsilon(self) -> bool:
       return self.matcher == EPSILON
 
+  # The base element of a Thompson construction.
   @dataclass
   class Graph:
     label: str
@@ -1255,14 +1258,25 @@ at least one final state of the *NFA*.
       Rule(start, match_any(), end)
     ])
 
+  #                <------+
+  #               /        \
+  # A* = [p1]-->[s1]--A-->[s2]-->(p2)
+  #        \                      /
+  #         +-------------------->
+  
   def zero_or_more(subject: Graph) -> Graph:
     start, end = State(), State()
     label = "(" + subject.label + ")"
     return Graph(label, start, end, [
+      # A
       *subject.rules,
+      # p1 -> p2
       Rule(start, EPSILON, end),
+      # p1 -> s1
       Rule(start, EPSILON, subject.start),
+      # s2 -> p2
       Rule(subj.end, EPSILON, end),
+      # s2 -> s1
       Rule(subj.end, EPSILON, subject.start),
     ])
 
