@@ -1124,6 +1124,7 @@ at least one final state of the *NFA*.
     // String pointer
     char *sp;
 
+    // Number of instructions
     length = program_length(program);
     clist  = threadlist(length);
     nlist  = threadlist(length);
