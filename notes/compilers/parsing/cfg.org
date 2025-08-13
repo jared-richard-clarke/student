@@ -210,13 +210,21 @@ as the sum of terms (*T*) that consist of multiplied factors (*F*).
 |    7 | F → 1      |
 
 #+begin_example
-=== ambiguous ===
+  === ambiguous ===
 
-E → E + E | E * E | ( E ) | 1
+  E → E + E
+    | E * E
+    | ( E )
+    | 1
 
-=== unambiguous ===
+  === unambiguous ===
 
-E → T | E + T
-T → F | T * F
-F → 1 | ( E )
+  E → T
+    | E + T
+
+  T → F
+    | T * F
+
+  F → 1
+    | ( E )
 #+end_example
