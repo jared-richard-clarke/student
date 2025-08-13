@@ -52,21 +52,49 @@ corresponding non-terminal.
 |-------------+--------|
 | ε           | I → ε  |
 |-------------+--------|
-| a           | I → a  |
+| s           | I → s  |
 |-------------+--------|
-| st or s • t | I → ST |
+| st or s • t | I → st |
 |-------------+--------|
-| s\vert{}t   | I → S  |
-|             | I → T  |
+| s\vert{}t   | I → s  |
+|             | I → t  |
 |-------------+--------|
-| s*          | I → SI |
+| s*          | I → sI |
 |             | I → ε  |
 |-------------+--------|
-| s+          | I → SI |
-|             | I → S  |
+| s+          | I → sI |
+|             | I → s  |
 |-------------+--------|
-| s?          | I → S  |
+| s?          | I → s  |
 |             | I → ε  |
+
+- regular grammar :: A grammar that is either right or left regular and describes a regular language.
+
+#+begin_example
+  === right-regular grammar ===
+
+  1. A → a
+  2. A → aB
+  3. A → ε
+
+    A
+   / \
+  a   A
+     / \
+    a   ...
+
+  === left-regular grammar ===
+
+  1. A → a
+  2. A → Ba
+  3. A → ε
+
+        A
+       / \
+      A   a
+     / \
+  ...   a
+#+end_example
 
 ** Derivation
 
