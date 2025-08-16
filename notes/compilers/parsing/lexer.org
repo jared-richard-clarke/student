@@ -137,6 +137,16 @@ input string *w*.
 
 *** NFA to DFA Conversion
 
+#+begin_quote
+  "The conversion is done by simulating all possible paths in an NFA at once.
+   This means that we operate with sets of NFA states: When we have several
+   choices of a next state, we take all of the choices simultaneously and form
+   a set of the possible next-states. The idea is that such a set of NFA states
+   will become a single DFA state."
+
+  — *The Basics of Compiler Design*, Torben Ægidius Mogensen
+#+end_quote
+
 - epsilon closure :: *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the
   set of all states that can be reached from *q* via one or more *ε* transitions.
 
