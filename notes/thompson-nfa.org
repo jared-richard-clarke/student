@@ -1073,101 +1073,112 @@ at least one final state of the *NFA*.
 #+begin_src c
   // Op Codes
   enum {
-    Char,
-    Match,
-    Jump,
-    Split
+      Char,
+      Match,
+      Jump,
+      Split
   };
 
   // Instruction
   typedef struct Inst {
-    int  opcode;
-    int  c;
-    Inst *x;
-    Inst *y;
+      int  opcode;
+      int  c;
+      Inst *x;
+      Inst *y;
   } Inst;
 
   typedef struct Thread {
-    Inst *pc;
+      Inst *pc;
   } Thread;
 
   // typedef struct Thread {
-  //   Inst *pc;
-  //   // $0 through $9: An array of submatching string pointers.
-  //   char *saved[20];
+  //     Inst *pc;
+  //     // $0 through $9: An array of submatching string pointers.
+  //     char *saved[20];
   // } Thread;
 
   typedef struct ThreadList {
-    int n;
-    Thread t[1];
+      int n;
+      Thread t[1];
   } ThreadList;
 
   Thread thread(Inst *pc) {
-    Thread t = { pc };
-    return t;
+      Thread t = { pc };
+      return t;
   }
 
   ThreadList* threadlist(int n) {
-    return malloc(sizeof(ThreadList)+n*sizeof(Thread));
+      return malloc(sizeof(ThreadList)+n*sizeof(Thread));
   }
 
   void addthread(ThreadList *l, Thread t) {
-    l->t[l->n] = t;
-    l->n++;
+      l->t[l->n] = t;
+      l->n++;
+  }
+
+  void swap(Threadlist *clist, Threadlist *nlist) {
+      Threadlist *temp;
+      temp = clist;
+      clist = nlist;
+      nlist = temp;
+  }
+
+  void clear(Threadlist *nlist) {
+      nlist->n = 0;
   }
 
   int thompson_vm(Inst *program, char *input) {
   // int pike_vm(Inst *program, char *input, char **saved)
-    // Number of instructions
-    int length;
-    // Current list and next list
-    Threadlist *clist, *nlist;
-    // Program counter
-    Inst *pc;
-    // String pointer
-    char *sp;
+      // Number of instructions
+      int length;
+      // Current list and next list
+      Threadlist *clist, *nlist;
+      // Program counter
+      Inst *pc;
+      // String pointer
+      char *sp;
 
-    // Number of instructions
-    length = program_length(program);
-    clist  = threadlist(length);
-    nlist  = threadlist(length);
+      // Number of instructions
+      length = program_length(program);
+      clist  = threadlist(length);
+      nlist  = threadlist(length);
 
-    addthread(clist, thread(program));
-    // addthread(clist, thread(program, saved));
+      addthread(clist, thread(program));
+      // addthread(clist, thread(program, saved));
 
-    for (sp = input; *sp; sp += 1) {
-      for (i = 0; i < clist.n; i += 1) {
-        pc = clist.t[i].pc;
-        switch (pc->opcode) {
-        case Char:
-          if (*sp != pc->c) {
-            break;
+      for (sp = input; *sp; sp += 1) {
+          for (i = 0; i < clist.n; i += 1) {
+              pc = clist.t[i].pc;
+              switch (pc->opcode) {
+              case Char:
+                  if (*sp != pc->c) {
+                      break;
+                  }
+                  addthread(nlist, thread(pc + 1));
+                  // addthread(nlist, thread(pc + 1, t.saved));
+                  break;
+              case Match:
+                  // memmove(saved, t.saved, sizeof t.saved);
+                  return 1
+              case Jump:
+                  addthread(clist, thread(pc->x));
+                  // addthread(clist, thread(pc->x, t.saved));
+                  break;
+              case Split:
+                  addthread(clist, thread(pc->x));
+                  // addthread(clist, thread(pc->x, t.saved));
+                  addthread(clist, thread(pc->y));
+                  // addthread(clist, thread(pc->y, t.saved));
+                  break;
+           // case Save:
+           //     t.saved[t->pc.i] = sp;
+           //     addthread(clist, thread(pc->x, t.saved));
+           //     break;
+              }
           }
-          addthread(nlist, thread(pc + 1));
-          // addthread(nlist, thread(pc + 1, t.saved));
-          break;
-        case Match:
-          // memmove(saved, t.saved, sizeof t.saved);
-          return 1
-        case Jump:
-          addthread(clist, thread(pc->x));
-          // addthread(clist, thread(pc->x, t.saved));
-          break;
-        case Split:
-          addthread(clist, thread(pc->x));
-          // addthread(clist, thread(pc->x, t.saved));
-          addthread(clist, thread(pc->y));
-          // addthread(clist, thread(pc->y, t.saved));
-          break;
-     // case Save:
-     //   t.saved[t->pc.i] = sp;
-     //   addthread(clist, thread(pc->x, t.saved));
-     //   break;
-        }
+       swap(clist, nlist);
+       clear(nlist);
       }
-      swap(clist, nlist);
-      clear(nlist);
-    }
   }
 #+end_src
 
