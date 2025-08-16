@@ -144,6 +144,13 @@ input string *w*.
    a set of the possible next-states. The idea is that such a set of NFA states
    will become a single DFA state."
 
+  "Epsilon-transitions complicate the construction a bit:  Whenever we are in an
+   NFA state we can always choose to follow an epsilon-transition without reading
+   any symbol...We handle this in the construction by first extending the set of
+   NFA states with those you can reach from these using only epsilon-transitions.
+   Then, for each possible input symbol, we follow transitions with this symbol
+   to form a new set of NFA states."
+
   — *The Basics of Compiler Design*, Torben Ægidius Mogensen
 #+end_quote
 
