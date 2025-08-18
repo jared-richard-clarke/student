@@ -37,11 +37,11 @@ a sentential form that describes the allowable forms of the corresponding non-te
 
 - (⇒) :: Shows that one sentential form is equal to another by applying a given rule.
 
-- top-down derivation :: Begins with the start symbol, applying rules to expand non-terminals
-  until the desired sentence is reached.
+- top-down derivation :: Begins with the start symbol. Applies production rules, rewriting
+  non-terminals to terminals until the desired sentence is reached.
 
-- bottom-up derivation :: Begins at the desired sentence, applying rules backward until reaching
-  the start symbol.
+- bottom-up derivation :: Begins with the desired sentence. Applies production rules,
+  rewriting terminals to non-terminals until the start symbol is reached.
 
 - weak equivalence :: Two separate grammars that generate the same language.
 
