@@ -234,6 +234,15 @@ The usual approach is to construct a grammar with multiple levels, each reflecti
 intended precedence of operators. Addition combined with multiplication can be expressed
 as the sum of terms (*T*) that consist of multiplied factors (*F*).
 
+#+begin_quote
+  "We also need to handle operators with different precedences. This is done by
+   using a nonterminal for each precedence level. The idea is that if an expression
+   uses an operator of a certain precedence level, then its subexpressions cannot use
+   operators of lower precedence (unless these are inside parentheses)."
+
+  — *Basics of Compiler Design*, Torben Ægidius Mogensen
+#+end_quote
+
 | rule | production |
 |------+------------|
 |    1 | S → E      |
