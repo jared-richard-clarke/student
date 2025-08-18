@@ -134,7 +134,15 @@ For brevity, we occasionally condense a set of rules with a common left-hand sid
 the right-hand sides with a logical-or symbol:
 
 #+begin_example
-E → E + E | id | 1
+  E → E + E
+  E → id
+  E → 1
+
+  - equivalent ->
+
+  E → E + E
+    | id
+    | 1
 #+end_example
 
 ** Top-Down Derivation
