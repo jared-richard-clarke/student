@@ -170,6 +170,21 @@ the right-hand sides with a logical-or symbol:
 
 ** Ambiguity
 
+#+begin_quote
+  "How do we know if a grammar is ambiguous? If we can find a string and show
+   two alternative syntax trees for it, this is a proof of ambiguity. It may,
+   however, be hard to find such a string and, when the grammar is unambiguous,
+   even harder to show that this is the case. In fact, the problem is
+   formally undecidable...
+
+   Given two grammars, it would be nice to be able to tell if they are equivalent.
+   Unfortunately, no known method is able to decide this in all cases, but, unlike
+   ambiguity, it is not (at the time of writing) known if such a method may or may
+   not theoretically exist. "
+
+  — *Basics of Compiler Design*, Torben Ægidius Mogensen
+#+end_quote
+
 ~id + 1 + 1~ for the grammar above is ambiguous because it has two possible derivations.
 
 *** Left-Most Derivation
