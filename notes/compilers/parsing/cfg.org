@@ -10,9 +10,10 @@
 
 ** Definitions
 
-Grammars in which the left-hand side of each production rule is always a single non-terminal.
-The right-hand side of a rule is a sentential form that describes the allowable forms of the
-corresponding non-terminal.
+In formal language theory, a context-free grammar is a formal grammar whose production rules
+can be applied to a non-terminal symbol regardless of its context. The left-hand side of each
+production rule is a single non-terminal. The right-hand side of each production rule is
+a sentential form that describes the allowable forms of the corresponding non-terminal.
 
 - terminal :: The elementary symbols of a language.
 
