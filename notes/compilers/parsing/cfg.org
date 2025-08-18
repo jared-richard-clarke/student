@@ -99,6 +99,17 @@ a sentential form that describes the allowable forms of the corresponding non-te
 
 ** Derivation
 
+#+begin_quote
+  "The basic idea of derivation is to consider productions as rewrite rules:
+   Whenever we have a nonterminal, we can replace this by the right-hand side
+   of any production in which the nonterminal appears on the left-hand side.
+   We can do this anywhere in a sequence of symbols (terminals and nonterminals)
+   and repeat doing so until we have only terminals left. The resulting sequence
+   of terminals is a string in the language defined by the grammar."
+
+  — *Basics of Compiler Design*, Torben Ægidius Mogensen
+#+end_quote
+
 1. *αNβ ⇒ αγβ* if there is a production *N → γ*
 
    - Using a production as a rewrite rule anywhere in a sequence of grammar symbols
