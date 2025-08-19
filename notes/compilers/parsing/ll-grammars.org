@@ -28,6 +28,8 @@ the next token in the input stream. To make a grammar *LL(1)* we must do the fol
 3. Eliminate any common left prefixes through left factoring.
 4. Formally prove the grammar is *LL(1)* by generating *FIRST* and *FOLLOW* sets for the grammar.
 
+Apply production *N → α* to input *c* if *c ∈ FIRST(α)*, or *Nullable(α)* and *c ∈ FOLLOW(N)*.
+
 ** Eliminating Left Recursion
 
 *Left Recursion*: *A → Bβ* such that *B ⇒ Aγ*.
