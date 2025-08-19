@@ -125,7 +125,30 @@ appear after the derivation of non-terminal *A*.
 
 *Side Note*: *α* is a sentential form, *a* is a terminal, and *A* is a nonterminal.
 
-*** Computing First Sets for a Grammar *G*
+*** Computing First Sets
+
+- A symbol *c* is in *FIRST(α)* if and only if *α ⇒ cβ* for some, possibly empty,
+  sequence *β* of grammar symbols.
+
+  1. *FIRST(ε)* = *∅*
+
+  2. *FIRST(a)* = *{a}*
+
+  3. *FIRST(αβ)* = *FIRST(α) ∪ FIRST(β)* if *Nullable(α)* or *FIRST(α)* if not *Nullable(α)*
+
+  4. *FIRST(N)* = *FIRST(α_1) ∪ ... ∪ FIRST(α_n)*, where productions for
+     *N* are *N → α_1, ... , N → α_n*.
+
+- A sequence *α* of grammar symbols is *Nullable(α)* if and only if *α ⇒ ε*.
+
+  1. *Nullable(ε)* = *true*
+
+  2. *Nullable(a)* = *false*
+
+  3. *Nullable(αβ)* = *Nullable(α) ∧ Nullable(β)*
+
+  4. *Nullable(N)* = *Nullable(α_1) ∨ ... ∨ Nullable(α_n)*, where productions for
+     *N* are *N → α_1, ... , N → α_n*.
 
 #+begin_example
   FIRST(α) is the set of terminals that begin all strings given by α,
@@ -151,7 +174,11 @@ appear after the derivation of non-terminal *A*.
       If Y₁...Yk ⇒ ε then add ε to FIRST(α).
 #+end_example
 
-*** Computing Follow Sets for Grammar *G*
+*** Computing Follow Sets
+
+- A terminal symbol *a* is in *FOLLOW(N)* if and only if there is a derivation from the
+  start symbol *S* of the grammar such that *S ⇒ αNaβ*, where *α* and *β* are, possibly
+  empty, sequences of grammar symbols.
 
 #+begin_example
   FOLLOW(A) is the set of terminals that can come after
