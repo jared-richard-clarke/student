@@ -355,23 +355,27 @@ the stack, accept the token, and continue. If not, then consult the parse table 
 to apply. If we can continue until the end-of-file symbol is matched, then the parse succeeds.
 
 #+begin_example
-  Given a grammar G with start symbol P and parse table T, parse a
-  sequence of tokens and determine whether they satisfy G.
+  stack := empty
+  push(start, $, stack)
+  c := next(input)
 
-  Create a stack S.
-  Push $ and P onto S.
-  Let c be the first token on the input.
-
-  While S is not empty:
-      Let X be the top element of the stack.
-      If X matches c:
-          Remove X from the stack.
-          Advance c to the next token and repeat.
-      If X is any other terminal, stop with an error.
-      If T[X, c] indicates rule X → α:
-          Remove X from the stack.
-          Push symbol α on to the stack and repeat.
-      If T[X, c] indicates an error state, stop with an error
+  While not empty(stack) then
+      X := peek(stack)
+      if terminal(X) then
+          if match(X, c):
+              pop(stack)
+              c = next(input)
+          else
+              throw(error)
+          end
+      end
+      if table[X, c] == rule X → α then
+          pop(stack)
+          push(α, stack)
+      else
+          throw(error)
+      end
+  end
 #+end_example
 
 ** Stack Trace
