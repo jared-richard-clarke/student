@@ -177,8 +177,8 @@ appear after the derivation of non-terminal *A*.
 *** Computing Follow Sets
 
 - A terminal symbol *a* is in *FOLLOW(N)* if and only if there is a derivation from the
-  start symbol *S* of the grammar such that *S ⇒ αNaβ*, where *α* and *β* are, possibly
-  empty, sequences of grammar symbols.
+  start symbol *S* of the grammar such that *S ⇒ αNaβ*, where *α* and *β* are sequences
+  of zero or more grammar symbols.
 
 #+begin_example
   FOLLOW(A) is the set of terminals that can come after
