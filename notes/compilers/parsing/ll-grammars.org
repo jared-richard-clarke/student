@@ -196,8 +196,6 @@ appear after the derivation of non-terminal *A*.
 
 *** Grammar Translated By First and Follow
 
-**** Grammmar
-
 | rule | production  |
 |------+-------------|
 |    1 | S → E       |
@@ -221,8 +219,6 @@ appear after the derivation of non-terminal *A*.
   F  ::= ( E )
        | 1
 #+end_example
-
-**** First and Follow
 
 |        | S        | E        | E'       | T           | T'          | F              |
 | FIRST  | { (, 1 } | { (, 1 } | { +, ε } | { (, 1 }    | { *, ε }    | { (, 1 }       |
