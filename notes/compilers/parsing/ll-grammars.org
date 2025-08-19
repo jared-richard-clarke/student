@@ -230,8 +230,7 @@ appear after the derivation of non-terminal *A*.
 
 *LL(1)* grammars are amenable to *recursive descent parsing* in which there is one function for each
 non-terminal in a grammar. The body of each function follows the right-hand sides of the corresponding
-rules: non-terminals result in a call to another parse function, while terminals result in considering
-the next token.
+rules: non-terminals call another function, and terminals attempt to match the next token.
 
 Two special cases must be considered:
 
