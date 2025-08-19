@@ -25,11 +25,15 @@
 the next token in the input stream. To make a grammar *LL(1)* we must do the following:
 
 1. Remove ambiguous derivations.
-2. Eliminate left recursion.
-3. Eliminate any common left prefixes through left factoring.
-4. Formally prove the grammar is *LL(1)* by generating *FIRST* and *FOLLOW* sets for the grammar.
 
-Apply production *N → α* to input *c* if *c ∈ FIRST(α)*, or *Nullable(α)* and *c ∈ FOLLOW(N)*.
+2. Eliminate left recursion.
+
+3. Eliminate any common left prefixes through left factoring.
+
+4. Compute the *FIRST* sets for every production and *FOLLOW* sets for every non-terminal.
+
+5. For non-terminal *N* and input symbol *c*, choose production *N → α*
+   when *c ∈ FIRST(α)*, or *Nullable(α)* and *c ∈ FOLLOW(N)*.
 
 ** Eliminating Left Recursion
 
