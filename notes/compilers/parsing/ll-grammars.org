@@ -136,8 +136,8 @@ appear after the derivation of non-terminal *A*.
 
   3. *FIRST(αβ)* = *FIRST(α) ∪ FIRST(β)* if *Nullable(α)* or *FIRST(α)* if not *Nullable(α)*
 
-  4. *FIRST(N)* = *FIRST(α_1) ∪ ... ∪ FIRST(α_n)*, where productions for
-     *N* are *N → α_1, ... , N → α_n*.
+  4. *FIRST(N)* = *FIRST(α_{1}) ∪ ... ∪ FIRST(α_{n})*, where productions for
+     *N* are *N → α_{1}, ... , N → α_{n}*.
 
 - A sequence *α* of grammar symbols is *Nullable(α)* if and only if *α ⇒ ε*.
 
@@ -147,8 +147,8 @@ appear after the derivation of non-terminal *A*.
 
   3. *Nullable(αβ)* = *Nullable(α) ∧ Nullable(β)*
 
-  4. *Nullable(N)* = *Nullable(α_1) ∨ ... ∨ Nullable(α_n)*, where productions for
-     *N* are *N → α_1, ... , N → α_n*.
+  4. *Nullable(N)* = *Nullable(α_{1}) ∨ ... ∨ Nullable(α_{n})*, where productions for
+     *N* are *N → α_{1}, ... , N → α_{n}*.
 
 #+begin_example
   FIRST(α) is the set of terminals that begin all strings given by α,
