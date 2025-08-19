@@ -2,10 +2,11 @@
 
 ** Sources
 
-| source                                            | author        |
-|---------------------------------------------------+---------------|
-| *Introduction to Compilers and Language Design*   | Douglas Thain |
-| *Formal Languages*, *LL Parser*, and *Set Theory* | Wikipedia     |
+| source                                          | author                  |
+|-------------------------------------------------+-------------------------|
+| *Introduction to Compilers and Language Design* | Douglas Thain           |
+| *Formal Languages* and *Set Theory*             | Wikipedia               |
+| *Basics of Compiler Design*                     | Torben Ægidius Mogensen |
 
 ** Actions
 
