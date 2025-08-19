@@ -360,16 +360,16 @@ to apply. If we can continue until the end-of-file symbol is matched, then the p
   c := next(input)
 
   While not empty(stack) then
-      X := peek(stack)
-      if terminal(X) then
-          if match(X, c):
+      x := peek(stack)
+      if terminal(x) then
+          if match(x, c):
               pop(stack)
               c = next(input)
           else
               throw(error)
           end
       end
-      if table[X, c] == rule X → α then
+      if table[x, c] == rule x → α then
           pop(stack)
           push(α, stack)
       else
