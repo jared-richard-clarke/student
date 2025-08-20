@@ -10,7 +10,7 @@
 
 ** Actions
 
-- L :: left-to-right parse
+- L :: left-to-right scan.
 
 - R :: Right-most derivation. Expands the right-most nonterminal. Reductions in reverse order,
   from the leaves to the root.
