@@ -388,7 +388,7 @@ has more precise lookahead information available for each item.
 
 *** Grammar
 
-*Side Note*: Th same grammar as the *LR(1)* parser example.
+*Side Note*: The same grammar as the *LR(1)* parser example.
 
 | rule | production   |
 |------+--------------|
