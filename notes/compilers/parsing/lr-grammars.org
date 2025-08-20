@@ -233,7 +233,7 @@ Find the item set that each symbol *x ∈ {0, 1, +, E, B}* closes over.
 The complete of canonical form of *LR(1)* parsing depends on the *LR(1)* automaton.
 The *LR(1)* automaton is like the *LR(0)* automaton, except that each item is annotated with
 the set of tokens that could potentially follow it, given the current state. This set is known
-as the *lookahead* of the item. The lookahead is always a subset of the *FOLLOW* of the
+as the *lookahead* of the item. The lookahead is always a subset of the *FOLLOW* set of the
 relevant non-terminal.
 
 - For an item like *A → α.B* with a lookahead of *{L}*, add new rules like *B → .γ* with a
