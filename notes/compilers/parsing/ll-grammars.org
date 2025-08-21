@@ -10,7 +10,7 @@
 
 ** Actions
 
-- L :: left-to-right parse
+- L :: left-to-right scan
 
 - L :: left-most derivation
 
