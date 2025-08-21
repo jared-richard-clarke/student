@@ -432,7 +432,7 @@ Many macros and error checks have been removed for clarity. Only the bare parsin
                  break;
           }
 
-          YYPOPSTACK (yylen);
+          YYPOPSTACK(yylen);
           // re-initialize yylen.
           yylen = 0;
           // Push the result of semantic evaluation on top of semantic stack.
