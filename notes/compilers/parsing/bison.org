@@ -90,7 +90,7 @@ Invoke Bison: ~bison --output=parser.c parser.y~.
 
 *** yytranslate
 
-Maps token numbers returned by yylex() to Bison’s internal number symbols.
+Maps token numbers returned by ~yylex()~ to Bison’s internal number symbols.
 
 #+begin_src c
   // YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.
