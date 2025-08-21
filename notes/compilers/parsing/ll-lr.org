@@ -1,0 +1,130 @@
+* Understanding LL and LR
+
+** Sources
+
+| source                           | author        |
+|----------------------------------+---------------|
+| *LL and LR Parsing Demystified* | Josh Haberman |
+
+#+begin_quote
+  "The primary difference between how LL and LR parsers operate is that an LL parser
+   outputs a pre-order traversal of the parse tree and an LR parser outputs a
+   post-order traversal."
+
+   — Josh Haberman
+#+end_quote
+
+** Infix
+
+- Infix Notation
+
+- In-Order Traversal
+
+#+begin_example
+  +-------------------+
+  | A | B | C | D | E |
+  |-------------------|
+  | 1 | + | 2 | * | 3 |
+  +-------------------+
+
+        +---+
+      B | + |
+        +---+
+          |
+       +--+--+
+       |     |
+     +---+ +---+
+   A | 1 | | * | D
+     +---+ +---+
+             |
+          +--+--+
+          |     |
+        +---+ +---+
+      C | 2 | | 3 | E
+        +---+ +---+
+#+end_example
+
+** Prefix
+
+- Polish Notation
+  
+- Pre-Order Traversal
+  
+- Left-Most Derivation
+  
+- Top Down
+
+#+begin_example
+   ---- traversal --->
+  +-------------------+
+  | A | B | C | D | E |
+  |-------------------|
+  | + | 1 | * | 2 | 3 |
+  +-------------------+
+   ---- derivation -->
+
+        +---+
+      A | + |
+        +---+
+          |
+       +--+--+
+       |     |
+     +---+ +---+
+   B | 1 | | * | C
+     +---+ +---+
+             |
+          +--+--+
+          |     |
+        +---+ +---+
+      D | 2 | | 3 | E
+        +---+ +---+
+#+end_example
+
+** Postfix
+
+- Reverse Polish Notation
+  
+- Post-Order Traversal
+  
+- Right-Most Derivation
+  
+- Bottom Up
+
+#+begin_example
+   ---- traversal --->
+  +-------------------+
+  | A | B | C | D | E |
+  |-------------------|
+  | 1 | 2 | 3 | * | + |
+  +-------------------+
+   <--- derivation ---
+
+        +---+
+      E | + |
+        +---+
+          |
+       +--+--+
+       |     |
+     +---+ +---+
+   A | 1 | | * | D
+     +---+ +---+
+             |
+          +--+--+
+          |     |
+        +---+ +---+
+      B | 2 | | 3 | C
+        +---+ +---+
+#+end_example
+
+** Lookahead
+
+#+begin_example
+         Tokens for Rule R
+        +-----------------+
+  +---+ | +---+     +---+ | +---+ +---+
+  | a | | | b | ... | x | | | y | | z |
+  +---+ | +---+     +---+ | +---+ +---+
+        +---^-------------+   ^
+            |                 |
+        lookahead LL      lookahead LR
+#+end_example
