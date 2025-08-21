@@ -58,20 +58,20 @@
 
 ** Compilation
 
-Invoke Bison: ~bison --defines=token.h --output=parser.c parser.bison~.
+Invoke Bison: ~bison --output=parser.c parser.y~.
 
 ~--output=parser.c~ directs Bison to write its code into file ~parser.c~ instead of ~yy.tab.c~.
 
 #+begin_example
-                 -------                  ----------
-parser.bison -> | Bison | -> parser.c -> | compiler | -> parser.o
-                 -------   /              ----------              \
-                    V     /               ----------               \--------
-                 token.h -> main.c ----> | compiler | -> main.o -> | linker | -> compiler.exe
-                          \               ----------               /--------
-                 ------    \              ----------              /
-scanner.flex -> | flex | -> scanner.c -> | compiler | -> scanner.o
-                 ------                   ----------
+                  +-------+                +----------+
+  parser.bison -> | Bison | -> parser.c -> | compiler | -> parser.o
+                  +-------+                +----------+             \
+                                           +----------+              +--------+
+                                 main.c -> | compiler | -> main.o -> | linker | -> compiler.exe
+                                            ----------               +--------+
+                  +------+                 +----------+             /
+  scanner.flex -> | flex | -> scanner.c -> | compiler | -> scanner.o
+                  +------+                 +----------+
 #+end_example
 
 ** Bison Internals
