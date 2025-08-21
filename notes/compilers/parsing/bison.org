@@ -291,8 +291,10 @@ Many macros and error checks have been removed for clarity. Only the bare parsin
       // YYEMPTY is -2
       yychar = YYEMPTY
 
-      yyssp = yyss; // Top = bottom for state stack.
-      yyvsp = yyvs; // Same for semantic stack.
+      // state stack pointer
+      yyssp = yyss;
+      // semantic stack pointer
+      yyvsp = yyvs;
 
       // gotos are used for maximum performance.
       goto yysetstate;
