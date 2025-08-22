@@ -4,7 +4,7 @@
 
 | source                           | author        |
 |----------------------------------+---------------|
-| *LL and LR Parsing Demystified* | Josh Haberman |
+| *LL and LR Parsing Demystified*  | Josh Haberman |
 
 #+begin_quote
   "The primary difference between how LL and LR parsers operate is that an LL parser
@@ -47,11 +47,11 @@
 ** Prefix
 
 - Polish Notation
-  
+
 - Pre-Order Traversal
-  
+
 - Left-Most Derivation
-  
+
 - Top Down
 
 #+begin_example
@@ -83,11 +83,11 @@
 ** Postfix
 
 - Reverse Polish Notation
-  
+
 - Post-Order Traversal
-  
+
 - Right-Most Derivation
-  
+
 - Bottom Up
 
 #+begin_example
@@ -127,4 +127,46 @@
         +---^-------------+   ^
             |                 |
         lookahead LL      lookahead LR
+#+end_example
+
+** LL Example
+
+| rule | production  |
+|------+-------------|
+|    0 | X → Z Y     |
+|    1 | Y → + Z Y   |
+|    2 | Y → ε       |
+|    3 | Z → 1       |
+
+#+begin_example
+  === input ===
+  1 + 1
+
+  === output ===
+   --------------- traversal -------------->
+  +-----------------------------------------+
+  | X | Z | '1' | Y | '+' | Z | '1' | Y | ε |
+  +-----------------------------------------+
+   --------------- derivation ------------->
+#+end_example
+
+** LR Example
+
+| rule | production |
+|------+------------|
+|    0 | S → X      |
+|    1 | X → Y + X  |
+|    2 | X → Y      |
+|    3 | Y → 1      |
+
+#+begin_example
+  === input ===
+  1 + 1
+
+  === output ===
+   ----------- traversal ---------->
+  +---------------------------------+
+  | '1' | Y | '+' | '1' | Y | X | X |
+  +---------------------------------+
+   <---------- derivation ----------
 #+end_example
