@@ -10,7 +10,7 @@
 
 ** Actions
 
-- L :: left-to-right scan.
+- L :: left-to-right scan
 
 - R :: Right-most derivation. Expands the right-most nonterminal. Reductions in reverse order,
   from the leaves to the root.
@@ -44,24 +44,24 @@
       - return error
 
 #+begin_example
-# === parser-driving psuedo code ===
+  # === parser-driving psuedo code ===
 
-stack.push($, 0) # <----- always push a symbol/state pair
-lookahead = scan()
-loop:
-    s = stack.top() # <-- always a state
-    switch(action[s][lookahead])
-    case shift sn:
-        stack.push(lookahead, sn)
-        lookahead = scan()
-    case reduce A → β:
-        stack.pop(β)
-        sn = stack.top()
-        stack.push(A, goto[sn][A])
-    case accept:
-        return success
-    default:
-        return error
+  stack.push($, 0) # <----- always push a symbol/state pair
+  lookahead = scan()
+  loop:
+      s = stack.top() # <-- always a state
+      switch(action[s][lookahead])
+      case shift sn:
+          stack.push(lookahead, sn)
+          lookahead = scan()
+      case reduce A → β:
+          stack.pop(β)
+          sn = stack.top()
+          stack.push(A, goto[sn][A])
+      case accept:
+          return success
+      default:
+          return error
 #+end_example
 
 The difference between *SLR*, *LALR*, and *LR* parsers is in the tables that they use. Different
@@ -131,8 +131,8 @@ An *SLR* grammar is one that has no *shift-reduce* or *reduce-reduce* conflicts 
 
 Find the item set that each symbol *x ∈ {0, 1, +, E, B}* closes over.
 
-1. Take the subset, *S*, of all items in the current item set where there is a dot in front of the symbol
-   of interest, *x*.
+1. Take the subset, *S*, of all items in the current item set where there is a dot in front of the
+   symbol of interest, *x*.
 
 2. For each item in *S*, move the dot to the right of *x*.
 
@@ -212,6 +212,7 @@ Find the item set that each symbol *x ∈ {0, 1, +, E, B}* closes over.
 |     5 |       | s3 | s4 |        |   | 6 |
 |     6 | r_{1} |    |    | r_{1}  |   |   |
 
+
 *** Stack Trace: ~1 + 0~
 
 | step | stack                 | input   | action |
@@ -252,68 +253,68 @@ relevant non-terminal.
 
 | rule | production   |
 |------+--------------|
-|    0 | S → E $      |
-|    1 | E → E + T    |
-|    2 | E → T        |
-|    3 | T → id ( E ) |
-|    4 | T → id       |
+|    0 | S → X $      |
+|    1 | X → X + Y    |
+|    2 | X → Y        |
+|    3 | Y → id ( X ) |
+|    4 | Y → id       |
 
 *** Configurating Sets
 
 | state | set             | follow set |
 |-------+-----------------+------------|
-|     0 | S → .E          | $          |
-|       | + E → .E + T    | $, +       |
-|       | + E → .T        | $, +       |
-|       | + T → .id ( E ) | $, +       |
-|       | + T → .id       | $, +       |
+|     0 | S →.X $         | $          |
+|       | + X →.X + Y     | $, +       |
+|       | + X →.Y         | $, +       |
+|       | + Y →.id ( X )  | $, +       |
+|       | + Y →.id        | $, +       |
 |-------+-----------------+------------|
-|     1 | S → E.$         | $          |
-|       | + E → E.+ T     | $, +       |
+|     1 | S → X.          | $          |
+|       | X → X.+ Y       | $, +       |
 |-------+-----------------+------------|
-|     2 | E → T.          | $, +       |
+|     2 | X → Y.          | $, +       |
 |-------+-----------------+------------|
-|     3 | T → id.( E )    | $, +       |
-|       | + T → id.       | $, +       |
+|     3 | Y → id.( X )    | $, +       |
+|       | Y → id.         | $, +       |
 |-------+-----------------+------------|
-|     4 | E → E +.T       | $, +       |
-|       | + T → .id ( E ) | $, +       |
-|       | + T → .id       | $, +       |
+|     4 | X → X +.Y       | $, +       |
+|       | + Y →.id ( X )  | $, +       |
+|       | + Y →.id        | $, +       |
 |-------+-----------------+------------|
-|     5 | T → id (.E )    | $, +       |
-|       | + E → .E + T    | ), +       |
-|       | + E → .T        | ), +       |
-|       | + T → .id ( E ) | ), +       |
-|       | + T → .id       | ), +       |
+|     5 | Y → id (.X )    | $, +       |
+|       | + X →.X + Y     | ), +       |
+|       | + X →.Y         | ), +       |
+|       | + Y →.id ( X )  | ), +       |
+|       | + Y →.id        | ), +       |
 |-------+-----------------+------------|
-|     6 | E → E + T.      | $, +       |
+|     6 | X → X + Y.      | $, +       |
 |-------+-----------------+------------|
-|     7 | T → id ( E.)    | $, +       |
-|       | + E → E.+ T     | ), +       |
+|     7 | Y → id.( X )    | $, +       |
+|       | X → X.+ Y       | ), +       |
 |-------+-----------------+------------|
-|     8 | E → T.          | ), +       |
+|     8 | X → Y.          | ), +       |
 |-------+-----------------+------------|
-|     9 | T → id.( E )    | ), +       |
-|       | + T → id.       | ), +       |
+|     9 | Y → id.( X )    | ), +       |
+|       | Y → id.         | ), +       |
 |-------+-----------------+------------|
-|    10 | T → id ( E ).   | $, +       |
+|    10 | Y → id ( X ).   | $, +       |
 |-------+-----------------+------------|
-|    11 | E → E +.T       | ), +       |
-|       | + T .id ( E )   | ), +       |
-|       | + T .id         | ), +       |
+|    11 | X → X +.Y       | ), +       |
+|       | + Y → .id ( X ) | ), +       |
+|       | + Y → .id       | ), +       |
 |-------+-----------------+------------|
-|    12 | T → id (.E )    | ), +       |
-|       | + E → .E + T    | ), +       |
-|       | + E → .T        | ), +       |
-|       | + T → .id ( E ) | ), +       |
-|       | + T → .id       | ), +       |
+|    12 | Y → id (.X )    | ), +       |
+|       | + X →.X + Y     | ), +       |
+|       | + X →.Y         | ), +       |
+|       | + Y →.id ( X )  | ), +       |
+|       | + Y →.id        | ), +       |
 |-------+-----------------+------------|
-|    13 | E → E + T       | ), +       |
+|    13 | X → X + Y.      | ), +       |
 |-------+-----------------+------------|
-|    14 | T → id ( E.)    | ), +       |
-|       | + E → E.+ T     | ), +       |
+|    14 | Y → id ( X.)    | ), +       |
+|       | X → X.+ Y       | ), +       |
 |-------+-----------------+------------|
-|    15 | T → id ( E ).   | ), +       |
+|    15 | Y → id ( X ).   | ), +       |
 
 *** First Table
 
@@ -325,42 +326,50 @@ relevant non-terminal.
 
 *** Goto-Action Table
 
-| state | +   | id | (   | )   | $      |  E |  T |
-|-------+-----+----+-----+-----+--------+----+----|
-|     0 |     | s3 |     |     |        |  1 |  2 |
-|     1 | s4  |    |     |     | accept |    |    |
-|     2 | r2  |    |     |     | r2     |    |    |
-|     3 | r4  |    | s5  |     | r4     |    |    |
-|     4 |     | s3 |     |     |        |    |  6 |
-|     5 |     | s9 |     |     |        |  7 |  8 |
-|     6 | r1  |    |     |     | r1     |    |    |
-|     7 | s11 |    |     | s10 |        |    |    |
-|     8 | r2  |    |     | r2  |        |    |    |
-|     9 | r4  |    | s12 | r4  |        |    |    |
-|    10 | r3  |    |     |     | r3     |    |    |
-|    11 |     | s9 |     |     |        |    | 13 |
-|    12 |     | s9 |     |     |        | 14 |  8 |
-|    13 | r1  |    |     | r1  |        |    |    |
-|    14 | s11 |    |     | s15 |        |    |    |
-|    15 | r3  |    |     | r3  |        |    |    |
+| state | +     | id | (   | )     | $      |  X |  Y |
+|-------+-------+----+-----+-------+--------+----+----|
+|     0 |       | s3 |     |       |        |  1 |  2 |
+|     1 | s4    |    |     |       | accept |    |    |
+|     2 | r_{2} |    |     |       | r_{2}  |    |    |
+|     3 | r_{4} |    | s5  |       | r_{4}  |    |    |
+|     4 |       | s3 |     |       |        |    |  6 |
+|     5 |       | s9 |     |       |        |  7 |  8 |
+|     6 | r_{1} |    |     |       | r_{1}  |    |    |
+|     7 | s11   |    |     | s10   |        |    |    |
+|     8 | r_{2} |    |     | r_{2} |        |    |    |
+|     9 | r_{4} |    | s12 | r_{4} |        |    |    |
+|    10 | r_{3} |    |     |       | r_{3}  |    |    |
+|    11 |       | s9 |     |       |        |    | 13 |
+|    12 |       | s9 |     |       |        | 14 |  8 |
+|    13 | r_{1} |    |     | r_{1} |        |    |    |
+|    14 | s11   |    |     | s15   |        |    |    |
+|    15 | r_{3} |    |     | r_{3} |        |    |    |
 
 *** Stack Trace: ~id ( id )~
 
-| step | state            | symbol        | input       | action |
-|------+------------------+---------------+-------------+--------|
-|    1 | [0]              | []            | id ( id ) $ | s3     |
-|    2 | [0, 3]           | [id]          | ( id ) $    | s5     |
-|    3 | [0, 3, 5]        | [id, (]       | id ) $      | s9     |
-|    4 | [0, 3, 5, 9]     | [id, (, id]   | ) $         | r4     |
-|    5 | [0, 3, 5]        | [id, (, T]    | ) $         | 8      |
-|    6 | [0, 3, 5, 8]     | [id, (, T]    | ) $         | r2     |
-|    7 | [0, 3, 5]        | [id, (, E]    | ) $         | 7      |
-|    8 | [0, 3, 5, 7]     | [id, (, E]    | ) $         | s10    |
-|    9 | [0, 3, 5, 7, 10] | [id, (, E, )] | $           | r3     |
-|   10 | [0]              | [T]           | $           | 2      |
-|   11 | [0, 2]           | [T]           | $           | r2     |
-|   12 | [0]              | [E]           | $           | 1      |
-|   13 | [0, 1]           | [E]           | $           | accept |
+#+begin_example
+   --------------- traversal -------------->
+  +------+-----+------+---+---+-----+---+---+
+  | 'id' | '(' | 'id' | Y | X | ')' | Y | X |
+  +------+-----+------+---+---+-----+---+---+
+   <-------------- derivation --------------
+#+end_example
+
+| step | state                         | input       | action |
+|------+-------------------------------+-------------+--------|
+|    1 | ~0~                           | id ( id ) $ | s3     |
+|    2 | ~0~ id ~3~                    | ( id ) $    | s5     |
+|    3 | ~0~ id ~3~ ( ~5~              | id ) $      | s9     |
+|    4 | ~0~ id ~3~ ( ~5~ id ~9~       | ) $         | r_{4}  |
+|    5 | ~0~ id ~3~ ( ~5~ Y            | ) $         | 8      |
+|    6 | ~0~ id ~3~ ( ~5~ Y ~8~        | ) $         | r_{2}  |
+|    7 | ~0~ id ~3~ ( ~5~ X            | ) $         | 7      |
+|    8 | ~0~ id ~3~ ( ~5~ X ~7~        | ) $         | s10    |
+|    9 | ~0~ id ~3~ ( ~5~ X ~7~ ) ~10~ | $           | r_{3}  |
+|   10 | ~0~ Y                         | $           | 2      |
+|   11 | ~0~ Y ~2~                     | $           | r_{2}  |
+|   12 | ~0~ X                         | $           | 1      |
+|   13 | ~0~ X ~1~                     | $           | accept |
 
 ** LALR Parsing
 
