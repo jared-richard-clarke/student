@@ -335,5 +335,5 @@ to apply. If we can continue until the end-of-file symbol is matched, then the p
 | $ Y Z   | 0 $     | match +            |
 | $ Y 0   | 0 $     | apply 4: Z ⇒ 0     |
 | $ Y     | $       | match 0            |
-| \$      | $       | apply 3: Y ⇒ ε     |
-| \$      |         | match $            |
+| $       | $       | apply 3: Y ⇒ ε     |
+| $       |         | match $            |
