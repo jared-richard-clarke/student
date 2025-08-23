@@ -43,7 +43,7 @@ the next token in the input stream. To make a grammar *LL(1)* we must do the fol
 appears as the first symbol on the right-hand side. Thus *X + Y* will expand into *(X + Y) + Y*,
 which will expand into *((X + Y) + Y) + Y* and so on into infinity.
 
-Rewriting the rule as *X → Y + X* would remove left recursion, but it creates a right-associative
+Rewriting the rule as *X → Y + X* will remove left recursion, but it creates a right-associative
 operation and a common left prefix. To make a right-associative operation again left-associative,
 transform grammar *A → Aα_{1} | Aα_{2} | ... | β_{1} | β_{2} |...* into *A → β_{1}A' | β_{2}A' | ...*,
 where *A' → α_{1}A' | α_{2}A' | ε*. Common left prefixes of the grammar *A → αβ_{1} | αβ_{2} | ...*
