@@ -11,6 +11,8 @@
 
 ** Set Configuration
 
+*Side Note*: Rules prefixed by *+* are closures of the item set.
+
 | state | set         |
 |-------+-------------|
 |     0 | S →.E $     |
