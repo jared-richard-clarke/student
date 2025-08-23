@@ -14,7 +14,7 @@
 
 - L :: left-most derivation
 
-- (k) :: *k* symbols of lookahead
+- (k) :: k symbols of lookahead
 
 ** LL(1)
 
@@ -39,36 +39,20 @@ the next token in the input stream. To make a grammar *LL(1)* we must do the fol
 
 *Left Recursion*: *A → Bβ* such that *B ⇒ Aγ*.
 
-*LL(1)* grammars cannot contain left recursion. The expression *E → E + T* is left-recursive because *E*
-appears as the first symbol on the right-hand side. Thus *E → E + T* would expand to *(E + T) + T*,
-which would expand into *((E + T) + T) + T* and so on into infinity.
+*LL(1)* grammars cannot contain left recursion. The expression *X → X + Y* is left-recursive because *X*
+appears as the first symbol on the right-hand side. Thus *X + Y* will expand into *(X + Y) + Y*,
+which will expand into *((X + Y) + Y) + Y* and so on into infinity.
 
-Rewriting the rule as *E → T + E* would remove left recursion, but it creates a right-associative
-operation and a common left prefix. Instead the rules must be rewritten so that the formally recursive
-rule begins with the leading symbols of its alternatives.
+Rewriting the rule as *X → Y + X* would remove left recursion, but it creates a right-associative
+operation and a common left prefix. To make a right-associative operation again left-associative,
+transform grammar *A → Aα_{1} | Aα_{2} | ... | β_{1} | β_{2} |...* into *A → β_{1}A' | β_{2}A' | ...*,
+where *A' → α_{1}A' | α_{2}A' | ε*. Common left prefixes of the grammar *A → αβ_{1} | αβ_{2} | ...*
+can be replaced with *A → αA'* where *A' → β_{1} | β_{2}...*.
 
-| rule | production  |
-|------+-------------|
-|    1 | S → E       |
-|    2 | E → T E'    |
-|    3 | E' → + T E' |
-|    4 | E' → ε      |
-|    5 | T → id      |
-|    6 | T → 1       |
+*Side Note*: Left recursion is primarily a theoretical problem. Looping constructs, or iteration,
+are excellent real-world solutions.
 
-#+begin_example
-  S  ::= E
-  E  ::= T E'
-  E' ::= + T E'
-       | ε
-  T  ::= id
-       | 1
-#+end_example
-
-Left recursion is primarily a theoretical problem. Looping constructs, or iteration, are excellent
-real-world solutions.
-
-Parsing expressions with precedence requires unintuitive rewritings of context-free grammars.
+*Also*: Parsing expressions with precedence requires unintuitive rewritings of context-free grammars.
 It is simpler to either loop through a list of atoms separated by operators and reconstruct the
 tree separately or fuse the two stages into a recursive loop — a Pratt parser.
 
@@ -86,7 +70,7 @@ tree separately or fuse the two stages into a recursive loop — a Pratt parser.
 ** Eliminating Common Left Prefixes
 
 Look for all common prefixes of a given non-terminal and replace them with one rule that contains
-the prefix and another that contains the variants. This process is called /left factorization/,
+the prefix and another that contains the variants. This process is called *left factorization*,
 which eliminates backtracking and redundant parsings.
 
 *** Before Left Factoring
@@ -201,36 +185,6 @@ appear after the derivation of non-terminal *A*.
   until no more changes occur.
 #+end_example
 
-*** Grammar Translated By First and Follow
-
-| rule | production  |
-|------+-------------|
-|    1 | S → E       |
-|    2 | E → T E'    |
-|    3 | E' → + T E' |
-|    4 | E' → ε      |
-|    5 | T → F T'    |
-|    6 | T' → * F T' |
-|    7 | T' → ε      |
-|    8 | F → ( E )   |
-|    9 | F → 1       |
-
-#+begin_example
-  S  ::= E $
-  E  ::= T E'
-  E' ::= + T E'
-       | ε
-  T  ::= F T'
-  T' ::= * F T'
-       | ε
-  F  ::= ( E )
-       | 1
-#+end_example
-
-|        | S        | E        | E'       | T           | T'          | F              |
-| FIRST  | { (, 1 } | { (, 1 } | { +, ε } | { (, 1 }    | { *, ε }    | { (, 1 }       |
-| FOLLOW | { $ }    | { ), $ } | { ), $ } | { +, ), $ } | { +, ), $ } | { +, *, ), $ } |
-
 ** Recursive Descent Parsing
 
 *LL(1)* grammars are amenable to *recursive descent parsing* in which there is one function for each
@@ -251,46 +205,38 @@ Three helper functions are needed:
 
 *** Grammar Translated into a Recursive Descent Parser
 
-This C program serves only to verify that the input program matches the grammar outlined above.
+This C program serves only to verify that the input program matches the following grammar:
+
+| rule | production |
+|------+------------|
+|    1 | X → Z Y    |
+|    2 | Y → + Z Y  |
+|    3 | Y → ε      |
+|    4 | Z → 0      |
+|    5 | Z → 1      |
 
 #+begin_src c
-  // S ::= E $
+  // S ::= X $
   int parse_S() {
     return parse_E() && match(TOKEN_EOF);
   }
-  // E ::= T E'
-  int parse_E() {
-    return parse_T() && parse_E_prime();
+  // X ::= Z Y
+  int parse_X() {
+    return parse_Z() && parse_Y();
   }
-  // E' ::= + T E' | ε 
-  int parse_E_prime() {
+  // Y ::= + Z Y | ε
+  int parse_Y() {
     token_t t = peek();
     if (t == TOKEN_PLUS) {
       next();
-      return parse_T() && parse_E_prime();
+      return parse_Z() && parse_Y();
     }
     return 1;
   }
-  // T ::= F T'
-  int parse_T() {
-    return parse_F() && parse_T_prime();
-  }
-  // T' ::= * F T' | ε
-  int parse_T_prime() {
+  // Z ::= 0 | 1
+  int parse_Z() {
     token_t t = peek();
-    if (t == TOKEN_MULTIPLY) {
-      next();
-      return parse_F() && parse_T_prime();
-    }
-    return 1;
-  }
-  // F ::= ( E ) | 1
-  int parse_F() {
-    token_t t = peek();
-    if (t == TOKEN_LPAREN) {
-      next();
-      return parse_E() && match(TOKEN_RPAREN);
-    } else if (t == TOKEN_INT) {
+    if (t == TOKEN_ZERO || t == TOKEN_ONE) {
       next();
       return 1;
     } else {
@@ -326,31 +272,6 @@ applied for any combination of non-terminal on the stack and the next token on t
       ε is in FIRST(w) and a is in FOLLOW(A)
 #+end_example
 
-*** Grammar
-
-| rule | production  |
-|------+-------------|
-|    1 | S → E       |
-|    2 | E → T E'    |
-|    3 | E' → + T E' |
-|    4 | E' → ε      |
-|    5 | T → F T'    |
-|    6 | T' → * F T' |
-|    7 | T' → ε      |
-|    8 | F → ( E )   |
-|    9 | F → 1       |
-
-*** Parse Table
-
-|    | 1 | + | * | ( | ) | $ |
-|----+---+---+---+---+---+---|
-| S  | 1 |   |   | 1 |   |   |
-| E  | 2 |   |   | 2 |   |   |
-| E' |   | 3 |   |   | 4 | 4 |
-| T  | 5 |   |   | 5 |   |   |
-| T' |   | 7 | 6 |   | 7 | 7 |
-| F  | 9 |   |   | 8 |   |   |
-
 ** LL(1) Table Parsing Algorithm
 
 Informally, the idea is to keep a stack that tracks the current state of the parser. In each step,
@@ -382,19 +303,36 @@ to apply. If we can continue until the end-of-file symbol is matched, then the p
   end
 #+end_example
 
-** Stack Trace
+** LL(1) Example
 
-| stack       | input   | action               |
-|-------------+---------+----------------------|
-| S $         | 1 * 1 $ | apply 1: S ⇒ E       |
-| E $         | 1 * 1 $ | apply 2: E ⇒ T E'    |
-| T E' $      | 1 * 1 $ | apply 5: T ⇒ F T'    |
-| F T' E' $   | 1 * 1 $ | apply 9: F ⇒ 1       |
-| 1 T' E' $   | 1 * 1 $ | match 1              |
-| T' E' $     | * 1 $   | apply 6: T' ⇒ * F T' |
-| * F T' E' $ | * 1 $   | match *              |
-| F T' E' $   | 1 $     | apply 9: F ⇒ 1       |
-| 1 T' E' $   | 1 $     | match 1              |
-| T' E' $     | $       | apply 7: T' ⇒ ε      |
-| E' $        | $       | apply 4: E' ⇒ ε      |
-| \$          | $       | match $              |
+*** Grammar
+
+| rule | production |
+|------+------------|
+|    1 | X → Z Y    |
+|    2 | Y → + Z Y  |
+|    3 | Y → ε      |
+|    4 | Z → 0      |
+|    5 | Z → 1      |
+
+*** Parse Table
+
+| FIRST  | FOLLOW | non-terminal | + | 0 | 1 | $ |
+|--------+--------+--------------+---+---+---+---|
+| {0, 1} | {$}    | X            |   | 1 | 1 |   |
+| {+, ε} | {$}    | Y            | 2 |   |   | ε |
+| {0, 1} | {+, $} | Z            |   | 4 | 5 |   |
+
+*** Stack Trace: ~1 + 0~ 
+
+| stack   | input   | action             |
+|---------+---------+--------------------|
+| $ X     | 1 + 0 $ |                    |
+| $ Y Z   | 1 + 0 $ | apply 1: X ⇒ Z Y   |
+| $ Y 1   | 1 + 0 $ | apply 5: Z ⇒ 1     |
+| $ Y     | + 0 $   |                    |
+| $ Y Z + | + 0 $   | apply 2: Y ⇒ + Z Y |
+| $ Y Z   | 0 $     |                    |
+| $ Y 0   | 0 $     | apply 4: Z ⇒ 0     |
+| $ Y     | $       |                    |
+| \$      | $       | Y ⇒ ε              |
