@@ -330,9 +330,10 @@ to apply. If we can continue until the end-of-file symbol is matched, then the p
 | $ X     | 1 + 0 $ |                    |
 | $ Y Z   | 1 + 0 $ | apply 1: X ⇒ Z Y   |
 | $ Y 1   | 1 + 0 $ | apply 5: Z ⇒ 1     |
-| $ Y     | + 0 $   |                    |
+| $ Y     | + 0 $   | match 1            |
 | $ Y Z + | + 0 $   | apply 2: Y ⇒ + Z Y |
-| $ Y Z   | 0 $     |                    |
+| $ Y Z   | 0 $     | match +            |
 | $ Y 0   | 0 $     | apply 4: Z ⇒ 0     |
-| $ Y     | $       |                    |
-| \$      | $       | Y ⇒ ε              |
+| $ Y     | $       | match 0            |
+| \$      | $       | apply 3: Y ⇒ ε     |
+| \$      |         | match $            |
