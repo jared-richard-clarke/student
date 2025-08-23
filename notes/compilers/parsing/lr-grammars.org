@@ -382,17 +382,17 @@ has more precise lookahead information available for each item.
 
 *** LR(1) States
 
-| state 1    | LA       | state 2    | LA       |
-|------------+----------+------------+----------|
-| X → .X + Y | { $, + } | X → .X + Y | { ), + } |
-| X → .Y     | { $, + } | X → .Y     | { ), + } |
+| state 1    | LA   | state 2    | LA   |
+|------------+------+------------+------|
+| X → .X + Y | $, + | X → .X + Y | ), + |
+| X → .Y     | $, + | X → .Y     | ), + |
 
 *** LALR(1) State
 
-| state      | LA          |
-|------------+-------------|
-| X → .X + Y | { $, ), + } |
-| X → .Y     | { $, ), + } |
+| state      | LA      |
+|------------+---------|
+| X → .X + Y | $, ), + |
+| X → .Y     | $, ), + |
 
 ** LALR(1) Parser Example
 
