@@ -170,7 +170,7 @@ Find the item set that each symbol *x ∈ {0, 1, +, E, B}* closes over.
 |-------+--------------|
 |     6 | E → E + B.   |
 
-*** Finite State Machine
+*** LR State Graph
 
 #+begin_example
                   +                   $  +--------+
