@@ -224,6 +224,14 @@ Find the item set that each symbol *x ∈ {0, 1, +, E, B}* closes over.
 
 *** Stack Trace: ~1 + 0~
 
+#+begin_example
+   ----------- traversal ---------->
+  +-----+---+---+-----+-----+---+---+
+  | '1' | B | E | '+' | '0' | B | E |
+  +-----+---+---+-----+-----+---+---+
+   <---------- derivation ----------
+#+end_example
+
 | step | stack                 | input   | action |
 |------+-----------------------+---------+--------|
 |    1 | ~0~                   | 1 + 0 $ | s4     |
