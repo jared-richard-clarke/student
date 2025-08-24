@@ -116,7 +116,7 @@ reductions | +----+----+ | +----+----+
 
 - Closure :: Any set of items that can be extended by recursively adding items until all
   non-terminals preceded by markers are accounted for. The minimal extension is the
-  closure of an item set. Only states reachable from the begin state are included
+  closure of an item set. Only item sets reachable from the begin state are included
   in the parse table.
 
   - *A → α.Bγ* produces the closure *B →.δ*.
