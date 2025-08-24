@@ -94,23 +94,32 @@ reductions | +----+----+ | +----+----+
 
 ** LR(0) Parsing
 
-- LR(0) Parser State :: All the possible rules that are currently under consideration by a shift-reduce
-  parser. Each set of rules, or box, represents a state in the machine, connected by transitions from
-  both terminals to non-terminals in a grammar. Also known as the *canonical collection* or
-  *compact finite state machine* of a grammar.
+- LR(0) Parser State :: All the possible rules that are currently under consideration
+  by a shift-reduce parser. Each set of rules, or box, represents a state in the machine,
+  connected by transitions from both terminals to non-terminals in a grammar. Also known
+  as the *canonical collection* or *finite state machine* of a grammar.
 
 - Item :: The contents of each state, which are rules augmented by a *marker*.  In general, item
-  *X → γ . δ* means *γ* is at the top of the stack. At the head of the input there is a string
-  derivable from *δ*.
+  *X → γ.δ* means *γ* is at the top of the stack. At the head of the input there is a string
+  derivable from *δ*. The rule *X → X + Y* has the corresponding items:
+
+  1. *X →.X + Y*
+  2. *X → X.+ Y*
+  3. *X → X +.Y*
+  4. *X → X + Y.*
 
 - Marker(.) :: Marks the parser's current position in a rule.
 
-- Kernel :: *State 0* created by taking the production for the start symbol *S → E* and adding a marker
-  at the beginning of the right-hand side.
+- Kernel :: Items derived directly from a shift operation or are the initial items of a state.
 
-- Closure ::  Any set of items can be extended by recursively adding all the appropriate items until
-  all non-terminals preceded by markers are accounted for. The minimal extension is called the closure
-  of an item set.
+  - *A →.αβ* produces the kernel *A → α.β*.
+
+- Closure :: Any set of items that can be extended by recursively adding items until all
+  non-terminals preceded by markers are accounted for. The minimal extension is the
+  closure of an item set. Only states reachable from the begin state are included
+  in the parse table.
+
+  - *A → α.Bγ* produces the closure *B →.δ*.
 
 ** SLR Parser Example
 
