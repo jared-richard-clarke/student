@@ -123,7 +123,7 @@ reductions | +----+----+ | +----+----+
 
 - Augmented Grammar :: An *LR* grammar is augmented with a special rule *S → X $*, where
   non-terminal *S* and end-of-input symbol *$* wrap the original start symbol *X*.
-  Marks the point of completion.
+  Marks the point of completion for *X*.
 
 ** SLR Parser Example
 
