@@ -121,6 +121,10 @@ reductions | +----+----+ | +----+----+
 
   - *A → α.Bγ* produces the closure *B →.δ*.
 
+- Augmented Grammar :: An *LR* grammar is augmented with a special rule *S → X $*, where
+  non-terminal *S* and end-of-input symbol *$* wrap the original start symbol *X*.
+  Marks the point of completion.
+
 ** SLR Parser Example
 
 An *SLR* grammar is one that has no *shift-reduce* or *reduce-reduce* conflicts when examining its
