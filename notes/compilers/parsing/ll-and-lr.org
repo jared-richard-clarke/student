@@ -86,7 +86,7 @@
 
 - Post-Order Traversal
 
-- Right-Most Derivation
+- Reversed, Right-Most Derivation
 
 - Bottom Up
 
