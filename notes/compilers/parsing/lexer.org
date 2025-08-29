@@ -178,7 +178,7 @@ input string *w*.
   F' = { q' ∈ Q' | q' ∩ F ≠ ∅ }
 
   === epsilon closure ===
-  ε-closure(x) = NFA ∪ { t | q ∈ x ∧ (q, ε) ∈ T }
+  ε-closure(x) = x ∪ { t | q ∈ x ∧ (q, ε) ∈ T }
 
   === transitions ===
   T = Transitions in NFA, where "t" is an individual transition.
