@@ -137,6 +137,18 @@ input string *w*.
 
 *** NFA to DFA Conversion
 
+1. Determine the start state, which is the ε-closure of the NFA's start state.
+
+2. For each DFA state, find the set of NFA states it can transition from for each input symbol.
+
+   - Compute the union of transitions from individual NFA states that are part of the current
+     DFA state.
+
+   - Compute the ε-closure of this newly-found set of NFA states.
+
+3. Determine the DFA's final states, which are any state that contains one or more final states
+   from the original NFA.
+
 #+begin_quote
   "The conversion is done by simulating all possible paths in an NFA at once.
    This means that we operate with sets of NFA states: When we have several
