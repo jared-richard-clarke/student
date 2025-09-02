@@ -40,9 +40,9 @@
    To make the whole process efficient we must balance the time spent processing the
    pattern and doing the scanning. A reasonable compromise, proposed by Thompson [1968],
    is to convert the regular expression to an NFA. The process of scanning the input
-   is then one of directly simulating the NFA. As we scan the line, /a/ list of "current"
-   states is kept, beginning with the ε-CLOSURE of the start state. If /a/ is the next
-   input character, we create a new list of all states with a transition on /a/ from
+   is then one of directly simulating the NFA. As we scan the line, a list of "current"
+   states is kept, beginning with the ε-CLOSURE of the start state. If *a* is the next
+   input character, we create a new list of all states with a transition on *a* from
    a state of the old list. The old list is then discarded and we compute the ε-CLOSURE
    of the new list. If the final state is not on the new list, we repeat the process
    with the next character."
