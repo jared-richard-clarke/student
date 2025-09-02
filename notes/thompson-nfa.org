@@ -1108,7 +1108,7 @@ at least one final state of the *NFA*.
   }
 
   ThreadList* threadlist(int n) {
-      return malloc(sizeof(ThreadList)+n*sizeof(Thread));
+      return malloc(sizeof(ThreadList) + n * sizeof(Thread));
   }
 
   void addthread(ThreadList *l, Thread t) {
