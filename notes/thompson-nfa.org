@@ -1033,12 +1033,25 @@ at least one final state of the *NFA*.
 
   === subset construction ===
 
+  1. Determine the start state, which is the ε-closure of the NFA's start state.
+
+  2. For each DFA state, find the set of NFA states it can transition from
+     for each input symbol.
+
+     - Compute the union of transitions from individual NFA states that
+       are part of the current DFA state.
+
+     - Compute the ε-closure of this newly-found set of NFA states.
+
+  3. Determine the DFA's final states, which are any state that contains
+     one or more final states from the original NFA.
+
   | NFA States            | DFA State | a | b | c |
   |-----------------------+-----------+---+---+---|
-  | { 9, 7, 1, 5, 10 }    | A         | B |   | C |
+  | { 9, 7, 1, 5, 10 }    | A accept  | B |   | C |
   | { 2 }                 | B         |   | D |   |
-  | { 6, 8, 10, 7, 1, 5 } | C         | B |   | C |
-  | { 4, 8, 7, 1, 5, 10 } | D         | B |   | C |
+  | { 6, 8, 10, 7, 1, 5 } | C accept  | B |   | C |
+  | { 4, 8, 7, 1, 5, 10 } | D accept  | B |   | C |
 
   === DFA ===
 
