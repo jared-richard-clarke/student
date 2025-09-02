@@ -1071,6 +1071,7 @@ at least one final state of the *NFA*.
 *** Operation Codes
 
 #+begin_example
+  +-------------------------------+
   | Expression | Instructions     |
   |------------+------------------|
   | a          | char a           |
@@ -1096,6 +1097,11 @@ at least one final state of the *NFA*.
   | e+         | L1: codes for e  | e+?        | L1: codes for e  |
   |            |     split L1, L3 |            |     split L3, L1 |
   |            | L3:              |            | L3:              |
+  |------------+------------------+-------------------------------+
+  | (e)        | save i (2i)      |
+  |            | codes for e      |
+  |            | save i (2i + 1)  |
+  +-------------------------------+
 #+end_example
 
 *** Thompson's VM
@@ -1112,7 +1118,10 @@ at least one final state of the *NFA*.
   // Instruction
   typedef struct Inst {
       int  opcode;
+      // character
       int  c;
+      // capture number
+      int  i;
       Inst *x;
       Inst *y;
   } Inst;
@@ -1124,6 +1133,10 @@ at least one final state of the *NFA*.
   // typedef struct Thread {
   //     Inst *pc;
   //     // $0 through $9: An array of submatching string pointers.
+  //     //
+  //     // $i   = ith capture
+  //     // 2i   = capture start
+  //     // 2i+1 = capture stop
   //     char *saved[20];
   // } Thread;
 
