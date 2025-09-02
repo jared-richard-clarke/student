@@ -1120,7 +1120,7 @@ at least one final state of the *NFA*.
       int  opcode;
       // character
       int  c;
-      // capture number
+      // capture offset
       int  i;
       Inst *x;
       Inst *y;
