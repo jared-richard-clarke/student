@@ -1041,31 +1041,31 @@ at least one final state of the *NFA*.
 *** Operation Codes
 
 #+begin_example
- | Expression | Instructions     |
- |------------+------------------|
- | a          | char a           |
- |------------+------------------|
- | e₁e₂       | codes for e₁     |
- |            | codes for e₂     |
- |------------+------------------|
- | e₁|e₂      |     split L1, L2 |
- |            | L1: codes for e₁ |
- |            |     jump L3      |
- |            | L2: codes for e₂ |
- |            | L3:              |
- |------------+------------------|
- | e?         |     split L1, L2 |
- |            | L1: codes for e  |
- |            | L2:              |
- |------------+------------------|
- | e*         | L1: split L2, L3 |
- |            | L2: codes for e  |
- |            |     jump L1      |
- |            | L3:              |
- |------------+------------------|
- | e+         | L1: codes for e  |
- |            |     split L1, L3 |
- |            | L3:              |
+  | Expression | Instructions     |
+  |------------+------------------|
+  | a          | char a           |
+  |------------+------------------|
+  | e₁e₂       | codes for e₁     |
+  |            | codes for e₂     |
+  |------------+------------------|
+  | e₁|e₂      |     split L1, L2 |
+  |            | L1: codes for e₁ |
+  |            |     jump L3      |
+  |            | L2: codes for e₂ |-------------------------------+
+  |            | L3:              | Non-greedy:                   |
+  |------------+------------------+------------+------------------|
+  | e?         |     split L1, L2 | e??        |     split L2, L1 |
+  |            | L1: codes for e  |            | L1: codes for e  |
+  |            | L2:              |            | L2:              |
+  |------------+------------------+------------+------------------|
+  | e*         | L1: split L2, L3 | e*?        | L1: split L3, L2 |
+  |            | L2: codes for e  |            | L2: codes for e  |
+  |            |     jump L1      |            |     jump L1      |
+  |            | L3:              |            | L3:              |
+  |------------+------------------+------------+------------------|
+  | e+         | L1: codes for e  | e+?        | L1: codes for e  |
+  |            |     split L1, L3 |            |     split L3, L1 |
+  |            | L3:              |            | L3:              |
 #+end_example
 
 *** Thompson's VM
