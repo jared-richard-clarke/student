@@ -1187,10 +1187,11 @@ at least one final state of the *NFA*.
       // String pointer
       char *sp;
 
-      // Number of instructions
+      // Number of program instructions
       int length = program->length;
-      // Current list and next list.
+      // Current Threadlist
       Threadlist *clist = threadlist(length);
+      // Next Threadlist
       Threadlist *nlist = threadlist(length);
 
       addthread(clist, thread(program));
