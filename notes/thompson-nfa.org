@@ -1106,6 +1106,16 @@ at least one final state of the *NFA*.
 
 *** Thompson's VM
 
+Implementing both greedy and non-greedy matches requires a prioritizing *Split* instruction.
+The Thompson/Pike VM below does not respect thread priority. Moving instructions *Jump*, *Split*, and
+*Saved* into the function *addthread(threadlist, thread, sp)* and calling said function recursively
+to add targets of said instructions ensures *clist* and *nlist* are maintained in order of thread
+priority, highest to lowest.
+
+Also: if a match is found, lower-priority threads in the *clist* should be cut off, but higher-priority
+threads need to be given the chance to match possibly-longer sections of input
+(hence the added *sp* instruction to *addthread*).
+
 #+begin_src c
   // Op Codes
   enum {
