@@ -1202,7 +1202,7 @@ at least one final state of the *NFA*.
                   break;
               case Match:
                   // memmove(saved, t.saved, sizeof t.saved);
-                  return 1
+                  return 1;
               case Jump:
                   addthread(clist, thread(pc->x));
                   // addthread(clist, thread(pc->x, t.saved));
@@ -1219,8 +1219,8 @@ at least one final state of the *NFA*.
            //     break;
               }
           }
-       swap(clist, nlist);
-       clear(nlist);
+          swap(clist, nlist);
+          clear(nlist);
       }
   }
 #+end_src
