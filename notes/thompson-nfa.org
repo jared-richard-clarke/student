@@ -1150,6 +1150,11 @@ at least one final state of the *NFA*.
       return t;
   }
 
+  // Thread thread(Inst *pc, char **saved) {
+  //     Thread t = { pc, saved };
+  //     return t;
+  // }
+
   ThreadList* threadlist(int n) {
       return malloc(sizeof(ThreadList) + n * sizeof(Thread));
   }
