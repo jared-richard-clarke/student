@@ -1112,7 +1112,8 @@ at least one final state of the *NFA*.
       Char,
       Match,
       Jump,
-      Split
+      Split,
+      Save
   };
 
   // Instruction
@@ -1125,6 +1126,12 @@ at least one final state of the *NFA*.
       Inst *x;
       Inst *y;
   } Inst;
+
+  // Program
+  typedef struct Program {
+      Inst *start;
+      int length;
+  }
 
   typedef struct Thread {
       Inst *pc;
@@ -1186,8 +1193,7 @@ at least one final state of the *NFA*.
       // String pointer
       char *sp;
 
-      // Number of instructions
-      length = program_length(program);
+      length = program->length;
       clist  = threadlist(length);
       nlist  = threadlist(length);
 
