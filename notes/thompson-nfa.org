@@ -1116,29 +1116,27 @@ at least one final state of the *NFA*.
       Save
   };
 
-  // Instruction
-  typedef struct Inst {
-      int  opcode;
+  typedef struct Instruction {
+      int opcode;
       // character
-      int  c;
+      int c;
       // capture offset
-      int  i;
-      Inst *x;
-      Inst *y;
-  } Inst;
+      int i;
+      Instruction *x;
+      Instruction *y;
+  } Instruction;
 
-  // Program
   typedef struct Program {
-      Inst *start;
+      Instruction *start;
       int length;
   }
 
   typedef struct Thread {
-      Inst *pc;
+      Instruction *pc;
   } Thread;
 
   // typedef struct Thread {
-  //     Inst *pc;
+  //     Instruction *pc;
   //     // $0 through $9: An array of submatching string pointers.
   //     //
   //     // $i   = ith capture
@@ -1152,12 +1150,12 @@ at least one final state of the *NFA*.
       Thread t[1];
   } ThreadList;
 
-  Thread thread(Inst *pc) {
+  Thread thread(Instruction *pc) {
       Thread t = { pc };
       return t;
   }
 
-  // Thread thread(Inst *pc, char **saved) {
+  // Thread thread(Instruction *pc, char **saved) {
   //     Thread t = { pc, saved };
   //     return t;
   // }
@@ -1173,7 +1171,7 @@ at least one final state of the *NFA*.
 
   void swap(Threadlist *clist, Threadlist *nlist) {
       Threadlist *temp;
-      temp = clist;
+      temp  = clist;
       clist = nlist;
       nlist = temp;
   }
@@ -1182,20 +1180,18 @@ at least one final state of the *NFA*.
       nlist->n = 0;
   }
 
-  int thompson_vm(Inst *program, char *input) {
-  // int pike_vm(Inst *program, char *input, char **saved)
-      // Number of instructions
-      int length;
-      // Current list and next list
-      Threadlist *clist, *nlist;
+  int thompson_vm(Instruction *program, char *input) {
+  // int pike_vm(Instruction *program, char *input, char **saved)
       // Program counter
-      Inst *pc;
+      Instruction *pc;
       // String pointer
       char *sp;
 
-      length = program->length;
-      clist  = threadlist(length);
-      nlist  = threadlist(length);
+      // Number of instructions
+      int length = program->length;
+      // Current list and next list.
+      Threadlist *clist = threadlist(length);
+      Threadlist *nlist = threadlist(length);
 
       addthread(clist, thread(program));
       // addthread(clist, thread(program, saved));
