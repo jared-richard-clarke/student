@@ -1113,8 +1113,8 @@ to add targets of said instructions ensures *clist* and *nlist* are maintained i
 priority, highest to lowest.
 
 Also: if a match is found, lower-priority threads in the *clist* should be cut off, but higher-priority
-threads need to be given the chance to match possibly-longer sections of input
-(hence the added *sp* instruction to *addthread*).
+threads need to be given the chance to match possibly-longer sections of input. *addthread* must be
+able to move itself forward within the input by incrementing the pointer *sp*.
 
 #+begin_src c
   // Op Codes
