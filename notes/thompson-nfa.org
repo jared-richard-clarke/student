@@ -1129,7 +1129,7 @@ higher-priority threads should be able to match possibly-longer sections of inpu
       int opcode;
       // character
       int c;
-      // capture offset
+      // ith capture
       int i;
       Instruction *x;
       Instruction *y;
