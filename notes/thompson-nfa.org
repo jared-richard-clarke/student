@@ -1098,9 +1098,9 @@ at least one final state of the *NFA*.
   |            |     split L1, L3 |            |     split L3, L1 |
   |            | L3:              |            | L3:              |
   |------------+------------------+-------------------------------+
-  | (e)        | save i (2i)      |
+  | (e)        | save (2i)        |
   |            | codes for e      |
-  |            | save i (2i + 1)  |
+  |            | save (2i + 1)    |
   +-------------------------------+
 #+end_example
 
