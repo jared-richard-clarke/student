@@ -1129,6 +1129,17 @@ higher-priority threads should be able to match possibly-longer sections of inpu
  — *Regular Expression Matching: The Virtual Machine Approach*, Russ Cox
 #+end_quote
 
+#+begin_example
+  +-------------------------+
+  | unanchored search for e |
+  |-------------------------|
+  | .*?e | L1: split L3, L2 |
+  |      | L2: any          |
+  |      |     jump L1      |
+  |      | L3: codes for e  |
+  +-------------------------+
+#+end_example
+
 #+begin_src c
   // Op Codes
   enum {
