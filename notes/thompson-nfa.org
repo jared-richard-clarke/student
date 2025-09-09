@@ -1115,6 +1115,18 @@ thread priority.
 Also: If a match is found, lower-priority threads in the *clist* should be ignored, and
 higher-priority threads should be able to match possibly-longer sections of input.
 
+#+begin_quote
+  "To implement unanchored matches, many implementations try for a match at position 0,
+   then try for a match at position 1, and so on. If the regexp engine scans to the end
+   of the string before failing to find a match, wrapping it in this loop makes the
+   unanchored search quadratic in the length of the text. In VM-based implementations,
+   a more efficient way to do an unanchored search is to put the compiled code for ~.*?~
+   at the beginning of the program. This lets the VM itself implement the unanchored
+   search in a single linear-time pass."
+
+ — *Regular Expression Matching: The Virtual Machine Approach*, Russ Cox
+#+end_quote
+
 #+begin_src c
   // Op Codes
   enum {
