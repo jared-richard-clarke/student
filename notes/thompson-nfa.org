@@ -1100,9 +1100,9 @@ at least one final state of the *NFA*.
   |            |     split L1, L3 |            |     split L3, L1 |
   |            | L3:              |            | L3:              |
   |------------+------------------+-------------------------------+
-  | (e)        | save (2i)        |
+  | (e)        | capture (2i)     |
   |            | codes for e      |
-  |            | save (2i + 1)    |
+  |            | capture (2i + 1) |
   +-------------------------------+
 #+end_example
 
@@ -1147,7 +1147,7 @@ higher-priority threads should be able to match possibly-longer sections of inpu
       Match,
       Jump,
       Split,
-      Save
+      Capture
   };
 
   typedef struct Instruction {
@@ -1176,7 +1176,7 @@ higher-priority threads should be able to match possibly-longer sections of inpu
   //     // $i   = ith capture
   //     // 2i   = capture start
   //     // 2i+1 = capture stop
-  //     char *saved[20];
+  //     char *captured[20];
   // } Thread;
 
   typedef struct ThreadList {
@@ -1189,8 +1189,8 @@ higher-priority threads should be able to match possibly-longer sections of inpu
       return t;
   }
 
-  // Thread thread(Instruction *pc, char **saved) {
-  //     Thread t = { pc, saved };
+  // Thread thread(Instruction *pc, char **captured) {
+  //     Thread t = { pc, captured };
   //     return t;
   // }
 
@@ -1215,7 +1215,7 @@ higher-priority threads should be able to match possibly-longer sections of inpu
   }
 
   int thompson_vm(Instruction *program, char *input) {
-  // int pike_vm(Instruction *program, char *input, char **saved)
+  // int pike_vm(Instruction *program, char *input, char **captured)
       // Program counter
       Instruction *pc;
       // String pointer
@@ -1240,24 +1240,24 @@ higher-priority threads should be able to match possibly-longer sections of inpu
                       break;
                   }
                   addthread(nlist, thread(pc + 1));
-                  // addthread(nlist, thread(pc + 1, t.saved));
+                  // addthread(nlist, thread(pc + 1, t.captured));
                   break;
               case Match:
-                  // memmove(saved, t.saved, sizeof t.saved);
+                  // memmove(captured, t.captured, sizeof t.captured);
                   return 1;
               case Jump:
                   addthread(clist, thread(pc->x));
-                  // addthread(clist, thread(pc->x, t.saved));
+                  // addthread(clist, thread(pc->x, t.captured));
                   break;
               case Split:
                   addthread(clist, thread(pc->x));
-                  // addthread(clist, thread(pc->x, t.saved));
+                  // addthread(clist, thread(pc->x, t.captured));
                   addthread(clist, thread(pc->y));
-                  // addthread(clist, thread(pc->y, t.saved));
+                  // addthread(clist, thread(pc->y, t.captured));
                   break;
-           // case Save:
-           //     t.saved[t->pc.i] = sp;
-           //     addthread(clist, thread(pc->x, t.saved));
+           // case Capture:
+           //     t.captured[t->pc.i] = sp;
+           //     addthread(clist, thread(pc->x, t.captured));
            //     break;
               }
           }
