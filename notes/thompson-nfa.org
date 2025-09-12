@@ -1074,35 +1074,35 @@ at least one final state of the *NFA*.
   +-------------------------------+
   | Expression | Instructions     |
   |------------+------------------|
-  | .          | any              |
+  | .          | Any              |
   |------------+------------------|
-  | a          | char a           |
+  | a          | Char a           |
   |------------+------------------|
   | e₁e₂       | codes for e₁     |
   |            | codes for e₂     |
   |------------+------------------|
-  | e₁|e₂      |     split L1, L2 |
+  | e₁|e₂      |     Split L1, L2 |
   |            | L1: codes for e₁ |
-  |            |     jump L3      |
+  |            |     Jump L3      |
   |            | L2: codes for e₂ |-------------------------------+
   |            | L3:              | Non-greedy:                   |
   |------------+------------------+-------------------------------|
-  | e?         |     split L1, L2 | e??        |     split L2, L1 |
+  | e?         |     Split L1, L2 | e??        |     Split L2, L1 |
   |            | L1: codes for e  |            | L1: codes for e  |
   |            | L2:              |            | L2:              |
   |------------+------------------+------------+------------------|
-  | e*         | L1: split L2, L3 | e*?        | L1: split L3, L2 |
+  | e*         | L1: Split L2, L3 | e*?        | L1: Split L3, L2 |
   |            | L2: codes for e  |            | L2: codes for e  |
-  |            |     jump L1      |            |     jump L1      |
+  |            |     Jump L1      |            |     Jump L1      |
   |            | L3:              |            | L3:              |
   |------------+------------------+------------+------------------|
   | e+         | L1: codes for e  | e+?        | L1: codes for e  |
-  |            |     split L1, L3 |            |     split L3, L1 |
+  |            |     Split L1, L3 |            |     Split L3, L1 |
   |            | L3:              |            | L3:              |
   |------------+------------------+-------------------------------+
-  | (e)        | capture (2i)     |
+  | (e)        | Capture (2i)     |
   |            | codes for e      |
-  |            | capture (2i + 1) |
+  |            | Capture (2i + 1) |
   +-------------------------------+
 #+end_example
 
