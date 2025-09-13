@@ -1110,7 +1110,7 @@ at least one final state of the *NFA*.
 
 Implementing both greedy and non-greedy matches requires a prioritizing *Split* instruction.
 The Thompson/Pike VM below does not respect thread priority. Moving instructions *Jump*, *Split*, and
-*Saved* into the function *addthread(threadlist, thread, sp)* and calling said function recursively
+*Capture* into the function *addthread(threadlist, thread, sp)* and calling said function recursively
 to add targets of said instructions to worklists *clist* and *nlist* ensures highest to lowest
 thread priority.
 
@@ -1133,9 +1133,9 @@ higher-priority threads should be able to match possibly-longer sections of inpu
   +-------------------------+
   | unanchored search for e |
   |-------------------------|
-  | .*?e | L1: split L3, L2 |
-  |      | L2: any          |
-  |      |     jump L1      |
+  | .*?e | L1: Split L3, L2 |
+  |      | L2: Any          |
+  |      |     Jump L1      |
   |      | L3: codes for e  |
   +-------------------------+
 #+end_example
