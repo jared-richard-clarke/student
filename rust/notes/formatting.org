@@ -176,6 +176,24 @@ the ~fmt~ module.
   parameter     := argument '$'
 #+end_example
 
+- ~text~ must not contain any ~'{'~ or ~'}'~ characters.
+
+- ~ws~ is any character for which ~char::is_whitespace~ returns ~true~.
+
+#+begin_src rust
+  pub const fn is_whitespace(self) -> bool {
+      match self {
+          ' ' | '\x09'..='\x0d' => true,
+          c => c >= '\x7f' && unicode::White_Space(c),
+      }
+  }
+#+end_src
+
+- ~integer~ is a decimal integer that may contain leading zeroes and must fit into ~usize~.
+
+- ~identifier~ is an ~IDENTIFIER_OR_KEYWORD~ — not an ~IDENTIFIER~ — as defined by the
+  Rust language reference.
+
 ** Formatting Traits
 
 | specifier | trait                               |
