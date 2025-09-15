@@ -86,6 +86,12 @@
 - ~slice~ :: A dynamically-sized view into a contiguous sequence, ~[T]~. Contiguous here
   means that elements are laid out so that every element is the same distance from its
   neighbors.
+
+  - ~&[T]~ :: Shared slice.
+
+  - ~&mut [T]~ :: Mutable slice.
+
+  - ~Box<[T]>~ :: Owned slice.
   
 - ~str~ :: String slices.
   
