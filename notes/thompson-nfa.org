@@ -1229,7 +1229,7 @@ higher-priority threads should be able to match possibly-longer sections of inpu
       Threadlist *nlist = threadlist(length);
 
       addthread(clist, thread(program));
-      // addthread(clist, thread(program, saved));
+      // addthread(clist, thread(program, captured));
 
       for (sp = input; *sp; sp += 1) {
           for (int i = 0; i < clist.n; i += 1) {
