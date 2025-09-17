@@ -18,6 +18,8 @@
 
 - Infix Notation
 
+- Left → Node → Right
+
 - In-Order Traversal
 
 #+begin_example
@@ -47,6 +49,8 @@
 ** Prefix
 
 - Polish Notation
+
+- Node → Left → Right
 
 - Pre-Order Traversal
 
@@ -86,7 +90,9 @@
 
 - Reverse Polish Notation
 
-- Post-Order, Depth-First Traversal
+- Left → Right → Node
+
+- Post-Order Traversal
 
 - Reversed, Right-Most Derivation
 
