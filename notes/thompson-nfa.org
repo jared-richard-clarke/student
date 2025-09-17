@@ -1112,7 +1112,7 @@ Implementing both greedy and non-greedy matches requires a prioritizing *Split* 
 The Thompson/Pike VM below does not respect thread priority. Moving instructions *Jump*, *Split*, and
 *Capture* into the function *addthread(threadlist, thread, sp)* and calling said function recursively
 to add targets of said instructions to worklists *clist* and *nlist* would ensure highest to lowest
-thread priority.
+thread priority. Also:
 
 - If a match is found, lower-priority threads in *clist* should be ignored.
   That is, *clist* is cleared of states.
