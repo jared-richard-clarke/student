@@ -86,7 +86,7 @@
 
 - Reverse Polish Notation
 
-- Post-Order Traversal
+- Post-Order, Depth-First Traversal
 
 - Reversed, Right-Most Derivation
 
