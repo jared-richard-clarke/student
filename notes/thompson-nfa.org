@@ -1118,7 +1118,8 @@ thread priority. Also:
   That is, *clist* is cleared of states.
 
 - Higher priority threads should be able to match possibly-longer sections of input.
-  That is, recursive calls to *addthread* continue to build up states in *nlist*.
+  That is, higher-priority threads continue to build up states in *nlist*
+  via recursive calls to *addthread*.
 
 #+begin_quote
   "To implement unanchored matches, many implementations try for a match at position 0,
