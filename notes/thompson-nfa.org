@@ -1114,8 +1114,11 @@ The Thompson/Pike VM below does not respect thread priority. Moving instructions
 to add targets of said instructions to worklists *clist* and *nlist* would ensure highest to lowest
 thread priority.
 
-Also: If a match is found, lower-priority threads in the *clist* should be ignored, while
-higher-priority threads should be able to match possibly-longer sections of input.
+- If a match is found, lower-priority threads in *clist* should be ignored.
+  That is, *clist* is cleared of states.
+
+- Higher priority threads should be able to match possibly-longer sections of input.
+  That is, recursive calls to *addthread* continue to build up states in *nlist*.
 
 #+begin_quote
   "To implement unanchored matches, many implementations try for a match at position 0,
