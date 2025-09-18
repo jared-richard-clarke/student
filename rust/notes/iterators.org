@@ -450,7 +450,7 @@ Transforms an iterator into a relevant collection.
 
 ** Infinity
 
-Because iterators are lazily evaluated, they can be infinite in range.
+Iterators are lazily evaluated, meaning they can be infinite in range.
 
 #+begin_src rust
   let numbers = 0..;
