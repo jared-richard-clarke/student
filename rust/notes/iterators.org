@@ -453,7 +453,7 @@ Transforms an iterator into a relevant collection.
 Iterators are lazily evaluated, meaning they can be infinite in range.
 
 #+begin_src rust
-  let numbers = 0..;
+  let numbers: RangeFrom<i32> = 0..;
 
   for number in numbers.take(7) {
       println!("{number}");
