@@ -423,6 +423,31 @@ within the closure.
   xs.iter().for_each(|x| println!("{x}"));
 #+end_src
 
+*** Collect Method
+
+Transforms an iterator into a relevant collection.
+
+#+begin_src rust
+  fn collect<B: FromIterator<Self::Item>>(self) -> B
+  where
+      Self: Sized,
+  {
+      FromIterator::from_iter(self)
+  }
+
+  // === Example ===
+  let array = [1, 2, 3];
+
+  let doubled: Vec<i32> = array.iter().map(|x| x * 2).collect();
+
+  assert_eq!(vec![2, 4, 6], doubled);
+
+  // === required trait ===
+  trait FromIterator<A>: Sized {
+      fn from_iter<T: IntoIterator<Item = A>>(iter: T) -> Self;
+  }
+#+end_src
+
 ** Infinity
 
 Because iterators are lazily evaluated, they can be infinite in range.
