@@ -1,0 +1,116 @@
+* Regular Expression Derivatives
+
+** Sources
+
+| source                                      | author                               |
+|---------------------------------------------+--------------------------------------|
+| *Regular-Expression Derivatives Reexamined* | Scott Owens, John Reppy, Aaron Turon |
+
+** Definitions
+
+- Σ :: finite alphabet
+
+- Σ* :: finite set of strings over Σ
+
+- a, b, c ... :: symbols
+
+- u, v, w ... :: strings
+
+- ε :: empty string
+
+- L ⊆ Σ* :: language of Σ
+
+*** Syntax
+
+- r, s :: regular expressions *r* and *s*
+
+| syntax | meaning                    |
+|--------+----------------------------|
+| ∅      | empty set                  |
+| ε      | empty string               |
+| a      | a ∈ Σ                      |
+| r • s  | concatenation              |
+| r*     | Kleene closure             |
+| r + s  | logical *or* (alternation) |
+| r & s  | logical *and*              |
+| ¬r     | complement                 |
+
+*** Semantics
+
+- L⟦r⟧ ⊆ Σ* :: the language of the regular expression
+
+| evaluation | meaning                         |
+|------------+---------------------------------|
+| L⟦∅⟧       | ∅                               |
+| L⟦ε⟧       | ε                               |
+| L⟦a⟧       | {a}                             |
+| L⟦r • s⟧   | { u • v : u ∈ L⟦r⟧ ∧ v ∈ L⟦s⟧ } |
+| L⟦r*⟧      | {ε} ∪ L⟦r • r*⟧                 |
+| L⟦r + s⟧   | L⟦r⟧ ∪ L⟦s⟧                     |
+| L⟦r & s⟧   | L⟦r⟧ ∩ L⟦s⟧                     |
+| L⟦¬r⟧      | Σ* - L⟦r⟧                       |
+
+*** Finite State Machine: DFA
+
+- (Q, q₀, F, δ) :: deterministic finite automaton over alphabet Σ
+
+- Q :: finite set of states
+
+- q₀ ∈ Q :: start state
+
+- F ⊆ Q :: final or accepting states
+
+- δ : Q × Σ → Q :: state transition function
+
+#+begin_example
+  === Extending δ Over Strings ===
+  
+  δ'(q, ε)  = q
+  δ'(q, au) = δ'(q', u), where q' = δ(q, a)
+
+  === Language Accepted by DFA ===
+
+  { u : δ'(q₀, u) ∈ F }
+#+end_example
+
+** Derivatives
+
+- ∂_{u}L = { v : u • v ∈ L } :: the derivative of language L ⊆ Σ* with
+  respect to string u ∈ Σ*
+
+*** Computing Nullability
+
+#+begin_example
+  nullable(r) = ε, if ε ∈ L⟦r⟧
+  nullable(r) = ∅, otherwise
+#+end_example
+
+| function        | computation               |
+|-----------------+---------------------------|
+| nullable(ε)     | ε                         |
+| nullable(a)     | a                         |
+| nullable(∅)     | ∅                         |
+| nullable(r • s) | nullable(r) & nullable(s) |
+| nullable(r + s) | nullable(r) + nullable(s) |
+| nullable(r*)    | ε                         |
+| nullable(r & s) | nullable(r) & nullable(s) |
+| nullable(¬r)    | ε, if nullable(r) = ∅     |
+| nullable(¬r)    | ∅, if nullable(r) = ε     |
+
+*** Computing Derivatives
+
+Computing the derivative of a regular expression with respect to symbol *a*.
+
+| function     | computation                       |
+|--------------+-----------------------------------|
+| ∂_{a}ε       | ∅                                 |
+| ∂_{a}a       | ε                                 |
+| ∂_{a}b       | ∅, for b ≠ a                      |
+| ∂_{a}∅       | ∅                                 |
+| ∂_{a}(r • s) | ∂_{a}r • s + nullable(r) • ∂_{a}s |
+| ∂_{a}(r*)    | ∂_{a}r • r*                       |
+| ∂_{a}(r + s) | ∂_{a}r + ∂_{a}s                   |
+| ∂_{a}(r & s) | ∂_{a}r & ∂_{a}s                   |
+| ∂_{a}(¬r)    | ¬(∂_{a}r)                         |
+| ∂_{ε}r       | r                                 |
+| ∂_{ua}r      | ∂_{a}(∂_{u}r)                     |
