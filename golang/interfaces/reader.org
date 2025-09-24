@@ -25,9 +25,11 @@ pushed to the slice and a potential error value. Returns ~io.EOF~ when the strea
   )
 
   func main() {
-          r := strings.NewReader("Hello, Reader!") // &Reader{ s: "Hello, Reader!", i: 0, prevRune: -1, }
+          // r := &Reader{ s: "Hello, Reader!", i: 0, prevRune: -1 }
+          r := strings.NewReader("Hello, Reader!")
 
-          b := make([]byte, 8) // []byte{ 0, 0, 0, 0, 0, 0, 0, 0 }
+          // b := []byte{ 0, 0, 0, 0, 0, 0, 0, 0 }
+          b := make([]byte, 8)
           for {
                   n, err := r.Read(b)
                   fmt.Printf("n = %v err = %v b = %v\n", n, err, b)
