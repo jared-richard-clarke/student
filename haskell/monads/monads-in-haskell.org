@@ -50,11 +50,11 @@ A monad in Haskell is defined by three elements:
    the computational strategy into a single place instead of requiring it be
    distributed throughout the entire program.
 
- 3. Isolation - They can be used to create imperative-style computational structures,
-    which remain safely isolated from the main body of the functional program.
-    This is useful for incorporating side-effects (such as I/O) and state
-    (which violates referential transparency) into a pure functional language
-    like Haskell.
+3. Isolation - They can be used to create imperative-style computational structures,
+   which remain safely isolated from the main body of the functional program.
+   This is useful for incorporating side-effects (such as I/O) and state
+   (which violates referential transparency) into a pure functional language
+   like Haskell.
 
 ** The Three Monad Laws
 
