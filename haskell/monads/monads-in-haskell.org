@@ -295,7 +295,7 @@ types moving down the class hierarchy from Functor to Applicative to Monad.
       fmap = -- etc.
 
   instance Applicative M where
-      pure = -- etc.
+      pure  = -- etc.
       (<*>) = -- etc.
 
   instance Monad M where
@@ -307,10 +307,10 @@ Conversely, Functor and Applicative can be derived from Monad.
 #+begin_src haskell
   instance Monad M where
       return = -- etc.
-      (>>=) = -- etc.
+      (>>=)  = -- etc.
 
   instance Applicative M where
-      pure = return
+      pure  = return
       (<*>) = ap
 
   instance Functor M where
