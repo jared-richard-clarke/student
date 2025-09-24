@@ -1,6 +1,10 @@
 * Type Classes
 
-*Functional Programming with Overloading and Higher-Order Polymorphism* by Mark P. Jones
+** Sources
+
+| source                                                                  | author        |
+|-------------------------------------------------------------------------+---------------|
+| *Functional Programming with Overloading and Higher-Order Polymorphism* | Mark P. Jones |
 
 ** Types of Types
 
