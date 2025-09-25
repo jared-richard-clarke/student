@@ -2,9 +2,9 @@
 
 ** Sources
 
-| source      | author |
-|-------------+--------|
-| *Go errors* | go.dev |
+| source           | author              |
+|------------------+---------------------|
+| Package ~errors~ | Go standard library |
 
 ** The ~error~ Interface
 
