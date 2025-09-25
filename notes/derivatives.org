@@ -145,10 +145,10 @@ Computing the derivative of a regular expression with respect to symbol *a*.
       let qₓ = ∂ₓq
       in
           if ∃q' ∈ Q such that q' ≡ qₓ
-          then (Q, δ ∪ {(q, c) → q'})
+          then (Q, δ ∪ {(q, c) ↦ q'})
           else
               let Q' = Q ∪ {qₓ}
-              let δ' = δ ∪ {(q, c) → qₓ}
+              let δ' = δ ∪ {(q, c) ↦ qₓ}
               in explore (Q', δ', qₓ)
 
   (*
