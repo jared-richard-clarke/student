@@ -132,7 +132,15 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   states are those states labeled by nullable REs. The error state is labeled by *∅*.
 
 #+begin_src
-  (* DFA construction using RE derivatives *)
+  (*
+     DFA construction using RE derivatives,
+     where
+         "goto": constructs the transition state from state "q" for symbol "x"
+         "explore": collects all possible transitions from state "q"
+
+     Together these functions perform a depth-first traversal of the DFA's state
+     graph while constructing it.
+  *)
   fun goto q(c, (Q, δ)) =
       let qₓ = ∂ₓq
       in
@@ -143,6 +151,10 @@ Computing the derivative of a regular expression with respect to symbol *a*.
               let δ' = δ ∪ {(q, c) → qₓ}
               in explore (Q', δ', qₓ)
 
+  (*
+     In SML, the "and" syntax allows the joint declaration
+     of mutually-recursive functions.
+  *)
   and explore (Q, δ, q) = fold (goto q) (Q, δ) Σ
 
   fun mkDFA r =
