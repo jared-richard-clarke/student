@@ -114,3 +114,19 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | ∂_{a}(¬r)    | ¬(∂_{a}r)                         |
 | ∂_{ε}r       | r                                 |
 | ∂_{ua}r      | ∂_{a}(∂_{u}r)                     |
+
+- r ~ u :: regular expression *r* matches string *u* if and only if *u ∈ L⟦r⟧*
+  
+  - r ~ ε ⇔ nullable(r) = ε
+
+  - r ~ a • w ⇔ ∂_{a}r ~ w
+
+** DFA Construction
+
+- r ≡ s :: *r* and *s* are equivalent if *L⟦r⟧ = L⟦s⟧*
+
+- [r]_{≡} :: { s : r ≡ s }, the equivalence of class *r* under *≡*
+
+- δ(q, [a]_{≡}) = [∂_{a}(q)]_{≡} :: The states of the DFA are RE equivalence classes
+  and the transition function is the derivative function on those classes. Accepting
+  states are those states labeled by nullable REs. The error state is labeled by *∅*.
