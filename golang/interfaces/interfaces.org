@@ -1,4 +1,10 @@
-* Go Interfaces
+* Interfaces
+
+** Sources
+
+| source         | author |
+|----------------+--------|
+| *A Tour of Go* | go.dev |
 
 ** About
 
