@@ -160,6 +160,6 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   fun mkDFA r =
       let qₒ = ∂εr
       let (Q, δ) = explore ({qₒ}, {}, qₒ)
-      let F = { q : q ∈ Q and nullable(q) = ε }
+      let F = { q : q ∈ Q ∧ nullable(q) = ε }
       in (Q, qₒ, F, δ)
 #+end_src
