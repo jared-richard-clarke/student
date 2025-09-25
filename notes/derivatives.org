@@ -131,7 +131,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   and the transition function is the derivative function on those classes. Accepting
   states are those states labeled by nullable REs. The error state is labeled by *∅*.
 
-#+begin_src ml
+#+begin_src
   (* DFA construction using RE derivatives *)
   fun goto q(c, (Q, δ)) =
       let qₓ = ∂ₓq
