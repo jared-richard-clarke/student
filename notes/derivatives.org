@@ -158,10 +158,10 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   and explore (Q, δ, q) = fold (goto q) (Q, δ) Σ
 
   fun mkDFA r =
-      let qₒ = ∂εr
-      let (Q, δ) = explore ({qₒ}, {}, qₒ)
+      let q₀ = ∂εr
+      let (Q, δ) = explore ({q₀}, {}, q₀)
       let F = { q : q ∈ Q ∧ nullable(q) = ε }
-      in ⟨Q, qₒ, F, δ⟩
+      in ⟨Q, q₀, F, δ⟩
 #+end_src
 
 *** Implementation Issues
