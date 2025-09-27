@@ -165,7 +165,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 #+end_src
 
 *** Implementation Issues
-1. The problem of determining when two REs are equivalent, which is used to test if
+1. The problem of determining whether two REs are equivalent, which is used to test if
    *q' ≡ qₓ* in the ~goto~ function, is computationally expensive.
 
 2. The iteration over symbols in *Σ* that is used to compute the *δ* function is impractical
