@@ -138,17 +138,17 @@ Computing the derivative of a regular expression with respect to symbol *a*.
          "goto": constructs the transition state from state "q" for symbol "x"
          "explore": collects all possible transitions from state "q"
 
-     Together these functions perform a depth-first traversal of the DFA's state
-     graph while constructing it.
+     Together these functions perform a depth-first traversal
+     of the DFA's state graph while constructing it.
   *)
-  fun goto q(c, (Q, δ)) =
+  fun goto q(x, (Q, δ)) =
       let qₓ = ∂ₓq
       in
           if ∃q' ∈ Q such that q' ≡ qₓ
-          then (Q, δ ∪ {(q, c) ↦ q'})
+          then (Q, δ ∪ {(q, x) ↦ q'})
           else
               let Q' = Q ∪ {qₓ}
-              let δ' = δ ∪ {(q, c) ↦ qₓ}
+              let δ' = δ ∪ {(q, x) ↦ qₓ}
               in explore (Q', δ', qₓ)
 
   (*
