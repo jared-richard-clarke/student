@@ -324,8 +324,6 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | r & s  | logical *and*            |
 | ¬r     | complement               |
 
-**** Simplification
-
 - R, S, T :: character sets R, S, and T
 
 | RE    | ≈         |
