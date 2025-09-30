@@ -257,3 +257,53 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
 3. A scanner generator may take a collection of REs as its input specification,
    whereas the algorithm above builds a DFA for a single RE.
+
+*** 1. Weaker Notions of RE Equivalence
+
+- equivalence :: ∃q' ∈ such that q' ≡ q_{x}
+
+- approximation :: ∃q' ∈ such that q' ≈ q_{x}
+
+| RE          | ≈           |
+|-------------+-------------|
+| r & r       | r           |
+| r & s       | s & r       |
+| (r & s) & t | r & (s & t) |
+| ∅ & r       | ∅           |
+| ¬∅ & r      | r           |
+| r + r       | r           |
+| r + s       | s + r       |
+| (r + s) + t | r + (s + t) |
+| ¬∅ + r      | ¬∅          |
+| ∅ + r       | r           |
+| (r • s) • t | r • (s • t) |
+| ∅ • r       | ∅           |
+| ε • r       | r           |
+| r • ε       | r           |
+| (r*)*       | r*          |
+| ε*          | ε           |
+| ∅*          | ε           |
+| ¬(¬r)       | r           |
+
+#+begin_quote
+  "In our implementations, we maintain the invariant that all REs are in *≈-canonical* form
+   and use structural equality to identify equivalent REs. To ensure this invariant,
+   we represent REs as an abstract type and use smart-constructor functions to build
+   *≈-canonical* forms. Each RE operator has an associated smart-constructor function that
+   checks its arguments for the applicability of the *≈* equations. If an equation applies,
+   the smart constructor simplifies the RE using the equation as a reduction from left to right.
+   For example, the constructor for negation inspects its argument, and if it is of the form
+   *(¬r)*, the constructor simply returns *r*.
+
+   For the commutativity and associativity equations, we use these equivalences to sort the
+   subterms in lexical order. We also use this lexical order to implement a functional finite
+   map with RE keys. This map is used as the representation of the set *Q* of DFA states...
+   where RE labels are mapped to states. The membership test *q_{c} ∈ Q* is just a lookup
+   in the finite map."
+
+  — *Regular-Expression Derivatives Reexamined*, Scott Owens, John Reppy, and Aaron Turon
+#+end_quote
+
+*** 2. Character Sets
+
+*** 3. Regular Vectors
