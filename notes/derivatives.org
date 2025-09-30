@@ -121,6 +121,32 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
   - r ~ a • w ⇔ ∂_{a}r ~ w
 
+**** Example Derivations
+
+#+begin_example
+  RE     = a • b*
+  string = abb
+
+  a • b* ~ abb ⇔ ∂(a)a • b* ~ bb
+               ⇔ b* ~ bb
+               ⇔ ∂(b)b* ~ b
+               ⇔ b* ~ b
+               ⇔ ∂(b)b* ~ ε
+               ⇔ b* ~ ε
+               ⇔ nullable(b*) = ε (true)
+
+  RE     = a • b*
+  string = aba
+
+  a • b* ~ aba ⇔ ∂(a)a • b* ~ ba
+               ⇔ b* ~ ba
+               ⇔ ∂(b)b* ~ a
+               ⇔ b* ~ a
+               ⇔ ∂(a)b* ~ ε
+               ⇔ ∅ ~ ε
+               ⇔ nullable(∅) = ε (false)
+#+end_example
+
 ** DFA Construction
 
 - r ≡ s :: *r* and *s* are equivalent if *L⟦r⟧ = L⟦s⟧*
