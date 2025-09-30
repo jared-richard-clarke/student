@@ -306,4 +306,31 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
 *** 2. Character Sets
 
+- S :: character set — including the empty set, single characters, and character classes
+
+  - L⟦S⟧ = S
+
+  - nullable(S) = ∅
+
+  - ∂_{a}S = ε if a ∈ S, otherwise ∅
+
+| syntax | meaning                  |
+|--------+--------------------------|
+| S      | S ⊆ Σ                    |
+| ε      | empty string             |
+| r • s  | concatenation            |
+| r*     | Kleene closure           |
+| r + s  | logical *or* alternation |
+| r & s  | logical *and*            |
+| ¬r     | complement               |
+
+**** Simplification
+
+- R, S, T :: character sets R, S, and T
+
+| RE    | ≈         |
+|-------+-----------|
+| R + S | T = R ∪ S |
+| ¬S    | T = Σ - S |
+
 *** 3. Regular Vectors
