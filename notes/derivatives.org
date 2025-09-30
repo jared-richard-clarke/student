@@ -127,22 +127,22 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   RE     = a • b*
   string = abb
 
-  a • b* ~ abb ⇔ ∂(a)a • b* ~ bb
+  a • b* ~ abb ⇔ ∂a(a • b*) ~ bb
                ⇔ b* ~ bb
-               ⇔ ∂(b)b* ~ b
+               ⇔ ∂b(b*) ~ b
                ⇔ b* ~ b
-               ⇔ ∂(b)b* ~ ε
+               ⇔ ∂b(b*) ~ ε
                ⇔ b* ~ ε
                ⇔ nullable(b*) = ε (true)
 
   RE     = a • b*
   string = aba
 
-  a • b* ~ aba ⇔ ∂(a)a • b* ~ ba
+  a • b* ~ aba ⇔ ∂a(a • b*) ~ ba
                ⇔ b* ~ ba
-               ⇔ ∂(b)b* ~ a
+               ⇔ ∂b(b*) ~ a
                ⇔ b* ~ a
-               ⇔ ∂(a)b* ~ ε
+               ⇔ ∂a(b*) ~ ε
                ⇔ ∅ ~ ε
                ⇔ nullable(∅) = ε (false)
 #+end_example
