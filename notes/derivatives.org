@@ -190,6 +190,64 @@ Computing the derivative of a regular expression with respect to symbol *a*.
       in ⟨Q, q₀, F, δ⟩
 #+end_src
 
+*** Example DFA Construction
+
+#+begin_example
+  === DFA Construction ===
+
+  RE = a • b + a • c
+  Σ  = { a, b, c }
+
+  q0 = ∂ε(a • b + a • c) = a • b + a • c
+
+  1. ∂a(q0) = ∂a(a • b + a • c) = b + c
+     state q1
+
+  2. ∂a(q1) = ∂a(b + c) = ∅
+     state q2
+
+  3. ∂a(q2) = ∂a(∅) = ∅
+     state q2
+
+  4. ∂b(q2) and ∂c(q2)
+     state q2
+
+  5. ∂b(q1) = ∂b(b + c) = (ε + ∅) ≡ ε
+     state q3
+
+  6. ∂a(q3) = ∂a(ε) = ∅
+     state q2
+
+  7. ∂b(q3) and ∂c(q3)
+     state q2
+
+  8. ∂c(q1) = ∂c(b + c) = (∅ + ε) ≡ ε
+     state q3
+
+  9. ∂b(q0) = ∂b(a • b + a • c)
+     state q2
+
+  10. ∂c(q0) = ∂c(a • b + a • c) = ∅
+      state q2
+
+  === Accepting State ===
+
+  nullable(q3) = ε
+
+  === DFA Graph ===
+                                            +------------+
+  +--------------+     +------------+       | +--------+ |
+  | q0 = ab + ac |--a->| q1 = b + c |--b,c->| | q3 = ε | |
+  +--------------+     +------------+       | +--------+ |
+            |               |               +------------+
+           b,c              a
+            |  +---------+  |
+            +->| q2 = ∅  |<-+
+               +---------+
+                |       ^
+                +-a,b,c-+
+#+end_example
+
 *** Implementation Issues
 1. The problem of determining whether two REs are equivalent, which is used to test if
    *q' ≡ qₓ* in the ~goto~ function, is computationally expensive.
