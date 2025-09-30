@@ -260,9 +260,9 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
 *** 1. Weaker Notions of RE Equivalence
 
-- equivalence :: ∃q' ∈ such that q' ≡ q_{x}
+- equivalence :: ∃q' ∈ Q such that q' ≡ q_{x}
 
-- approximation :: ∃q' ∈ such that q' ≈ q_{x}
+- approximation :: ∃q' ∈ Q such that q' ≈ q_{x}
 
 | RE          | ≈           |
 |-------------+-------------|
