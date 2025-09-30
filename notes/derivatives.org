@@ -248,7 +248,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
                 +-a,b,c-+
 #+end_example
 
-*** Implementation Issues
+** Implementation Issues
 1. The problem of determining whether two REs are equivalent, which is used to test if
    *q' ≡ qₓ* in the ~goto~ function, is computationally expensive.
 
