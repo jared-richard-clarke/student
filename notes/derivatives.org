@@ -374,6 +374,6 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   match :: Regex -> String -> Bool
   match regex text =
       case regex text of
-          r ""     -> nullable r
-          r (x:xs) -> match (derive r x) xs
+          re ""     -> nullable re
+          re (x:xs) -> match (derive re x) xs
 #+end_src
