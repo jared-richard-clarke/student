@@ -335,3 +335,45 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | ¬S    | T = Σ - S |
 
 *** 3. Regular Vectors
+
+** Haskell
+
+#+begin_src haskell
+  data Regex = EmptySet
+             | EmptyString
+             | Character Char
+             | Union  Regex Regex
+             | Concat Regex Regex
+             | Repeat Regex Regex
+             deriving (Eq, Show)
+
+  nullable :: Regex -> Bool
+  nullable regex =
+      case regex of
+          EmptySet      -> False
+          EmptyString   -> True
+          (Character _) -> False
+          (Union x y)   -> nullable x || nullable y
+          (Concat x y)  -> nullable x && nullable y
+          (Repeat _)    -> True
+
+  derive :: Regex -> Char -> Regex
+  derive regex prefix =
+      case regex prefix of
+          EmptySet _      -> EmptySet
+          EmptyString _   -> EmptySet
+          (Character x) c -> if x == c
+                             then EmptyString
+                             else EmptySet
+          (Union x y) c   -> Union (derive x c) (derive y c)
+          (Concat x y) c  -> if nullable x
+                             then Union (Concat (derive x c) y) (derive y c)
+                             else Concat (derive x c) y
+          (repeat x) c    -> Concat (derive x c) (Repeat x)
+
+  match :: Regex -> String -> Bool
+  match regex text =
+      case regex text of
+          r ""     -> nullable r
+          r (x:xs) -> match (derive r x) xs
+#+end_src
