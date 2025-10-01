@@ -5,8 +5,15 @@
 | source                                      | author                               |
 |---------------------------------------------+--------------------------------------|
 | *Regular-Expression Derivatives Reexamined* | Scott Owens, John Reppy, Aaron Turon |
+| *Brzozowski derivative*                     | Wikipedia                            |
 
 ** Definitions
+
+- Brzozowski derivative :: *u^{-1}S* of a set *S* of strings and a string *u* is the
+  the set of all strings obtainable from a string in *S* by cutting off the prefix *u*:
+  u^{-1}S = { v ∈ Σ* : uv ∈ S }
+
+  - c^{-1}{ cat, cow, dog } = { at, ow }
 
 - Σ :: finite alphabet
 
