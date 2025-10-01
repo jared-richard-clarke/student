@@ -338,6 +338,8 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
 ** Haskell
 
+*** Derivation
+
 #+begin_src haskell
   data Regex = EmptySet
              | EmptyString
@@ -376,4 +378,64 @@ Computing the derivative of a regular expression with respect to symbol *a*.
       case regex text of
           re ""     -> nullable re
           re (x:xs) -> match (derive re x) xs
+#+end_src
+
+*** Compilation
+
+#+begin_src haskell
+  data Regex = EmptySet
+             | EmptyString
+             | Character Char
+             | Repeat Regex
+             | Regex :. Regex
+             | Union [Regex]
+             deriving (Eq, Ord)
+
+  nullable :: Regex -> Bool
+  nullable re =
+      case re of
+          EmptySet    -> False
+          EmptyString -> True
+          Character _ -> False
+          x : y       -> nullable x && nullable y
+          Union xs    -> any nullable xs
+          Repeat _    -> True
+
+  derive :: Char -> Regex -> Regex
+  derive c f =
+      let dc = derive c
+      in case f of
+          EmptySet    -> EmptySet
+          EmptyString -> EmptySet
+          Character x -> if x == c
+                         then EmptyString
+                         else EmptySet
+          x : y       -> if nullable x
+                         then unify [dc x : y, dc y]
+                         else dc x : y
+          Union xs    -> unify (dc <$> xs)
+          Repeat x    -> dc x : f
+
+  unify :: [Regex] -> Regex
+  unify xs =
+      let xs         = nub (sort (concatMap flatten xs))
+          flatten ys = case ys of
+                           (Union zs) -> zs
+                           z          -> [z]
+      in case xs of
+             [x] -> x
+              _  -> Union xs
+
+  -- Compiles a DFA from Regex
+  compile :: Regex -> ([Regex], Regex, [Regex], [((Regex, Regex), Char)])
+  compile regex =
+      let (states, edges) = explore ([Regex], []) Regex
+          explore gr q = foldl' (goto q) gr ['a'..'z']
+          goto q (qs, es) c =
+              let qc  = derive c q
+                  es1 = ((q, qc), c) : es
+              in if elem qc qs
+                 then (qs, es1)
+                 else explore (qc : qs, es1) qc
+      in (states, regex, (filter nullable states), edges)
 #+end_src
