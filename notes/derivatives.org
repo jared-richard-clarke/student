@@ -9,12 +9,6 @@
 
 ** Definitions
 
-- Brzozowski derivative :: *u^{-1}S* of a set *S* of strings and a string *u* is the
-  the set of all strings obtainable from a string in *S* by cutting off the prefix *u*:
-  u^{-1}S = { v ∈ Σ* : uv ∈ S }
-
-  - c^{-1}{ cat, cow, dog } = { at, ow }
-
 - Σ :: finite alphabet
 
 - Σ* :: finite set of strings over Σ
@@ -84,6 +78,8 @@
 
 - ∂_{u}L = { v : u • v ∈ L } :: the derivative of language L ⊆ Σ* with
   respect to string u ∈ Σ*
+
+  - *∂_{c}{ cat, cow, dog } = { at, ow }*
 
 *** Computing Nullability
 
