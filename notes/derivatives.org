@@ -369,7 +369,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
           (Concat x y) c  -> if nullable x
                              then Union (Concat (derive x c) y) (derive y c)
                              else Concat (derive x c) y
-          (repeat x) c    -> Concat (derive x c) (Repeat x)
+          (Repeat x) c    -> Concat (derive x c) (Repeat x)
 
   match :: Regex -> String -> Bool
   match regex text =
