@@ -344,7 +344,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
              | Character Char
              | Union  Regex Regex
              | Concat Regex Regex
-             | Repeat Regex Regex
+             | Repeat Regex
              deriving (Eq, Show)
 
   nullable :: Regex -> Bool
