@@ -6,6 +6,7 @@
 |---------------------------------------------+--------------------------------------|
 | *Regular-Expression Derivatives Reexamined* | Scott Owens, John Reppy, Aaron Turon |
 | *Brzozowski derivative*                     | Wikipedia                            |
+| *Regex Derivatives*                         | BenLynn                              |
 
 ** Definitions
 
