@@ -317,15 +317,15 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
   - ∂_{a}S = ε if a ∈ S, otherwise ∅
 
-| syntax | meaning                  |
-|--------+--------------------------|
-| S      | S ⊆ Σ                    |
-| ε      | empty string             |
-| r • s  | concatenation            |
-| r*     | Kleene closure           |
-| r + s  | logical *or* alternation |
-| r & s  | logical *and*            |
-| ¬r     | complement               |
+| syntax | meaning                    |
+|--------+----------------------------|
+| S      | S ⊆ Σ                      |
+| ε      | empty string               |
+| r • s  | concatenation              |
+| r*     | Kleene closure             |
+| r + s  | logical *or* (alternation) |
+| r & s  | logical *and*              |
+| ¬r     | complement                 |
 
 - R, S, T :: character sets R, S, and T
 
