@@ -444,13 +444,13 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   -- transitions
   type Δ  = [((Regex, Regex), Char)]
 
-  Σ = ['a'..'z']
+  alphabet = ['a'..'z']
 
   -- Compiles a Regex to a DFA
   compile :: Regex -> (Q, Qo, F, Δ)
   compile regex =
       let (states, edges) = explore ([Regex], []) Regex
-          explore graph state = foldl' (goto state) graph Σ
+          explore graph state = foldl' (goto state) graph alphabet
           goto state (states, edges) character =
               let derived  = derive character state
                   edges    = ((state, derived), character):edges
