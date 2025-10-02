@@ -414,7 +414,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
           Concat x y  -> if nullable x
                          then unify [dc (Concat x y), dc y]
                          else dc (Concat x y)
-          Union xs    -> unify (dc <$> xs)
+          Union xs    -> unify (fmap dc xs)
           Repeat x    -> dc (Concat x f)
 
   unify :: [Regex] -> Regex
