@@ -388,7 +388,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
              | EmptyString
              | Character Char
              | Repeat Regex
-             | Regex : Regex
+             | Concat Regex Regex
              | Union [Regex]
              deriving (Eq, Ord)
 
@@ -398,7 +398,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
           EmptySet    -> False
           EmptyString -> True
           Character _ -> False
-          x : y       -> nullable x && nullable y
+          Concat x y  -> nullable x && nullable y
           Union xs    -> any nullable xs
           Repeat _    -> True
 
@@ -411,11 +411,11 @@ Computing the derivative of a regular expression with respect to symbol *a*.
           Character x -> if x == c
                          then EmptyString
                          else EmptySet
-          x : y       -> if nullable x
-                         then unify [dc x : y, dc y]
-                         else dc x : y
+          Concat x y  -> if nullable x
+                         then unify [dc (Concat x y), dc y]
+                         else dc (Concat x y)
           Union xs    -> unify (dc <$> xs)
-          Repeat x    -> dc x : f
+          Repeat x    -> dc (Concat x f)
 
   unify :: [Regex] -> Regex
   unify xs =
@@ -434,9 +434,9 @@ Computing the derivative of a regular expression with respect to symbol *a*.
           explore gr q = foldl' (goto q) gr ['a'..'z']
           goto q (qs, es) c =
               let qc  = derive c q
-                  es1 = ((q, qc), c) : es
+                  es1 = ((q, qc), c):es
               in if elem qc qs
                  then (qs, es1)
-                 else explore (qc : qs, es1) qc
+                 else explore (qc:qs, es1) qc
       in (states, regex, (filter nullable states), edges)
 #+end_src
