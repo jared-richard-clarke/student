@@ -388,7 +388,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
              | EmptyString
              | Character Char
              | Repeat Regex
-             | Regex :. Regex
+             | Regex : Regex
              | Union [Regex]
              deriving (Eq, Ord)
 
