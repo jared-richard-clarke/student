@@ -424,7 +424,6 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   -- | commutativity | sort      |
   -- | associativity | concatMap |
   -- +---------------------------+
-
   unify :: [Regex] -> Regex
   unify rs =
       let rs         = nub (sort (concatMap flatten rs))
