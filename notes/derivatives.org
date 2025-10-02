@@ -393,8 +393,8 @@ Computing the derivative of a regular expression with respect to symbol *a*.
              deriving (Eq, Ord)
 
   nullable :: Regex -> Bool
-  nullable re =
-      case re of
+  nullable regex =
+      case regex of
           EmptySet    -> False
           EmptyString -> True
           Character _ -> False
@@ -404,7 +404,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
   derive :: Char -> Regex -> Regex
   derive c f =
-      let dc = derive c
+      let derived = derive c
       in case f of
           EmptySet    -> EmptySet
           EmptyString -> EmptySet
@@ -412,10 +412,10 @@ Computing the derivative of a regular expression with respect to symbol *a*.
                          then EmptyString
                          else EmptySet
           Concat x y  -> if nullable x
-                         then unify [dc (Concat x y), dc y]
-                         else dc (Concat x y)
-          Union xs    -> unify (fmap dc xs)
-          Repeat x    -> dc (Concat x f)
+                         then unify [derived (Concat x y), derived y]
+                         else derived (Concat x y)
+          Union xs    -> unify (fmap derived xs)
+          Repeat x    -> derived (Concat x f)
 
   -- +---------------------------+
   -- | problem       | solution  |
@@ -424,17 +424,24 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   -- | commutativity | sort      |
   -- | associativity | concatMap |
   -- +---------------------------+
+
   unify :: [Regex] -> Regex
-  unify xs =
-      let xs         = nub (sort (concatMap flatten xs))
-          flatten ys = case ys of
-                           (Union zs) -> zs
-                           z          -> [z]
-      in case xs of
-             [x] -> x
-              _  -> Union xs
+  unify rs =
+      let rs         = nub (sort (concatMap flatten rs))
+          flatten xs = case xs of
+                           (Union ys) -> ys
+                           y          -> [y]
+      in case rs of
+             [r] -> r
+              _  -> Union rs
 
   -- Compiles a Regex to a DFA
+  -- Regex -> (Q, q₀, F, δ)
+  -- where Q  = states
+  --       q₀ = start state
+  --       F  = accepting states
+  --       δ  = state transitions
+
   compile :: Regex -> ([Regex], Regex, [Regex], [((Regex, Regex), Char)])
   compile regex =
       let (states, edges) = explore ([Regex], []) Regex
