@@ -445,12 +445,12 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   compile :: Regex -> ([Regex], Regex, [Regex], [((Regex, Regex), Char)])
   compile regex =
       let (states, edges) = explore ([Regex], []) Regex
-          explore gr q = foldl' (goto q) gr ['a'..'z']
-          goto q (qs, es) c =
-              let qc  = derive c q
-                  es1 = ((q, qc), c):es
-              in if elem qc qs
-                 then (qs, es1)
-                 else explore (qc:qs, es1) qc
+          explore graph state = foldl' (goto state) graph ['a'..'z']
+          goto state (states, edges) character =
+              let derived_state  = derive character state
+                  edge = ((state, derived_state), character):edges
+              in if elem derived_state states
+                 then (states, edge)
+                 else explore (derived_state:states, edge) derived_state
       in (states, regex, (filter nullable states), edges)
 #+end_src
