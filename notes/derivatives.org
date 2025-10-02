@@ -404,7 +404,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
   derive :: Char -> Regex -> Regex
   derive c f =
-      let derived = derive c
+      let derivation = derive c
       in case f of
           EmptySet    -> EmptySet
           EmptyString -> EmptySet
@@ -412,10 +412,10 @@ Computing the derivative of a regular expression with respect to symbol *a*.
                          then EmptyString
                          else EmptySet
           Concat x y  -> if nullable x
-                         then unify [derived (Concat x y), derived y]
-                         else derived (Concat x y)
-          Union xs    -> unify (fmap derived xs)
-          Repeat x    -> derived (Concat x f)
+                         then unify [derivation (Concat x y), derivation y]
+                         else derivation (Concat x y)
+          Union xs    -> unify (fmap derivation xs)
+          Repeat x    -> derivation (Concat x f)
 
   -- +---------------------------+
   -- | problem       | solution  |
@@ -435,22 +435,25 @@ Computing the derivative of a regular expression with respect to symbol *a*.
              [r] -> r
               _  -> Union rs
 
-  -- Compiles a Regex to a DFA
-  -- Regex -> (Q, q₀, F, δ)
-  -- where Q  = states
-  --       q₀ = start state
-  --       F  = accepting states
-  --       δ  = state transitions
+  -- states
+  type Q  = [Regex]
+  -- start state
+  type Qo = Regex
+  -- accepting states
+  type F  = [Regex]
+  -- transitions
+  type Δ  = [((Regex, Regex), Char)]
 
-  compile :: Regex -> ([Regex], Regex, [Regex], [((Regex, Regex), Char)])
+  -- Compiles a Regex to a DFA
+  compile :: Regex -> (Q, Qo, F, Δ)
   compile regex =
       let (states, edges) = explore ([Regex], []) Regex
           explore graph state = foldl' (goto state) graph ['a'..'z']
           goto state (states, edges) character =
-              let derived_state  = derive character state
-                  edge = ((state, derived_state), character):edges
-              in if elem derived_state states
-                 then (states, edge)
-                 else explore (derived_state:states, edge) derived_state
+              let derived  = derive character state
+                  edges    = ((state, derived), character):edges
+              in if elem derived states
+                 then (states, edges)
+                 else explore (derived:states, edges) derived
       in (states, regex, (filter nullable states), edges)
 #+end_src
