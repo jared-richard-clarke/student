@@ -417,6 +417,13 @@ Computing the derivative of a regular expression with respect to symbol *a*.
           Union xs    -> unify (fmap dc xs)
           Repeat x    -> dc (Concat x f)
 
+  -- +---------------------------+
+  -- | problem       | solution  |
+  -- |---------------+-----------|
+  -- | idempotence   | nub       |
+  -- | commutativity | sort      |
+  -- | associativity | concatMap |
+  -- +---------------------------+
   unify :: [Regex] -> Regex
   unify xs =
       let xs         = nub (sort (concatMap flatten xs))
