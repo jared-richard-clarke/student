@@ -171,7 +171,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
      Together these functions perform a depth-first traversal
      of the DFA's state graph while constructing it.
   *)
-  fun goto q(x, (Q, δ)) =
+  fun goto q (x, (Q, δ)) =
       let qₓ = ∂ₓq
       in
           if ∃q' ∈ Q such that q' ≡ qₓ
