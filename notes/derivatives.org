@@ -434,7 +434,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
              [x] -> x
               _  -> Union xs
 
-  -- Compiles a DFA from Regex
+  -- Compiles a Regex to a DFA
   compile :: Regex -> ([Regex], Regex, [Regex], [((Regex, Regex), Char)])
   compile regex =
       let (states, edges) = explore ([Regex], []) Regex
