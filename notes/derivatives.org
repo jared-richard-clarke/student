@@ -210,29 +210,22 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   2. ∂a(q1) = ∂a(b + c) = ∅
      state q2
 
-  3. ∂a(q2) = ∂a(∅) = ∅
-     state q2
+  3. ∂a(q2) = ∂a(∅) = ∅ = q2
 
-  4. ∂b(q2) and ∂c(q2)
-     state q2
+  4. ∂b(q2) = q2 and ∂c(q2) = q2
 
   5. ∂b(q1) = ∂b(b + c) = (ε + ∅) ≡ ε
      state q3
 
-  6. ∂a(q3) = ∂a(ε) = ∅
-     state q2
+  6. ∂a(q3) = ∂a(ε) = ∅ = q2
 
-  7. ∂b(q3) and ∂c(q3)
-     state q2
+  7. ∂b(q3) = q2 and ∂c(q3) = q2
 
-  8. ∂c(q1) = ∂c(b + c) = (∅ + ε) ≡ ε
-     state q3
+  8. ∂c(q1) = ∂c(b + c) = (∅ + ε) ≡ ε = q3
 
-  9. ∂b(q0) = ∂b(ab + ac)
-     state q2
+  9. ∂b(q0) = ∂b(ab + ac) = ∅ = q2
 
-  10. ∂c(q0) = ∂c(ab + ac) = ∅
-      state q2
+  10. ∂c(q0) = ∂c(ab + ac) = ∅ = q2
 
   === Accepting State ===
 
@@ -243,13 +236,14 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   +--------------+     +------------+       | +--------+ |
   | q0 = ab + ac |--a->| q1 = b + c |--b,c->| | q3 = ε | |
   +--------------+     +------------+       | +--------+ |
-            |               |               +------------+
-           b,c              a
-            |  +---------+  |
-            +->| q2 = ∅  |<-+
-               +---------+
-                |       ^
-                +-a,b,c-+
+         |                   |              +------------+
+        b,c                  a
+         |    +---------+    |
+         +--->| q2 = ∅  |<---+
+              +---------+
+               |       ^
+               |       |
+               +-a,b,c-+
 #+end_example
 
 ** Implementation Issues
