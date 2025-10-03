@@ -199,12 +199,12 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 #+begin_example
   === DFA Construction ===
 
-  RE = a • b + a • c
+  RE = ab + ac
   Σ  = { a, b, c }
 
-  q0 = ∂ε(a • b + a • c) = a • b + a • c
+  q0 = ∂ε(ab + ac) = ab + ac
 
-  1. ∂a(q0) = ∂a(a • b + a • c) = b + c
+  1. ∂a(q0) = ∂a(ab + ac) = b + c
      state q1
 
   2. ∂a(q1) = ∂a(b + c) = ∅
@@ -228,10 +228,10 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   8. ∂c(q1) = ∂c(b + c) = (∅ + ε) ≡ ε
      state q3
 
-  9. ∂b(q0) = ∂b(a • b + a • c)
+  9. ∂b(q0) = ∂b(ab + ac)
      state q2
 
-  10. ∂c(q0) = ∂c(a • b + a • c) = ∅
+  10. ∂c(q0) = ∂c(ab + ac) = ∅
       state q2
 
   === Accepting State ===
