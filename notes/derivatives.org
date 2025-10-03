@@ -474,8 +474,8 @@ Computing the derivative of a regular expression with respect to symbol *a*.
       let (states, edges) = explore ([Regex], []) Regex
           explore graph state = foldl' (goto state) graph alphabet
           goto state (states, edges) character =
-              let derived  = derive character state
-                  edges    = ((state, derived), character):edges
+              let derived = derive character state
+                  edges   = ((state, derived), character):edges
               in if elem derived states
                  then (states, edges)
                  else explore (derived:states, edges) derived
