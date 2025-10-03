@@ -436,9 +436,9 @@ Computing the derivative of a regular expression with respect to symbol *a*.
                          else EmptySet
           Union xs    -> unify (fmap derivation xs)
           Concat x y  -> if nullable x
-                         then unify [derivation (Concat x y), derivation y]
-                         else derivation (Concat x y)
-          Repeat x    -> derivation (Concat x f)
+                         then unify [Concat (derivation x) y, derivation y]
+                         else Concat (derivation x) y
+          Repeat x    -> Concat (derivation x) f
 
   -- +---------------------------+
   -- | problem       | solution  |
