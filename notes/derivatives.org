@@ -381,6 +381,45 @@ Computing the derivative of a regular expression with respect to symbol *a*.
           re (x:xs) -> match (derive re x) xs
 #+end_src
 
+#+begin_example
+  RE   = ab*
+  text = "abb"
+
+  1. match ab* "abb"
+
+     derive ab* 'a'
+
+     (derive a 'a')b*
+
+     εb*
+
+  2. match εb* "bb"
+
+     (derive ε 'b') + (derive b* 'b')
+
+     ∅ + (derive b 'b')b*
+
+     ∅ + εb*
+
+  3. match (∅ + εb*) "b"
+
+     derive (∅ + εb*) 'b'
+
+     (derive ∅ 'b') + (derive εb* 'b')
+
+     ∅ + (derive ε 'b')(derive b* 'b')
+
+     ∅ + ∅ + (derive b 'b')b*
+
+     ∅ + ∅ + εb*
+
+  4. match (∅ + ∅ + εb*) ""
+
+     nullable (∅ + ∅ + εb*)
+
+     True
+#+end_example
+
 *** Compilation
 
 #+begin_src haskell
