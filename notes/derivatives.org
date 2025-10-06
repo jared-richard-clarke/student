@@ -6,7 +6,6 @@
 |---------------------------------------------+--------------------------------------|
 | *Regular-Expression Derivatives Reexamined* | Scott Owens, John Reppy, Aaron Turon |
 | *Brzozowski derivative*                     | Wikipedia                            |
-| *Regex Derivatives*                         | Ben Lynn                             |
 
 ** Definitions
 
@@ -333,8 +332,6 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
 ** Haskell
 
-*** Derivation
-
 #+begin_src haskell
   data Regex = EmptySet
              | EmptyString
@@ -397,81 +394,3 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 |    4 | ~match (∅ + ∅ + εb*) ""~            |
 |      | ~nullable (∅ + ∅ + εb*)~            |
 |      | ~True~                              |
-
-*** Compilation
-
-#+begin_src haskell
-  data Regex = EmptySet
-             | EmptyString
-             | Literal Char
-             | Union [Regex]
-             | Concat Regex Regex
-             | Repeat Regex
-             deriving (Eq, Ord)
-
-  nullable :: Regex -> Bool
-  nullable regex =
-      case regex of
-          EmptySet    -> False
-          EmptyString -> True
-          Literal _   -> False
-          Union xs    -> any nullable xs
-          Concat x y  -> nullable x && nullable y
-          Repeat _    -> True
-
-  derive :: Char -> Regex -> Regex
-  derive c f =
-      let derivation = derive c
-      in case f of
-          EmptySet    -> EmptySet
-          EmptyString -> EmptySet
-          Literal x   -> if x == c
-                         then EmptyString
-                         else EmptySet
-          Union xs    -> unify (fmap derivation xs)
-          Concat x y  -> if nullable x
-                         then unify [Concat (derivation x) y, derivation y]
-                         else Concat (derivation x) y
-          Repeat x    -> Concat (derivation x) f
-
-  -- +---------------------------+
-  -- | problem       | solution  |
-  -- |---------------+-----------|
-  -- | idempotence   | nub       |
-  -- | commutativity | sort      |
-  -- | associativity | concatMap |
-  -- +---------------------------+
-  unify :: [Regex] -> Regex
-  unify rs =
-      let rs         = nub (sort (concatMap flatten rs))
-          flatten xs = case xs of
-                           (Union ys) -> ys
-                           y          -> [y]
-      in case rs of
-             [r] -> r
-              _  -> Union rs
-
-  -- states
-  type Q  = [Regex]
-  -- start state
-  type Qo = Regex
-  -- accepting states
-  type F  = [Regex]
-  -- transitions
-  type Δ  = [((Regex, Regex), Char)]
-
-  alphabet = ['a'..'z']
-
-  -- Compiles a Regex to a DFA
-  compile :: Regex -> (Q, Qo, F, Δ)
-  compile regex =
-      let (states, edges) = explore ([Regex], []) Regex
-          explore graph state = foldl' (goto state) graph alphabet
-          goto state (states, edges) character =
-              let derived = derive character state
-                  edges   = ((state, derived), character):edges
-              in if elem derived states
-                 then (states, edges)
-                 else explore (derived:states, edges) derived
-      in (states, regex, (filter nullable states), edges)
-#+end_src
