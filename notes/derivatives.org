@@ -330,7 +330,9 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
 *** 3. Regular Vectors
 
-** Haskell
+** Example Code
+
+*** Haskell Derivation
 
 #+begin_src haskell
   data Regex = EmptySet
@@ -394,3 +396,31 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 |    4 | ~match (∅ + ∅ + εb*) ""~            |
 |      | ~nullable (∅ + ∅ + εb*)~            |
 |      | ~True~                              |
+
+*** Python Compilation
+
+#+begin_src python
+  def compile(regex, alphabet):
+      start = regex
+      states = {start}
+      # { state-x: { character: state-y } }
+      transitions  = {}
+      # worklist: depth-first traversal
+      stack = [start]
+
+      while stack:
+          x = stack.pop()
+          transitions[x] = {}
+
+          for symbol in alphabet:
+              y = derive(x, symbol)
+              if y not in states:
+                  states.add(y)
+                  stack.append(y)
+              transitions[x][symbol] = y
+
+      accepting = { state for state in states if nullable(state) }
+
+      return { "Q": states, "q0": start, "F": accepting, "δ": transitions }
+#+end_src
+
