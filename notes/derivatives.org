@@ -326,8 +326,9 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | R + S | T = R ∪ S |
 | ¬S    | T = Σ \ S |
 
-- C : RE → 2^{2}^{Σ} :: A function that approximates derivative classes
-  through structural recursion.
+- C :: A function that approximates derivative classes through structural recursion.
+  The algorithm is conservative because it assumes that only those symbols that are related
+  in both *C(r)* and *C(s)* are related in *C(r + s)*.
 
 | function    | computation                                    |
 |-------------+------------------------------------------------|
