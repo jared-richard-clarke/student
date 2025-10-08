@@ -412,7 +412,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
           re (x:xs) -> match (derive re x) xs
 #+end_src
 
-| step | derivation                          | simplification     |
+| step | derivation                          | ≈                  |
 |------+-------------------------------------+--------------------|
 |    1 | ~match ab* "abb"~                   | ~match ab* "abb"~  |
 |      | ~derive ab* 'a'~                    | ~derive ab* 'a'~   |
