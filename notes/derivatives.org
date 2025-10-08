@@ -158,7 +158,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   and the transition function is the derivative function on those classes. Accepting
   states are those states labeled by nullable REs. The error state is labeled by *∅*.
 
-#+begin_src
+#+begin_example
   (*
      DFA construction using RE derivatives,
      where
@@ -187,9 +187,34 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   fun compile r =
       let q₀ = ∂ε(r)
       let (Q, δ) = explore ({q₀}, {}, q₀)
-      let F = { q : q ∈ Q ∧ nullable(q) = ε }
+      let F = { q : q ∈ Q and nullable(q) = ε }
       in ⟨Q, q₀, F, δ⟩
-#+end_src
+
+  (* ========================================================== *)
+
+  (*
+     DFA construction using character classes and RE derivatives
+     in ≈-canonical form.
+  *)
+  fun goto q (S, (Q, δ)) =
+      let x ∈ S
+      let qₓ = ∂ₓq
+      in
+          if ∃q' ∈ Q such that q' ≈ qₓ
+          then (Q, δ ∪ {(q, S) ↦ q'})
+          else
+              let Q' = Q ∪ {qₓ}
+              let δ' = δ ∪ {(q, S) ↦ qₓ}
+              in explore (Q', δ', qₓ)
+
+  and explore (Q, δ, q) = fold (goto q) (Q, δ) (C(q))
+
+  fun compile r =
+      let q₀ = ∂ε(r)
+      let (Q, δ) = explore ({q₀}, {}, q₀)
+      let F = { q : q ∈ Q and nullable(q) = ε }
+      in ⟨Q, q₀, F, δ⟩
+#+end_example
 
 *** Example DFA Construction
 
