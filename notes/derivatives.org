@@ -328,6 +328,20 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | R + S | T = R ∪ S |
 | ¬S    | T = Σ - S |
 
+- C : RE → 2^{2}^{Σ} :: A function that approximates derivative classes
+  through structural recursion.
+
+| function    | computation                                     |
+|-------------+-------------------------------------------------|
+| C(ε)        | { Σ }                                           |
+| C(S)        | { S, Σ \ S }                                    |
+| C(r) ∧ C(s) | { S_{r} ∩ S_{s}} : S_{r} ∈ C(r), S_{s} ∈ C(s) } |
+| C(r • s)    | if nullable(r): C(r) ∧ C(s), else: C(r)         |
+| C(r + s)    | C(r) ∧ C(s)                                     |
+| C(r & s)    | C(r) ∧ C(s)                                     |
+| C(r*)       | C(r)                                            |
+| C(¬r)       | C(r)                                            |
+
 *** 3. Regular Vectors
 
 ** Example Code
