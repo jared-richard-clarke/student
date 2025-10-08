@@ -303,7 +303,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
 *** 2. Character Sets
 
-- S :: character set — including the empty set, single characters, and character classes
+- S :: A character set. Includes the empty set, single characters, and character classes.
 
   - L⟦S⟧ = S
 
