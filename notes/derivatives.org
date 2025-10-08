@@ -268,7 +268,8 @@ Computing the derivative of a regular expression with respect to symbol *a*.
                +-a,b,c-+
 #+end_example
 
-** Implementation Issues
+** Implementation
+
 1. The problem of determining whether two REs are equivalent, which is used to test if
    *q' ≡ qₓ* in the ~goto~ function, is computationally expensive.
 
@@ -367,6 +368,30 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | C(¬r)       | C(r)                                           |
 
 *** 3. Regular Vectors
+
+#+begin_quote
+  "In order to use this DFA construction algorithm in a scanner generator,
+   we need to extend it to handle multiple REs in parallel. Brzozowski
+   recognized this problem and introduced regular vectors as an elegant
+   solution."
+
+  — *Regular-Expression Derivatives Reexamined*, Scott Owens, John Reppy, and Aaron Turon
+#+end_quote
+
+- R = (r_{1} ... r_{n}) :: An n-tuple of regular expressions. Called a *regular vector*.
+  Replaces REs as states within a DFA.
+
+- ∂_{a}(r_{1} ... r_{n}) = (∂_{a}r_{1} ... ∂_{a}r_{n}) :: The derivative function that
+  is the transitions function, where the derivative of a regular vector is defined
+  component-wise.
+
+- error state :: *(r_{1} ... r_{n})* where *(∀r)(r = ∅)*.
+
+- accept state :: *(r_{1} ... r_{n})* where *(∃r)(nullable(r) = ε)*
+
+- C(r_{1} ... r_{n}) = ∧C(r_{i}) :: An approximation of the derivative classes
+  of a regular vector is the intersection of the approximate derivative classes
+  of its components.
 
 ** Example Code
 
