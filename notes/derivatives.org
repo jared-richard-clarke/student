@@ -441,7 +441,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   def compile(regex, alphabet):
       start = regex
       states = {start}
-      # { state-x: { character: state-y } }
+      # { state-x: { symbol: state-y } }
       transitions  = {}
       # worklist: depth-first traversal
       stack = [start]
@@ -461,4 +461,3 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
       return { "Q": states, "q0": start, "F": accepting, "δ": transitions }
 #+end_src
-
