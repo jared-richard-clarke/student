@@ -124,8 +124,6 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
   - r ~ a • w ⇔ ∂_{a}r ~ w
 
-**** Example Derivations
-
 #+begin_example
   RE     = a • b*
   string = abb
