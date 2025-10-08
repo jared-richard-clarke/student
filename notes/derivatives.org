@@ -49,7 +49,7 @@
 | L⟦r*⟧      | {ε} ∪ L⟦r • r*⟧                 |
 | L⟦r + s⟧   | L⟦r⟧ ∪ L⟦s⟧                     |
 | L⟦r & s⟧   | L⟦r⟧ ∩ L⟦s⟧                     |
-| L⟦¬r⟧      | Σ* - L⟦r⟧                       |
+| L⟦¬r⟧      | Σ* \ L⟦r⟧                       |
 
 *** Finite State Machine: DFA
 
