@@ -352,9 +352,26 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | R + S | T = R ∪ S |
 | ¬S    | T = Σ \ S |
 
-- C(r) :: A function that approximates derivative classes. The algorithm
-  is conservative because it assumes that only those symbols that are
-  related in both *C(r)* and *C(s)* are related in *C(r + s)*.
+- a ≃_{r} b :: If the regular expression is *r* over *Σ*, *a, b ∈ Σ* and *∂_{a}r ≡ ∂_{b}r*.
+
+- Σ/≃_{r} :: The equivalence classes that are the derivative classes of *r*.
+
+  - equivalence class :: Disjoint subsets of a larger set that are formed
+    by an equivalence relation.
+
+- [a]_{r} = { b : a ≃_{r} b } :: The derivative class of *r* represented by *a*.
+
+| a ≃_{r} b and a ≃_{s} b |
+|-------------------------|
+| a ≃_{(r • s)} b         |
+| a ≃_{(r + s)} b         |
+| a ≃_{(r & s)} b         |
+| a ≃_{r*} b              |
+| a ≃_{¬r} b              |
+
+- C(r) :: A partitioning function that approximates derivative classes.
+  The algorithm is conservative because it assumes that only those
+  symbols that are related in both *C(r)* and *C(s)* are related in *C(r + s)*.
   More precisely: *C(r) ∧ C(s) = { S_{r} ∩ S_{s} : S_{r} ∈ C(r), S_{s} ∈ C(s) }*.
 
 | function | computation                             |
