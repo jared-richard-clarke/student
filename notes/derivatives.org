@@ -352,7 +352,12 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | R + S | T = R ∪ S |
 | ¬S    | T = Σ \ S |
 
-- a ≃_{r} b :: If the regular expression is *r* over *Σ*, *a, b ∈ Σ* and *∂_{a}r ≡ ∂_{b}r*.
+- a ≃_{r} b :: 
+  1. regular expression *r* over alphabet *Σ*
+
+  2. *a, b ∈ Σ*
+
+  3. *∂_{a}r ≡ ∂_{b}r*
 
 - Σ/≃_{r} :: The equivalence classes that are the derivative classes of *r*.
 
