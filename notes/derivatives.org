@@ -40,16 +40,16 @@
 
 - L⟦r⟧ ⊆ Σ* :: the language of the regular expression
 
-| evaluation | meaning                         |
-|------------+---------------------------------|
-| L⟦∅⟧       | ∅                               |
-| L⟦ε⟧       | ε                               |
-| L⟦a⟧       | {a}                             |
-| L⟦r • s⟧   | { u • v : u ∈ L⟦r⟧ ∧ v ∈ L⟦s⟧ } |
-| L⟦r*⟧      | {ε} ∪ L⟦r • r*⟧                 |
-| L⟦r + s⟧   | L⟦r⟧ ∪ L⟦s⟧                     |
-| L⟦r & s⟧   | L⟦r⟧ ∩ L⟦s⟧                     |
-| L⟦¬r⟧      | Σ* \ L⟦r⟧                       |
+| evaluation | meaning                           |
+|------------+-----------------------------------|
+| L⟦∅⟧       | ∅                                 |
+| L⟦ε⟧       | ε                                 |
+| L⟦a⟧       | {a}                               |
+| L⟦r • s⟧   | { u • v : u ∈ L⟦r⟧ and v ∈ L⟦s⟧ } |
+| L⟦r*⟧      | {ε} ∪ L⟦r • r*⟧                   |
+| L⟦r + s⟧   | L⟦r⟧ ∪ L⟦s⟧                       |
+| L⟦r & s⟧   | L⟦r⟧ ∩ L⟦s⟧                       |
+| L⟦¬r⟧      | Σ* \ L⟦r⟧                         |
 
 *** Finite State Machine: DFA
 
