@@ -352,20 +352,29 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | R + S | T = R ∪ S |
 | ¬S    | T = Σ \ S |
 
-- C(r) :: A function that approximates derivative classes through structural recursion.
-  The algorithm is conservative because it assumes that only those symbols that are related
-  in both *C(r)* and *C(s)* are related in *C(r + s)*.
+- C(r) :: A function that approximates derivative classes. The algorithm
+  is conservative because it assumes that only those symbols that are
+  related in both *C(r)* and *C(s)* are related in *C(r + s)*.
+  More precisely: *C(r) ∧ C(s) = { S_{r} ∩ S_{s} : S_{r} ∈ C(r), S_{s} ∈ C(s) }*.
 
-| function    | computation                                    |
-|-------------+------------------------------------------------|
-| C(ε)        | { Σ }                                          |
-| C(S)        | { S, Σ \ S }                                   |
-| C(r) ∧ C(s) | { S_{r} ∩ S_{s} : S_{r} ∈ C(r), S_{s} ∈ C(s) } |
-| C(r • s)    | if nullable(r): C(r) ∧ C(s), else: C(r)        |
-| C(r + s)    | C(r) ∧ C(s)                                    |
-| C(r & s)    | C(r) ∧ C(s)                                    |
-| C(r*)       | C(r)                                           |
-| C(¬r)       | C(r)                                           |
+| function | computation                             |
+|----------+-----------------------------------------|
+| C(ε)     | { Σ }                                   |
+| C(S)     | { S, Σ \ S }                            |
+| C(r • s) | if nullable(r): C(r) ∧ C(s), else: C(r) |
+| C(r + s) | C(r) ∧ C(s)                             |
+| C(r & s) | C(r) ∧ C(s)                             |
+| C(r*)    | C(r)                                    |
+| C(¬r)    | C(r)                                    |
+
+#+begin_example
+  C(a + ba + c) = C(a + ba) ∧ C(c)
+                = (C(a) ∧ C(ba)) ∧ C(c)
+                = (C(a) ∧ C(b)) ∧ C(c)
+                = ({{a}, Σ \ {a}} ∧ {{b}, Σ \ {b}}) ∧ {{c}, Σ \ {c}}
+                = {∅, {a}, {b}, Σ \ {a, b}} ∧ {{c}, Σ \ {c}}
+                = {∅, {a}, {b}, {c}, Σ \ {a, b, c}}
+#+end_example
 
 *** 3. Regular Vectors
 
