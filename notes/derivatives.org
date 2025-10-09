@@ -467,7 +467,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
       start = regex
       states = {start}
       # { state-x: { symbol: state-y } }
-      transitions  = {}
+      transitions = {}
       # worklist: depth-first traversal
       stack = [start]
 
