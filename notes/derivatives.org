@@ -353,7 +353,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | ¬S    | T = Σ \ S |
 
 - a ≃_{r} b :: 
-  1. regular expression *r* over alphabet *Σ*
+  1. *r* over *Σ*
 
   2. *a, b ∈ Σ*
 
