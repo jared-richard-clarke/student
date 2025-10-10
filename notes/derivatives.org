@@ -396,6 +396,12 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | C(¬r)    | C(r)                                    |
 
 #+begin_example
+  === exact ===
+
+  a + ba + c = {{a, c}, {b}, Σ \ {a, b, c}}
+
+  === approximate ===
+
   C(a + ba + c) = C(a + ba) ∧ C(c)
                 = (C(a) ∧ C(ba)) ∧ C(c)
                 = (C(a) ∧ C(b)) ∧ C(c)
