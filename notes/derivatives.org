@@ -65,7 +65,7 @@
 
 #+begin_example
   === Extending δ Over Strings ===
-  
+
   δ'(q, ε)  = q
   δ'(q, au) = δ'(q', u), where q' = δ(q, a)
 
@@ -84,43 +84,43 @@
 *** Computing Nullability
 
 #+begin_example
-  nullable(r) = ε, if ε ∈ L⟦r⟧
-  nullable(r) = ∅, otherwise
+  ν(r) = ε, if ε ∈ L⟦r⟧
+  ν(r) = ∅, otherwise
 #+end_example
 
-| function        | computation               |
-|-----------------+---------------------------|
-| nullable(ε)     | ε                         |
-| nullable(a)     | a                         |
-| nullable(∅)     | ∅                         |
-| nullable(r • s) | nullable(r) & nullable(s) |
-| nullable(r + s) | nullable(r) + nullable(s) |
-| nullable(r*)    | ε                         |
-| nullable(r & s) | nullable(r) & nullable(s) |
-| nullable(¬r)    | ε, if nullable(r) = ∅     |
-| nullable(¬r)    | ∅, if nullable(r) = ε     |
+| function | computation    |
+|----------+----------------|
+| ν(ε)     | ε              |
+| ν(a)     | a              |
+| ν(∅)     | ∅              |
+| ν(r • s) | ν(r) & ν(s)    |
+| ν(r + s) | ν(r) + ν(s)    |
+| ν(r*)    | ε              |
+| ν(r & s) | ν(r) & ν(s)    |
+| ν(¬r)    | ε, if ν(r) = ∅ |
+| ν(¬r)    | ∅, if ν(r) = ε |
 
 *** Computing Derivatives
 
 Computing the derivative of a regular expression with respect to symbol *a*.
 
-| function     | computation                       |
-|--------------+-----------------------------------|
-| ∂_{a}ε       | ∅                                 |
-| ∂_{a}a       | ε                                 |
-| ∂_{a}b       | ∅, because b ≠ a                  |
-| ∂_{a}∅       | ∅                                 |
-| ∂_{a}(r • s) | ∂_{a}r • s + nullable(r) • ∂_{a}s |
-| ∂_{a}(r*)    | ∂_{a}r • r*                       |
-| ∂_{a}(r + s) | ∂_{a}r + ∂_{a}s                   |
-| ∂_{a}(r & s) | ∂_{a}r & ∂_{a}s                   |
-| ∂_{a}(¬r)    | ¬(∂_{a}r)                         |
-| ∂_{ε}r       | r                                 |
-| ∂_{ua}r      | ∂_{a}(∂_{u}r)                     |
+| function     | computation                |
+|--------------+----------------------------|
+| ∂_{a}ε       | ∅                          |
+| ∂_{a}a       | ε                          |
+| ∂_{a}b       | ∅, because b ≠ a           |
+| ∂_{a}∅       | ∅                          |
+| ∂_{a}(r • s) | ∂_{a}r • s + ν(r) • ∂_{a}s |
+| ∂_{a}(r*)    | ∂_{a}r • r*                |
+| ∂_{a}(r + s) | ∂_{a}r + ∂_{a}s            |
+| ∂_{a}(r & s) | ∂_{a}r & ∂_{a}s            |
+| ∂_{a}(¬r)    | ¬(∂_{a}r)                  |
+| ∂_{ε}r       | r                          |
+| ∂_{ua}r      | ∂_{a}(∂_{u}r)              |
 
 - r ~ u :: regular expression *r* matches string *u* if and only if *u ∈ L⟦r⟧*
-  
-  - r ~ ε ⇔ nullable(r) = ε
+
+  - r ~ ε ⇔ ν(r) = ε
 
   - r ~ a • w ⇔ ∂_{a}r ~ w
 
@@ -134,7 +134,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
                ⇔ b* ~ b
                ⇔ ∂b(b*) ~ ε
                ⇔ b* ~ ε
-               ⇔ nullable(b*) = ε (true)
+               ⇔ ν(b*) = ε (nullable: true)
 
   RE     = a • b*
   string = aba
@@ -145,7 +145,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
                ⇔ b* ~ a
                ⇔ ∂a(b*) ~ ε
                ⇔ ∅ ~ ε
-               ⇔ nullable(∅) = ε (false)
+               ⇔ ν(∅) = ε (nullable: false)
 #+end_example
 
 ** DFA Construction
@@ -187,7 +187,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   fun compile r =
       let q₀ = ∂ε(r)
       let (Q, δ) = explore ({q₀}, {}, q₀)
-      let F = { q : q ∈ Q and nullable(q) = ε }
+      let F = { q : q ∈ Q and ν(q) = ε }
       in ⟨Q, q₀, F, δ⟩
 
   (* ========================================================== *)
@@ -212,7 +212,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   fun compile r =
       let q₀ = ∂ε(r)
       let (Q, δ) = explore ({q₀}, {}, q₀)
-      let F = { q : q ∈ Q and nullable(q) = ε }
+      let F = { q : q ∈ Q and ν(q) = ε }
       in ⟨Q, q₀, F, δ⟩
 #+end_example
 
@@ -331,7 +331,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
   - L⟦S⟧ = S
 
-  - nullable(S) = ∅
+  - v(S) = ∅
 
   - ∂_{a}S = ε if a ∈ S, otherwise ∅
 
@@ -385,15 +385,15 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   symbols that are related in both *C(r)* and *C(s)* are related in *C(r + s)*.
   More precisely: *C(r) ∧ C(s) = { S_{r} ∩ S_{s} : S_{r} ∈ C(r), S_{s} ∈ C(s) }*.
 
-| function | computation                             |
-|----------+-----------------------------------------|
-| C(ε)     | { Σ }                                   |
-| C(S)     | { S, Σ \ S }                            |
-| C(r • s) | if nullable(r): C(r) ∧ C(s), else: C(r) |
-| C(r + s) | C(r) ∧ C(s)                             |
-| C(r & s) | C(r) ∧ C(s)                             |
-| C(r*)    | C(r)                                    |
-| C(¬r)    | C(r)                                    |
+| function | computation                          |
+|----------+--------------------------------------|
+| C(ε)     | { Σ }                                |
+| C(S)     | { S, Σ \ S }                         |
+| C(r • s) | if ν(r) = ε: C(r) ∧ C(s), else: C(r) |
+| C(r + s) | C(r) ∧ C(s)                          |
+| C(r & s) | C(r) ∧ C(s)                          |
+| C(r*)    | C(r)                                 |
+| C(¬r)    | C(r)                                 |
 
 #+begin_example
   === exact ===
@@ -445,7 +445,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   of a regular vector is the intersection of the approximate derivative classes
   of its components.
 
-** Example Code
+** Code Examples
 
 *** Haskell Derivation
 
