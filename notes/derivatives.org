@@ -365,7 +365,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
 - a ≃_{r} b :: If and only if *∂_{a}r ≡ ∂_{b}r*.
 
-- Σ/≃_{r} :: The equivalence classes that are the derivative classes of *r*.
+- Σ≃_{r} :: The equivalence classes that are the derivative classes of *r*.
 
   - equivalence class :: Disjoint subsets of a larger set that are formed
     by an equivalence relation.
