@@ -331,7 +331,7 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
   - L⟦S⟧ = S
 
-  - v(S) = ∅
+  - ν(S) = ∅
 
   - ∂_{a}S = ε if a ∈ S, otherwise ∅
 
