@@ -400,6 +400,15 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 
   a + ba + c = {{a, c}, {b}, Σ \ {a, b, c}}
 
+      ∂{a, c}(a + ba + c) = ε
+      δ(a + ba + c, a) = δ(a + ba + c, c)
+
+      ∂{b}(a + ba + c) = a
+      δ(a + ba + c, b)
+
+      ∂(Σ \ {a, b, c})(a + ba + c) = ∅
+      δ(a + ba + c, Σ \ {a, b, c})
+
   === approximate ===
 
   C(a + ba + c) = C(a + ba) ∧ C(c)
