@@ -352,12 +352,18 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 | R + S | T = R ∪ S |
 | ¬S    | T = Σ \ S |
 
-- a ≃_{r} b :: 
-  1. *r* over *Σ*
+#+begin_quote
+  "[A] DFA will usually have many fewer distinct outgoing state transitions
+   than there are symbols in *Σ*. Let *S_{1}, ... , S_{n}* be a partition
+   of *Σ* such that whenever *a, b ∈ S_{i}*, we have *δ(q, a) = δ(q, b)*
+   (equivalently: *∂_{a}q ≈ ∂_{b}q*). If we somehow knew the partition
+   *S_{1}, ... , S_{n}* for *q* in advance, we would only need to calculate
+   one derivative per *S_{i}* when computing the transitions from *q*."
 
-  2. *a, b ∈ Σ*
+  — *Regular-Expression Derivatives Reexamined*, Scott Owens, John Reppy, and Aaron Turon
+#+end_quote
 
-  3. *∂_{a}r ≡ ∂_{b}r*
+- a ≃_{r} b :: If and only if *∂_{a}r ≡ ∂_{b}r*.
 
 - Σ/≃_{r} :: The equivalence classes that are the derivative classes of *r*.
 
