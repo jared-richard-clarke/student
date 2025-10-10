@@ -480,28 +480,30 @@ Computing the derivative of a regular expression with respect to symbol *a*.
           re (x:xs) -> match (derive re x) xs
 #+end_src
 
-| step | derivation                          | ≈                  |
-|------+-------------------------------------+--------------------|
-|    1 | ~match ab* "abb"~                   | ~match ab* "abb"~  |
-|      | ~derive ab* 'a'~                    | ~derive ab* 'a'~   |
-|      | ~(derive a 'a')b*~                  | ~(derive a 'a')b*~ |
-|      | ~εb*~                               | ~b*~               |
-|------+-------------------------------------+--------------------|
-|    2 | ~match εb* "bb"~                    | ~match b* "bb"~    |
-|      | ~(derive ε 'b') + (derive b* 'b')~  | ~(derive b* 'b')~  |
-|      | ~∅ + (derive b 'b')b*~              | ~(derive b 'b')b*~ |
-|      | ~∅ + εb*~                           | ~b*~               |
-|------+-------------------------------------+--------------------|
-|    3 | ~match (∅ + εb*) "b"~               | ~match b* "b"~     |
-|      | ~derive (∅ + εb*) 'b'~              | ~derive b* 'b'~    |
-|      | ~(derive ∅ 'b') + (derive εb* 'b')~ | ~(derive b 'b')b*~ |
-|      | ~∅ + (derive ε 'b')(derive b* 'b')~ | ~b*~               |
-|      | ~∅ + ∅ + (derive b 'b')b*~          |                    |
-|      | ~∅ + ∅ + εb*~                       |                    |
-|------+-------------------------------------+--------------------|
-|    4 | ~match (∅ + ∅ + εb*) ""~            | ~match b* ""~      |
-|      | ~nullable (∅ + ∅ + εb*)~            | ~nullable b*~      |
-|      | ~True~                              | ~True~             |
+| step | derivation                                           | ≈                  |
+|------+------------------------------------------------------+--------------------|
+|    1 | ~match ab* "abb"~                                    | ~match ab* "abb"~  |
+|      | ~derive ab* 'a'~                                     | ~derive ab* 'a'~   |
+|      | ~(derive a 'a')b*~                                   | ~(derive a 'a')b*~ |
+|      | ~εb*~                                                | ~b*~               |
+|------+------------------------------------------------------+--------------------|
+|    2 | ~match εb* "bb"~                                     | ~match b* "bb"~    |
+|      | ~(derive ε 'b') + (derive b* 'b')~                   | ~(derive b* 'b')~  |
+|      | ~∅ + (derive b 'b')b*~                               | ~(derive b 'b')b*~ |
+|      | ~∅ + εb*~                                            | ~b*~               |
+|------+------------------------------------------------------+--------------------|
+|    3 | ~match (∅ + εb*) "b"~                                | ~match b* "b"~     |
+|      | ~derive (∅ + εb*) 'b'~                               | ~derive b* 'b'~    |
+|      | ~(derive ∅ 'b') + (derive εb* 'b')~                  | ~(derive b 'b')b*~ |
+|      | ~∅ + (derive ε 'b')(derive b* 'b')~                  | ~b*~               |
+|      | ~∅ + ∅ + (derive b 'b')b*~                           |                    |
+|      | ~∅ + ∅ + εb*~                                        |                    |
+|------+------------------------------------------------------+--------------------|
+|    4 | ~match (∅ + ∅ + εb*) ""~                             | ~match b* ""~      |
+|      | ~nullable (∅ + ∅ + εb*)~                             | ~nullable b*~      |
+|      | ~nullable ∅ + nullable ∅ + nullable ε & nullable b*~ | ~True~             |
+|      | ~False + False + True & True~                        |                    |
+|      | ~True~                                               |                    |
 
 *** Python Compilation
 
