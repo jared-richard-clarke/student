@@ -266,6 +266,25 @@ Computing the derivative of a regular expression with respect to symbol *a*.
                |       ^
                |       |
                +-a,b,c-+
+
+  DFA = ( Q, q₀, Σ, F, δ )
+
+  where Q  = { ab + ac, b + c, ∅, ε }
+        q₀ = ab + ac
+        Σ  = { a, b, c }
+        F  = { ε }
+        δ  = { (ab + ac, a) → b + c,
+               (ab + ac, b) → ∅,
+               (ab + ac, c) → ∅,
+               (b + c, a)   → ∅,
+               (b + c, b)   → ε,
+               (b + c, c)   → ε,
+               (∅, a)       → ∅
+               (∅, b)       → ∅,
+               (∅, c)       → ∅
+               (ε, a)       → ∅,
+               (ε, b)       → ∅,
+               (ε, c)       → ∅ }
 #+end_example
 
 ** Implementation
