@@ -230,13 +230,13 @@
     struct
     datatype t = Free  of string
                | Bound of int
-               | Abs   of string*t
-               | Apply of t*t;
+               | Abs   of string * t
+               | Apply of t * t;
 
     (* Convert occurrences of b to bound index i in a term *)
     fun abstract i b (Free a) = if a = b then Bound i else Free a
       | abstract i b (Bound j) = Bound j
-      | abstract i b (Abs(a, t)) = Abs(a, abstract (i+1) b t)
+      | abstract i b (Abs(a, t)) = Abs(a, abstract (i + 1) b t)
       | abstract i b (Apply(t, u)) = Apply(abstract i b t, abstract i b u);
 
     (* Abstraction over several free variables *)
