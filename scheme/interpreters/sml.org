@@ -8,7 +8,7 @@
 
 ** Lexer, Parser, Printer, and Evaluator
 
-#+begin_src
+#+begin_src sml
   (**** Lexical Analysis -- Scanning ****)
 
   (*Input to LexicalFUN*)
