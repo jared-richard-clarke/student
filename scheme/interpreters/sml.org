@@ -47,16 +47,16 @@
     (* Scanning a substring into a list of tokens *)
     fun scanning (toks, ss) =
         case Substring.getc ss of
-            (*end of substring*)
+            (* end of substring *)
             NONE => rev toks
           | SOME (c, ss1) =>
               if Char.isAlphaNum c
-                 (*identifier or keyword*)
+                 (* identifier or keyword *)
                  then let val (id, ss2) = Substring.splitl Char.isAlphaNum ss
                           val tok = alphaTok (Substring.string id)
                       in scanning (tok::toks, ss2) end
               else if Char.isPunct c
-              (* special symbol* )
+              (* special symbol *)
               then let val (tok, ss2) = symbolic (String.str c, ss1)
                    in scanning (tok::toks, ss2) end
               (* ignore spaces, line breaks, control characters *)
