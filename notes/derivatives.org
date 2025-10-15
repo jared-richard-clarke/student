@@ -469,8 +469,8 @@ Computing the derivative of a regular expression with respect to symbol *a*.
 *** Haskell Derivation
 
 #+begin_src haskell
-  data Regex = EmptySet
-             | EmptyString
+  data Regex = Empty
+             | Epsilon
              | Literal Char
              | Union Regex Regex
              | Concat Regex Regex
@@ -480,8 +480,8 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   nullable :: Regex -> Bool
   nullable regex =
       case regex of
-          EmptySet     -> False
-          EmptyString  -> True
+          Empty        -> False
+          Epsilon      -> True
           (Literal _)  -> False
           (Union x y)  -> nullable x || nullable y
           (Concat x y) -> nullable x && nullable y
@@ -490,11 +490,11 @@ Computing the derivative of a regular expression with respect to symbol *a*.
   derive :: Regex -> Char -> Regex
   derive regex prefix =
       case regex prefix of
-          EmptySet _     -> EmptySet
-          EmptyString _  -> EmptySet
+          Empty _        -> Empty
+          Epsilon _      -> Empty
           (Literal x) c  -> if x == c
-                            then EmptyString
-                            else EmptySet
+                            then Epsilon
+                            else Empty
           (Union x y) c  -> Union (derive x c) (derive y c)
           (Concat x y) c -> if nullable x
                             then Union (Concat (derive x c) y) (derive y c)
