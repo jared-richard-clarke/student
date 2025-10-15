@@ -29,7 +29,7 @@
     struct
     datatype token = Key of string | Id of string;
 
-    fun member (x:string, l) = List.exists (fn y => x=y) l;
+    fun member (x:string, l) = List.exists (fn y => x = y) l;
 
     fun alphaTok a =
         if member(a, Keyword.alphas) then Key(a) else Id(a);
@@ -153,9 +153,7 @@
 
     end;
 
-
   (**** Example: Parsing and Displaying Types ****)
-
 
   signature TYPE =
     sig
@@ -211,7 +209,6 @@
 
   end;
 
-
   (**** Lambda-terms.
         Bound variables are indicated by depth index,
         free variables by name. ****)
@@ -258,9 +255,10 @@
     (* Substitute u for bound variable i in a term t *)
     fun subst i u (Free a)  = Free a
       | subst i u (Bound j) =
-          if j<i then Bound j (*locally bound*)
+          (* locally bound *)
+          if j < i then Bound j
           else if j = i then shift i 0 u
-          else (*j > i*) Bound(j - 1) (*non-local to t*)
+          else (*j > i*) Bound(j - 1) (* non-local to t *)
       | subst i u (Abs(a, t)) = Abs(a, subst (i + 1) u t)
       | subst i u (Apply(t1, t2)) = Apply(subst i u t1, subst i u t2);
 
@@ -271,7 +269,6 @@
       | inst env (Abs(a, t)) = Abs(a, inst env t)
       | inst env (Apply(t1, t2)) = Apply(inst env t1, inst env t2);
     end;
-
 
   (*** Parsing of lambda terms ***)
   signature PARSE_TERM =
@@ -298,7 +295,6 @@
     val read = reader term;
 
     end;
-
 
   (**** Pretty Printing of lambda terms ****)
 
@@ -331,17 +327,17 @@
 
     fun stripAbs t = strip ([],t);
 
-    fun spaceJoin (b,z) = " " ^ b ^ z;
+    fun spaceJoin (b, z) = " " ^ b ^ z;
 
     fun term (Lambda.Free a) = Pretty.str a
       | term (Lambda.Bound i) = Pretty.str "??UNMATCHED INDEX??"
       | term (t as Lambda.Abs _) =
-            let val (b::bs,u) = stripAbs t
+            let val (b::bs, u) = stripAbs t
                 val binder = "%" ^ b ^ (foldr spaceJoin ". " bs)
             in Pretty.blo(0, [Pretty.str binder, term u])
             end
       | term t = Pretty.blo(0, applic t)
-    and applic (Lambda.Apply(t,u)) = applic t @ [Pretty.brk 1, atom u]
+    and applic (Lambda.Apply(t, u)) = applic t @ [Pretty.brk 1, atom u]
       | applic t        = [atom t]
     and atom (Lambda.Free a) = Pretty.str a
       | atom t = Pretty.blo(1, [Pretty.str"(",
@@ -350,7 +346,6 @@
 
     fun pr t = Pretty.pr (TextIO.stdOut, term t, 50);
     end;
-
 
   (*** Evaluation of lambda terms ***)
   signature REDUCE =
@@ -365,21 +360,21 @@
     struct
 
     (* evaluation, not affecting function bodies *)
-    fun eval (Lambda.Apply(t1,t2)) =
+    fun eval (Lambda.Apply(t1, t2)) =
                   (case eval t1 of
-                       Lambda.Abs(a,u) => eval(Lambda.subst 0 (eval t2) u)
+                       Lambda.Abs(a, u) => eval(Lambda.subst 0 (eval t2) u)
                      | u1 => Lambda.Apply(u1, eval t2))
       | eval t = t;
 
     (* normalization using call-by-value *)
     fun byValue t = bodies (eval t)
-    and bodies (Lambda.Abs(a,t)) = Lambda.Abs(a, byValue t)
-      | bodies (Lambda.Apply(t1,t2)) = Lambda.Apply(bodies t1, bodies t2)
+    and bodies (Lambda.Abs(a, t)) = Lambda.Abs(a, byValue t)
+      | bodies (Lambda.Apply(t1, t2)) = Lambda.Apply(bodies t1, bodies t2)
       | bodies t = t;
 
     (* head normal form *)
-    fun headNF (Lambda.Abs(a,t)) = Lambda.Abs(a, headNF t)
-      | headNF (Lambda.Apply(t1,t2)) =
+    fun headNF (Lambda.Abs(a, t)) = Lambda.Abs(a, headNF t)
+      | headNF (Lambda.Apply(t1, t2)) =
                   (case headNF t1 of
                        Lambda.Abs(a,t) => headNF(Lambda.subst 0 t2 t)
                      | u1 => Lambda.Apply(u1, t2))
@@ -387,32 +382,40 @@
 
     (* normalization using call-by-name *)
     fun byName t = args (headNF t)
-    and args (Lambda.Abs(a,t)) = Lambda.Abs(a, args t)
-      | args (Lambda.Apply(t1,t2)) = Lambda.Apply(args t1, byName t2)
+    and args (Lambda.Abs(a, t)) = Lambda.Abs(a, args t)
+      | args (Lambda.Apply(t1, t2)) = Lambda.Apply(args t1, byName t2)
       | args t = t;
     end;
 
-
   (*** Using the structures ***)
 
-  fun insertEnv ((a,b),env) =
+  fun insertEnv ((a, b), env) =
       StringDict.insert (env, a, ParseTerm.read b);
 
   val stdEnv = foldl insertEnv StringDict.empty
-  [    (*booleans*)
-   ("true", "%x y.x"),           ("false",  "%x y.y"),
+  [(* booleans *)
+   ("true", "%x y.x"),
+   ("false",  "%x y.y"),
    ("if", "%p x y. p x y"),
-       (*ordered pairs*)
+
+   (* ordered pairs *)
    ("pair", "%x y f.f x y"),
-   ("fst", "%p.p true"),         ("snd", "%p.p false"),
-       (*natural numbers*)
+   ("fst", "%p.p true"),
+   ("snd", "%p.p false"),
+
+   (* natural numbers *)
    ("suc", "%n f x. n f (f x)"),
    ("iszero", "%n. n (%x.false) true"),
-   ("0", "%f x. x"),             ("1", "suc 0"),
-   ("2", "suc 1"),               ("3", "suc 2"),
-   ("4", "suc 3"),               ("5", "suc 4"),
-   ("6", "suc 5"),               ("7", "suc 6"),
-   ("8", "suc 7"),               ("9", "suc 8"),
+   ("0", "%f x. x"),
+   ("1", "suc 0"),
+   ("2", "suc 1"),
+   ("3", "suc 2"),
+   ("4", "suc 3"),
+   ("5", "suc 4"),
+   ("6", "suc 5"),
+   ("7", "suc 6"),
+   ("8", "suc 7"),
+   ("9", "suc 8"),
    ("add",  "%m n f x. m f (n f x)"),
    ("mult", "%m n f. m (n f)"),
    ("expt", "%m n f x. n m f x"),
@@ -420,20 +423,22 @@
    ("pre",  "%n f x. snd (n (prefn f) (pair x x))"),
    ("sub",  "%m n. n pre m"),
    ("ack",  "%m. m (%f n. n f (f 1)) suc"),
-       (*lists*)
+
+   (* lists *)
    ("nil",  "%z.z"),
    ("cons", "%x y. pair false (pair x y)"),
    ("null", "fst"),
    ("hd", "%z. fst(snd z)"),     ("tl", "%z. snd(snd z)"),
-       (*recursion for call-by-name*)
+
+   (* recursion for call-by-name *)
    ("Y", "%f. (%x.f(x x))(%x.f(x x))"),
    ("fact", "Y (%g n. if (iszero n) 1 (mult n (g (pre n))))"),
    ("append", "Y (%g z w. if (null z) w (cons (hd z) (g (tl z) w)))"),
    ("inflist", "Y (%z. cons MORE z)"),
-       (*recursion for call-by-value*)
-   ("YV", "%f. (%x.f(%y.x x y)) (%x.f(%y.x x y))"),
-   ("factV", "YV (%g n. (if (iszero n) (%y.1) (%y.mult n (g (pre n))))y)") ];
 
+   (* recursion for call-by-value *)
+   ("YV", "%f. (%x.f(%y.x x y)) (%x.f(%y.x x y))"),
+   ("factV", "YV (%g n. (if (iszero n) (%y.1) (%y.mult n (g (pre n))))y)")];
 
   (** lambda reduction examples **)
 
