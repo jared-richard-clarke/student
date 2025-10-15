@@ -11,7 +11,7 @@
 #+begin_src sml
   (**** Lexical Analysis -- Scanning ****)
 
-  (*Input to LexicalFUN*)
+  (* Input to LexicalFUN *)
   signature KEYWORD =
     sig
     val alphas: string list
@@ -26,7 +26,7 @@
     end;
 
 
-  (*All characters are covered; whitespace is ignored. *)
+  (* All characters are covered; whitespace is ignored. *)
   functor Lexical (Keyword: KEYWORD) : LEXICAL =
     struct
     datatype token = Key of string  |  Id of string;
@@ -36,17 +36,17 @@
     fun alphaTok a =
         if member(a, Keyword.alphas) then Key(a) else Id(a);
 
-    (*scanning of a symbolic keyword*)
+    (* scanning of a symbolic keyword *)
     fun symbolic (sy, ss) =
         case Substring.getc ss of
             NONE => (Key sy, ss)
           | SOME (c,ss1) =>
                 if member(sy, Keyword.symbols)
-                    orelse not (Char.isPunct c)
+                   orelse not (Char.isPunct c)
                 then  (Key sy, ss)
                 else  symbolic (sy ^ String.str c, ss1);
 
-    (*Scanning a substring into a list of tokens*)
+    (* Scanning a substring into a list of tokens *)
     fun scanning (toks, ss) =
         case Substring.getc ss of
             NONE => rev toks    (*end of substring*)
@@ -71,7 +71,7 @@
 
   (**** Parsing functionals ****)
 
-  (*Infix directives: made globally*)
+  (* Infix directives: made globally *)
   infix 6 $--;
   infix 5 --;
   infix 3 >>;
@@ -102,46 +102,46 @@
 
     exception SyntaxErr of string;
 
-    (*Phrase consisting of an identifier*)
+    (* Phrase consisting of an identifier *)
     fun id (Lex.Id a :: toks) = (a,toks)
       | id toks = raise SyntaxErr "Identifier expected";
 
-    (*Phrase consisting of the keyword 'a' *)
+    (* Phrase consisting of the keyword 'a' *)
     fun $a (Lex.Key b :: toks) = if a=b then (a,toks)
                                  else raise SyntaxErr a
       | $a _ = raise SyntaxErr "Symbol expected";
 
-    (*The empty phrase!*)
+    (* The empty phrase! *)
     fun empty toks = ([],toks);
 
-    (*Alternative phrases*)
+    (* Alternative phrases *)
     fun (ph1 || ph2) toks = ph1 toks
                             handle SyntaxErr _ => ph2 toks;
 
     fun !! ph toks = ph toks
         handle SyntaxErr msg => raise Fail ("Syntax error: " ^ msg);
 
-    (*One phrase then another*)
+    (* One phrase then another *)
     fun (ph1 -- ph2) toks =
         let val (x,toks2) = ph1 toks
             val (y,toks3) = ph2 toks2
         in  ((x,y), toks3)  end;
 
-    (*Application of f to the result of a phrase*)
-    fun (ph>>f) toks =
-        let val (x,toks2) = ph toks
+    (* Application of f to the result of a phrase *)
+    fun (ph >> f) toks =
+        let val (x, toks2) = ph toks
         in  (f x, toks2)  end;
 
     fun (a $-- ph) = ($a -- !!ph >> #2);
 
-    (*Zero or more phrases*)
+    (* Zero or more phrases *)
     fun repeat ph toks = (   ph -- repeat ph >> (op::)
-                          || empty   ) toks;
+                          || empty) toks;
 
-    fun infixes (ph,prec_of,apply) =
+    fun infixes (ph, prec_of, apply) =
       let fun over k toks = next k (ph toks)
           and next k (x, Lex.Key(a)::toks) =
-                if prec_of a < k then (x, Lex.Key a :: toks)
+                if prec_of a < k then (x, Lex.Key a::toks)
                 else next k ((over (prec_of a) >> apply a x) toks)
             | next k (x, toks) = (x, toks)
       in  over 0  end;
@@ -183,12 +183,12 @@
       open LamParsing
 
       fun typ toks =
-       (   atom -- "->" $-- typ                         >> makeFun
+       (   atom -- "->" $-- typ  >> makeFun
         || atom
        ) toks
       and atom toks =
-        (   $"'" -- id                          >> (Var o op^)
-         || "(" $-- typ -- $")"                         >> #1
+        (   $"'" -- id           >> (Var o op^)
+         || "(" $-- typ -- $")"  >> #1
         ) toks;
     in
       val read = reader typ;
@@ -197,13 +197,13 @@
     local (** Display **)
       fun typ (Var a) = Pretty.str a
         | typ (Con("->",[ty1,ty2])) = Pretty.blo(0, [atom ty1,
-                                                   Pretty.str " ->",
-                                                   Pretty.brk 1,
-                                                   typ ty2])
+                                                     Pretty.str " ->",
+                                                     Pretty.brk 1,
+                                                     typ ty2])
        and atom (Var a) = Pretty.str a
          | atom ty = Pretty.blo(1, [Pretty.str"(",
-                                   typ ty,
-                                   Pretty.str")"]);
+                                    typ ty,
+                                    Pretty.str")"]);
     in
       fun pr ty = Pretty.pr (TextIO.stdOut, typ ty, 50)
     end
@@ -235,35 +235,35 @@
                | Abs   of string*t
                | Apply of t*t;
 
-    (*Convert occurrences of b to bound index i in a term*)
+    (* Convert occurrences of b to bound index i in a term *)
     fun abstract i b (Free a) = if a=b then  Bound i  else  Free a
       | abstract i b (Bound j) = Bound j
       | abstract i b (Abs(a,t)) = Abs(a, abstract (i+1) b t)
       | abstract i b (Apply(t,u)) = Apply(abstract i b t, abstract i b u);
 
-    (*Abstraction over several free variables*)
+    (* Abstraction over several free variables *)
     fun absList (bs,t) = foldr (fn (b,u) => Abs(b, abstract 0 b u)) t bs;
 
-    (*Application of t to several terms*)
+    (* Application of t to several terms *)
     fun applyList (t0,us) = foldl (fn (u,t) => Apply(t,u)) t0 us;
 
-    (*Shift a term's non-local indices by i; d is the depth of abstractions*)
+    (* Shift a term's non-local indices by i; d is the depth of abstractions *)
     fun shift 0 d u = u
       | shift i d (Free a) = Free a
       | shift i d (Bound j) = if j>=d then Bound(j+i) else Bound j
       | shift i d (Abs(a,t)) = Abs(a, shift i (d+1) t)
       | shift i d (Apply(t,u)) = Apply(shift i d t, shift i d u);
 
-    (*Substitute u for bound variable i in a term t*)
+    (* Substitute u for bound variable i in a term t *)
     fun subst i u (Free a)  = Free a
       | subst i u (Bound j) =
-          if j<i then           Bound j         (*locally bound*)
+          if j<i then Bound j (*locally bound*)
           else if j=i then shift i 0 u
-          else (*j>i*)  Bound(j-1)      (*non-local to t*)
+          else (*j>i*) Bound(j-1) (*non-local to t*)
       | subst i u (Abs(a,t)) = Abs(a, subst (i+1) u t)
       | subst i u (Apply(t1,t2)) = Apply(subst i u t1, subst i u t2);
 
-    (*Substitution for free variables*)
+    (* Substitution for free variables *)
     fun inst env (Free a) = (inst env (StringDict.lookup(env,a))
                              handle StringDict.E _ => Free a)
       | inst env (Bound i) = Bound i
@@ -285,14 +285,14 @@
 
     open LamParsing
 
-    (*term/atom distinction prevents left recursion; grammar is ambiguous*)
+    (* term/atom distinction prevents left recursion; grammar is ambiguous *)
     fun term toks =
       (   "%" $-- id -- repeat id -- "." $-- term >> makeLambda
-       || atom -- repeat atom                    >> Lambda.applyList
+       || atom -- repeat atom                     >> Lambda.applyList
       ) toks
     and atom toks =
-      (   id                                     >> Lambda.Free
-       || "(" $-- term -- $")"                   >> #1
+      (   id                                      >> Lambda.Free
+       || "(" $-- term -- $")"                    >> #1
       ) toks;
     val read = reader term;
 
@@ -311,17 +311,17 @@
   structure DisplayTerm : DISPLAY_TERM =
     struct
 
-    (*Free variable in a term -- simple & slow version using append*)
+    (* Free variable in a term -- simple & slow version using append *)
     fun vars (Lambda.Free a) = [a]
       | vars (Lambda.Bound i) = []
       | vars (Lambda.Abs(a,t)) = vars t
       | vars (Lambda.Apply(t1,t2)) = vars t1 @ vars t2;
 
-    (*Rename variable "a" to avoid clashes with the strings bs. *)
+    (* Rename variable "a" to avoid clashes with the strings bs. *)
     fun rename (bs,a) =
         if  List.exists (fn x => x=a) bs  then  rename (bs, a ^ "'")  else  a;
 
-    (*Remove leading lambdas; return bound variable names*)
+    (* Remove leading lambdas; return bound variable names *)
     fun strip (bs, Lambda.Abs(a,t)) =
           let val b = rename (vars t, a)
           in  strip (b::bs, Lambda.subst 0 (Lambda.Free b) t)
@@ -363,20 +363,20 @@
   structure Reduce : REDUCE =
     struct
 
-    (*evaluation, not affecting function bodies*)
+    (* evaluation, not affecting function bodies *)
     fun eval (Lambda.Apply(t1,t2)) =
                   (case eval t1 of
                        Lambda.Abs(a,u) => eval(Lambda.subst 0 (eval t2) u)
                      | u1 => Lambda.Apply(u1, eval t2))
       | eval t = t;
 
-    (*normalization using call-by-value*)
+    (* normalization using call-by-value *)
     fun byValue t = bodies (eval t)
     and bodies (Lambda.Abs(a,t)) = Lambda.Abs(a, byValue t)
       | bodies (Lambda.Apply(t1,t2)) = Lambda.Apply(bodies t1, bodies t2)
       | bodies t = t;
 
-    (*head normal form*)
+    (* head normal form *)
     fun headNF (Lambda.Abs(a,t)) = Lambda.Abs(a, headNF t)
       | headNF (Lambda.Apply(t1,t2)) =
                   (case headNF t1 of
@@ -384,7 +384,7 @@
                      | u1 => Lambda.Apply(u1, t2))
       | headNF t = t;
 
-    (*normalization using call-by-name*)
+    (* normalization using call-by-name *)
     fun byName t = args (headNF t)
     and args (Lambda.Abs(a,t)) = Lambda.Abs(a, args t)
       | args (Lambda.Apply(t1,t2)) = Lambda.Apply(args t1, byName t2)
@@ -419,12 +419,12 @@
    ("pre",  "%n f x. snd (n (prefn f) (pair x x))"),
    ("sub",  "%m n. n pre m"),
    ("ack",  "%m. m (%f n. n f (f 1)) suc"),
-        (*lists*)
+       (*lists*)
    ("nil",  "%z.z"),
    ("cons", "%x y. pair false (pair x y)"),
    ("null", "fst"),
    ("hd", "%z. fst(snd z)"),     ("tl", "%z. snd(snd z)"),
-      (*recursion for call-by-name*)
+       (*recursion for call-by-name*)
    ("Y", "%f. (%x.f(x x))(%x.f(x x))"),
    ("fact", "Y (%g n. if (iszero n) 1 (mult n (g (pre n))))"),
    ("append", "Y (%g z w. if (null z) w (cons (hd z) (g (tl z) w)))"),
