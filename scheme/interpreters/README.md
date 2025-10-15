@@ -11,6 +11,7 @@ Most of these programs interpret Scheme programs, although one, currently, inter
 - `meta-scheme.org`: meta-circular interpreters as implemented by William Byrd and R. Kent Dybvig.
 - `miranda-scheme.org`: a comparison between Miranda and Scheme interpreters by Philip Wadler.
 - `norvig.org`: a Scheme interpreter written in Python as defined by Peter Norvig.
+- `sml.org`: a lambda calculus lexer, parser, printer, and evalutator in SML by Lawrence C. Paulson.
 - `tang.org`: a Scheme interpreter implemented in Haskell by Jonathan Tang.
 
 ## Grammar
