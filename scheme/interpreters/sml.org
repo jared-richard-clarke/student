@@ -54,11 +54,15 @@
                    (* identifier or keyword *)
                    then let val (id, ss2) = Substring.splitl Char.isAlphaNum ss
                             val tok = alphaTok (Substring.string id)
-                        in scanning (tok::toks, ss2) end
+                        in
+                          scanning (tok::toks, ss2)
+                        end
                 else if Char.isPunct c
                 (* special symbol *)
                 then let val (tok, ss2) = symbolic (String.str c, ss1)
-                     in scanning (tok::toks, ss2) end
+                     in
+                       scanning (tok::toks, ss2)
+                     end
                 (* ignore spaces, line breaks, control characters *)
                 else
                      scanning (toks, Substring.dropl (not o Char.isGraph) ss);
@@ -104,9 +108,7 @@
         | id toks = raise SyntaxErr "Identifier expected";
 
       (* Phrase consisting of the keyword 'a' *)
-      fun $a (Lex.Key b::toks) = if a = b
-                                 then (a, toks)
-                                 else raise SyntaxErr a
+      fun $a (Lex.Key b::toks) = if a = b then (a, toks) else raise SyntaxErr a
         | $a _ = raise SyntaxErr "Symbol expected";
 
       (* The empty phrase! *)
@@ -121,14 +123,16 @@
 
       (* One phrase then another *)
       fun (ph1 -- ph2) toks =
-          let val (x,toks2) = ph1 toks
-              val (y,toks3) = ph2 toks2
+          let val (x, toks2) = ph1 toks
+              val (y, toks3) = ph2 toks2
           in ((x,y), toks3) end;
 
       (* Application of f to the result of a phrase *)
       fun (ph >> f) toks =
           let val (x, toks2) = ph toks
-          in (f x, toks2) end;
+          in
+            (f x, toks2)
+          end;
 
       fun (a $-- ph) = ($a -- !!ph >> #2);
 
@@ -162,9 +166,10 @@
     end;
 
   structure LamKey =
-      struct val alphas = []
-             and symbols = ["(", ")", "'", "->"]
-      end;
+    struct
+      val alphas = []
+      and symbols = ["(", ")", "'", "->"]
+    end;
   structure LamLex = Lexical (LamKey);
   structure LamParsing = Parsing (LamLex);
 
@@ -238,7 +243,7 @@
         | abstract i b (Apply(t, u)) = Apply(abstract i b t, abstract i b u);
 
       (* Abstraction over several free variables *)
-      fun absList (bs,t) = foldr (fn (b, u) => Abs(b, abstract 0 b u)) t bs;
+      fun absList (bs, t) = foldr (fn (b, u) => Abs(b, abstract 0 b u)) t bs;
 
       (* Application of t to several terms *)
       fun applyList (t0, us) = foldl (fn (u, t) => Apply(t,u)) t0 us;
@@ -306,21 +311,22 @@
       (* Free variable in a term -- simple & slow version using append *)
       fun vars (Lambda.Free a) = [a]
         | vars (Lambda.Bound i) = []
-        | vars (Lambda.Abs(a,t)) = vars t
+        | vars (Lambda.Abs(a, t)) = vars t
         | vars (Lambda.Apply(t1, t2)) = vars t1 @ vars t2;
 
       (* Rename variable "a" to avoid clashes with the strings bs. *)
-      fun rename (bs,a) =
-          if List.exists (fn x => x=a) bs then rename (bs, a ^ "'") else  a;
+      fun rename (bs, a) =
+          if List.exists (fn x => x = a) bs then rename (bs, a ^ "'") else  a;
 
       (* Remove leading lambdas; return bound variable names *)
       fun strip (bs, Lambda.Abs(a,t)) =
             let val b = rename (vars t, a)
-            in strip (b::bs, Lambda.subst 0 (Lambda.Free b) t)
+            in
+              strip (b::bs, Lambda.subst 0 (Lambda.Free b) t)
             end
         | strip (bs, u) = (rev bs, u);
 
-      fun stripAbs t = strip ([],t);
+      fun stripAbs t = strip ([], t);
 
       fun spaceJoin (b, z) = " " ^ b ^ z;
 
@@ -329,11 +335,12 @@
         | term (t as Lambda.Abs _) =
               let val (b::bs, u) = stripAbs t
                   val binder = "%" ^ b ^ (foldr spaceJoin ". " bs)
-              in Pretty.blo(0, [Pretty.str binder, term u])
+              in
+                Pretty.blo(0, [Pretty.str binder, term u])
               end
         | term t = Pretty.blo(0, applic t)
       and applic (Lambda.Apply(t, u)) = applic t @ [Pretty.brk 1, atom u]
-        | applic t        = [atom t]
+        | applic t = [atom t]
       and atom (Lambda.Free a) = Pretty.str a
         | atom t = Pretty.blo(1, [Pretty.str"(",
                                   term t,
