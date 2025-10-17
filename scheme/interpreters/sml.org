@@ -22,12 +22,13 @@
 
   signature LEXICAL =
     sig
+      (* token: identifier or keyword *)
       datatype token = Id  of string
                      | Key of string
       val scan : string -> token list
     end;
 
-  (* Consume characters. Ignore whitespace. *)
+  (* consumes characters, ignores whitespace *)
   functor Lexical (Keyword: KEYWORD) : LEXICAL =
     struct
       datatype token = Key of string
@@ -35,52 +36,52 @@
 
       fun member (x:string, l) = List.exists (fn y => x = y) l;
 
-      fun alphaTok a =
-          if member(a, Keyword.alphas) then Key(a) else Id(a);
+      fun alphaToken x =
+          if member(x, Keyword.alphas) then Key(x) else Id(x);
 
-      (* scanning of a symbolic keyword *)
+      (* scans symbolic keywords *)
       fun symbolic (symbol, text) =
           case Substring.getc text of
               NONE            => (Key symbol, text)
-            | SOME (c, text1) =>
+            | SOME (x, text1) =>
                   if member(symbol, Keyword.symbols)
-                     orelse not (Char.isPunct c)
+                     orelse not (Char.isPunct x)
                   then (Key symbol, text)
-                  else symbolic (symbol ^ String.str c, text1);
+                  else symbolic (symbol ^ String.str x, text1);
 
-      (* Scanning a substring into a list of tokens *)
+      (* transforms substring into a list of tokens *)
       fun scanning (tokens, text) =
           case Substring.getc text of
               (* end of substring *)
               NONE            => rev tokens
-            | SOME (c, text1) =>
-                if Char.isAlphaNum c
+            | SOME (x, text1) =>
+                if Char.isAlphaNum x
                    (* identifier or keyword *)
                    then let val (id, text2) = Substring.splitl Char.isAlphaNum text
-                            val token = alphaTok (Substring.string id)
+                            val token = alphaToken (Substring.string id)
                         in
                           scanning (token::tokens, text2)
                         end
-                else if Char.isPunct c
+                else if Char.isPunct x
                 (* special symbol *)
-                then let val (token, text2) = symbolic (String.str c, text1)
+                then let val (token, text2) = symbolic (String.str x, text1)
                      in
                        scanning (token::tokens, text2)
                      end
-                (* ignore spaces, line breaks, control characters *)
+                (* ignores whitespace: spaces, line breaks, control characters *)
                 else
                      scanning (tokens, Substring.dropl (not o Char.isGraph) text);
 
-      fun scan a = scanning([], Substring.all a);
+      fun scan text = scanning([], Substring.all text);
     end;
 
   (*
      === Functional Parsers ===
-  
+
      Top-down recursive descent parsing via parsing combinators.
   *)
 
-  (* Infix directives: made globally *)
+  (* Infix directives: global declarations — descending order *)
   infix 6 $--;
   infix 5 --;
   infix 3 >>;
@@ -96,38 +97,68 @@
       val id : token list -> string * token list
 
       (* $key, where key = keyword *)
-      val $  : string -> token list -> string * token list
+      val $ : string -> token list -> string * token list
 
       (* empty *)
       val empty : 'a -> 'b list * 'a
 
-      (* alternative: px || py *)
+      (* choice: px || py *)
       val || : ('a -> 'b) * ('a -> 'b) -> 'a -> 'b
 
-      (* !!px: if px fails, throw a syntax error *)
+      (*
+         !! px
+
+         If px fails, throw a syntax error.
+      *)
       val !! : ('a -> 'b * 'c) -> 'a -> 'b * 'c
 
       (* sequence: px -- py *)
       val -- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> ('b * 'd) * 'e
 
-      (* key $-- px = $key -- px, where key = keyword *)
+      (*
+         key $-- px = $key -- px, where key = keyword
+
+         Parses a keyword followed by px. Either returns
+         the output of px or throws an error.
+      *)
       val $-- : string * (token list -> 'a * 'b) -> token list -> 'a * 'b
 
-      (* px >> fn: maps fn over the output of px *)
+      (*
+         px >> fn
+
+         Maps fn over the output of px.
+      *)
       val >> : ('a -> 'b * 'c) * ('b -> 'd) -> 'a -> 'd * 'c
 
-      (* repeat px: zero or more repetitions of px *)
+      (*
+         repeat px
+
+         Parses zero or more repetitions of px.
+      *)
       val repeat : ('a -> 'b * 'a) -> 'a -> 'b list * 'a
 
-      (* infixes px precedence apply: constructs infix parsers *)
+      (*
+         infixes px precedence apply
+         where px         = parser
+               precedence = fn operator -> binding-power
+               apply      = fn operator x y -> (operator x y)
+
+         Constructs parsers for infix operators.
+       *)
       val infixes :
           (token list -> 'a * token list) * (string -> int) *
           (string -> 'a -> 'a -> 'a) -> token list -> 'a * token list
 
-      (* reader px text: scans text then applies parser px to result *)
+      (*
+         reader px text
+
+         Transforms text into tokens. Applies parser px.
+         Ensures parser terminates at end of file.
+      *)
       val reader: (token list -> 'a * 'b list) -> string -> 'a
     end;
 
+  (* parser: tokens → τ × tokens, where τ = phrase *)
   functor Parsing (Lex: LEXICAL) : PARSE =
     struct
       type token = Lex.token;
@@ -135,24 +166,24 @@
       exception SyntaxErr of string;
 
       (* identifier parser *)
-      fun id (Lex.Id a::tokens) = (a, tokens)
+      fun id (Lex.Id x::tokens) = (x, tokens)
         | id tokens = raise SyntaxErr "Identifier expected";
 
       (* keyword parser *)
-      fun $a (Lex.Key b::tokens) = if a = b then (a, tokens) else raise SyntaxErr a
-        | $a _ = raise SyntaxErr "Symbol expected";
+      fun $x (Lex.Key y::tokens) = if x = y then (x, tokens) else raise SyntaxErr x
+        | $x _ = raise SyntaxErr "Symbol expected";
 
       (* empty parser *)
       fun empty tokens = ([], tokens);
 
-      (* alternative parser *)
+      (* choice parser combinator *)
       fun (px || py) tokens = px tokens handle SyntaxErr _ => py tokens;
 
-      (* error parser *)
+      (* error parser combinator *)
       fun !! px tokens = px tokens
           handle SyntaxErr message => raise Fail ("Syntax error: " ^ message);
 
-      (* sequence parser *)
+      (* sequence parser combinator *)
       fun (px -- py) tokens =
           let val (x, tokens2) = px tokens
               val (y, tokens3) = py tokens2
@@ -160,28 +191,21 @@
             ((x, y), tokens3)
           end;
 
-      (* map function *)
+      (* map function combinator *)
       fun (px >> f) tokens =
           let val (x, tokens2) = px tokens
           in
             (f x, tokens2)
           end;
 
-      (* keyword-phrase parser *)
+      (* keyword-phrase parser combinator *)
       fun (key $-- px) = ($key -- !!px >> #2);
 
-      (* repetition parser, zero or more *)
+      (* repeat parser combinator — zero or more *)
       fun repeat px tokens = (   px -- repeat px >> (op::)
                               || empty) tokens;
 
-      (*
-         infixes px precedence apply -> infix parser
-         where px = parser
-               precedence = fn operator -> binding
-               apply = fn operator x y -> (operator x y)
-
-         Constructs a parser for infix operators.
-      *)
+      (* infix parser combinator *)
       fun infixes (px, precedence, apply) =
         let fun over k tokens = next k (px tokens)
             and next k (x, Lex.Key(a)::tokens) =
@@ -193,9 +217,9 @@
           over 0
         end;
 
-      (* Scan and parse, checking that no tokens remain *)
-      fun reader px a =
-             (case px (Lex.scan a) of
+      (* parser *)
+      fun reader px text =
+             (case px (Lex.scan text) of
                   (x, []) => x
                 | (_, _::_) => raise SyntaxErr "Extra characters in phrase");
     end;
@@ -235,7 +259,7 @@
          ) toks
         and atom toks =
           (   $"'" -- id           >> (Var o op^)
-           || "(" $-- typ -- $")"  >> #1
+           || "(" $-- typ -- $ ")" >> #1
           ) toks;
       in
         val read = reader typ;
@@ -244,10 +268,10 @@
       (** Display **)
       local
         fun typ (Var a) = Pretty.str a
-          | typ (Con("->",[ty1,ty2])) = Pretty.blo(0, [atom ty1,
-                                                       Pretty.str " ->",
-                                                       Pretty.brk 1,
-                                                       typ ty2])
+          | typ (Con("->", [ty1, ty2])) = Pretty.blo(0, [atom ty1,
+                                                         Pretty.str " ->",
+                                                         Pretty.brk 1,
+                                                         typ ty2])
          and atom (Var a) = Pretty.str a
            | atom ty = Pretty.blo(1, [Pretty.str"(",
                                       typ ty,
@@ -364,7 +388,7 @@
           if List.exists (fn x => x = a) bs then rename (bs, a ^ "'") else  a;
 
       (* Remove leading lambdas; return bound variable names *)
-      fun strip (bs, Lambda.Abs(a,t)) =
+      fun strip (bs, Lambda.Abs(a, t)) =
             let val b = rename (vars t, a)
             in
               strip (b::bs, Lambda.subst 0 (Lambda.Free b) t)
@@ -422,7 +446,7 @@
       fun headNF (Lambda.Abs(a, t)) = Lambda.Abs(a, headNF t)
         | headNF (Lambda.Apply(t1, t2)) =
                     (case headNF t1 of
-                         Lambda.Abs(a,t) => headNF(Lambda.subst 0 t2 t)
+                         Lambda.Abs(a, t) => headNF(Lambda.subst 0 t2 t)
                        | u1 => Lambda.Apply(u1, t2))
         | headNF t = t;
 
