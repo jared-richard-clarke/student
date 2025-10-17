@@ -224,66 +224,12 @@
                 | (_, _::_) => raise SyntaxErr "Extra characters in phrase");
     end;
 
-  (**** Example: Parsing and Displaying Types ****)
+  (*
+     === Lambda Terms ===
 
-  signature TYPE =
-    sig
-      datatype t = Con of string * t list
-                 | Var of string
-      val pr : t -> unit
-      val read : string -> t
-    end;
-
-  structure LamKey =
-    struct
-      val alphas = []
-      and symbols = ["(", ")", "'", "->"]
-    end;
-  structure LamLex = Lexical (LamKey);
-  structure LamParsing = Parsing (LamLex);
-
-
-  structure Type : TYPE =
-    struct
-      datatype t = Con of string * t list
-                 | Var of string;
-
-      (** Parsing **)
-      local
-        fun makeFun (ty1, ty2) = Con("->", [ty1, ty2]);
-        open LamParsing
-
-        fun typ toks =
-         (   atom -- "->" $-- typ  >> makeFun
-          || atom
-         ) toks
-        and atom toks =
-          (   $"'" -- id           >> (Var o op^)
-           || "(" $-- typ -- $ ")" >> #1
-          ) toks;
-      in
-        val read = reader typ;
-      end;
-
-      (** Display **)
-      local
-        fun typ (Var a) = Pretty.str a
-          | typ (Con("->", [ty1, ty2])) = Pretty.blo(0, [atom ty1,
-                                                         Pretty.str " ->",
-                                                         Pretty.brk 1,
-                                                         typ ty2])
-         and atom (Var a) = Pretty.str a
-           | atom ty = Pretty.blo(1, [Pretty.str"(",
-                                      typ ty,
-                                      Pretty.str")"]);
-      in
-        fun pr ty = Pretty.pr (TextIO.stdOut, typ ty, 50)
-      end
-  end;
-
-  (**** Lambda-terms.
-        Bound variables are indicated by depth index,
-        free variables by name. ****)
+     index -> bound variables
+     name  -> free variables
+  *)
 
   signature LAMBDA =
     sig
