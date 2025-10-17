@@ -14,9 +14,9 @@
   (* Input to LexicalFUN *)
   signature KEYWORD =
     sig
-      (* alphanumeric keywords, greedy match *)
+      (* alphanumeric keywords — greedy match *)
       val alphas: string list
-      (* symbolic keywords, non-greedy match *)
+      (* symbolic keywords — non-greedy match *)
       and symbols: string list
     end;
 
