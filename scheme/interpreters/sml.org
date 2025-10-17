@@ -9,12 +9,14 @@
 ** Lexer, Parser, Printer, and Evaluator
 
 #+begin_src sml
-  (**** Lexical Analysis -- Scanning ****)
+  (* === Lexical Analysis | Scanning === *)
 
   (* Input to LexicalFUN *)
   signature KEYWORD =
     sig
+      (* alphanumeric keywords, greedy match *)
       val alphas: string list
+      (* symbolic keywords, non-greedy match *)
       and symbols: string list
     end;
 
@@ -39,7 +41,7 @@
       (* scanning of a symbolic keyword *)
       fun symbolic (symbol, text) =
           case Substring.getc text of
-              NONE => (Key symbol, text)
+              NONE            => (Key symbol, text)
             | SOME (c, text1) =>
                   if member(symbol, Keyword.symbols)
                      orelse not (Char.isPunct c)
@@ -50,7 +52,7 @@
       fun scanning (tokens, text) =
           case Substring.getc text of
               (* end of substring *)
-              NONE => rev tokens
+              NONE            => rev tokens
             | SOME (c, text1) =>
                 if Char.isAlphaNum c
                    (* identifier or keyword *)
@@ -72,7 +74,11 @@
       fun scan a = scanning([], Substring.all a);
     end;
 
-  (**** Parsing functionals ****)
+  (*
+     === Functional Parsers ===
+  
+     Top-down recursive descent parsing via parsing combinators.
+  *)
 
   (* Infix directives: made globally *)
   infix 6 $--;
