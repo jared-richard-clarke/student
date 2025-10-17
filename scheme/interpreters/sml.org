@@ -20,14 +20,16 @@
 
   signature LEXICAL =
     sig
-      datatype token = Id of string | Key of string
+      datatype token = Id of string
+                     | Key of string
       val scan : string -> token list
     end;
 
   (* All characters are covered; whitespace is ignored. *)
   functor Lexical (Keyword: KEYWORD) : LEXICAL =
     struct
-      datatype token = Key of string | Id of string;
+      datatype token = Key of string
+                     | Id of string;
 
       fun member (x:string, l) = List.exists (fn y => x = y) l;
 
@@ -160,7 +162,8 @@
 
   signature TYPE =
     sig
-      datatype t = Con of string * t list | Var of string
+      datatype t = Con of string * t list
+                 | Var of string
       val pr : t -> unit
       val read : string -> t
     end;
