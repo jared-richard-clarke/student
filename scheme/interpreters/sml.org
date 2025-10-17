@@ -27,7 +27,7 @@
       val scan : string -> token list
     end;
 
-  (* All characters are covered; whitespace is ignored. *)
+  (* Consume characters. Ignore whitespace. *)
   functor Lexical (Keyword: KEYWORD) : LEXICAL =
     struct
       datatype token = Key of string
