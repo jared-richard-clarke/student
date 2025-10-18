@@ -100,7 +100,7 @@
       (* choice: px || py *)
       val || : ('a -> 'b) * ('a -> 'b) -> 'a -> 'b
       (*
-         !! px
+         !!px
 
          If px fails, throws a syntax error.
       *)
@@ -114,11 +114,7 @@
          the output of px or throws an error.
       *)
       val $-- : string * (token list -> 'a * 'b) -> token list -> 'a * 'b
-      (*
-         px >> fn
-
-         Maps fn over the output of px.
-      *)
+      (* map: px >> fn *)
       val >> : ('a -> 'b * 'c) * ('b -> 'd) -> 'a -> 'd * 'c
       (*
          repeat px
