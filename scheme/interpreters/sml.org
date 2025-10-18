@@ -219,7 +219,7 @@
   structure LamKey =
     struct
       val alphas = []
-      and symbols = ["(", ")", "'", "->"]
+      and symbols = []
     end;
 
   structure LamLex = Lexical (LamKey);
