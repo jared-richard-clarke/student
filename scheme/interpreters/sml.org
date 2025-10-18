@@ -90,40 +90,48 @@
   signature PARSE =
     sig
       exception SyntaxErr of string
+
       type token
+  
       (* identifier *)
       val id : token list -> string * token list
+  
       (* $key, where key = keyword *)
       val $ : string -> token list -> string * token list
+  
       (* empty *)
       val empty : 'a -> 'b list * 'a
+  
       (* choice: px || py *)
       val || : ('a -> 'b) * ('a -> 'b) -> 'a -> 'b
-      (*
-         !!px
+  
+      (* !!px
 
          If px fails, throws a syntax error.
       *)
       val !! : ('a -> 'b * 'c) -> 'a -> 'b * 'c
+  
       (* sequence: px -- py *)
       val -- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> ('b * 'd) * 'e
-      (*
-         key $-- px = $key -- px, where key = keyword
+  
+      (* key $-- px = $key -- px
+         where key = keyword
 
          Parses a keyword followed by px. Either returns
          the output of px or throws an error.
       *)
       val $-- : string * (token list -> 'a * 'b) -> token list -> 'a * 'b
+  
       (* map: px >> fn *)
       val >> : ('a -> 'b * 'c) * ('b -> 'd) -> 'a -> 'd * 'c
-      (*
-         repeat px
+  
+      (* repeat px
 
          Parses zero or more repetitions of px.
       *)
       val repeat : ('a -> 'b * 'a) -> 'a -> 'b list * 'a
-      (*
-         infixes px precedence apply
+  
+      (* infixes px precedence apply
          where px         = parser
                precedence = fn operator -> binding-power
                apply      = fn operator x y -> (operator x y)
@@ -133,8 +141,8 @@
       val infixes :
           (token list -> 'a * token list) * (string -> int) *
           (string -> 'a -> 'a -> 'a) -> token list -> 'a * token list
-      (*
-         reader px text
+  
+      (* reader px text
 
          Transforms text into tokens, then applies parser px.
          Ensures parser terminates at end of file.
@@ -246,9 +254,9 @@
                  | Apply of t * t;
 
       (* Convert occurrences of b to bound index i in a term *)
-      fun abstract i b (Free a) = if a = b then Bound i else Free a
-        | abstract i b (Bound j) = Bound j
-        | abstract i b (Abs(a, t)) = Abs(a, abstract (i + 1) b t)
+      fun abstract i b (Free a)      = if a = b then Bound i else Free a
+        | abstract i b (Bound j)     = Bound j
+        | abstract i b (Abs(a, t))   = Abs(a, abstract (i + 1) b t)
         | abstract i b (Apply(t, u)) = Apply(abstract i b t, abstract i b u);
 
       (* Abstraction over several free variables *)
@@ -259,54 +267,60 @@
 
       (* Shift a term's non-local indices by i; d is the depth of abstractions *)
       fun shift 0 d u = u
-        | shift i d (Free a) = Free a
-        | shift i d (Bound j) = if j >= d then Bound(j + i) else Bound j
-        | shift i d (Abs(a, t)) = Abs(a, shift i (d + 1) t)
+        | shift i d (Free a)      = Free a
+        | shift i d (Bound j)     = if j >= d then Bound(j + i) else Bound j
+        | shift i d (Abs(a, t))   = Abs(a, shift i (d + 1) t)
         | shift i d (Apply(t, u)) = Apply(shift i d t, shift i d u);
 
       (* Substitute u for bound variable i in a term t *)
-      fun subst i u (Free a)  = Free a
-        | subst i u (Bound j) =
-            (* locally bound *)
-            if j < i then Bound j
-            else if j = i then shift i 0 u
-            else (*j > i*) Bound(j - 1) (* non-local to t *)
-        | subst i u (Abs(a, t)) = Abs(a, subst (i + 1) u t)
+      fun subst i u (Free a)        = Free a
+        | subst i u (Bound j)       = (* locally bound *)
+                                      if j < i then Bound j
+                                      else if j = i then shift i 0 u
+                                      else (*j > i*) Bound(j - 1) (* non-local to t *)
+        | subst i u (Abs(a, t))     = Abs(a, subst (i + 1) u t)
         | subst i u (Apply(t1, t2)) = Apply(subst i u t1, subst i u t2);
 
       (* Substitution for free variables *)
-      fun inst env (Free a) = (inst env (StringDict.lookup(env,a))
-                               handle StringDict.E _ => Free a)
-        | inst env (Bound i) = Bound i
-        | inst env (Abs(a, t)) = Abs(a, inst env t)
+      fun inst env (Free a)        = (inst env (StringDict.lookup(env,a))
+                                      handle StringDict.E _ => Free a)
+        | inst env (Bound i)       = Bound i
+        | inst env (Abs(a, t))     = Abs(a, inst env t)
         | inst env (Apply(t1, t2)) = Apply(inst env t1, inst env t2);
     end;
 
-  (*** Parsing of lambda terms ***)
+  (* === Parsing Lambda Terms === *)
+  
   signature PARSE_TERM =
     sig
       val read: string -> Lambda.t
     end;
+  
+  (* Term = "%" Id Id* Term
+          | Atom Atom*
 
+     Atom = Id
+          | "(" Term ")"
+  *)
   structure ParseTerm : PARSE_TERM =
     struct
-      fun makeLambda ((b, bs), t) = Lambda.absList (b::bs, t);
+      fun makeLambda ((x, xs), t) = Lambda.absList (x::xs, t);
 
       open LamParsing
 
-      (* term/atom distinction prevents left recursion; grammar is ambiguous *)
-      fun term toks =
+      (* term/atom distinction prevents left recursion *)
+      fun term tokens =
         (   "%" $-- id -- repeat id -- "." $-- term >> makeLambda
          || atom -- repeat atom                     >> Lambda.applyList
-        ) toks
-      and atom toks =
+        ) tokens
+      and atom tokens =
         (   id                                      >> Lambda.Free
          || "(" $-- term -- $")"                    >> #1
-        ) toks;
+        ) tokens;
       val read = reader term;
     end;
 
-  (**** Pretty Printing of lambda terms ****)
+  (* === Pretty Printing Lambda Terms === *)
 
   signature DISPLAY_TERM =
     sig
@@ -358,7 +372,8 @@
       fun pr t = Pretty.pr (TextIO.stdOut, term t, 50);
     end;
 
-  (*** Evaluation of lambda terms ***)
+  (* === Evaluating Lambda Terms === *)
+  
   signature REDUCE =
     sig
       val eval : Lambda.t -> Lambda.t
@@ -397,7 +412,7 @@
         | args t = t;
     end;
 
-  (*** Using the structures ***)
+  (* === Constructing the Standard Environment === *)
 
   fun insertEnv ((a, b), env) =
       StringDict.insert (env, a, ParseTerm.read b);
@@ -434,7 +449,7 @@
      ("sub",  "%m n. n pre m"),
      ("ack",  "%m. m (%f n. n f (f 1)) suc"),
 
-        (* lists *)
+     (* lists *)
      ("nil",  "%z.z"),
      ("cons", "%x y. pair false (pair x y)"),
      ("null", "fst"),
@@ -451,7 +466,7 @@
      ("YV", "%f. (%x.f(%y.x x y)) (%x.f(%y.x x y))"),
      ("factV", "YV (%g n. (if (iszero n) (%y.1) (%y.mult n (g (pre n))))y)")];
 
-  (** lambda reduction examples **)
+  (* === program === *)
 
   fun stdRead a = Lambda.inst stdEnv (ParseTerm.read a);
   fun try evfn = DisplayTerm.pr o evfn o stdRead;
