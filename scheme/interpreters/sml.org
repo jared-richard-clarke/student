@@ -90,31 +90,23 @@
   signature PARSE =
     sig
       exception SyntaxErr of string
-
       type token
-
       (* identifier *)
       val id : token list -> string * token list
-
       (* $key, where key = keyword *)
       val $ : string -> token list -> string * token list
-
       (* empty *)
       val empty : 'a -> 'b list * 'a
-
       (* choice: px || py *)
       val || : ('a -> 'b) * ('a -> 'b) -> 'a -> 'b
-
       (*
          !! px
 
          If px fails, throws a syntax error.
       *)
       val !! : ('a -> 'b * 'c) -> 'a -> 'b * 'c
-
       (* sequence: px -- py *)
       val -- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> ('b * 'd) * 'e
-
       (*
          key $-- px = $key -- px, where key = keyword
 
@@ -122,21 +114,18 @@
          the output of px or throws an error.
       *)
       val $-- : string * (token list -> 'a * 'b) -> token list -> 'a * 'b
-
       (*
          px >> fn
 
          Maps fn over the output of px.
       *)
       val >> : ('a -> 'b * 'c) * ('b -> 'd) -> 'a -> 'd * 'c
-
       (*
          repeat px
 
          Parses zero or more repetitions of px.
       *)
       val repeat : ('a -> 'b * 'a) -> 'a -> 'b list * 'a
-
       (*
          infixes px precedence apply
          where px         = parser
@@ -148,7 +137,6 @@
       val infixes :
           (token list -> 'a * token list) * (string -> int) *
           (string -> 'a -> 'a -> 'a) -> token list -> 'a * token list
-
       (*
          reader px text
 
