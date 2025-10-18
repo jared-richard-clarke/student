@@ -108,7 +108,7 @@
       (*
          !! px
 
-         If px fails, throw a syntax error.
+         If px fails, throws a syntax error.
       *)
       val !! : ('a -> 'b * 'c) -> 'a -> 'b * 'c
 
@@ -152,7 +152,7 @@
       (*
          reader px text
 
-         Transforms text into tokens. Applies parser px.
+         Transforms text into tokens, then applies parser px.
          Ensures parser terminates at end of file.
       *)
       val reader: (token list -> 'a * 'b list) -> string -> 'a
@@ -223,6 +223,16 @@
                   (x, []) => x
                 | (_, _::_) => raise SyntaxErr "Extra characters in phrase");
     end;
+
+  structure LamKey =
+    struct
+      val alphas = []
+      and symbols = ["(", ")", "'", "->"]
+    end;
+
+  structure LamLex = Lexical (LamKey);
+
+  structure LamParsing = Parsing (LamLex);
 
   (*
      === Lambda Terms ===
@@ -444,7 +454,8 @@
      ("nil",  "%z.z"),
      ("cons", "%x y. pair false (pair x y)"),
      ("null", "fst"),
-     ("hd", "%z. fst(snd z)"),     ("tl", "%z. snd(snd z)"),
+     ("hd", "%z. fst(snd z)"),
+     ("tl", "%z. snd(snd z)"),
 
      (* recursion for call-by-name *)
      ("Y", "%f. (%x.f(x x))(%x.f(x x))"),
