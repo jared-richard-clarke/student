@@ -417,23 +417,23 @@
       StringDict.insert (env, a, ParseTerm.read b);
 
   val stdEnv = foldl insertEnv StringDict.empty
-    [(* booleans *)
-     ("true",  "%x y.x"),
-     ("false", "%x y.y"),
-     ("if",    "%p x y. p x y"),
+    [(* === booleans === *)
+     ("true",  "%x y.x"),        (* true  ≡ λx y.x *)
+     ("false", "%x y.y"),        (* false ≡ λx y.y *)
+     ("if",    "%p x y. p x y"), (* if    ≡ λp x y.p x y *)
 
-     (* ordered pairs *)
-     ("pair", "%x y f.f x y"),
-     ("fst",  "%p.p true"),
-     ("snd",  "%p.p false"),
+     (* === ordered pairs === *)
+     ("pair", "%x y f.f x y"), (* pair ≡ λx y f.f x y *)
+     ("fst",  "%p.p true"),    (* fst  ≡ λp.p true *)
+     ("snd",  "%p.p false"),   (* snd  ≡ λp.p false *)
 
-     (* natural numbers *)
-     ("suc",    "%n f x. n f (f x)"),
-     ("iszero", "%n. n (%x.false) true"),
-     ("0", "%f x. x"),
-     ("1", "suc 0"),
-     ("2", "suc 1"),
-     ("3", "suc 2"),
+     (* === natural numbers === *)
+     ("suc",    "%n f x. n f (f x)"),     (* suc ≡ λn f x.n f (f x) *)
+     ("iszero", "%n. n (%x.false) true"), (* iszero ≡ λn.n(λx.false)true *)
+     ("0", "%f x. x"), (* 0 ≡ λf x.x *)
+     ("1", "suc 0"),   (* 1 ≡ λf x.f x *)
+     ("2", "suc 1"),   (* 2 ≡ λf x.f (f x) *)
+     ("3", "suc 2"),   (* ... n ≡ λf x.fⁿ(x) *)
      ("4", "suc 3"),
      ("5", "suc 4"),
      ("6", "suc 5"),
@@ -441,31 +441,37 @@
      ("8", "suc 7"),
      ("9", "suc 8"),
 
-     (* operators *)
-     ("add",  "%m n f x. m f (n f x)"),
-     ("mult", "%m n f. m (n f)"),
-     ("expt",  "%m n f x. n m f x"),
-     ("prefn", "%f p. pair (f (fst p)) (fst p)"),
-     ("pre",   "%n f x. snd (n (prefn f) (pair x x))"),
-     ("sub",   "%m n. n pre m"),
+     (* === operators === *)
+     ("add",  "%m n f x. m f (n f x)"),                 (* add   ≡ λm n f x.m f (n f x) *)
+     ("mult", "%m n f. m (n f)"),                       (* mult  ≡ λm n f.m (n f) *)
+     ("expt",  "%m n f x. n m f x"),                    (* expt  ≡ λm n f x.n m f x *)
+     ("prefn", "%f p. pair (f (fst p)) (fst p)"),       (* prefn ≡ λf p.pair (f (fst p)) (fst p) *)
+     ("pre",   "%n f x. snd (n (prefn f) (pair x x))"), (* pre   ≡ λn f x.snd (n (prefn f) (pair x x)) *)
+     ("sub",   "%m n. n pre m"),                        (* sub   ≡ λm n.n pre m *)
      ("ack",   "%m. m (%f n. n f (f 1)) suc"),
 
-     (* lists *)
-     ("nil",  "%z.z"),
-     ("cons", "%x y. pair false (pair x y)"),
-     ("null", "fst"),
-     ("hd",   "%z. fst(snd z)"),
-     ("tl",   "%z. snd(snd z)"),
+     (* === lists === *)
+     ("nil",  "%z.z"),                        (* nil  ≡ λz.z *)
+     ("cons", "%x y. pair false (pair x y)"), (* cons ≡ λx y.pair false (pair x y) *)
+     ("null", "fst"),                         (* null ≡ fst *)
+     ("hd",   "%z. fst(snd z)"),              (* hd   ≡ λz.fst (snd z) *)
+     ("tl",   "%z. snd(snd z)"),              (* tl   ≡ λz.snd (snd z) *)
 
-     (* recursion for call-by-name *)
-     ("Y",       "%f. (%x.f(x x))(%x.f(x x))"),
-     ("fact",    "Y (%g n. if (iszero n) 1 (mult n (g (pre n))))"),
-     ("append",  "Y (%g z w. if (null z) w (cons (hd z) (g (tl z) w)))"),
+     (* === recursion for call-by-name === *)
+     (* Y ≡ λf.(λx .f (x x))(λx.f (x x)) *)
+     ("Y", "%f. (%x.f(x x))(%x.f(x x))"),
+     (* fact ≡ Y (λg n.if (iszero n) 1 (mult n (g (pre n)))) *)
+     ("fact", "Y (%g n. if (iszero n) 1 (mult n (g (pre n))))"),
+     (* append ≡ Y (λg z w.if (null z ) w (cons (hd z) (g (tl z) w))) *)
+     ("append", "Y (%g z w. if (null z) w (cons (hd z) (g (tl z) w)))"),
+     (* inflist ≡ Y (λg.cons MORE g) *)
      ("inflist", "Y (%z. cons MORE z)"),
 
-     (* recursion for call-by-value *)
-     ("YV",    "%f. (%x.f(%y.x x y)) (%x.f(%y.x x y))"),
-     ("factV", "YV (%g n. (if (iszero n) (%y.1) (%y.mult n (g (pre n))))y)")];
+     (* === recursion for call-by-value === *)
+     (* Z ≡ λf.(λx.f (λy.x x y)) (λx.f (λy.x x y)) *)
+     ("Z",    "%f. (%x.f(%y.x x y)) (%x.f(%y.x x y))"),
+     (* factZ ≡ Z (λg n.(if (iszero n) (λy.1) (λy.mult n (g (pre n)))) y) *)
+     ("factZ", "Z (%g n.(if (iszero n) (%y.1) (%y.mult n (g (pre n)))) y)")];
 
   (* === program === *)
 
