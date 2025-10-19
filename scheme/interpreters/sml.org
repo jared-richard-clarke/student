@@ -497,8 +497,8 @@ The pretty printer module as used by the lambda calculus program above.
     (* Add the lengths of the expressions until the next Break; if no Break then
        include "after", to account for text following this block. *)
     fun breakdist (Block(_, _, len)::es, after) = len + breakdist(es, after)
-      | breakdist (String s :: es, after)       = size s + breakdist (es, after)
-      | breakdist (Break _ :: es, after)        = 0
+      | breakdist (String s::es, after)         = size s + breakdist (es, after)
+      | breakdist (Break _::es, after)          = 0
       | breakdist ([], after)                   = after;
 
     fun pr (os, e, margin) =
@@ -506,14 +506,14 @@ The pretty printer module as used by the lambda calculus program above.
 
           fun blanks n = (TextIO.output(os, StringCvt.padLeft #" " n ""); space := !space - n)
 
-          fun newline () = (TextIO.output(os,"\n"); space := margin)
+          fun newline () = (TextIO.output(os, "\n"); space := margin)
 
           fun printing ([], _, _)                 = ()
             | printing (e::es, blockspace, after) =
                 (case e of
                    Block(bes, indent, len) => printing(bes, !space-indent, breakdist(es,after))
-                 | String s                => (TextIO.output(os,s); space := !space - size s)
-                 | Break len               => if len + breakdist(es,after) <= !space 
+                 | String s                => (TextIO.output(os, s); space := !space - size s)
+                 | Break len               => if len + breakdist(es, after) <= !space 
                                               then blanks len
                                               else (newline(); blanks(margin-blockspace));
              printing (es, blockspace, after))
