@@ -508,14 +508,14 @@ The pretty printer module as used by the lambda calculus program above.
 
           fun newline () = (TextIO.output(os,"\n"); space := margin)
 
-          fun printing ([], _, _) = ()
+          fun printing ([], _, _)                 = ()
             | printing (e::es, blockspace, after) =
-              (case e of
-                 Block(bes, indent, len) => printing(bes, !space-indent, breakdist(es,after))
-               | String s                => (TextIO.output(os,s); space := !space - size s)
-               | Break len               => if len + breakdist(es,after) <= !space 
-                                            then blanks len
-                                            else (newline(); blanks(margin-blockspace));
+                (case e of
+                   Block(bes, indent, len) => printing(bes, !space-indent, breakdist(es,after))
+                 | String s                => (TextIO.output(os,s); space := !space - size s)
+                 | Break len               => if len + breakdist(es,after) <= !space 
+                                              then blanks len
+                                              else (newline(); blanks(margin-blockspace));
              printing (es, blockspace, after))
       in
         printing([e], margin, 0);
