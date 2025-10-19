@@ -2,9 +2,9 @@
 
 ** Sources
 
-| source                                           | author              |
-|--------------------------------------------------+---------------------|
-| *ML for the Working Programmer*, Chapter 8 and 9 | Lawrence C. Paulson |
+| source                                           -| author              |
+|---------------------------------------------------+---------------------|
+| *ML for the Working Programmer*, Chapters 8 and 9 | Lawrence C. Paulson |
 
 ** Lexer, Parser, Printer, and Evaluator
 
