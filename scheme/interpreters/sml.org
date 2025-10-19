@@ -113,7 +113,7 @@
       (* sequence: px -- py *)
       val -- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> ('b * 'd) * 'e
 
-      (* key $-- px = $key -- px
+      (* key $-- px = $key -- !!px
          where key = keyword
 
          Parses a keyword followed by px. Either returns
