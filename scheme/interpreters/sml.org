@@ -14,9 +14,9 @@
   signature KEYWORD =
     sig
       (* alphanumeric keywords — greedy match *)
-      val alphas: string list
+      val alphas  : string list
       (* symbolic keywords — non-greedy match *)
-      and symbols: string list
+      and symbols : string list
     end;
 
   signature LEXICAL =
@@ -228,11 +228,11 @@
                  | Bound    of int
                  | Abstract of string * t
                  | Apply    of t * t
-      val abstract: int -> string -> t -> t
-      val absList: string list * t -> t
-      val applyList: t * t list -> t
-      val subst: int -> t -> t -> t
-      val inst: t StringDict.t -> t -> t
+      val abstract  : int -> string -> t -> t
+      val absList   : string list * t -> t
+      val applyList : t * t list -> t
+      val subst     : int -> t -> t -> t
+      val inst      : t StringDict.t -> t -> t
     end;
 
   structure Lambda : LAMBDA =
@@ -282,7 +282,7 @@
 
   structure LambdaKey =
     struct
-      val alphas = []
+      val alphas  = []
       and symbols = ["%", ".", "(", ")"]
     end;
 
@@ -292,7 +292,7 @@
 
   signature PARSE_TERM =
     sig
-      val read: string -> Lambda.t
+      val read : string -> Lambda.t
     end;
 
   (* Term = "%" Id Id* Term
@@ -323,9 +323,9 @@
 
   signature DISPLAY_TERM =
     sig
-      val rename : string list * string -> string
+      val rename   : string list * string -> string
       val stripAbs : Lambda.t -> string list * Lambda.t
-      val pr : Lambda.t -> unit
+      val pr       : Lambda.t -> unit
     end;
 
   structure DisplayTerm : DISPLAY_TERM =
@@ -375,10 +375,10 @@
 
   signature REDUCE =
     sig
-      val eval : Lambda.t -> Lambda.t
+      val eval    : Lambda.t -> Lambda.t
       val byValue : Lambda.t -> Lambda.t
-      val headNF : Lambda.t -> Lambda.t
-      val byName : Lambda.t -> Lambda.t
+      val headNF  : Lambda.t -> Lambda.t
+      val byName  : Lambda.t -> Lambda.t
     end;
 
   structure Reduce : REDUCE =
