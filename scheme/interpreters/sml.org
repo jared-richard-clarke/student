@@ -428,8 +428,8 @@
      ("snd",  "%p.p false"),   (* snd  ≡ λp.p false *)
 
      (* === natural numbers === *)
-     ("suc",    "%n f x. n f (f x)"),     (* suc ≡ λn f x.n f (f x) *)
-     ("iszero", "%n. n (%x.false) true"), (* iszero ≡ λn.n(λx.false)true *)
+     ("suc",    "%n f x. n f (f x)"),     (* suc    ≡ λn f x.n f (f x) *)
+     ("iszero", "%n. n (%x.false) true"), (* iszero ≡ λn.n( λx.false) true *)
      ("0", "%f x. x"), (* 0 ≡ λf x.x *)
      ("1", "suc 0"),   (* 1 ≡ λf x.f x *)
      ("2", "suc 1"),   (* 2 ≡ λf x.f (f x) *)
