@@ -314,7 +314,7 @@
         ) tokens
       and atom tokens =
         (   id                                      >> Lambda.Free
-         || "(" $-- term -- $")"                    >> #1
+         || "(" $-- term -- $ ")"                   >> #1
         ) tokens;
       val read = reader term;
     end;
@@ -323,9 +323,9 @@
 
   signature DISPLAY_TERM =
     sig
-      val rename: string list * string -> string
-      val stripAbs: Lambda.t -> string list * Lambda.t
-      val pr: Lambda.t -> unit
+      val rename : string list * string -> string
+      val stripAbs : Lambda.t -> string list * Lambda.t
+      val pr : Lambda.t -> unit
     end;
 
   structure DisplayTerm : DISPLAY_TERM =
