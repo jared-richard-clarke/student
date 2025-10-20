@@ -55,14 +55,14 @@
               NONE            => rev tokens
             | SOME (x, text1) =>
                 if Char.isAlphaNum x
-                   (* identifier or keyword *)
+                   (* identifier or keyword: greedy match (maximal munch) *)
                    then let val (id, text2) = Substring.splitl Char.isAlphaNum text
                             val token = alphanumeric (Substring.string id)
                         in
                           scanning (token::tokens, text2)
                         end
                 else if Char.isPunct x
-                (* special symbol *)
+                (* special symbol: non-greedy match *)
                 then let val (token, text2) = symbolic (String.str x, text1)
                      in
                        scanning (token::tokens, text2)
