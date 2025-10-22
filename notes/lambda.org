@@ -122,6 +122,20 @@ to the universal and existential quantifiers *∀* and *∃* of first-order logi
 
 If *FV(M) = ∅* then *M* is called a *combinator*.
 
+** Avoiding Variable Capture
+
+- M[x := N] :: Substitute *N* for every free occurrence of *x* in *M*.
+
+1. x[x := N] = N, y[x := N] = y if y ≠ x
+
+2. (M_{1}M_{2})[x := N] = (M_{1}[x := N])(M_{2}[x := N])
+
+3. (λx.M)[x := N] = λx.M
+
+4. (λy.M)[x := N] = λy.(M[x := N]) if y ∉ FV(N)
+
+5. If y ∈ FV(N), α-convert λy.M to λy'.M[y := y']
+
 ** Combinators
 
 An expression that contains no free variables is *closed*. Closed lambda expressions are also known as
