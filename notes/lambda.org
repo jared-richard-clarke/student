@@ -51,6 +51,22 @@
   ^                ^  ^    ^   ^    ^
   |                |  |    |   |    |
   That function of x that adds x to 7
+
+  === syntactic sugar: named constants ===
+
+  let x = B
+      y = C
+  in A
+
+  - equivalent ->
+
+  let x = B
+  in let y = C
+     in A
+
+  - equivalent ->
+
+  (λx.λy.A) B C
 #+end_example
 
 - λ-conversion :: Written *⇔*, the smallest reflexive, symmetric, transitive, and substitutive relation
