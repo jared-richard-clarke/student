@@ -60,6 +60,8 @@
 
 - redex :: Called the *reducible expression*, it is the left-hand side of rule *β* or *η*.
 
+- reduct :: An expression to which a redex reduces. *M[x := N]* is the reduct of *(λx.M) N*.
+
 - normal form :: A term containing no redex.
 
 - normalizing :: A term that can be converted to normal form.
