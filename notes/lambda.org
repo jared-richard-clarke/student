@@ -11,23 +11,33 @@
 | *Some History of Functional Programming Languages* | David Turner                           |
 | *The Lambda Calculus*                              | Stanford Encyclopedia of Philosophy    |
 
-** Introduction
+** Definitions
 
-- lambda calculus :: A formal system in mathematical logic for expressing computation based on function
-  abstraction and application using variable binding and substitution. Consists of constructing
-  lambda terms and performing reduction operations on them.
+- lambda calculus :: A formal system in mathematical logic for expressing computation
+  based on function abstraction and application using variable binding and substitution.
+  Consists of constructing lambda terms and performing reduction operations on them.
 
-- δ-rules :: Rules for an applied lambda calculus, where constants representing various types of primitive
-  data and operations are added for extended utility.
+- δ-rules :: Rules for an applied lambda calculus, where constants representing various types
+  of primitive data and operations are added for extended utility.
 
 #+begin_quote
-  "The lambda calculus originates from an endeavour by Church, Curry and others to define an alternative
-   foundation for mathematics based on functions rather than sets. The attempt foundered in the late 1920's
-   on paradoxes analogous to those which sank Cantor's untyped set theory. What remained after the
-   propositional parts of the theory were removed is a consistent equational theory of functions."
+  "The lambda calculus originates from an endeavour by Church, Curry and others
+   to define an alternative foundation for mathematics based on functions rather
+   than sets. The attempt foundered in the late 1920's on paradoxes analogous
+   to those which sank Cantor's untyped set theory. What remained after the
+   propositional parts of the theory were removed is a consistent equational
+   theory of functions."
 
   — *Some History of Functional Programming Languages*, David Turner
 #+end_quote
+
+For lambda terms *Λ*:
+
+1. If *x* is a variable, then *x ∈ Λ*.
+
+2. If *M*, *N ∈ Λ*, then *(M N) ∈ Λ*.
+
+3. If *x* is a variable and *M ∈ Λ*, then *(λx.M) ∈ Λ*.
 
 #+begin_example
   e ::= x                 # Variables
@@ -54,6 +64,9 @@
 
   === syntactic sugar: named constants ===
 
+  # Aside: "x" cannot be referenced inside "B"
+           because "B" is outside the scope of "x".
+
   let x = B
       y = C
   in A
@@ -65,8 +78,21 @@
      in A
 
   - equivalent ->
-
+  
   (λx.λy.A) B C
+
+  === syntactic sugar: recursion ===
+  
+  letrec v = B in A
+
+  - equivalent ->
+
+  let v = Y (λv.B) in A
+          where Y = (λf.(λx.f (x x)) (λx.f (x x)))
+
+  - equivalent ->
+
+  (λv.A) (Y (λv.B))
 #+end_example
 
 - λ-conversion :: Written *⇔*, the smallest reflexive, symmetric, transitive, and substitutive relation
@@ -90,11 +116,11 @@
 - Normal Order Theorem :: Stated informally: the normal form of a normalizing term can be found by
   repeatedly reducing its left-most (outer-most) redex.
 
-- Normal Order Reduction :: A sequential procedure — provided by the normal order theorem — that is
-  guaranteed to reach normal form for a normalizing expression. Substitutes arguments into function bodies
-  without first reducing any redexes inside their arguments.
+- Normal Order Reduction :: A sequential procedure — provided by the normal order theorem —
+  that is guaranteed to reach normal form for a normalizing expression. Substitutes arguments
+  into function bodies without first reducing any redexes inside their arguments.
 
-*** Reduction Operations
+*** Conversion and Reduction Operations
 
 - λx.M[x] → λy.M[y] :: α-conversion, which renames bound variables in an expression. Used to avoid
   name collisions.
@@ -102,17 +128,8 @@
 - (λx.M) N → M[x := N] :: β-reduction, which replaces bound variables with the argument expression
   in the body of the abstraction.
 
-** Formal Definition
-
-*** Definition
-
-For lambda terms *Λ*:
-
-1. If *x* is a variable, then *x ∈ Λ*.
-
-2. If *M*, *N ∈ Λ*, then *(M N) ∈ Λ*.
-
-3. If *x* is a variable and *M ∈ Λ*, then *(λx.M) ∈ Λ*.
+- λx.M → M, where x ∉ FV(M) :: η-conversion, which allows adding or dropping an abstraction
+  over a function as long as the variable within the abstraction is bound within the function.
 
 *** Notational Conventions
 
@@ -120,17 +137,20 @@ For lambda terms *Λ*:
 
 - Applications are assumed to be left associative: *M N P* implies *(M N) P*.
 
-- When all variables are single-letter, spaces in applications may be removed. *MNP* instead of *M N P*.
+- When all variables are single-letter, spaces in applications may be removed.
+  *MNP* instead of *M N P*.
 
-- The body of an abstraction extends as far right as possible: *λx.M N* means *λx.(M N)*, not *(λx.M) N*.
+- The body of an abstraction extends as far right as possible:
+  *λx.M N* means *λx.(M N)*, not *(λx.M) N*.
 
 - A sequence of abstractions can be contracted: *λx.λy.λz.N* equals *λxyz.N*.
 
-*** Free and Bound Variables
+** Free and Bound Variables
 
-The operator *λ* binds its variable wherever it occurs in the body of the abstraction. Variables that
-fall within the scope of an abstraction are *bound*. All other variables are *free*. *λ* is analogous
-to the universal and existential quantifiers *∀* and *∃* of first-order logic.
+The operator *λ* binds its variable wherever it occurs in the body of the abstraction.
+Variables that fall within the scope of an abstraction are *bound*. All other variables
+are *free*. *λ* is analogous to the universal and existential quantifiers *∀* and *∃*
+of first-order logic.
 
 | free                      | bound                     |
 |---------------------------+---------------------------|
@@ -140,7 +160,7 @@ to the universal and existential quantifiers *∀* and *∃* of first-order logi
 
 If *FV(M) = ∅* then *M* is called a *combinator*.
 
-** Avoiding Variable Capture
+*** Avoiding Variable Capture
 
 - M[x := N] :: Substitute *N* for every free occurrence of *x* in *M*.
 
@@ -169,60 +189,6 @@ An expression that contains no free variables is *closed*. Closed lambda express
 | *T = λx.λy.x*                 | True                 |
 | *F = λx.λy.y*                 | False                |
 | *Y = λf.(λx.f(xx))(λx.f(xx))* | Fixed Point          |
-
-** Static and Dynamic Scope
-
-Scoping rules dictate how free variables are evaluated within an expression. With static
-scope, free variables of a term ~λx.e~ are interpreted according to the syntactic context in
-which the term ~λx.e~ occurs. With dynamic scope, free variables of ~λx.e~ are interpreted
-according to the environment in effect when ~λx.e~ is applied.
-
-The pairing of a function ~λx.e~ with an environment is called a *closure*. An *environment*
-is a partial function with a finite domain from names to values.
-
-#+begin_src scheme
-  ;; === Extended Lambda Calculus ===
-  ;;
-  ;; static scope: f 2 -> 4
-  ;; dynamic scope: f 2 -> 3
-  ;;
-  ;; let y = 2 in
-  ;; let f = λx.x + y in
-  ;; let y = 1 in
-  ;; f 2
-
-  ;; === Scheme: Static Scope ===
-
-  (let ([y 2])
-    (let ([f (lambda (x) (+ x y))])
-      (let ([y 1])
-        (f 2))))
-#+end_src
-
-*** Static Scope
-
-1. The outer ~y~ is bound to ~2~.
-
-2. The ~f~ is bound to ~λx.x + y~. Since ~y~ is statically bound, this will always be
-   equivalent to ~λx.x + 2~.
-
-3. The inner ~y~ is bound to ~1~.
-
-4. When evaluating the expression ~f 2~, free variables in the body of ~f~ are evaluated
-   using the environment in which ~f~ was defined. In that environment, ~y~ was bound to
-   ~2~, so that ~f 2~ reduces to ~2 + 2~.
-
-*** Dynamic Scope
-
-1. The outer ~y~ is bound to ~2~.
-
-2. The ~f~ is bound to ~λx.x + y~. The occurrence of ~y~ in the body of ~f~ is not locked
-   to the outer declaration of ~y~.
-
-3. The inner ~y~ is bound to ~1~.
-
-4. When evaluating the expression ~f 2~, free variables in the body of ~f~ are evaluated using
-   the environment of the call, in which ~y~ is ~1~. Therefore ~f 2~ reduces to ~2 + 1~.
 
 ** Encoding Datatypes
 
@@ -310,11 +276,11 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
 
 #+begin_example
   === Y Combinator ===
-  
+
   Y := λf.(λx.f (x x)) (λx.f (x x))
 
   === fixed point ===
-  
+
   Y F
 
   ≡ (λf.(λx.f (x x)) (λx.f (x x))) F
