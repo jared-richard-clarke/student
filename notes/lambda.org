@@ -215,7 +215,7 @@ The basic lambda calculus may be used to model arithmetic, booleans, data struct
   Takes a Church numeral "n" and returns "n + 1".
   INC := λn.λf.λx.f (n f x)
 
-  Addition: "m+n-th" composition of "f"
+  Addition: "m + nth" composition of "f"
   ADD := λm.λn.λf.λx.m f (n f x)
   ADD := λm.λn.m INC n
 
