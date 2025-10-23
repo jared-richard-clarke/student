@@ -132,7 +132,7 @@ The purpose of denotational semantics of a language is to assign a value to ever
 in that language. An expression is a syntactic object, formed according to the syntax rules
 of the language. A value, by contrast, is an abstract mathematical object.
 
-A function, like *Eval*, maps syntactic expressions to mathematical values.
+The function *Eval* maps syntactic expressions to mathematical values.
 
 #+begin_example
   Eval[k] p      = A built-in operation that requires semantic equations to specify
