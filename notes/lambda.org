@@ -108,7 +108,7 @@ For lambda terms *Λ*:
 
 - normalizing :: A term that can be converted to normal form.
 
-- non-normalizing :: A term that cannoted be converted to normal form, such as
+- non-normalizing :: A term that *cannot* be converted to normal form, such as
   *(λx.xx)(λx.xx) →β (λx.xx)(λx.xx)*.
 
 - Church-Rosser Theorem :: If *A ⇔ B*, there is a term *C* such that *A ⇒ C* and *B ⇒ C*.
