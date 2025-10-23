@@ -1,5 +1,11 @@
 * The Lambda Calculus
 
+** Sources
+
+| source                                                   | author                |
+|----------------------------------------------------------+-----------------------|
+| *The Implementation of Functional Programming Languages* | Simon L. Peyton Jones |
+
 ** Lambda Expression Syntax
 
 For this particular lambda calculus:
@@ -17,8 +23,8 @@ For this particular lambda calculus:
                |   λ<variable>.<expression> # Lambda abstraction
 #+end_example
 
-As opposed to the pure lambda calculus, an applied lambda calculus — such as the
-one in this book — can be extended with primitive constants and operations:
+As opposed to the pure lambda calculus, an applied lambda calculus can be extended
+with primitive constants and operations:
 
 1. arithmetic functions: (*+*, *-*, *\star{}*, */*)
 
@@ -33,7 +39,7 @@ one in this book — can be extended with primitive constants and operations:
 #+begin_example
   λx.+ x 7
 
-  -- reads ->
+  # - reads ->
 
   λ                x  .    +   x    7
   ^                ^  ^    ^   ^    ^
@@ -145,7 +151,7 @@ A function, like *Eval*, maps syntactic expressions to mathematical values.
 #+end_example
 
 ** The Enriched Lambda Calculus
-  
+
 #+begin_example
   <expression> ::= <constant>
                |   <variable>
@@ -169,7 +175,7 @@ A function, like *Eval*, maps syntactic expressions to mathematical values.
                              <pattern>
 #+end_example
 
-** *let* Semantics
+*** *let* Semantics
 
 #+begin_example
   let v = B in E ≡ (λv.E) B
@@ -213,14 +219,14 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   λx.(λy.(λz.(z) (* x y)) 4) 3
 #+end_example
 
-** *letrec* Semantics
+*** *letrec* Semantics
 
 #+begin_example
   letrec v = B in E ≡ let v = Y (λv.B) in E
                       where Y = (λf.(λx.f (x x)) (λx.f (x x)))
 #+end_example
 
-** Example Translation
+*** Example Translation
 
 #+begin_example
   # definition
@@ -239,7 +245,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   (λaverage.(average 2 (+ 3 5))) (λa.λb.(/ (+ a b) 2))
 #+end_example
 
-** *▯* Operator Semantics
+*** *▯* Operator Semantics
 
 - infix
 
