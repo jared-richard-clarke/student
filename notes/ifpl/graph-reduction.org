@@ -1,5 +1,11 @@
 * Graph Reduction: Program Representation
 
+** Sources
+
+| source                                                   | author                |
+|----------------------------------------------------------+-----------------------|
+| *The Implementation of Functional Programming Languages* | Simon L. Peyton Jones |
+
 ** Abstract Syntax Trees
 
 In all implementations of graph reduction, the expression to be evaluated is held
@@ -10,45 +16,45 @@ functions (such as ~+~, ~-~, ~*~), or variable names. The ~@~ sign is called the
 tag of the node, which indicates function application.
 
 #+begin_example
-=== expression ===
-(+ 7 (* 7 11))
+  === expression ===
+  (+ 7 (* 7 11))
 
-=== syntax tree ===
-      @
-   /     \
-  @       @
- / \     / \
-+   7   @   11 
+  === syntax tree ===
+        @
+     /     \
+    @       @
+   / \     / \
+  +   7   @   11
+         / \
+        *   7
+
+  === expression ===
+  (CONS E1 E2)
+
+  === syntax tree ===
+        @
        / \
-      *   7
-
-=== expression ===
-(CONS E1 E2)
-
-=== syntax tree ===
-      @
+      @   E2
      / \
-    @   E2
-   / \
-CONS  E1
+  CONS  E1
 
-=== CONS Cell ===
-  :
- / \
-E1 E2
+  === CONS Cell ===
+    :
+   / \
+  E1 E2
 #+end_example
 
 ** The Graph
 
 The process of reduction performs successive transformations on the syntax tree. During
-this process the /tree/ becomes a /graph/. The term "graph" here meaning a network
-of nodes connected together by /directed edges/. A graph differs from a tree in that
+this process the *tree* becomes a *graph*. The term *graph* here meaning a network
+of nodes connected together by *directed edges*. A graph differs from a tree in that
 two edges can point to the same node.
 
-*** Concrete Representations
+** Concrete Representations
 
 In a typical implementation each node of the tree would be represented by a small
-contiguous area of store, called a cell. A cell holds a /tag/, which tells the type
+contiguous area of store, called a cell. A cell holds a *tag*, which tells the type
 of the cell and two or more fields. Many implement fixed-size cell with two fields, but
 some have variable-sized cells.
 
@@ -56,11 +62,11 @@ If the implementation supports only fixed-size cells, then the structure must be
 implemented as a linked collection of cells.
 
 #+begin_example
-=== cell ===
-| tag | field 1 | field 2 |
+  === cell ===
+  | tag | field 1 | field 2 |
 
-    where field = | Pointer | -> Another cell
-       or field = | data    |	    	      
+      where field = | Pointer | -> Another cell
+         or field = | data    |
 #+end_example
 
 ** Compile-Time and Run-Time Checking
@@ -87,36 +93,36 @@ canidates for unboxed representation are integers, booleans, characters, and bui
 operators.
 
 #+begin_example
-=== expression ===
-(+ 7 11)
+  === expression ===
+  (+ 7 11)
 
-=== boxed ===
- ------------       -----------
-| @ | ptr |  | --> | N | 11 |  |
- ------------       -----------
-       |
-  +----+
-  V
- ------------       ----------
-| @ | ptr |  | --> | N | 7 |  |
- ------------       ----------
-       |
-  +----+        Tags: @ application
-  V                   P built-in
- ----------           N number
-| P | + |  |
- ----------
+  === boxed ===
+   ------------       -----------
+  | @ | ptr |  | --> | N | 11 |  |
+   ------------       -----------
+         |
+    +----+
+    V
+   ------------       ----------
+  | @ | ptr |  | --> | N | 7 |  |
+   ------------       ----------
+         |
+    +----+        Tags: @ application
+    V                   P built-in
+   ----------           N number
+  | P | + |  |
+   ----------
 
-=== unboxed ===
- --------------
-| @ | ptr | 11 |
- --------------
-       |
-  +----+
-  V
- ----------- 
-| @ | + | 7 |
- -----------
+  === unboxed ===
+   --------------
+  | @ | ptr | 11 |
+   --------------
+         |
+    +----+
+    V
+   -----------
+  | @ | + | 7 |
+   -----------
 #+end_example
 
 ** Storage Management and Garbage Collection
@@ -130,7 +136,6 @@ A cell can be reused once there are no more pointers pointing to it. Cells with 
 pointers are said to be /garbage/. A garbage collector automatically identifies and
 recycles garbage cells.
 
-
 ** Selecting the Next Redex
 
 When the graph of a functional program has been loaded into a computer, an
@@ -143,21 +148,22 @@ in two distinct tasks:
 ** Lazy Evaluation
 
 In most imperative languages, arguments to a function are evaluated before the function
-is called — /call by value/. The inverse of this is /call by need/. In the context of
-functional languages, /call by need/ is often called /lazy evaluation/, since it
-postpones work until it becomes unavoidable. Conversely, /call by value/ is often
-called /eager evaluation/.
+is called — *call by value*. The inverse of this is *call by need*. In the context of
+functional languages, *call by need* is often called *lazy evaluation*, since it
+postpones work until it becomes unavoidable. Conversely, *call by value* is often
+called *eager evaluation*.
 
-/Call by need/ is rarely implemented in imperative languages for two main reasons:
+*Call by need* is rarely implemented in imperative languages for two main reasons:
 
 1. The evaluation of an argument my cause side-effects in other parts of the program.
    The exact time in which an argument is evaluated is crucial to the correct
    behavior of a program.
-2. /Call by need/ is hard to implement in a stack-based implementation.
 
-** Normal Order Reduction
+2. *Call by need* is hard to implement in a stack-based implementation.
 
-Any implementation of /lazy evaluation/ has two ingredients:
+*** Normal Order Reduction
+
+Any implementation of *lazy evaluation* has two ingredients:
 
 1. Arguments to functions should be evaluated only when their value is needed, not
    when the function is applied.
@@ -169,41 +175,44 @@ outermost, leftmost redex is reduced first.
 #+begin_src
   -- lazy evaluation   -> 7
   -- strict evaluation -> non-terminating
-  
+
   (λx.7) <infinity>
 #+end_src
 
-** Weak Head Normal Form
+*** Weak Head Normal Form
 
 #+begin_example
-A lambda expression is in weak head normal form if and only if it is of the form
+  A lambda expression is in weak head normal form if and only if it is of the form
 
-    F E1 E2 ... En
+      F E1 E2 ... En
 
-where n >= 0
-and   either F is a variable or data object
-      or F is a lambda abstraction or built-in function
-         and (F E1 E2 ... Em) is not a redex or any m >= n.
+  where n >= 0
+  and   either F is a variable or data object
+        or F is a lambda abstraction or built-in function
+           and (F E1 E2 ... Em) is not a redex or any m >= n.
 
-An expression has no top-level redex if and only if it is in weak head normal form.	 
+  An expression has no top-level redex if and only if it is in weak head normal form.
 #+end_example
 
-** Lazy Graph Reduction = Lazy Evaluation
+*** Lazy Graph Reduction = Lazy Evaluation
 
 - Normal order evaluation to weak head normal form
 - Pointer substitution
 - Updating redex root with the result
 
-** Reduction Algorithm So Far
+* Reduction Algorithm So Far
 
 1. Unwind the spine until something other than an application node is encountered.
+
 2. Examine the objects found at the tip of the spine.
    - A Data Object :: Check that it is not applied to anything. If not, the expression
-     is in /weak head normal form/ so STOP. Otherwise there is an ERROR.
+     is in *weak head normal form* so STOP. Otherwise there is an ERROR.
+
    - A Built-In Function :: Check the number of arguments available. If there are too
      few arguments, the expression is in WHNF so STOP. Otherwise evaluate any arguments
      required, execute the built-in function and overwrite the root of the redex with
      the result.
+
    - A Lambda Abstraction :: Check that there is an argument. If not, the expression is
      in WHNF so STOP. Otherwise instantiate the body of the lambda abstraction, substituting
      pointers to the arguments for the formal parameters, and overwrite the root of the
