@@ -51,7 +51,7 @@ this process the *tree* becomes a *graph*. The term *graph* here meaning a netwo
 of nodes connected together by *directed edges*. A graph differs from a tree in that
 two edges can point to the same node.
 
-** Concrete Representations
+*** Concrete Representations
 
 In a typical implementation each node of the tree would be represented by a small
 contiguous area of store, called a cell. A cell holds a *tag*, which tells the type
@@ -69,7 +69,7 @@ implemented as a linked collection of cells.
          or field = | data    |
 #+end_example
 
-** Compile-Time and Run-Time Checking
+*** Compile-Time and Run-Time Checking
 
 Some functional languages are polymorphically typed and type-checked at compile time.
 Only distinct tags are required to identify system objects uniquely and to distinguish
@@ -85,7 +85,7 @@ information to aid in debugging. This can cause problems in languages that allow
 user-defined types, because the number of distinct types is unbounded. An escape
 mechanism, such as tagged fields in user-defined types, is used to solve this problem.
 
-** Boxed and Unboxed Objects
+*** Boxed and Unboxed Objects
 
 Data objects that can be completely described by a single field are called /unboxed/,
 while those that are represented by one or more cells are called /boxed/. Typical
@@ -125,7 +125,7 @@ operators.
    -----------
 #+end_example
 
-** Storage Management and Garbage Collection
+*** Storage Management and Garbage Collection
 
 Cells are abstracted from an area of storage called the /heap/, which is simply an
 unordered collection of cells. The term heap emphasizes that the physical adjacency
