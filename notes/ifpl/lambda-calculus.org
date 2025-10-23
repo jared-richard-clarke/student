@@ -53,7 +53,7 @@ The body of a lambda abstraction extends as far to the right as possible:
 ** Bound and Free Variables
 
 The operator *λ* binds its variable wherever it occurs in the body of the abstraction.
-Variables that fall within the scope of an abstraction is *bound*. All other variables
+Variables that fall within the scope of an abstraction are *bound*. All other variables
 are free.
 
 - The set of free variables of a lambda expression *M* is denoted as *FV(M)*:
