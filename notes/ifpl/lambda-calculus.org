@@ -2,19 +2,20 @@
 
 ** Sources
 
-| source                                                   | author                |
-|----------------------------------------------------------+-----------------------|
-| *The Implementation of Functional Programming Languages* | Simon L. Peyton Jones |
+| source                                                   | author                              |
+|----------------------------------------------------------+-------------------------------------|
+| *The Implementation of Functional Programming Languages* | Simon L. Peyton Jones               |
+| *The Lambda Calculus*                                    | Stanford Encyclopedia of Philosophy |
 
-** Lambda Expression Syntax
+** Expression Syntax and Notational Conventions
 
 For this particular lambda calculus:
 
-- Lower case names denote variables: (*x*, *y*).
+- Lower case names denote variables: (*x*, *y*, ...).
 
-- Single, upper-case letters denote whole lambda expressions: (*M*, *E*).
+- Single, upper-case letters denote whole lambda expressions: (*M*, *E*, ...).
 
-- Symbols and upper-case identifiers denote built-in functions: (*AND*, *IF*, *+*, *CONS*).
+- Symbols and upper-case identifiers denote built-in functions: (*AND*, *IF*, *+*, *CONS*, ...).
 
 #+begin_example
   <expression> ::= <constant>               # Built-in constant
@@ -23,7 +24,7 @@ For this particular lambda calculus:
                |   λ<variable>.<expression> # Lambda abstraction
 #+end_example
 
-As opposed to the pure lambda calculus, an applied lambda calculus can be extended
+As opposed to the pure lambda calculus, an applied lambda calculus is extended
 with primitive constants and operations:
 
 1. arithmetic functions: (*+*, *-*, *\star{}*, */*)
@@ -34,35 +35,38 @@ with primitive constants and operations:
 
 4. data constructors: (*CONS*, *HEAD*, *TAIL*)
 
-** Lambda Abstraction
-
 #+begin_example
+  === abstraction ===
+  
   λx.+ x 7
-
-  # - reads ->
 
   λ                x  .    +   x    7
   ^                ^  ^    ^   ^    ^
   |                |  |    |   |    |
   That function of x that adds x to 7
-#+end_example
 
-The body of a lambda abstraction extends as far to the right as possible:
-*λx.M E* implies *λx.(M E)*, not *(λx.M) E*.
+  # Body extends rightward unless delimited by brackets.
+
+  λx.+ x 7 = λx.(+ x 7), not (λx.+) x 7 or (λx.+ x) 7
+
+  === application ===
+
+  # Arity 1, left associative.
+
+  + x 7 → ((+ x) 7)
+#+end_example
 
 ** Bound and Free Variables
 
 The operator *λ* binds its variable wherever it occurs in the body of the abstraction.
 Variables that fall within the scope of an abstraction are *bound*. All other variables
-are free.
+are *free*.
 
-- The set of free variables of a lambda expression *M* is denoted as *FV(M)*:
-
-  1. *FV(x) = {x}*, where *x* is a variable.
-
-  2. *FV(λx.M) = FV(M) \ {x}*
-
-  3. *FV(M N) = FV(M) ∪ FV(N)*
+| free                    | bound                   |
+|-------------------------+-------------------------|
+| FV(x) = {x}             | BV(x) = ∅               |
+| FV(M N) = FV(M) ∪ FV(N) | BV(M N) = BV(M) ∪ BV(N) |
+| FV(λx[M]) = FV(M) \ {x} | BV(λx[M]) = BV(M) ∪ {x} |
 
 #+begin_example
        +-- bound
@@ -74,22 +78,33 @@ are free.
     +-- free
 #+end_example
 
-** β-Conversion (Beta)
+** Conversion Rules
 
-*(λx.M) E ⟷ M[E/x]*
+*** λ-conversion
+
+Written *⇔*, the smallest reflexive, symmetric, transitive, and substitutive
+relation on terms *→α*, *→β* and *→η*.
+
+*** λ-reduction
+
+Written *⇒*, omits the symmetry of the previous definition for an oriented relation.
+
+*** β-Conversion (Beta)
+
+*(λx.M) E ⇔ M[E/x]*
 
 Denotes relation between function abstraction and application.
 
-** α-Conversion (Alpha)
+*** α-Conversion (Alpha)
 
-*λx.M[x] ⟷ λy.M[y]*
+*λx.M[x] ⇔ λy.M[y]*
 
 Prevents name clashes of formal parameters within lambda abstractions through
 consistent renaming.
 
-** η-Conversion (Eta)
+*** η-Conversion (Eta)
 
-*λx.M x ⟷ M* where *x ∉ FV(M)* and *M* denotes a function.
+*λx.M x ⇔ M* where *x ∉ FV(M)* and *M* denotes a function.
 
 Eliminates redundant lambda abstractions.
 
@@ -97,7 +112,7 @@ Eliminates redundant lambda abstractions.
 
 #+begin_example
   # === Y Combinator ===
-
+  
   Y := λf.(λx.f (x x)) (λx.f (x x))
 
   # === fixed point ===
@@ -115,7 +130,7 @@ Eliminates redundant lambda abstractions.
   Y F → F (Y F)
 #+end_example
 
-** Denotational Semantics of The Lambda Calculus
+** Denotational Semantics
 
 Two perspectives on functions:
 
@@ -125,8 +140,8 @@ Two perspectives on functions:
 2. A set of ordered argument-value pairs. A static or denotational view of a function
    as a fixed set of associations.
 
-*β*, *α*, and *η* are purely syntactic transformations. The lambda calculus can be regarded
-as a formal system for manipulating syntactic symbols.
+*β*, *α*, and *η* are purely syntactic transformations. The lambda calculus is a formal system
+for manipulating syntactic symbols.
 
 The purpose of denotational semantics of a language is to assign a value to every expression
 in that language. An expression is a syntactic object, formed according to the syntax rules
@@ -193,12 +208,12 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   # - equivalent ->
 
   let x = 3
-  in (let y = 4
-      in (* x y))
+  in let y = 4
+     in (* x y)
 
   # - equivalent ->
 
-  λx.λy.(* x y) 3 4
+  λx.(λy.(* x y)) 3 4
 
   # === example 2 ===
 
@@ -210,13 +225,13 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   # - equivalent ->
 
   let x = 3
-  in (let y = 4
-      in (let z = (* x y)
-          in z))
+  in let y = 4
+     in let z = (* x y)
+        in z
 
   # - equivalent ->
 
-  λx.(λy.(λz.(z) (* x y)) 4) 3
+  λx.(λy.(λz.z) (* x y)) 3 4
 #+end_example
 
 *** *letrec* Semantics
