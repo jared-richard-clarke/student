@@ -116,6 +116,12 @@ relation on terms *→α*, *→β* and *→η*.
 
 Written *⇒*, omits the symmetry of the previous definition for an oriented relation.
 
+- reflexive :: ∀x ∈ X : xRx, where xRx is infix notation for (x,x) ∈ R.
+
+- symmetric :: ∀x,y ∈ X : xRy → yRx, where xRy is infix notation for (x,y) ∈ R.
+
+- transitive :: ∀x,y,z ∈ X : (xRy ∧ yRx) → xRz, where xRy is infix notation for (x,y) ∈ R.
+
 *** β-Conversion (Beta)
 
 *(λx.M) E ⇔ M[E/x]*
