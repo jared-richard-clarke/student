@@ -84,7 +84,13 @@ are *free*.
 
   λx.E
 
-  # For example, the inner occurrence of "x" is not free in
+       +-- bound in abstraction
+  λx.+ x
+
+       +-- free in body
+    (+ x)
+
+  # The inner occurrence of "x" is not free in
   # the body of the outer "λx" abstraction.
 
     (λx.(λx.+ (- x 1)) x 2) 3
