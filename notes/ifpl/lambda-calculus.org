@@ -148,6 +148,10 @@ lambda abstraction.
 
 Eliminates redundant lambda abstractions.
 
+** δ-conversion
+
+Rules of conversion for built-in functions — each rule specific to its particular function.
+
 ** Recursion
 
 #+begin_example
