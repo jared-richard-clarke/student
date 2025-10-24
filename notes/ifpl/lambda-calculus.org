@@ -76,7 +76,34 @@ are *free*.
              +-- bound
   + x ((λx.+ x 7) 4)
     +-- free
+
+
+  === scope ===
+
+  # "x" is bound in "λx" but free in "E"
+
+  λx.E
+
+  # For example, the inner occurrence of "x" is not free in
+  # the body of the outer "λx" abstraction.
+
+    (λx.(λx.+ (- x 1)) x 2) 3
+
+  ⇒ (λx.+ (- x 1)) 3 2
+
+  ⇒ (+ (- 3 1) 2)
+
+  ⇒ 4
 #+end_example
+
+#+begin_quote
+  "The result of applying a lambda abstraction to an argument is an
+   instance of the body of the lambda abstraction in which free
+   occurrences of the formal parameter in the body are replaced with
+   copies of the argument."
+
+  — *The Implementation of Functional Programming Languages*, Simon L. Peyton Jones
+#+end_quote
 
 ** Conversion Rules
 
