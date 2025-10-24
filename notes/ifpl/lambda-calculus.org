@@ -113,43 +113,64 @@ are *free*.
 
 ** Conversion Rules
 
-*** λ-conversion
+- λ-conversion :: Written *⇔*, the smallest reflexive, symmetric, transitive, and substitutive
+  relation on terms *→α*, *→β* and *→η*.
 
-Written *⇔*, the smallest reflexive, symmetric, transitive, and substitutive
-relation on terms *→α*, *→β* and *→η*.
+  - reflexive :: ∀x ∈ X : xRx, where xRx is infix notation for (x,x) ∈ R.
 
-- reflexive :: ∀x ∈ X : xRx, where xRx is infix notation for (x,x) ∈ R.
+  - symmetric :: ∀x,y ∈ X : xRy → yRx, where xRy is infix notation for (x,y) ∈ R.
 
-- symmetric :: ∀x,y ∈ X : xRy → yRx, where xRy is infix notation for (x,y) ∈ R.
+  - transitive :: ∀x,y,z ∈ X : (xRy ∧ yRx) → xRz, where xRy is infix notation for (x,y) ∈ R.
 
-- transitive :: ∀x,y,z ∈ X : (xRy ∧ yRx) → xRz, where xRy is infix notation for (x,y) ∈ R.
+- λ-reduction :: Written *⇒*, omits the symmetry of the previous definition for an oriented relation.
 
-*** λ-reduction
+- β-Conversion (Beta) :: *(λx.M) E ⇔ M[E/x]*
 
-Written *⇒*, omits the symmetry of the previous definition for an oriented relation.
+  - Denotes relation between function abstraction and application.
 
-*** β-Conversion (Beta)
+- α-Conversion (Alpha) :: *(λx.M) ⇔ λy.M[y/x]*, where *y ∉ FV(M)*
 
-*(λx.M) E ⇔ M[E/x]*
+  - Prevents name clashes of formal parameters within lambda
+    abstractions through consistent renaming.
 
-Denotes relation between function abstraction and application.
+- η-Conversion (Eta) :: *λx.M x ⇔ M* where *x ∉ FV(M)* and *M* denotes a function.
 
-*** α-Conversion (Alpha)
+  - Eliminates redundant lambda abstractions.
 
-*(λx.M) ⇔ λy.M[y/x]*, where *y ∉ FV(M)*
+- δ-conversion :: Rules of conversion for built-in functions — each rule specific
+  to its particular function.
 
-Prevents name clashes of formal parameters within lambda abstractions through
-consistent renaming.
+** Reduction
 
-*** η-Conversion (Eta)
+- redex :: Called a *reducible expression*, it is the left-hand side of rule β or η.
 
-*λx.M x ⇔ M* where *x ∉ FV(M)* and *M* denotes a function.
+- reduct :: A term to which a redex reduces. *M[N/x]* is the reduct of *(λx.M) N*
 
-Eliminates redundant lambda abstractions.
+- normal form :: A term that contains no redex.
 
-*** δ-conversion
+- normalizing :: A term that can be converted to normal form.
 
-Rules of conversion for built-in functions — each rule specific to its particular function.
+- non-normalizing :: A term that *cannot* be converted to normal form,
+  such as *(λx.xx)(λx.xx) →β (λx.xx)(λx.xx)*.
+
+- Church-Rosser Theorem 1 :: If *E_{1} ⇔ E_{2}*, then there exists an expression *E*,
+  such that *E_{1} ⇒ E* and *E_{2} ⇒ E*.
+
+  - *corrollary*: No expression can be converted into two distinct normal forms.
+    Normal forms must be α-convertible. All reduction sequences that terminate
+    will reach the same result.
+
+  - *proof*: Suppose that *E ⇔ E_{1}* and *E ⇔ E_{2}*, where *E_{1}* and *E_{2}* are in
+    normal form. Then, *E_{1} ⇔ E_{2}* and, by CRT-1, there must exist an expression
+    *F*, such that *E_{1} ⇒ F* and *E_{2} ⇒ F*. But *E_{1}* and *E_{2}* have no redexes,
+    so *E_{1} = F = E_{2}*.
+
+- normal order reduction :: The leftmost, outermost redex should be reduced first.
+
+- Church-Rosser Theorem 2 :: If *E_{1} ⇒ E_{2}* is in normal form, then there exists
+  a normal order reduction sequence from *E_{1}* to *E_{2}*.
+
+- evaluation :: Successive reductions of redexes until an expression is in normal form.
 
 ** Recursion
 
