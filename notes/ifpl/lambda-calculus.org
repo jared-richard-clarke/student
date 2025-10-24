@@ -29,7 +29,7 @@ with primitive constants and operations:
 
 1. arithmetic functions: (*+*, *-*, *\star{}*, */*)
 
-2. constants: ((*0*, *1*, *2* ...), (*TRUE*, *FALSE*), ('*a*'*, '*b*', '*c*' ...), (*NIL*))
+2. constants: ((*0*, *1*, *2* ...), (*TRUE*, *FALSE*), ('*a*', '*b*', '*c*' ...), (*NIL*))
 
 3. logical functions: (*AND*, *OR*, *NOT*, *IF*)
 
