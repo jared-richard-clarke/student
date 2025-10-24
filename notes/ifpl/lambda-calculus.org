@@ -133,7 +133,8 @@ Denotes relation between function abstraction and application.
 *λx.M[x] ⇔ λy.M[y]*
 
 Prevents name clashes of formal parameters within lambda abstractions through
-consistent renaming.
+consistent renaming. New names must not occur free in the body of the original
+lambda abstraction.
 
 *** η-Conversion (Eta)
 
