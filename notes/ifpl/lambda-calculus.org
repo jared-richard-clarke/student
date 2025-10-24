@@ -136,11 +136,10 @@ Denotes relation between function abstraction and application.
 
 *** α-Conversion (Alpha)
 
-*λx.M[x] ⇔ λy.M[y]*
+*(λx.M) ⇔ λy.M[y/x]*, where *y ∉ FV(M)*
 
 Prevents name clashes of formal parameters within lambda abstractions through
-consistent renaming. New names must not occur free in the body of the original
-lambda abstraction.
+consistent renaming.
 
 *** η-Conversion (Eta)
 
@@ -148,7 +147,7 @@ lambda abstraction.
 
 Eliminates redundant lambda abstractions.
 
-** δ-conversion
+*** δ-conversion
 
 Rules of conversion for built-in functions — each rule specific to its particular function.
 
