@@ -184,7 +184,7 @@ An expression that contains no free variables is *closed*. Closed lambda express
 | *S = λx.λy.λz.xz(yz)*         | Substitute-and-apply |
 | *K = λx.λy.x*                 | Constant             |
 | *I = λx.x*                    | Identity             |
-| *B = λx.λy.λz.x(yz)*          | Non-trivial Identity |
+| *B = λx.λy.λz.x(yz)*          | Composition          |
 | *C = λx.λy.λz.xzy*            | Swap                 |
 | *T = λx.λy.x*                 | True                 |
 | *F = λx.λy.y*                 | False                |
