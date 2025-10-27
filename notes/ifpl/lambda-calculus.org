@@ -172,7 +172,7 @@ are *free*.
     *F*, such that *E_{1} ⇒ F* and *E_{2} ⇒ F*. But *E_{1}* and *E_{2}* have no redexes,
     so *E_{1} = F = E_{2}*.
 
-- normal order reduction :: The leftmost, outermost redex should be reduced first.
+- normal order reduction :: The leftmost, outermost redex reduces first.
 
 - Church-Rosser Theorem 2 :: If *E_{1} ⇒ E_{2}* is in normal form, then there exists
   a normal order reduction sequence from *E_{1}* to *E_{2}*.
