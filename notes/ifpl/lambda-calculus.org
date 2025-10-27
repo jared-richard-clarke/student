@@ -228,20 +228,31 @@ of the language. A value, by contrast, is an abstract mathematical object.
 The function *Eval* maps syntactic expressions to mathematical values.
 
 #+begin_example
-  Eval[k] p      = A built-in operation that requires semantic equations to specify
+  +-------------+           +--------+
+  | expressions | - Eval -> | values |
+  +-------------+           +--------+
+
+  Eval⟦k⟧​​ p      = A built-in operation that requires semantic equations to specify
                    both its meaning and imply its operational behavior.
 
-  Eval[x] p      = p x
+  Eval⟦x⟧​ p      = p x
 
-  Eval[E1, E2] p = (Eval[E1] p) (Eval[E2] p)
+  Eval⟦E1, E2⟧​ p = (Eval⟦E1⟧​ p) (Eval⟦E2⟧​ p)
 
-  Eval[λx.E] p a = Eval[E] p[x=a]
+  Eval⟦λx.E⟧​ p a = Eval⟦E⟧​ p[x = a]
+                   where p[x = a] x = a
+                         p[x = a] y = p y
 
-      where k          is a constant or built-in function
-            x          is a variable
-            E, E1, E2  are expressions
-            p          is the environment, a function that maps variables to values
+  Eval⟦<non-normalizing>⟧ = ⊥​
+
+  where k          = a constant or built-in function
+        x          = a variable
+        E, E1, E2  = expressions
+        p          = the environment, a function that maps variables to values
+        ⊥          = non-terminating
 #+end_example
+
+- strict :: A function *f* is strict if and only if *f ⊥ = ⊥*.
 
 ** The Enriched Lambda Calculus
 
