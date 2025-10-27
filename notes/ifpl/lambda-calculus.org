@@ -127,19 +127,20 @@ are *free*.
 
 - λ-reduction :: Written *⇒*, omits the symmetry of the previous definition for an oriented relation.
 
-- β-Conversion (Beta) :: *(λx.M) E ⇔ M[E/x]*
+- β-conversion (Beta) :: *(λx.M) E ⇔ M[E/x]*
 
   - Denotes the substitutive relation between function abstraction and application.
 
   - The reductive expression *(λx.M) E ⇒ M[E/x]* reads, "Substitute expression *E*
     for all *free* occurrences of variable *x* in expression *M*".
 
-- α-Conversion (Alpha) :: *(λx.M) ⇔ λy.M[y/x]*, where *y ∉ FV(M)*
+- α-conversion (Alpha) :: *(λx.M) ⇔ λy.M[y/x]*, where *y ∉ FV(M)*
 
-  - Prevents name clashes of formal parameters within lambda
-    abstractions through consistent renaming.
+  - β-reduction is valid provided the free variables of an argument do not
+    clash with any formal parameters in the body of the lambda abstraction.
+    α-conversion renames bound variables to prevent variable name capture.
 
-- η-Conversion (Eta) :: *λx.M x ⇔ M* where *x ∉ FV(M)* and *M* denotes a function.
+- η-conversion (Eta) :: *λx.M x ⇔ M* where *x ∉ FV(M)* and *M* denotes a function.
 
   - Eliminates redundant lambda abstractions.
 
