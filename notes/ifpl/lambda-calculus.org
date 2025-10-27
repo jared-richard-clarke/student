@@ -130,8 +130,8 @@ are *free*.
 
   - Denotes the substitutive relation between function abstraction and application.
 
-  - The expression *(λx.M) E ⇒ M[E/x]* reads, "Substitute expression *E* for all *free*
-    occurrences of variable *x* in expression *M*".
+  - The reductive expression *(λx.M) E ⇒ M[E/x]* reads, "Substitute expression *E*
+    for all *free* occurrences of variable *x* in expression *M*".
 
 - α-Conversion (Alpha) :: *(λx.M) ⇔ λy.M[y/x]*, where *y ∉ FV(M)*
 
