@@ -119,11 +119,11 @@ are *free*.
 - λ-conversion :: Written *⇔*, the smallest reflexive, symmetric, transitive, and substitutive
   relation on terms *→α*, *→β* and *→η*.
 
-  - reflexive :: ∀x ∈ X : xRx, where xRx is infix notation for (x,x) ∈ R.
+  - reflexive :: ∀x ∈ X : xRx, where xRx is infix notation for (x, x) ∈ R.
 
-  - symmetric :: ∀x,y ∈ X : xRy → yRx, where xRy is infix notation for (x,y) ∈ R.
+  - symmetric :: ∀x∀y ∈ X : xRy → yRx, where xRy is infix notation for (x, y) ∈ R.
 
-  - transitive :: ∀x,y,z ∈ X : (xRy ∧ yRx) → xRz, where xRy is infix notation for (x,y) ∈ R.
+  - transitive :: ∀x∀y∀z ∈ X : (xRy ∧ yRx) → xRz, where xRy is infix notation for (x, y) ∈ R.
 
 - λ-reduction :: Written *⇒*, omits the symmetry of the previous definition for an oriented relation.
 
