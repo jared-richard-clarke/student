@@ -37,7 +37,7 @@ with primitive constants and operations:
 
 #+begin_example
   === abstraction ===
-  
+
   λx.+ x 7
 
   λ                x  .    +   x    7
@@ -45,9 +45,11 @@ with primitive constants and operations:
   |                |  |    |   |    |
   That function of x that adds x to 7
 
-  # Body extends rightward unless delimited by brackets.
+  # The scope of an abstraction, λ, extends
+  # as far to the right as possible — delimited
+  # only by brackets.
 
-  λx.+ x 7 = λx.(+ x 7), not (λx.+) x 7 or (λx.+ x) 7
+  λx.+ x 7 = (λx.+ x 7), not (λx.+) x 7 or (λx.+ x) 7
 
   === application ===
 
