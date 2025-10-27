@@ -6,6 +6,7 @@
 |----------------------------------------------------------+-------------------------------------|
 | *The Implementation of Functional Programming Languages* | Simon L. Peyton Jones               |
 | *The Lambda Calculus*                                    | Stanford Encyclopedia of Philosophy |
+| *Church's Thesis and Functional Programming*             | David Turner                        |
 
 ** Expression Syntax and Notational Conventions
 
