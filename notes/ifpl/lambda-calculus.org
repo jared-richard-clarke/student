@@ -128,7 +128,10 @@ are *free*.
 
 - β-Conversion (Beta) :: *(λx.M) E ⇔ M[E/x]*
 
-  - Denotes relation between function abstraction and application.
+  - Denotes the substitutive relation between function abstraction and application.
+
+  - The expression *(λx.M) E ⇒ M[E/x]* reads, "Substitute expression *E* for all *free*
+    occurrences of variable *x* in expression *M*".
 
 - α-Conversion (Alpha) :: *(λx.M) ⇔ λy.M[y/x]*, where *y ∉ FV(M)*
 
