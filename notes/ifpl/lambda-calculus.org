@@ -93,8 +93,8 @@ are *free*.
        +-- free in body
     (+ x)
 
-  # The inner occurrence of "x" is not free in
-  # the body of the outer "λx" abstraction.
+  # The inner "x" is not substituted for in the first reduction,
+  # since it is not free in the body of the outer "λx" abstraction.
 
     (λx.(λx.+ (- x 1)) x 2) 3
 
