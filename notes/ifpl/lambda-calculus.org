@@ -282,7 +282,11 @@ The function *Eval* maps syntactic expressions to mathematical values.
 *** *let* Semantics
 
 #+begin_example
-  let v = B in E ≡ (λv.E) B
+  let v = B in E
+
+  # - equivalent ->
+
+  (λv.E) B
 #+end_example
 
 As a matter of convenience, multiple definitions can be written in the same ~let~.
@@ -326,8 +330,17 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 *** *letrec* Semantics
 
 #+begin_example
-  letrec v = B in E ≡ let v = Y (λv.B) in E
-                      where Y = (λf.(λx.f (x x)) (λx.f (x x)))
+  letrec v = B in E
+
+  # - equivalent ->
+
+  let v = Y (λv.B) in E
+          where Y = λf.(λx.f (x x)) (λx.f (x x))
+
+ # - equivalent ->
+
+ (λv.E) (Y (λv.B))
+        where Y = λf.(λx.f (x x)) (λx.f (x x))
 #+end_example
 
 *** Example Translation
