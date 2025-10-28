@@ -233,7 +233,7 @@ The function *Eval* maps syntactic expressions to mathematical values.
   +-------------+           +--------+
 
   Eval⟦k⟧​​ p      = A built-in operation that requires semantic equations to specify
-                   both its meaning and imply its operational behavior.
+                  both its meaning and imply its operational behavior.
 
   Eval⟦x⟧​ p      = p x
 
