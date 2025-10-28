@@ -359,7 +359,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
     average 2 (+ 3 5)
 
   # plain lambda calculus
-  (λaverage.(average 2 (+ 3 5))) (λa.(λb./ (+ a b) 2))
+  (λaverage.(average 2 (+ 3 5))) λa.(λb./ (+ a b) 2)
 #+end_example
 
 *** *▯* Operator Semantics
