@@ -323,6 +323,63 @@ As a matter of convenience, multiple definitions can be written in the same ~let
         where Y = λf.(λx.f (x x)) (λx.f (x x))
 #+end_example
 
+*** *▯* Operator Semantics
+
+- infix
+
+- associative
+
+- identity = *FAIL*
+
+#+begin_example
+  a    ▯ b = a    if a ≠ ⊥ and a ≠ FAIL
+  FAIL ▯ b = b
+  ⊥    ▯ b = ⊥
+#+end_example
+
+** Miranda to Lambda
+
+*** Translation Scheme
+
+#+begin_example
+  === Miranda Program ===
+
+  +--------------+
+  | definition 1 |
+  | ...          |
+  | definition N |
+  |--------------|
+  | expression   |
+  +--------------+
+
+  === TE[expression] = translate expression ===
+
+  TE[k]           ≡ k
+
+  TE[v]           ≡ v
+
+  TE[E₁ E₂]       ≡ TE[E₁] TE[E₂]
+
+  TE[E₁ infix E₂] ≡ TE[infix] TE[E₁] TE[E₂]
+
+  TE[E₁ $v E₂]    ≡ TE[v] TE[E₁] TE[E₂]
+
+      where k      = literal constant or built-in operator
+            v      = variable
+            E₁, E₂ = expressions
+            infix  = built-in infix operator
+            $v     = function as infix operation
+
+  === TD[definition] = translate definition ===
+
+  TD[v = E]           ≡ v = TE[E]
+
+  TD[f v1 ... vn = E] ≡ f = λv1 ... λvn.TE[E]
+
+      where v, v1, vn, f = variables
+            E            = expression
+#+end_example
+
 *** Example Translation
 
 #+begin_example
@@ -340,18 +397,4 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
   # plain lambda calculus
   (λaverage.(average 2 (+ 3 5))) λa.(λb./ (+ a b) 2)
-#+end_example
-
-*** *▯* Operator Semantics
-
-- infix
-
-- associative
-
-- identity = *FAIL*
-
-#+begin_example
-  a    ▯ b = a    if a ≠ ⊥ and a ≠ FAIL
-  FAIL ▯ b = b
-  ⊥    ▯ b = ⊥
 #+end_example
