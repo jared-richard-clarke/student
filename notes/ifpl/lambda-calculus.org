@@ -323,7 +323,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
         where Y = λf.(λx.f (x x)) (λx.f (x x))
 #+end_example
 
-*** *▯* Operator Semantics
+*** ~▯~ Operator Semantics
 
 - infix
 
