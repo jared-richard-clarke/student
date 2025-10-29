@@ -279,7 +279,7 @@ The function *Eval* maps syntactic expressions to mathematical values.
                              <pattern>
 #+end_example
 
-*** *let* Semantics
+*** ~let~ Semantics
 
 #+begin_example
   let v = B in E
@@ -307,7 +307,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   λx.(λy.(* x y)) 3 4
 #+end_example
 
-*** *letrec* Semantics
+*** ~letrec~ Semantics
 
 #+begin_example
   letrec v = B in E
