@@ -292,8 +292,6 @@ The function *Eval* maps syntactic expressions to mathematical values.
 As a matter of convenience, multiple definitions can be written in the same ~let~.
 
 #+begin_example
-  # === example 1 ===
-
   let x = 3
       y = 4
   in (* x y)
@@ -307,24 +305,6 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   # - equivalent ->
 
   λx.(λy.(* x y)) 3 4
-
-  # === example 2 ===
-
-  let x = 3
-      y = 4
-      z = (* x y)
-  in z
-
-  # - equivalent ->
-
-  let x = 3
-  in let y = 4
-     in let z = (* x y)
-        in z
-
-  # - equivalent ->
-
-  λx.(λy.(λz.z) (* x y)) 3 4
 #+end_example
 
 *** *letrec* Semantics
