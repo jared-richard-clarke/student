@@ -20,9 +20,11 @@
           (sum sum (cdr xs))))))
 
 ;; === more generally ===
-;; Z-combinator: The strict form of the Y combinator, in that
-;; function application (g g) is wrapped in a thunk to prevent
-;; infinite recursion.
+;; Z = λf.(λg.f (λx.(g g) x)) (λg.f (λx.(g g) x))
+;;
+;; Z is the strict form of the Y combinator, in that
+;; function application (g g) is wrapped in a thunk
+;; to prevent infinite recursion.
 (define Z
   (lambda (f)
     ((lambda (g)
