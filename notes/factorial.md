@@ -225,6 +225,7 @@ function factorial (x)
 end
 
 -- === Z Combinator: The Y Combinator for Applicative Languages ===
+--
 -- let Z = λf.(λx.f (λv.(x x) v)) (λx.f (λv.(x x) v))
 --     F = λf.λn. if n = 0 then 1 else n x f(n - 1)
 -- in
