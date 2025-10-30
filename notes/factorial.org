@@ -392,8 +392,8 @@ It is therefore an excellent tool for comparing the syntax of different programm
   ;; Y := λf.(λx.f (x x)) (λx.f (x x))
   ;; Z := λf.(λg.f (λx.(g g) x)) (λg.f (λx.(g g) x))
   ;;
-  ;; Complete strict definition in that the Y combinator is wrapped in a thunk
-  ;; to prevent immediate and infinite evaluation.
+  ;; Strict definition in that function application (g g) is wrapped
+  ;; in a thunk to prevent immediate and infinite evaluation.
   (define Z
     (lambda (f)
       ((lambda (g)
