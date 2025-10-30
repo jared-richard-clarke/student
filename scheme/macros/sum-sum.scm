@@ -4,17 +4,36 @@
 ;; recursion in Scheme.
 
 ;; === let expression ===
-(let ([sum (lambda (sum lst)
-             (if (null? lst)
+(let ([sum (lambda (sum xs)
+             (if (null? xs)
                  0
-                 (+ (car lst)
-                    (sum sum (cdr lst)))))])
+                 (+ (car xs)
+                    (sum sum (cdr xs)))))])
   (sum sum '(1 2 3 4 5 6 7)))
 
 ;; === lambda expansion ===
 ((lambda (sum) (sum sum '(1 2 3 4 5 6 7)))
- (lambda (sum lst)
-   (if (null? lst)
+ (lambda (sum xs)
+   (if (null? xs)
        0
-       (+ (car lst)
-          (sum sum (cdr lst))))))
+       (+ (car xs)
+          (sum sum (cdr xs))))))
+
+;; === more generally ===
+;; Z-combinator: The strict form of the Y combinator, in that
+;; function application (g g) is wrapped in a thunk to prevent
+;; infinite recursion.
+(define Z
+  (lambda (f)
+    ((lambda (g)
+       (f (lambda (x) ((g g) x))))
+     (lambda (g)
+       (f (lambda (x) ((g g) x)))))))
+
+(define summation
+  (Z (lambda (sum)
+       (lambda (xs)
+         (if (null? xs)
+             0
+             (+ (car xs)
+                (sum (cdr xs))))))))
