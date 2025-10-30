@@ -346,8 +346,9 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
   +--------------+
   | definition 1 |
+  | definition 2 |
   | ...          |
-  | definition N |
+  | definition x |
   |--------------|
   | expression   |
   +--------------+
@@ -374,9 +375,9 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
   TD[v = E]           ≡ v = TE[E]
 
-  TD[f v1 ... vn = E] ≡ f = λv1 ... λvn.TE[E]
+  TD[f v₁ ... vₓ = E] ≡ f = λv₁ ... λvₓ.TE[E]
 
-      where v, v1, vn, f = variables
+      where v, v₁, vₓ, f = variables
             E            = expression
 #+end_example
 
