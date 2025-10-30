@@ -226,15 +226,15 @@ It is therefore an excellent tool for comparing the syntax of different programm
 
   -- === Z Combinator: The Y Combinator for Applicative Languages ===
   --
-  -- let Z = λf.(λx.f (λv.(x x) v)) (λx.f (λv.(x x) v))
-  --     F = λf.λn. if n = 0 then 1 else n x f(n - 1)
+  -- let Z = λf.(λg.f (λx.(g g) x)) (λg.f (λx.(g g) x))
+  --     F = λf.(λn. if n = 0 then 1 else n * f(n - 1))
   -- in
   --    (Z F) 4
 
   local Z = function (f)
       return
-          (function (x) return f (function (v) return x(x)(v) end) end)
-          (function (x) return f (function (v) return x(x)(v) end) end)
+          (function (g) return f (function (x) return g(g)(x) end) end)
+          (function (g) return f (function (x) return g(g)(x) end) end)
   end
 
   -- factorial function
