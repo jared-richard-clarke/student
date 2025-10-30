@@ -384,15 +384,17 @@ It is therefore an excellent tool for comparing the syntax of different programm
   ;; === Y Combinator ===
 
   ;; Simplified definition. In the lambda calculus,
-  ;; Y should not occur free in its own definition.
+  ;; Y cannot occur free in its own definition.
   (define Y
     (lambda (f)
       (f (lambda (x) ((Y f) x)))))
 
   ;; Y := λf.(λx.f (x x)) (λx.f (x x))
+  ;; Z := λf.(λg.f (λx.(g g) x)) (λg.f (λx.(g g) x))
+  ;;
   ;; Complete strict definition in that the Y combinator is wrapped in a thunk
   ;; to prevent immediate and infinite evaluation.
-  (define Y
+  (define Z
     (lambda (f)
       ((lambda (g)
          (f (lambda (x) ((g g) x))))
@@ -400,11 +402,11 @@ It is therefore an excellent tool for comparing the syntax of different programm
          (f (lambda (x) ((g g) x)))))))
 
   (define factorial
-    (Y (lambda (fac)
+    (Z (lambda (fn)
          (lambda (n)
            (if (< n 2)
                n
-               (* n (fac (- n 1))))))))
+               (* n (fn (- n 1))))))))
 
   ;; === lazy implementation ===
 
