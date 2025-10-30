@@ -237,17 +237,17 @@ The function *Eval* maps syntactic expressions to mathematical values.
 
   Eval[x]​ p      = p x
 
-  Eval[E1, E2]​ p = (Eval[E1]​ p) (Eval[E2]​ p)
+  Eval[E₁ E₂]​ p = (Eval[E₁]​ p) (Eval[E₂]​ p)
 
   Eval[λx.E]​ p a = Eval[E]​ p[x = a]
                    where p[x = a] x = a
                          p[x = a] y = p y
 
-  Eval[<non-normalizing>] = ⊥​
+  Eval[<non-normalizing>] = ⊥
 
   where k          = a constant or built-in function
         x          = a variable
-        E, E1, E2  = expressions
+        E, E₁, E₂  = expressions
         p          = the environment, a function that maps variables to values
         ⊥          = non-terminating
 #+end_example
