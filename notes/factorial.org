@@ -381,18 +381,18 @@ It is therefore an excellent tool for comparing the syntax of different programm
          [product 1 (* product number)])
       [(<= number 1) product]))
 
-  ;; === Y Combinator ===
+  ;; === Z Combinator ===
 
   ;; Simplified definition. In the lambda calculus,
-  ;; Y cannot occur free in its own definition.
-  (define Y
+  ;; Z cannot occur free in its own definition.
+  (define Z
     (lambda (f)
-      (f (lambda (x) ((Y f) x)))))
+      (f (lambda (x) ((Z f) x)))))
 
-  ;; Y := λf.(λx.f (x x)) (λx.f (x x))
+  ;; Y := λf.(λg.f (g g)) (λg.f (g g))
   ;; Z := λf.(λg.f (λx.(g g) x)) (λg.f (λx.(g g) x))
   ;;
-  ;; Strict definition in that function application (g g) is wrapped
+  ;; Z is the strict definition of Y in that it wraps function application (g g)
   ;; in a thunk to prevent immediate and infinite evaluation.
   (define Z
     (lambda (f)
