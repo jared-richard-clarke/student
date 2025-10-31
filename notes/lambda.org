@@ -185,16 +185,16 @@ If *FV(M) = ∅* then *M* is called a *combinator*.
 An expression that contains no free variables is *closed*. Closed lambda expressions are also known as
 *combinators* and are equivalent to terms in *combinatory logic*.
 
-| combinator                    | meaning              |
-|-------------------------------+----------------------|
-| *S = λx.λy.λz.xz(yz)*         | Substitute-and-apply |
-| *K = λx.λy.x*                 | Constant             |
-| *I = λx.x*                    | Identity             |
-| *B = λx.λy.λz.x(yz)*          | Composition          |
-| *C = λx.λy.λz.xzy*            | Swap                 |
-| *T = λx.λy.x*                 | True                 |
-| *F = λx.λy.y*                 | False                |
-| *Y = λf.(λx.f(xx))(λx.f(xx))* | Fixed Point          |
+| combinator                         | meaning     |
+|------------------------------------+-------------|
+| *S = λf.λg.λx.(f x) (g x)*         | Fusion      |
+| *K = λx.λy.x*                      | Constant    |
+| *I = λx.x*                         | Identity    |
+| *B = λf.λg.λx.f (g x)*             | Composition |
+| *C = λf.λx.λy.f y x*               | Swap        |
+| *T = λx.λy.x*                      | True        |
+| *F = λx.λy.y*                      | False       |
+| *Y = λf.(λx.f (x x)) (λx.f (x x))* | Fixed Point |
 
 ** Encoding Datatypes
 
