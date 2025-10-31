@@ -190,7 +190,7 @@ are *free*.
 
 #+begin_example
   # === Y Combinator ===
-  
+
   Y := λf.(λx.f (x x)) (λx.f (x x))
 
   # === fixed point ===
@@ -207,52 +207,6 @@ are *free*.
 
   Y F → F (Y F)
 #+end_example
-
-** Denotational Semantics
-
-Two perspectives on functions:
-
-1. An algorithm, which will produce a value given an argument. A dynamic or operational
-   view of a function as a sequence of operations in time.
-
-2. A set of ordered argument-value pairs. A static or denotational view of a function
-   as a fixed set of associations.
-
-*β*, *α*, and *η* are purely syntactic transformations. The lambda calculus is a formal system
-for manipulating syntactic symbols.
-
-The purpose of denotational semantics of a language is to assign a value to every expression
-in that language. An expression is a syntactic object, formed according to the syntax rules
-of the language. A value, by contrast, is an abstract mathematical object.
-
-The function *Eval* maps syntactic expressions to mathematical values.
-
-#+begin_example
-  +-------------+           +--------+
-  | expressions | - Eval -> | values |
-  +-------------+           +--------+
-
-  Eval[k]​​ p      = A built-in operation that requires semantic equations to specify
-                   both its meaning and imply its operational behavior.
-
-  Eval[x]​ p      = p x
-
-  Eval[E₁ E₂]​ p = (Eval[E₁]​ p) (Eval[E₂]​ p)
-
-  Eval[λx.E]​ p a = Eval[E]​ p[x = a]
-                   where p[x = a] x = a
-                         p[x = a] y = p y
-
-  Eval[<non-normalizing>] = ⊥
-
-  where k          = a constant or built-in function
-        x          = a variable
-        E, E₁, E₂  = expressions
-        p          = the environment, a function that maps variables to values
-        ⊥          = non-terminating
-#+end_example
-
-- strict :: A function *f* is strict if and only if *f ⊥ = ⊥*.
 
 ** The Enriched Lambda Calculus
 
@@ -279,7 +233,7 @@ The function *Eval* maps syntactic expressions to mathematical values.
                              <pattern>
 #+end_example
 
-*** ~let~ Semantics
+*** ~let~ Translation
 
 #+begin_example
   let v = B in E
@@ -307,7 +261,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   λx.(λy.(* x y)) 3 4
 #+end_example
 
-*** ~letrec~ Semantics
+*** ~letrec~ Translation
 
 #+begin_example
   letrec v = B in E
@@ -321,20 +275,6 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
  (λv.E) (Y (λv.B))
         where Y = λf.(λx.f (x x)) (λx.f (x x))
-#+end_example
-
-*** ~▯~ Operator Semantics
-
-- infix
-
-- associative
-
-- identity = *FAIL*
-
-#+begin_example
-  a    ▯ b = a    if a ≠ ⊥ and a ≠ FAIL
-  FAIL ▯ b = b
-  ⊥    ▯ b = ⊥
 #+end_example
 
 ** Miranda to Lambda
@@ -355,30 +295,68 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
   === TE[expression] = translate expression ===
 
-  TE[k]           ≡ k
+  TE[ : ]               ≡ CONS
 
-  TE[v]           ≡ v
+  TE[ [] ]              ≡ NIL
 
-  TE[E₁ E₂]       ≡ TE[E₁] TE[E₂]
+  TE[ [E₁, E₂ ... Eₓ] ] ≡ CONS TE[E₁] TE[ [E₂ ... Eₓ] ]
 
-  TE[E₁ infix E₂] ≡ TE[infix] TE[E₁] TE[E₂]
+  TE[ (E₁, E₂) ]        ≡ PAIR TE[E₁] TE[E₂]
 
-  TE[E₁ $v E₂]    ≡ TE[v] TE[E₁] TE[E₂]
+  TE[ (E₁, E₂, E₃) ]    ≡ TRIPLE TE[E₁] TE[E₂] TE[E₃]
+
+  TE[True]              ≡ TRUE
+
+  TE[False]             ≡ FALSE
+
+  TE[k]                 ≡ k
+
+  TE[v]                 ≡ v
+
+  TE[E₁ E₂]             ≡ TE[E₁] TE[E₂]
+
+  TE[E₁ infix E₂]       ≡ TE[infix] TE[E₁] TE[E₂]
+
+  TE[E₁ $v E₂]          ≡ TE[v] TE[E₁] TE[E₂]
 
       where k      = literal constant or built-in operator
             v      = variable
-            E₁, E₂ = expressions
+            Eₓ     = expressions
             infix  = built-in infix operator
             $v     = function as infix operation
 
   === TD[definition] = translate definition ===
 
-  TD[v = E]           ≡ v = TE[E]
+  TD[p = R] ≡ TE[p] = TR[R]
 
-  TD[f v₁ ... vₓ = E] ≡ f = λv₁ ... λvₓ.TE[E]
+    +-                  -+
+  TD| f p₁₁ ... p₁ₓ = R₁ | ≡ f = (λv₁ ... λvₓ.( ((λTE[p₁₁] ... λTE[p₁ₓ]. TR[R₁]) v₁ ... vₓ)
+    | ...                |                    ▯ ...
+    | f pₓ₁ ... pₓₓ = Rₓ |                    ▯ ((λTE[pₓ₁] ... λTE[pₓₓ]. TR[Rₓ]) v₁ ... vₓ)
+    +-                  -+                    ▯ ERROR))
 
-      where v, v₁, vₓ, f = variables
-            E            = expression
+    where f   = variable
+          vₓ  = variable bound in Rₓ
+          pₓₓ = pattern
+          Rₓ  = right-hand side
+
+  === TR[rhs] = translate right-hand side ===
+
+    +-               -+
+  TR|   A₁, G₁        | ≡ letrec TD[D₁]
+    | = ...           |          ...
+    | = Aₓ, Gₓ        |          TD[Dₓ]
+    | where D₁ ... Dₓ |   in
+    +-               -+      (IF TE[G₁] TE[A₁]
+                              ...
+                             (IF TE[Gₓ] TE[Aₓ] FAIL) ...)
+
+  If Gₓ is absent, or True, then the final IF-expression
+  should be replaced by TE[Aₓ].
+
+      where Aₓ = expression
+            Gₓ = boolean-valued expression
+            Dₓ = definition
 #+end_example
 
 *** Example Translation
@@ -399,3 +377,79 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   # plain lambda calculus
   (λaverage.(average 2 (+ 3 5))) λa.(λb./ (+ a b) 2)
 #+end_example
+
+** Denotational Semantics
+
+Two perspectives on functions:
+
+1. An algorithm, which will produce a value given an argument. A dynamic or operational
+   view of a function as a sequence of operations in time.
+
+2. A set of ordered argument-value pairs. A static or denotational view of a function
+   as a fixed set of associations.
+
+*β*, *α*, and *η* are purely syntactic transformations. The lambda calculus is a formal system
+for manipulating syntactic symbols.
+
+The purpose of denotational semantics of a language is to assign a value to every expression
+in that language. An expression is a syntactic object, formed according to the syntax rules
+of the language. A value, by contrast, is an abstract mathematical object.
+
+The function *Eval* maps syntactic expressions to mathematical values.
+
+#+begin_example
+  +-------------+           +--------+
+  | expressions | - Eval -> | values |
+  +-------------+           +--------+
+
+  Eval[ k ]​​ p      = A built-in operation that requires semantic equations to specify
+                     both its meaning and imply its operational behavior.
+
+  Eval[ x ]​ p      = p x
+
+  Eval[ E₁ E₂ ]​ p  = (Eval[E₁]​ p) (Eval[E₂]​ p)
+
+  Eval[ λx.E ]​ p a = Eval[E]​ p[x = a]
+                     where p[x = a] x = a
+                           p[x = a] y = p y
+
+  Eval[<non-normalizing>] = ⊥
+
+  where k  = a constant or built-in function
+        x  = a variable
+        Eₓ = expressions
+        p  = the environment, a function that maps variables to values
+        ⊥  = non-terminating
+
+  === pattern matching ===
+
+  Eval[ λx.E ] v = Eval[E] if v = Eval[x]
+  Eval[ λx.E ] v = FAIL    if v ≠ Eval[x] and v ≠ ⊥
+  Eval[ λx.E ] ⊥ = ⊥
+
+  Eval[ λ(s p₁ ... pₓ).E ] (s v₁ ... vₓ)  = Eval[ λp₁ ... λpₓ.E ] v₁ ... vₓ
+  Eval[ λ(s p₁ ... pₓ).E ] (s' v₁ ... vₓ) = FAIL if s ≠ s
+  Eval[ λ(s p₁ ... pₓ).E ] ⊥              = ⊥
+
+  Eval[ λ(t p₁ ... pₓ).E ] v = Eval[ λp₁ ... λpₓ.E ] (SELECT-t-1 v)
+                                                     ...
+                                                     (SELECT-t-x v)
+
+  where k  = constant
+        s  = sum constructor
+        t  = product constructor
+        pₓ = patterns
+        E  = expression
+        vₓ = values
+
+        SELECT-t-x (t v₁ ... vₓ ... vₑ) = vₓ
+        SELECT-t-x ⊥                    = ⊥
+
+  === ▯ operator ===
+
+  a    ▯ b = a    if a ≠ ⊥ and a ≠ FAIL
+  FAIL ▯ b = b
+  ⊥    ▯ b = ⊥
+#+end_example
+
+- strict :: A function *f* is strict if and only if *f ⊥ = ⊥*.
