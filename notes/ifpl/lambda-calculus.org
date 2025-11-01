@@ -389,7 +389,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
   # Miranda
   reflect (LEAF n) = LEAF n
-  reflect (BRANCH x y) = BRANCH y x
+  reflect (BRANCH x y) = BRANCH (reflect y) (reflect x)
 
   # enriched lambda calculus
 
