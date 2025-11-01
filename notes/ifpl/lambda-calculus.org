@@ -359,7 +359,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
             Dₓ = definition
 #+end_example
 
-*** Example Translation
+*** Basic Translation
 
 #+begin_example
   # definition
@@ -377,6 +377,100 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   # plain lambda calculus
   (λaverage.(average 2 (+ 3 5))) λa.(λb./ (+ a b) 2)
 #+end_example
+
+*** Pattern-Match Translation
+
+#+begin_example
+  # Miranda
+  head (x:xs) = x
+
+  # enriched lambda calculus
+  head = λxs'.(((λ(CONS x xs).x) xs') ▯ ERROR)
+
+  # Miranda
+  reflect (LEAF n) = LEAF n
+  reflect (BRANCH x y) = BRANCH y x
+
+  # enriched lambda calculus
+
+  reflect = λt.( ((λ(LEAF n).LEAF n) t)
+               ▯ ((λ(BRANCH x y).BRANCH (reflect y) (reflect x)) t)
+               ▯ ERROR)
+
+  # Miranda
+  xor False y    = y
+  xor True False = True
+  xor True True  = False
+
+  # enriched lambda calculus
+  xor = λx.λy.( ((λFALSE.λy.y) x y)
+              ▯ ((λTRUE.λFALSE.TRUE) x y)
+              ▯ ((λTRUE.λTRUE.FALSE) x y)
+              ▯ ERROR)
+
+  # Miranda
+  addPair w = x + y
+              where (x, y) = w
+
+  # enriched lambda calculus
+  addPair = λw.(letrec (PAIR x y) = w in (+ x y))
+#+end_example
+
+** General Structured Types
+
+#+begin_example
+  T ::= c₁ T₁₁ ... T₁ₓ
+      | ...
+      | cₓ Tₓ₁ ... Tₓₓ
+
+      where Tₓ = types
+            cₓ = constructors
+
+  === sum of products ===
+
+  T = T₁ + ... + Tₓ
+
+      where Tₓ = Tₓ₁ × ... × Tₓₓ
+#+end_example
+
+** Pattern Matching
+
+1. overlapping patterns
+
+2. constant patterns
+
+3. nested patterns
+
+4. multiple arguments
+
+5. non-exhaustive sets of equations
+
+6. conditional equations
+
+7. repeated variables
+
+- pattern :: Either a variable, a constant, or a constructor pattern
+  of the form ~(c p₁ ... pₓ)~ where ~c~ is a constructor of arity ~x~
+  and ~p₁ ... pₓ~ are patterns. All patterns should be distinct.
+
+- sum pattern :: ~(s p₁ ... pₓ)~
+
+- product pattern :: ~(t p₁ ... pₓ)~
+
+- simple pattern :: ~(c v₁ ... vₓ)~, where ~v₁ ... vₓ~ are distinct variables.
+
+- nested pattern :: A constructor pattern that is *not* simple.
+
+#+begin_quote
+  "Intuitively, we expect the semantics to be 'try the first equation,
+   and if that fails try the second, and so on'. This introduces the
+   idea that a pattern-match might fail. Such failure does not
+   necessarily indicate an error, since there might be a subsequent
+   equation which would match. Hence, we introduce a new built-in value
+   *FAIL*, which is returned when a pattern-match fails."
+
+  — *The Implementation of Functional Programming Languages*, Simon L. Peyton Jones
+#+end_quote
 
 ** Denotational Semantics
 
@@ -428,7 +522,7 @@ The function *Eval* maps syntactic expressions to mathematical values.
   Eval[ λx.E ] ⊥ = ⊥
 
   Eval[ λ(s p₁ ... pₓ).E ] (s v₁ ... vₓ)  = Eval[ λp₁ ... λpₓ.E ] v₁ ... vₓ
-  Eval[ λ(s p₁ ... pₓ).E ] (s' v₁ ... vₓ) = FAIL if s ≠ s
+  Eval[ λ(s p₁ ... pₓ).E ] (s' v₁ ... vₓ) = FAIL if s ≠ s'
   Eval[ λ(s p₁ ... pₓ).E ] ⊥              = ⊥
 
   Eval[ λ(t p₁ ... pₓ).E ] v = Eval[ λp₁ ... λpₓ.E ] (SELECT-t-1 v)
