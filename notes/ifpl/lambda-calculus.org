@@ -431,6 +431,14 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   T = T₁ + ... + Tₓ
 
       where Tₓ = Tₓ₁ × ... × Tₓₓ
+
+ === examples ===
+
+ TREE * ::= LEAF * | BRANCH tree tree
+
+ LIST * ::= NIL | CONS (list *)
+
+ BOOLEAN ::= TRUE | FALSE
 #+end_example
 
 ** Pattern Matching
