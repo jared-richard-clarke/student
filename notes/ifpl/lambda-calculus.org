@@ -418,6 +418,16 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
 ** General Structured Types
 
+#+begin_quote
+  "An important difference in structured types in Miranda from that of ML
+   or Hope, is that in Miranda constructor functions are lazy; that is
+   they do not evaluate their arguments. The components of a structured
+   object are evaluated only when (and if) they are subsequently extracted
+   and used, not when the object is built."
+
+  — *The Implementation of Functional Programming Languages*, Simon L. Peyton Jones
+#+end_quote
+
 #+begin_example
   T ::= c₁ T₁₁ ... T₁ₓ
       | ...
@@ -436,9 +446,16 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
  tree * ::= LEAF * | BRANCH (tree *) (tree *)
 
- list * ::= NIL | CONS (list *)
+ list * ::= NIL | CONS * (list *)
+
+ pair * **       ::= PAIR * **
+ triple * ** *** ::= TRIPLE * ** ***
 
  boolean ::= TRUE | FALSE
+
+     where *, **, *** = generic type variables
+           lowercase  = type-forming operator
+           UPPERCASE  = constructor function
 #+end_example
 
 ** Pattern Matching
