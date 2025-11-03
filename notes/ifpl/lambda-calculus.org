@@ -329,6 +329,8 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
   TD[p = R] ≡ TE[p] = TR[R]
 
+      The syntax of patterns is a subset of the syntax of expressions.
+
     +-                  -+
   TD| f p₁₁ ... p₁ₓ = R₁ | ≡ f = (λv₁ ... λvₓ.( ((λTE[p₁₁] ... λTE[p₁ₓ]. TR[R₁]) v₁ ... vₓ)
     | ...                |                    ▯ ...
@@ -336,7 +338,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
     +-                  -+                    ▯ ERROR))
 
     where f   = variable
-          vₓ  = variable bound in Rₓ
+          vₓ  = new variable bound in Rₓ
           pₓₓ = pattern
           Rₓ  = right-hand side
 
@@ -464,15 +466,50 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
 2. constant patterns
 
+#+begin_example
+  # 0 is both a literal constant and a pattern
+  # that overlaps with "n".
+
+  factorial 0 = 1
+  factorial n = n * factorial (n - 1)
+#+end_example
+
 3. nested patterns
 
 4. multiple arguments
 
 5. non-exhaustive sets of equations
 
-6. conditional equations
+#+begin_example
+  # Both patterns are overlapping and nested. They are also
+  # non-exhaustive since neither patterns matches the empty
+  # list "[]".
+
+  last (x:[]) = x
+  last (x:xs) = last xs
+#+end_example
+
+6. conditional equations (guards)
+
+#+begin_example
+  # A constant pattern can be replaced with a variable
+  # and a guard equation.
+  #
+  # guard --------+-----+
+  #               |     |
+  factorial n = 1, n = 0
+              = n * factorial (n - 1)
+#+end_example
 
 7. repeated variables
+
+#+begin_example
+  dedup []       = []
+  dedup [x]      = [x]
+  # The repeated use of variable "x" implies equality.
+  dedup [x:x:xs] = dedup (x:xs)
+  dedup [x:y:ys] = dedup x : dedup y:ys
+#+end_example
 
 - pattern :: Either a variable, a constant, or a constructor pattern
   of the form ~(c p₁ ... pₓ)~ where ~c~ is a constructor of arity ~x~
@@ -484,7 +521,8 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
 - simple pattern :: ~(c v₁ ... vₓ)~, where ~v₁ ... vₓ~ are distinct variables.
 
-- nested pattern :: A constructor pattern that is *not* simple.
+- nested pattern :: A constructor pattern that is *not* simple. A pattern
+  that contains patterns within itself.
 
 #+begin_quote
   "Intuitively, we expect the semantics to be 'try the first equation,
@@ -521,30 +559,31 @@ The function *Eval* maps syntactic expressions to mathematical values.
   | expressions | - Eval -> | values |
   +-------------+           +--------+
 
-  Eval[ k ]​​ p      = A built-in operation that requires semantic equations to specify
-                     both its meaning and imply its operational behavior.
+  Eval[ k ]​​ env      = A built-in operation that requires semantic equations to specify
+                       both its meaning and imply its operational behavior.
 
-  Eval[ x ]​ p      = p x
+  Eval[ x ]​ env      = env x
 
-  Eval[ E₁ E₂ ]​ p  = (Eval[E₁]​ p) (Eval[E₂]​ p)
+  Eval[ E₁ E₂ ]​ env  = (Eval[E₁]​ env) (Eval[E₂]​ env)
 
-  Eval[ λx.E ]​ p a = Eval[E]​ p[x = a]
-                     where p[x = a] x = a
-                           p[x = a] y = p y
+  Eval[ λx.E ]​ env v = Eval[E]​ env[x = v]
+                       where env[x = v] x = v
+                             env[x = v] y = env y
 
   Eval[<non-normalizing>] = ⊥
 
-  where k  = a constant or built-in function
-        x  = a variable
-        Eₓ = expressions
-        p  = the environment, a function that maps variables to values
-        ⊥  = non-terminating
+  where k   = a constant or built-in function
+        x   = a variable
+        Eₓ  = expressions
+        env = the environment, a function that maps variables to values
+        v   = value
+        ⊥   = non-terminating
 
   === pattern matching ===
 
-  Eval[ λx.E ] v = Eval[E] if v = Eval[x]
-  Eval[ λx.E ] v = FAIL    if v ≠ Eval[x] and v ≠ ⊥
-  Eval[ λx.E ] ⊥ = ⊥
+  Eval[ λk.E ] v = Eval[E], if v = Eval[k]
+  Eval[ λk.E ] v = FAIL,    if v ≠ Eval[k] and v ≠ ⊥
+  Eval[ λk.E ] ⊥ = ⊥
 
   Eval[ λ(s p₁ ... pₓ).E ] (s v₁ ... vₓ)  = Eval[ λp₁ ... λpₓ.E ] v₁ ... vₓ
   Eval[ λ(s p₁ ... pₓ).E ] (s' v₁ ... vₓ) = FAIL if s ≠ s'
@@ -572,3 +611,16 @@ The function *Eval* maps syntactic expressions to mathematical values.
 #+end_example
 
 - strict :: A function *f* is strict if and only if *f ⊥ = ⊥*.
+
+#+begin_quote
+  "Here [ *SELECT-t-x* ] is a built-in function which selects the [ *xth* ]
+   field from a structured object built with constructor *t* ...
+
+   Suppose that *(λp.E)*, where *p* is a product pattern, is applied to an
+   expression *A*. The rule for lazy product-matching postpones the
+   evaluation of argument *A* by binding the names for the components to
+   applications of [ *SELECT-t-x* ] to *A*, rather than evaluating *A*
+   and extracting its components directly."
+
+  — *The Implementation of Functional Programming Languages*, Simon L. Peyton Jones
+#+end_quote
