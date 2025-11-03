@@ -434,11 +434,11 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
  === examples ===
 
- TREE * ::= LEAF * | BRANCH (tree *) (tree *)
+ tree * ::= LEAF * | BRANCH (tree *) (tree *)
 
- LIST * ::= NIL | CONS (list *)
+ list * ::= NIL | CONS (list *)
 
- BOOLEAN ::= TRUE | FALSE
+ boolean ::= TRUE | FALSE
 #+end_example
 
 ** Pattern Matching
