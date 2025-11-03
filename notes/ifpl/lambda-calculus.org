@@ -434,7 +434,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
  === examples ===
 
- TREE * ::= LEAF * | BRANCH tree tree
+ TREE * ::= LEAF * | BRANCH (tree *) (tree *)
 
  LIST * ::= NIL | CONS (list *)
 
