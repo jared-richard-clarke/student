@@ -282,7 +282,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 *** Translation Scheme
 
 #+begin_example
-  === Miranda Program ===
+  || === Miranda Program ===
 
   +--------------+
   | definition 1 |
@@ -293,7 +293,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   | expression   |
   +--------------+
 
-  === TE[expression] = translate expression ===
+  || === TE[expression] = translate expression ===
 
   TE[ : ]               ≡ CONS
 
@@ -325,11 +325,11 @@ As a matter of convenience, multiple definitions can be written in the same ~let
             infix  = built-in infix operator
             $v     = function as infix operation
 
-  === TD[definition] = translate definition ===
+  || === TD[definition] = translate definition ===
 
   TD[p = R] ≡ TE[p] = TR[R]
 
-      The syntax of patterns is a subset of the syntax of expressions.
+  || The syntax of patterns is a subset of the syntax of expressions.
 
     +-                  -+
   TD| f p₁₁ ... p₁ₓ = R₁ | ≡ f = (λv₁ ... λvₓ.( ((λTE[p₁₁] ... λTE[p₁ₓ]. TR[R₁]) v₁ ... vₓ)
@@ -342,7 +342,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
           pₓₓ = pattern
           Rₓ  = right-hand side
 
-  === TR[rhs] = translate right-hand side ===
+  || === TR[rhs] = translate right-hand side ===
 
     +-               -+
   TR|   A₁, G₁        | ≡ letrec TD[D₁]
@@ -359,6 +359,23 @@ As a matter of convenience, multiple definitions can be written in the same ~let
       where Aₓ = expression
             Gₓ = boolean-valued expression
             Dₓ = definition
+
+  || === pattern-match transformations ===
+
+  (λk.E)             ≡ (λv.IF (= k v) E FAIL)
+                       where v = new variable bound in E
+
+  (λ(t p₁ ... pₓ).E) ≡ (UNPACK-PRODUCT-t (λp₁ ... λpₓ.E))
+
+  (λ(s p₁ ... pₓ).E) ≡ (UNPACK-SUM-s (λp₁ ... pₓ.E))
+
+  || === UNPACK semantics ===
+
+  UNPACK-PRODUCT-t f v = f (SELECT-t-1 v) ... (SELECT-t-x v)
+
+  UNPACK-SUM-s f (s v₁ ... vₓ)  = f v₁ ... vₓ
+  UNPACK-SUM-s f (s' v₁ ... vₓ) = FAIL, if s ≠ s'
+  UNPACK-SUM-s f ⊥              = ⊥
 #+end_example
 
 *** Basic Translation
@@ -384,6 +401,21 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
 #+begin_example
   || Miranda
+  flip 0 = 1
+  flip 1 = 0
+
+  || enriched lambda calculus
+  flip = λx.( ((λ0.1) x)
+            ▯ ((λ1.0) x)
+            ▯ ERROR)
+
+  || - transforms ->
+
+  flip = λx.( ((λv.IF (= 0 v) 1 FAIL) x)
+            ▯ ((λv.IF (= 1 v) 0 FAIL) x)
+            ▯ ERROR)
+
+  || Miranda
   head (x:xs) = x
 
   || enriched lambda calculus
@@ -407,6 +439,11 @@ As a matter of convenience, multiple definitions can be written in the same ~let
                ▯ ((λ(BRANCH x y).BRANCH (reflect y) (reflect x)) t)
                ▯ ERROR)
 
+  || - transforms ->
+
+  reflect = λt.( (UNPACK-SUM-LEAF (λn.LEAF n) t)
+               ▯ (UNPACK-SUM-BRANCH (λt₁.λt₂.BRANCH (reflect t₁) (reflect t₂)) t)
+               ▯ ERROR)
   || Miranda
   xor False y    = y
   xor True False = True
