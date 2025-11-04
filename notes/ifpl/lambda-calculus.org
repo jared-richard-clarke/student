@@ -383,38 +383,46 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 *** Pattern-Match Translation
 
 #+begin_example
-  # Miranda
+  || Miranda
   head (x:xs) = x
 
-  # enriched lambda calculus
+  || enriched lambda calculus
   head = λxs'.(((λ(CONS x xs).x) xs') ▯ ERROR)
 
-  # Miranda
+  || Miranda
+  sum [] = 0
+  sum (x:xs) = x + sum xs
+
+  || enriched lambda calculus
+  sum = λxs'.( ((λNIL.0) xs')
+             ▯ ((λ(CONS x xs).+ x (sum xs)) xs')
+             ▯ ERROR)
+
+  || Miranda
   reflect (LEAF n) = LEAF n
   reflect (BRANCH x y) = BRANCH (reflect y) (reflect x)
 
-  # enriched lambda calculus
-
+  || enriched lambda calculus
   reflect = λt.( ((λ(LEAF n).LEAF n) t)
                ▯ ((λ(BRANCH x y).BRANCH (reflect y) (reflect x)) t)
                ▯ ERROR)
 
-  # Miranda
+  || Miranda
   xor False y    = y
   xor True False = True
   xor True True  = False
 
-  # enriched lambda calculus
+  || enriched lambda calculus
   xor = λx.λy.( ((λFALSE.λy.y) x y)
               ▯ ((λTRUE.λFALSE.TRUE) x y)
               ▯ ((λTRUE.λTRUE.FALSE) x y)
               ▯ ERROR)
 
-  # Miranda
+  || Miranda
   addPair w = x + y
               where (x, y) = w
 
-  # enriched lambda calculus
+  || enriched lambda calculus
   addPair = λw.(letrec (PAIR x y) = w in (+ x y))
 #+end_example
 
