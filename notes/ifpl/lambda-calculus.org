@@ -538,7 +538,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   — *The Implementation of Functional Programming Languages*, Simon L. Peyton Jones
 #+end_quote
 
-*** Case Expressions
+** Case Expressions
 
 Unlike sequential match expressions, nested case expressions do not backtrack
 on nested patterns.
