@@ -466,47 +466,42 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
 2. constant patterns
 
-#+begin_example
-  # 0 is both a literal constant and a pattern
-  # that overlaps with "n".
-
-  factorial 0 = 1
-  factorial n = n * factorial (n - 1)
-#+end_example
-
 3. nested patterns
 
 4. multiple arguments
 
 5. non-exhaustive sets of equations
 
-#+begin_example
-  # Both patterns are overlapping and nested. They are also
-  # non-exhaustive since neither patterns matches the empty
-  # list "[]".
-
-  last (x:[]) = x
-  last (x:xs) = last xs
-#+end_example
-
 6. conditional equations (guards)
-
-#+begin_example
-  # A constant pattern can be replaced with a variable
-  # and a guard equation.
-  #
-  # guard --------+-----+
-  #               |     |
-  factorial n = 1, n = 0
-              = n * factorial (n - 1)
-#+end_example
 
 7. repeated variables
 
 #+begin_example
+  || 0 is both a literal constant and a pattern
+  || that overlaps with "n".
+
+  factorial 0 = 1
+  factorial n = n * factorial (n - 1)
+
+  || Both patterns are overlapping and nested. They are also
+  || non-exhaustive since neither pattern matches the empty
+  || list "[]".
+
+  last (x:[]) = x
+  last (x:xs) = last xs
+
+  || A constant pattern can be replaced with a variable
+  || and a guard equation.
+  ||
+  || guard -------+--------+
+  ||              |        |
+  factorial n = 1, if n = 0
+              = n * factorial (n - 1)
+
+  || The repeated use of variable "x" implies equality.
+
   dedup []       = []
   dedup [x]      = [x]
-  # The repeated use of variable "x" implies equality.
   dedup [x:x:xs] = dedup (x:xs)
   dedup [x:y:ys] = dedup x : dedup y:ys
 #+end_example
