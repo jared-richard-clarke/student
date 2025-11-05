@@ -575,42 +575,6 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   — *The Implementation of Functional Programming Languages*, Simon L. Peyton Jones
 #+end_quote
 
-** Case Expressions
-
-Unlike sequential match expressions, nested case expressions do not backtrack
-on nested patterns.
-
-#+begin_example
-  mappairs f [] ys         = []
-  mappairs f (x:xs) []     = []
-  mappairs f (x:xs) (y:ys) = f x y : mappairs f xs ys
-
-  || - translates ->
-
-  mappairs = λf.λxs'.λys'.
-                 case xs' of
-                 NIL       -> NIL
-                 CONS x xs -> case ys' of
-                              NIL       -> NIL
-                              CONS y ys -> CONS (f x y) (mappairs f xs ys)
-
-  dedup []       = []
-  dedup [x]      = [x]
-  dedup (y:x:xs) = dedup (x:xs),     if y = x
-                 = y : dedup (x:xs), otherwise
-
-  || - translates ->
-
-  dedup = λxs''. case xs'' of
-                 NIL         -> NIL
-                 CONS x' xs' ->
-                     case xs' of
-                     NIL       -> CONS x' NIL
-                     CONS x xs -> IF (= x' x)
-                                     (dedup (CONS x xs))
-                                     (CONS x' (dedup (CONS x xs)))
-#+end_example
-
 ** Denotational Semantics
 
 Two perspectives on functions:
