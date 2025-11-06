@@ -60,7 +60,7 @@ on nested and multiple patterns.
              case u₂ of
              NIL        -> (A u₂ u₃)
              CONS u₄ u₅ ->
-                 case v₃ of
+                 case u₃ of
                  NIL        -> (B u₁ u₂)
                  CONS u₆ u₇ ->
                      case u₂ of
