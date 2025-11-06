@@ -120,7 +120,7 @@ on nested and multiple patterns.
       cₓ us'ₓ -> match (us'ₓ ++ us) qs'ₓ E
 #+end_example
 
-** Miranda: Pattern Matching Compiler
+** Miranda: Case Compiler
 
 #+begin_src
   || === patterns ===
