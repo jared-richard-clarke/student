@@ -26,6 +26,11 @@ on nested and multiple patterns.
                  ▯ ERROR
 
   || === match: compiler function ===
+  ||
+  || match us qs E
+  ||     where us = variables
+  ||           qs = (patterns, expression)
+  ||           E  = default expression
 
   match [u₁ ... uₓ]
         [( [p₁₁ ... p₁ₓ)], E₁ ),
@@ -79,38 +84,53 @@ on nested and multiple patterns.
 ** Compilation Steps
 
 #+begin_example
-  || === The Variable Rule ===
+  || === Variable Rule ===
   ||
-  || If every equation begins with a variable pattern, then
-  || the call of match will have this form:
+  || For a list where every equation begins with a variable pattern.
 
   match (u:us)
-        [( (v₁:p₁), E₁ ),
+        [( (v₁:ps₁), E₁ ),
          ...
-         ( (vₓ:pₓ), Eₓ )]
+         ( (vₓ:psₓ), Eₓ )]
          E
 
   || - reduces ->
 
   match us
-        [( p₁, E₁[u/v₁] ),
+        [( ps₁, E₁[u/v₁] ),
          ...
-         ( pₓ, Eₓ[u/vₓ] )]
+         ( psₓ, Eₓ[u/vₓ] )]
         E
 
-  || === The Constructor Rule ===
+  || -- example --
+
+  match [u₁, u₂, u₃]
+        [( [f, NIL,       ys ],       (A f ys) ),
+         ( [f, CONS x xs, NIL],       (B f x xs) ),
+         ( [f, CONS x xs, CONS y ys], (C f x xs y ys) )]
+        ERROR
+
+  || - reduces ->
+
+  match [u₂, u₃]
+        [( [NIL,       ys ],       (A u₁ ys) ),
+         ( [CONS x xs, NIL],       (B u₁ x xs) ),
+         ( [CONS x xs, CONS y ys], (C u₁ x xs y ys) )]
+        ERROR
+
+  || === Constructor Rule ===
   ||
-  || A list of equations that begin with a constructor
-  || is equivalent to a case expression derived by grouping
-  || together all equations that begin with the same
-  || constructor. Within each group, new variables are
-  || introduced corresponding to each field of the
-  || constructor.
+  || A list of equations that begin with a constructor is equivalent
+  || to a case expression derived by grouping together all equations
+  || that begin with the same constructor. Within each group, new
+  || variables are introduced corresponding to each field of the
+  || constructor. These new variables are matched against corresponding
+  || subpatterns of the original pattern.
 
   match (u:us) (qs₁ ++ ... ++ qsₓ) E
 
-      where [( ((c ps'₁):ps₁), E₁ ),
-             ( ((c ps'ₓ):psₓ), Eₓ )]
+      where qsₓ = [( ((c ps'₁):ps₁), E₁ ),
+                   ( ((c ps'ₓ):psₓ), Eₓ )]
 
   || - reduces ->
 
@@ -118,6 +138,54 @@ on nested and multiple patterns.
       c₁ us'₁ -> match (us'₁ ++ us) qs'₁ E
       ...
       cₓ us'ₓ -> match (us'ₓ ++ us) qs'ₓ E
+
+  || -- example --
+
+  match [u₂, u₃]
+        [( [NIL,       ys ],       (A u₁ ys) ),
+         ( [CONS x xs, NIL],       (B u₁ x xs) ),
+         ( [CONS x xs, CONS y ys], (C u₁ x xs y ys) )]
+        ERROR
+
+  || - reduces ->
+
+  case u₂ of
+      NIL        -> match [u₃]
+                          [( [ys],               (A u₁ ys) )]
+                          ERROR
+      CONS u₄ u₅ -> match [u₄, u₅, u₃]
+                          [( [x, xs, NIL],       (B u₁ x xs) ),
+                           ( [x, xs, CONS y ys], (C u₁ x xs y ys) )]
+                          ERROR
+
+  || === Empty Rule ===
+
+  match []
+        [( [], E₁ ),
+         ...
+         ( [], Eₓ )]
+        E
+
+  || - reduces ->
+
+  E₁ ▯ ... ▯ Eₓ ▯ E
+
+      where x ≥ 0
+
+ || === Mixture Rule ===
+ ||
+ || A list of equations that begins with both variables and constructors
+ || may be partitioned into "x" lists.
+
+ qs = qs₁ ++ ... ++ qsₓ
+
+ || - and ->
+
+ match us qs E
+
+ || - reduces ->
+
+ match us qs₁ (match us qs₂ ( ... (match us qsₓ E) ... ))
 #+end_example
 
 ** Miranda: Case Compiler
@@ -205,6 +273,8 @@ on nested and multiple patterns.
 ** Example Translations
 
 #+begin_example
+  || === multiple patterns ===
+
   mappairs f [] ys         = []
   mappairs f (x:xs) []     = []
   mappairs f (x:xs) (y:ys) = f x y : mappairs f xs ys
@@ -218,12 +288,23 @@ on nested and multiple patterns.
                               NIL       -> NIL
                               CONS y ys -> CONS (f x y) (mappairs f xs ys)
 
+  || - or ->
+
+  mappairs = λu₁.λu₂.λu₃.
+                 case u₂ of
+                 NIL        -> NIL
+                 CONS u₄ u₅ -> case u₃ of
+                               NIL        -> NIL
+                               CONS u₆ u₇ -> CONS (u₁ u₄ u₆) (mappairs u₁ u₅ u₇)
+
   dedup []       = []
   dedup [x]      = [x]
   dedup (y:x:xs) = dedup (x:xs),     if y = x
                  = y : dedup (x:xs), otherwise
 
   || - translates ->
+
+  || === nested patterns ===
 
   dedup = λxs''. case xs'' of
                  NIL         -> NIL
@@ -234,4 +315,3 @@ on nested and multiple patterns.
                                      (dedup (CONS x xs))
                                      (CONS x' (dedup (CONS x xs)))
 #+end_example
-    
