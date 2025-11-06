@@ -9,7 +9,7 @@
 ** Introduction
 
 Unlike sequential match expressions, nested case expressions do not backtrack
-on nested and multiple patterns.
+on multiple and nested patterns.
 
 #+begin_example
   || === Miranda ===
