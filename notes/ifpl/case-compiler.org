@@ -1,0 +1,237 @@
+* Compiling Case Expressions
+
+** Sources
+
+| source                                      | author        |
+|---------------------------------------------+---------------|
+| *Efficient Compilation of Pattern-matching* | Philip Wadler |
+
+** Introduction
+
+Unlike sequential match expressions, nested case expressions do not backtrack
+on nested and multiple patterns.
+
+#+begin_example
+  || === Miranda ===
+
+  f p₁₁ ... p₁ₓ = E₁
+  ...
+  f pₓ₁ ... pₓₓ = Eₓ
+
+  || - translates ->
+
+  f = λu₁ ... λuₓ. (( λp₁₁ ... λp₁ₓ.E₁) u₁ ... uₓ)
+                 ▯ ...
+                 ▯ (( λpₓ₁ ... λpₓₓ.Eₓ) u₁ ... uₓ)
+                 ▯ ERROR
+
+  || === match: compiler function ===
+
+  match [u₁ ... uₓ]
+        [( [p₁₁ ... p₁ₓ)], E₁ ),
+         ...
+         ( [pₓ₁ ... pₓₓ)], Eₓ )]
+         E
+
+  || === demonstration ===
+
+  demo f [] ys         = A f ys
+  demo f (x:xs) []     = B f x xs
+  demo f (x:xs) (y:ys) = C f x xs y ys
+
+  || - translates ->
+
+  demo = λu₁.λu₂.λu₃. ((λf.λNIL.λys.A f ys) u₁ u₂ u₃)
+                    ▯ ((λf.λ(CONS x xs).λNIL.B f x xs) u₁ u₂ u₃)
+                    ▯ ((λf.λ(CONS x xs).λ(CONS y ys).C f x xs y ys) u₁ u₂ u₃)
+                    ▯ ERROR
+
+  || - transforms ->
+
+  demo = λu₁.λu₂.λu₃. match [u₁, u₂, u₃]
+                            [( [f, NIL,       ys ],       (A f ys) ),
+                             ( [f, CONS x xs, NIL],       (B f x xs) ),
+                             ( [f, CONS x xs, CONS y ys], (C f x xs y ys) )]
+                            ERROR
+
+  || - transforms ->
+
+  demo = λu₁.λu₂.λu₃.
+             case u₂ of
+             NIL        -> (A u₂ u₃)
+             CONS u₄ u₅ ->
+                 case v₃ of
+                 NIL        -> (B u₁ u₂)
+                 CONS u₆ u₇ ->
+                     case u₂ of
+                     NIL        -> ERROR
+                     CONS u₄ u₅ ->
+                         case u₃ of
+                         NIL        -> ERROR
+                         CONS u₆ u₇ -> (C u₁ u₄ u₅ u₆ u₇)
+
+  where uₓ      = new variable bound in Eₓ
+        pₓₓ     = pattern
+        Eₓ      = expression
+        A, B, C = unspecified expressions
+#+end_example
+
+** Compilation Steps
+
+#+begin_example
+  || === The Variable Rule ===
+  ||
+  || If every equation begins with a variable pattern, then
+  || the call of match will have this form:
+
+  match (u:us)
+        [( (v₁:p₁), E₁ ),
+         ...
+         ( (vₓ:pₓ), Eₓ )]
+         E
+
+  || - reduces ->
+
+  match us
+        [( p₁, E₁[u/v₁] ),
+         ...
+         ( pₓ, Eₓ[u/vₓ] )]
+        E
+
+  || === The Constructor Rule ===
+  ||
+  || A list of equations that begin with a constructor
+  || is equivalent to a case expression derived by grouping
+  || together all equations that begin with the same
+  || constructor. Within each group, new variables are
+  || introduced corresponding to each field of the
+  || constructor.
+
+  match (u:us) (qs₁ ++ ... ++ qsₓ) E
+
+      where [( ((c ps'₁):ps₁), E₁ ),
+             ( ((c ps'ₓ):psₓ), Eₓ )]
+
+  || - reduces ->
+
+  case u of
+      c₁ us'₁ -> match (us'₁ ++ us) qs'₁ E
+      ...
+      cₓ us'ₓ -> match (us'ₓ ++ us) qs'ₓ E
+#+end_example
+
+** Miranda: Pattern Matching Compiler
+
+#+begin_src
+  || === patterns ===
+
+  pattern ::= VARIABLE variable
+            | CONSTRUCT constructor [pattern]
+
+  variable    == [char]
+  constructor == [char]
+
+  arity        :: constructor -> num
+  constructors :: constructor -> [constructor]
+
+  expression ::= CASE variable [clause]
+               | FATBAR expression expression
+               | ...
+
+  clause     ::= CLAUSE constructor [variable] expression
+
+  || example: (substitute (f x y) "_u1" "x") -> (f _u1 y)
+  substitute :: expression -> variable -> variable -> expression
+
+  equation == ([pattern], expression)
+
+  isVariable :: equation -> bool
+  isVariable (VARIABLE v : ps, e)      = True
+  isVariable (CONSTRUCT c ps' : ps, e) = False
+
+  isConstruct :: equation -> bool
+  isConstruct q = ~(isVariable q)
+
+  getConstruct :: equation -> constructor
+  getConstruct (CONSTRUCT c ps' : ps, e) = c
+
+  makeVariable :: num -> variable
+  makeVariable k = "_u" ++ show k
+
+  partition :: (* -> **) -> [*] -> [ [*] ]
+  partition f []        = []
+  partition f [x]       = [ [x] ]
+  partition f (x:x':xs) = tack x (partition f (x':xs)), if f x = f x'
+                        = [x] : partition f (x':xs),    otherwise
+
+  tack x xss = (x : hd xss) : tl xss
+
+  foldr :: (* -> ** -> **) -> ** -> [*] -> **
+  foldr f a []     = a
+  foldr f a (x:xs) = f x (foldr f a xs)
+
+  match :: num -> [variable] -> [equation] -> expression -> expression
+  match number [] equations default
+      = foldr FATBAR default [e | ([], e) <- equations]
+  match number (v:vs) equations default
+      = foldr (matchEither number (v:vs)) default (partition isVariable equations)
+
+  matchEither number variables equations default
+      = matchVariable  number variables equations default, if isVariable  (hd equations)
+      = matchConstruct number variables equations default, if isConstruct (hd equations)
+
+  matchVariable number (v:vs) equations default
+      = match number
+              vs
+              [(ps, substitute e u x) | (VARIABLE x : ps, e) <- equations]
+              default
+
+  matchConstruct number (v:vs) equations default
+      = CASE v [matchClause c number (v:vs) (choose c equations) default | c <- cs]
+        where cs = constructors (getConstruct (hd equations))
+
+  matchClause constructor number (v:vs) equations default
+      = CLAUSE constructor vs' (match (number' + number)
+                                      (vs' ++ vs)
+                                      [(ps' ++ ps, e) | (CONSTRUCT constructor ps' : ps, e) <- equations]
+                                      default)
+        where number' = arity constructor
+              vs'     = [makeVariable (i + number) | i <- [1..number']]
+
+  choose constructor equations
+      = [equation | equation <- equations; getConstruct equation = constructor]
+#+end_src
+
+** Example Translations
+
+#+begin_example
+  mappairs f [] ys         = []
+  mappairs f (x:xs) []     = []
+  mappairs f (x:xs) (y:ys) = f x y : mappairs f xs ys
+
+  || - translates ->
+
+  mappairs = λf.λxs'.λys'.
+                 case xs' of
+                 NIL       -> NIL
+                 CONS x xs -> case ys' of
+                              NIL       -> NIL
+                              CONS y ys -> CONS (f x y) (mappairs f xs ys)
+
+  dedup []       = []
+  dedup [x]      = [x]
+  dedup (y:x:xs) = dedup (x:xs),     if y = x
+                 = y : dedup (x:xs), otherwise
+
+  || - translates ->
+
+  dedup = λxs''. case xs'' of
+                 NIL         -> NIL
+                 CONS x' xs' ->
+                     case xs' of
+                     NIL       -> CONS x' NIL
+                     CONS x xs -> IF (= x' x)
+                                     (dedup (CONS x xs))
+                                     (CONS x' (dedup (CONS x xs)))
+#+end_example
+    
