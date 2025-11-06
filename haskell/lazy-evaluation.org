@@ -36,33 +36,37 @@ Pattern matching drives evaluation.
 *** Example 1: Build and Take
 
 #+begin_src haskell
-  take :: int -> [a] -> [a]
+  repeat :: a -> [a]
+  repeat x = x : repeat x
+
+  take :: Int -> [a] -> [a]
   take _ []     = []
-  take n (x:xs) = if n <= 0 then [] else (x : take (n - 1) xs)
+  take n (x:xs) = if n <= 0
+                  then []
+                  else (x : take (n - 1) xs)
 
-  build :: Int -> Int -> Int
-  build x y = if x > y then [] else (x : build (x + 1) y)
-
-  take 3 (build 1 99)
-  take 3 (1 : (build 2 99))
-  1:(take 2 (build­ 2 99))
-  1:(take 2 (2 : (build 3 99)))
-  1:2:(take 1 (build 3 99))
-  1:2:(take 1 (3 : (build 4 99)))
-  1:2:3:(take 0 (build 4 99))
-  1:2:3:[]
+    take 2 (repeat 7)
+  = take 2 (7 : repeat 7)
+  = 7 : take (2 - 1) (repeat 7)
+  = 7 : take 1 (repeat 7)
+  = 7 : take 1 (7 : repeat 7)
+  = 7 : 7 : take (1 - 1) (repeat 7)
+  = 7 : 7 : take 0 (repeat 7)
+  = 7 : 7 : []
 #+end_src
 
-*** Example 2: Take and Drop (Miranda)
+*** Example 2: Take and Drop
 
-#+begin_src
-  take 0 x = []
-  take (n+1) [] = []
-  take (n+1) (a:x) = a : take n x
+#+begin_src haskell
+  take :: Int -> [a] -> [a]
+  take 0 _         = []
+  take _ []        = []
+  take (n+1) (x:xs) = x : take n xs
 
-  drop 0 x = x
-  drop (n+1) [] = []
-  drop (n+1) (a:x) = drop n x
+  drop :: Int -> [a] -> [a]
+  drop 0 xs         = xs
+  drop _ []         = []
+  drop (n+1) (_:xs) = drop n xs
 
   take n x ++ drop n x = x
 #+end_src
