@@ -233,53 +233,7 @@ are *free*.
                              <pattern>
 #+end_example
 
-*** ~let~ Translation
-
-#+begin_example
-  let v = B in E
-
-  # - equivalent ->
-
-  (λv.E) B
-#+end_example
-
-As a matter of convenience, multiple definitions can be written in the same ~let~.
-
-#+begin_example
-  let x = 3
-      y = 4
-  in (* x y)
-
-  # - equivalent ->
-
-  let x = 3
-  in let y = 4
-     in (* x y)
-
-  # - equivalent ->
-
-  λx.(λy.(* x y)) 3 4
-#+end_example
-
-*** ~letrec~ Translation
-
-#+begin_example
-  letrec v = B in E
-
-  # - equivalent ->
-
-  let v = Y (λv.B) in E
-          where Y = λf.(λx.f (x x)) (λx.f (x x))
-
- # - equivalent ->
-
- (λv.E) (Y (λv.B))
-        where Y = λf.(λx.f (x x)) (λx.f (x x))
-#+end_example
-
-** Miranda to Lambda
-
-*** Translation Scheme
+** Translations
 
 #+begin_example
   || === Miranda Program ===
@@ -359,9 +313,13 @@ As a matter of convenience, multiple definitions can be written in the same ~let
       where Aₓ = expression
             Gₓ = boolean-valued expression
             Dₓ = definition
+#+end_example
 
-  || === pattern-match transformations ===
+** Transformations
 
+*** Constants, Sums, and Products
+
+#+begin_example
   (λk.E)             ≡ (λv.IF (= k v) E FAIL)
                        where v = new variable bound in E
                              k = constant
@@ -370,6 +328,9 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
   (λ(s p₁ ... pₓ).E) ≡ (UNPACK-SUM-s (λp₁ ... pₓ.E))
 
+  where t = product constructor
+        s = sum constructor
+
   || === UNPACK semantics ===
 
   UNPACK-PRODUCT-t f v = f (SELECT-t-1 v) ... (SELECT-t-x v)
@@ -377,30 +338,150 @@ As a matter of convenience, multiple definitions can be written in the same ~let
   UNPACK-SUM-s f (s v₁ ... vₓ)  = f v₁ ... vₓ
   UNPACK-SUM-s f (s' v₁ ... vₓ) = FAIL, if s ≠ s'
   UNPACK-SUM-s f ⊥              = ⊥
+
+  || === constructor functions ===
+
+  s                = PACK-SUM-d-r
+  UNPACK-SUM-s     = UNPACK-SUM-d-r
+
+  t                = PACK-PRODUCT-r
+  UNPACK-PRODUCT-t = UNPACK-PRODUCT-r
+                     where SELECT-t-x = SELECT-r-x
+
+  where s = sum constructor
+        d = structure tag
+        t = product constructor
+        r = constructor arity
+
+  || --- examples ---
+
+  tree ::= LEAF num | BRANCH tree tree
+
+  || - transforms ->
+
+  LEAF              = PACK-SUM-1-1
+  BRANCH            = PACK-SUM-2-2
+  UNPACK-SUM-LEAF   = UNPACK-SUM-1-1
+  UNPACK-SUM-BRANCH = UNPACK-SUM-2-2
+
+  pair * ** ::= PAIR * **
+
+  || - transforms ->
+
+  PAIR                = PACK-PRODUCT-2
+  UNPACK-PRODUCT-PAIR = UNPACK-PRODUCT-2
+  SELECT-PAIR-1       = SELECT-2-1
+  SELECT-PAIR-2       = SELECT-2-2
 #+end_example
 
-*** Basic Translation
+*** ~let~ and ~letrec~
 
 #+begin_example
-  # definition
+            Dependency Analysis
+           +-----------------------------+
+           |                             V
+          +-------------------------------+
+          | general let(rec) expressions  |
+          +-------------------------------+
+           | Conformality Transformation |
+           V                             V
+  +-----------------+           +--------------------+
+  | irrefutable let |<--------- | irrefutable letrec |
+  +-----------------+           +--------------------+
+           |                             |
+           V                             V
+    +------------+                +---------------+
+    | simple let |                | simple letrec |
+    +------------+                +---------------+
+           |
+           V
+  +-----------------+
+  | lambda calculus |
+  +-----------------+
+
+  || === simple let -> lambda calculus ===
+
+  let v = B in E ≡ (λv.E) B
+
+  || --- examples ---
+
+  let x = 3
+      y = 4
+  in (* x y)
+
+  || - transforms ->
+
+  let x = 3
+  in let y = 4
+     in (* x y)
+
+  || - transforms ->
+
+  λx.(λy.(* x y)) 3 4
+
+  || === irrefutable let -> simple let ===
+  ||
+  || Variable patterns need not be transformed, because
+  || they are already in simple form.
+
+  let (t p₁ ... pₓ) = B in E ≡ let v = B
+                               in let p₁ = SELECT-t-1 v
+                                      ...
+                                      pₓ = SELECT-t-r v
+                                  in E
+
+  where v  = new variable bound in E
+
+  || === irrefutable letrec -> simple letrec ===
+
+  letrec (t p₁ ... pₓ) = B
+         ...
+  in E
+
+  || - equivalent ->
+
+  letrec v  = B
+         p₁ = SELECT-t-1 v
+         ...
+         pₓ = SELECT-t-x v
+         ...
+  in E
+
+  where v = new variable bound in E or B
+
+  || === irrefutable letrec -> irrefutable let ===
+
+  letrec v = B in E
+
+  || - equivalent ->
+
+  let v = Y (λv.B) in E
+          where Y = λf.(λx.f (x x)) (λx.f (x x))
+
+  || - equivalent ->
+
+  (λv.E) (Y (λv.B))
+         where Y = λf.(λx.f (x x)) (λx.f (x x))
+#+end_example
+
+*** Example Translations
+
+#+begin_example
+  || Miranda definition
   average a b = (a + b) / 2
 
-  # expression
+  || Miranda expression
   average 2 (3 + 5)
 
-  # enriched lambda calculus
+  || enriched lambda calculus
   let
     average = λa.(λb./ (+ a b) 2)
   in
     average 2 (+ 3 5)
 
-  # plain lambda calculus
+  || plain lambda calculus
   (λaverage.(average 2 (+ 3 5))) λa.(λb./ (+ a b) 2)
-#+end_example
 
-*** Pattern-Match Translation
-
-#+begin_example
   || Miranda
   flip 0 = 1
   flip 1 = 0
@@ -564,6 +645,11 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
 - nested pattern :: A constructor pattern that is *not* simple. A pattern
   that contains patterns within itself.
+
+- refutable pattern :: A pattern match that can fail.
+
+- irrefutable pattern :: A pattern *p* is irrefutable if is either a variable, *v*,
+  or a product pattern *(t p₁ ... pₓ)*, where *p₁ ... pₓ* are irrefutable patterns.
 
 #+begin_quote
   "Intuitively, we expect the semantics to be 'try the first equation,
