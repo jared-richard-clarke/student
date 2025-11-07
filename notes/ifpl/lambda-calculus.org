@@ -424,13 +424,17 @@ are *free*.
   || Variable patterns need not be transformed, because
   || they are already in simple form.
 
-  let (t p₁ ... pₓ) = B in E ≡ let v = B
-                               in let p₁ = SELECT-t-1 v
-                                      ...
-                                      pₓ = SELECT-t-r v
-                                  in E
+  let (t p₁ ... pₓ) = B in E
 
-  where v  = new variable bound in E
+  || - equivalent ->
+
+  let v = B
+  in let p₁ = SELECT-t-1 v
+         ...
+         pₓ = SELECT-t-r v
+     in E
+
+  where v = new variable bound in E
 
   || === irrefutable letrec -> simple letrec ===
 
