@@ -464,7 +464,7 @@ are *free*.
          where Y = λf.(λx.f (x x)) (λx.f (x x))
 #+end_example
 
-*** Example Translations
+** Example Translations
 
 #+begin_example
   || Miranda definition
