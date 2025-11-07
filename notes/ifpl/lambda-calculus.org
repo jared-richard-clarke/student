@@ -364,6 +364,7 @@ As a matter of convenience, multiple definitions can be written in the same ~let
 
   (λk.E)             ≡ (λv.IF (= k v) E FAIL)
                        where v = new variable bound in E
+                             k = constant
 
   (λ(t p₁ ... pₓ).E) ≡ (UNPACK-PRODUCT-t (λp₁ ... λpₓ.E))
 
