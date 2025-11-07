@@ -120,7 +120,7 @@ on multiple and nested patterns.
 
   || === Constructor Rule ===
   ||
-  || A list of equations that begin with a constructor is equivalent
+  || A list of equations where each begins with a constructor is equivalent
   || to a case expression derived by grouping together all equations
   || that begin with the same constructor. Within each group, new
   || variables are introduced corresponding to each field of the
