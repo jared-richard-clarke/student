@@ -297,14 +297,14 @@ on multiple and nested patterns.
                                NIL        -> NIL
                                CONS u₆ u₇ -> CONS (u₁ u₄ u₆) (mappairs u₁ u₅ u₇)
 
+  || === nested patterns ===
+
   dedup []       = []
   dedup [x]      = [x]
   dedup (y:x:xs) = dedup (x:xs),     if y = x
                  = y : dedup (x:xs), otherwise
 
   || - translates ->
-
-  || === nested patterns ===
 
   dedup = λxs''. case xs'' of
                  NIL         -> NIL
