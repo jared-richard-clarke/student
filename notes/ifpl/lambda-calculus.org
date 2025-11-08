@@ -273,6 +273,8 @@ are *free*.
 
   TE[E₁ $v E₂]          ≡ TE[v] TE[E₁] TE[E₂]
 
+  TE[E₁ ▯ E₂]           ≡ FATBAR E₁ E₂
+
       where k      = literal constant or built-in operator
             v      = variable
             Eₓ     = expressions
@@ -313,11 +315,45 @@ are *free*.
       where Aₓ = expression
             Gₓ = boolean-valued expression
             Dₓ = definition
+
+  || === list comprehensions ===
+
+  flatmap f []     = []
+  flatmap f (x:xs) = (f x) ++ (flatmap f xs)
+
+  TE[ [E | v <- L; Q] ] ≡ flatmap (λv.TE[ [E | Q] ]) TE[L]
+
+  TE[ [E | B; Q] ]      ≡ IF TE[B] TE[ [E | Q] ] NIL
+
+  TE[ [E | ] ]          ≡ CONS TE[E] NIL
+
+  where E = expression
+        B = boolean expression
+        L = list
+        Q = qualifiers (zero or more)
+        v = variable
+
+  || - optimizations ->
+
+  TE[ [E | Q] ] ≡ TQ[ [E | Q] ++ [] ]
+
+  TQ[ [E | v <- L₁; Q] ++ L₂ ]
+
+  ≡ letrec h = λus. case us of
+                   NIL        -> TE[L₂]
+                   CONS v us' -> TQ[ [E | Q] ++ (h us') ]
+    in (h TE[L₁])
+
+  TQ[ [E | B; Q] ++ L ] ≡ IF TE[B] TQ[ [E | Q] ++ L ] TE[L]
+
+  TQ[ [E | ] ++ L ]     ≡ CONS TE[E] TE[L]
+
+  where h, us, us' = new variables bound in E, L₁, L₂, or Q
 #+end_example
 
 ** Transformations
 
-*** Constants, Sums, and Products
+*** Constant, Sum, and Product Expressions
 
 #+begin_example
   (λk.E)             ≡ (λv.IF (= k v) E FAIL)
@@ -374,7 +410,7 @@ are *free*.
   SELECT-PAIR-2       = SELECT-2-2
 #+end_example
 
-*** ~let~ and ~letrec~
+*** ~let~ and ~letrec~ Expressions
 
 #+begin_example
             Dependency Analysis
@@ -455,17 +491,77 @@ are *free*.
 
   || === irrefutable letrec -> irrefutable let ===
 
-  letrec v = B in E
+  || multiple definitions
+
+  letrec p₁ = B₁
+         ...
+         pₓ = Bₓ
+  in E
 
   || - equivalent ->
 
-  let v = Y (λv.B) in E
+  letrec (t p₁ ... pₓ) = (t B₁ ... Bₓ) in E
+
+  || single definition
+
+  letrec p = B in E
+
+  || - equivalent ->
+
+  let p = Y (λp.B) in E
           where Y = λf.(λx.f (x x)) (λx.f (x x))
 
+  || === refutable let and letrec ===
+
+  let(rec) p = B
+
   || - equivalent ->
 
-  (λv.E) (Y (λv.B))
-         where Y = λf.(λx.f (x x)) (λx.f (x x))
+  let(rec) (t v₁ ... vₓ) = let v = B
+                           in ((λp.(t v₁ ... vₓ)) v) ▯ ERROR
+
+  where {v₁ ... vₓ} = Var(p)
+        t           = product constructor
+        vₓ          = unique variable
+
+  Var(p)             = {v}, if p = variable
+  Var(p)             = {},  if p = constant
+  Var((c p₁ ... pₓ)) = Var(p₁) ∪ ... ∪ Var(pₓ)
+#+end_example
+
+*** ~case~ Expressions
+
+#+begin_example
+  || === product types ==
+
+  case v of
+      t v₁ ... vₓ -> E₁
+
+  || - equivalent ->
+
+  let v₁ = SELECT-t-1 v
+      ...
+      vₓ = SELECT-t-r v
+  in E₁
+
+  || === sum types ===
+
+  case v of
+      s  v₁₁ ... v₁ₓ -> E₁
+      ...
+      sₓ vₓ₁ ... vₓₓ -> Eₓ
+
+  || - equivalent ->
+
+  CASE-T v (let v₁₁ = SELECT-SUM-s₁-1 v
+                ...
+                v₁ₓ = SELECT-SUM-s₁-x v
+            in E₁)
+           ...
+           (let vₓ₁ = SELECT-SUM-sₓ-1 v
+                ...
+                vₓₓ = SELECT-SUM-sₓ-x v
+            in Eₓ)
 #+end_example
 
 ** Miranda to Lambda
@@ -496,7 +592,6 @@ are *free*.
             ▯ ERROR)
 
   || - transforms ->
-
   flip = λx.( ((λv.IF (= 0 v) 1 FAIL) x)
             ▯ ((λv.IF (= 1 v) 0 FAIL) x)
             ▯ ERROR)
@@ -526,7 +621,6 @@ are *free*.
                ▯ ERROR)
 
   || - transforms ->
-
   reflect = λt.( (UNPACK-SUM-LEAF (λn.LEAF n) t)
                ▯ (UNPACK-SUM-BRANCH (λt₁.λt₂.BRANCH (reflect t₁) (reflect t₂)) t)
                ▯ ERROR)
@@ -547,6 +641,14 @@ are *free*.
 
   || enriched lambda calculus
   addPair = λw.(letrec (PAIR x y) = w in (+ x y))
+
+  || - transforms ->
+  addPair = λw.(case w of (PAIR x y) -> (+ x y))
+
+  || - transforms ->
+  addPair = λw.(let x = SELECT-PAIR-1 w
+                    y = SELECT-PAIR-2 w
+                in (+ x y))
 #+end_example
 
 ** General Structured Types
