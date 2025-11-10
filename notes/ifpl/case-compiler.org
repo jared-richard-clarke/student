@@ -8,8 +8,8 @@
 
 ** Introduction
 
-Unlike sequential match expressions, nested case expressions do not backtrack
-on multiple and nested patterns.
+Unlike sequential match expressions, case expressions — if compiled properly —
+do not backtrack on multiple and nested patterns.
 
 #+begin_example
   || === Miranda ===
