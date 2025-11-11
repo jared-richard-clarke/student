@@ -33,9 +33,9 @@ do not backtrack on multiple and nested patterns.
   ||           E  = default expression
 
   match [u₁ ... uₓ]
-        [( [p₁₁ ... p₁ₓ)], E₁ ),
+        [( [p₁₁ ... p₁ₓ], E₁ ),
          ...
-         ( [pₓ₁ ... pₓₓ)], Eₓ )]
+         ( [pₓ₁ ... pₓₓ], Eₓ )]
          E
 
   || === demonstration ===
