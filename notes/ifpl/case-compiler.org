@@ -288,7 +288,7 @@ do not backtrack on multiple and nested patterns.
   matchVariable number (v:vs) equations default
       = match number
               vs
-              [(ps, substitute e u x) | (VARIABLE x : ps, e) <- equations]
+              [(ps, substitute e v x) | (VARIABLE x : ps, e) <- equations]
               default
 
   || === Construct Rule ===
