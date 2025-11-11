@@ -86,7 +86,9 @@ do not backtrack on multiple and nested patterns.
 #+begin_example
   || === Variable Rule ===
   ||
-  || For a list where every equation begins with a variable pattern.
+  || If every equation in the equations list begins with a variable pattern,
+  || replace said patterns with the first variable in the variables list.
+  || Variable patterns need not be the same.
 
   match (u:us)
         [( (v₁:ps₁), E₁ ),
@@ -130,6 +132,7 @@ do not backtrack on multiple and nested patterns.
   match (u:us) (qs₁ ++ ... ++ qsₓ) E
 
       where qsₓ = [( ((c ps'₁):ps₁), E₁ ),
+                   ...
                    ( ((c ps'ₓ):psₓ), Eₓ )]
 
   || - reduces ->
@@ -138,6 +141,10 @@ do not backtrack on multiple and nested patterns.
       c₁ us'₁ -> match (us'₁ ++ us) qs'₁ E
       ...
       cₓ us'ₓ -> match (us'ₓ ++ us) qs'ₓ E
+
+          where qsₓ = [( (ps'₁ ++ ps₁), E₁ ),
+                       ...
+                       ( (ps'ₓ ++ psₓ), Eₓ )]
 
   || -- example --
 
@@ -158,7 +165,9 @@ do not backtrack on multiple and nested patterns.
                            ( [x, xs, CONS y ys], (C u₁ x xs y ys) )]
                           ERROR
 
-  || === Empty Rule ===
+  || === Empty Rule (Base Case) ===
+  ||
+  || A match call where the variable list is empty.
 
   match []
         [( [], E₁ ),
@@ -174,8 +183,12 @@ do not backtrack on multiple and nested patterns.
 
  || === Mixture Rule ===
  ||
- || A list of equations that begins with both variables and constructors
- || may be partitioned into "x" lists.
+ || The equation list is partitioned into "x" lists
+ || so that "qsₓ" has every equation beginning with
+ || a variable or a constructor.
+ ||
+ || If "match" fails on "qs₁", try through "qsₓ"
+ || until either success or default value "E".
 
  qs = qs₁ ++ ... ++ qsₓ
 
@@ -186,6 +199,24 @@ do not backtrack on multiple and nested patterns.
  || - reduces ->
 
  match us qs₁ (match us qs₂ ( ... (match us qsₓ E) ... ))
+
+ || -- example --
+
+  match [u₂, u₃]
+        [( [NIL, ys],              (A u₁ ys) ),
+         ( [xs,  NIL],             (B u₁ xs) ),
+         ( [CONS x xs, CONS y ys], (C u₁ x xs y ys) )]
+        ERROR
+
+  || - reduces ->
+
+  match [u₂, u₃]
+        [( [NIL, ys], (A u₁ ys) )]
+        (match [u₂, u₃]
+               [( [xs, NIL], (B u₁ xs) )]
+               (match [u₂, u₃]
+                      [( [CONS x xs, CONS y ys], (C u₁ x xs y ys) )]
+                      ERROR))
 #+end_example
 
 ** Miranda: Case Compiler
@@ -208,7 +239,9 @@ do not backtrack on multiple and nested patterns.
 
   clause     ::= CLAUSE constructor [variable] expression
 
-  || example: (substitute (f x y) "_u1" "x") -> (f _u1 y)
+  || Replaces variable with provided alternative.
+  ||
+  || (substitute (f x y) "_u1" "x") -> (f _u1 y)
   substitute :: expression -> variable -> variable -> expression
 
   equation == ([pattern], expression)
@@ -238,9 +271,12 @@ do not backtrack on multiple and nested patterns.
   foldr f a []     = a
   foldr f a (x:xs) = f x (foldr f a xs)
 
+  || Argument "number" helps generate unique variable names.
   match :: num -> [variable] -> [equation] -> expression -> expression
+  || === Empty Rule (Base Case) ===
   match number [] equations default
       = foldr FATBAR default [e | ([], e) <- equations]
+  || === Mixture Rule ===
   match number (v:vs) equations default
       = foldr (matchEither number (v:vs)) default (partition isVariable equations)
 
@@ -248,12 +284,14 @@ do not backtrack on multiple and nested patterns.
       = matchVariable  number variables equations default, if isVariable  (hd equations)
       = matchConstruct number variables equations default, if isConstruct (hd equations)
 
+  || === Variable Rule ===
   matchVariable number (v:vs) equations default
       = match number
               vs
               [(ps, substitute e u x) | (VARIABLE x : ps, e) <- equations]
               default
 
+  || === Construct Rule ===
   matchConstruct number (v:vs) equations default
       = CASE v [matchClause c number (v:vs) (choose c equations) default | c <- cs]
         where cs = constructors (getConstruct (hd equations))
@@ -266,6 +304,7 @@ do not backtrack on multiple and nested patterns.
         where number' = arity constructor
               vs'     = [makeVariable (i + number) | i <- [1..number']]
 
+  || Return all "equations" that begin with "constructor".
   choose constructor equations
       = [equation | equation <- equations; getConstruct equation = constructor]
 #+end_src
