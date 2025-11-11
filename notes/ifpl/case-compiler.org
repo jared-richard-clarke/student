@@ -278,9 +278,9 @@ do not backtrack on multiple and nested patterns.
       = foldr FATBAR default [e | ([], e) <- equations]
   || === Mixture Rule ===
   match number (v:vs) equations default
-      = foldr (matchEither number (v:vs)) default (partition isVariable equations)
+      = foldr (matchMix number (v:vs)) default (partition isVariable equations)
 
-  matchEither number variables equations default
+  matchMix number variables equations default
       = matchVariable  number variables equations default, if isVariable  (hd equations)
       = matchConstruct number variables equations default, if isConstruct (hd equations)
 
