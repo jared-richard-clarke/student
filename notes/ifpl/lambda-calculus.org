@@ -353,12 +353,23 @@ are *free*.
 
 ** Transformations
 
-*** Constant, Sum, and Product Expressions
+*** Variable, Constant, Sum, and Product Expressions
+
+#+begin_quote
+  "In the case when the pattern *p* is a variable there is nothing to do,
+   because no pattern-matching is involved."
+
+  — *The Implementation of Functional Programming Languages*, Simon L. Peyton Jones
+#+end_quote
 
 #+begin_example
+  || === constants ===
+
   (λk.E)             ≡ (λv.IF (= k v) E FAIL)
                        where v = new variable bound in E
                              k = constant
+
+  || === products and sums ===
 
   (λ(t p₁ ... pₓ).E) ≡ (UNPACK-PRODUCT-t (λp₁ ... λpₓ.E))
 
@@ -412,6 +423,27 @@ are *free*.
 
 *** ~let~ and ~letrec~ Expressions
 
+1. The left-hand side of each definition of a *simple* let(rec)-expression
+   must be a variable.
+
+2. The left-hand side of each definition of an *irrefutable* let(rec)-expression
+   must be an irrefutable pattern.
+
+3. The left-hand side of each definition of a *general* let(rec)-expression may
+   be any arbitrary pattern.
+
+There are strong efficiency reasons for including *simple let(rec)-expressions*
+in the target language, rather than transforming them into the ordinary lambda calculus.
+
+1. Miranda is a polymorphically-typed language. It is impossible to type-check
+   a program once it has been transformed into the ordinary lambda calculus.
+
+2. *let-expressions* can be evaluated much more efficiently than the corresponding
+   application of a lambda abstraction.
+
+3. Recursion in the ordinary lambda calculus must be expressed via
+   the inefficient *Y-combinator*
+
 #+begin_example
             Dependency Analysis
            +-----------------------------+
@@ -457,8 +489,8 @@ are *free*.
 
   || === irrefutable let -> simple let ===
   ||
-  || Variable patterns need not be transformed, because
-  || they are already in simple form.
+  || Side Note: Variable patterns need not be transformed,
+  || because they are already in simple form.
 
   let (t p₁ ... pₓ) = B in E
 
@@ -479,7 +511,7 @@ are *free*.
   || === irrefutable letrec -> simple letrec ===
 
   letrec (t p₁ ... pₓ) = B
-         ...
+         < definitions >
   in E
 
   || - equivalent ->
@@ -488,15 +520,14 @@ are *free*.
          p₁ = SELECT-t-1 v
          ...
          pₓ = SELECT-t-x v
-         ...
+         < definitions >
   in E
 
   where v = new variable bound in E or B
 
   || === irrefutable letrec -> irrefutable let ===
 
-  || multiple definitions
-
+  || -- multiple definitions --
   letrec p₁ = B₁
          ...
          pₓ = Bₓ
@@ -506,8 +537,7 @@ are *free*.
 
   letrec (t p₁ ... pₓ) = (t B₁ ... Bₓ) in E
 
-  || single definition
-
+  || -- single definition --
   letrec p = B in E
 
   || - equivalent ->
@@ -519,7 +549,7 @@ are *free*.
 
   let(rec) p = B
 
-  || - equivalent ->
+  || -- conformality transformation --
 
   let(rec) (t v₁ ... vₓ) = let v = B
                            in ((λp.(t v₁ ... vₓ)) v) ▯ ERROR
@@ -566,15 +596,21 @@ are *free*.
                 ...
                 vₓₓ = SELECT-SUM-sₓ-x v
             in Eₓ)
+
+  || === CASE-T semantics ===
+
+  CASE-T (sₓ a₁ ... aₓ) b₁ ... bₓ ... bₑ = bₓ
+  CASE-T ⊥              b₁ ... bₓ ... bₑ = ⊥
+
+      where T = sum constructor type
 #+end_example
 
-** Miranda to Lambda
+** Miranda to Lambda Examples
 
 #+begin_example
-  || Miranda definition
+  || Miranda
   average a b = (a + b) / 2
 
-  || Miranda expression
   average 2 (3 + 5)
 
   || enriched lambda calculus
@@ -595,7 +631,8 @@ are *free*.
             ▯ ((λ1.0) x)
             ▯ ERROR)
 
-  || - transforms ->
+  || - equivalent ->
+
   flip = λx.( ((λv.IF (= 0 v) 1 FAIL) x)
             ▯ ((λv.IF (= 1 v) 0 FAIL) x)
             ▯ ERROR)
@@ -605,6 +642,20 @@ are *free*.
 
   || enriched lambda calculus
   head = λxs'.(((λ(CONS x xs).x) xs') ▯ ERROR)
+
+  || - equivalent ->
+
+  let (PAIR x xs) = let v = xs'
+                    in ((λ(CONS x xs).PAIR x xs) v) ▯ ERROR
+  in x
+
+  || - equivalent ->
+
+  let pair = let v = xs'
+             in ((λ(CONS x xs).PAIR x xs) v) ▯ ERROR
+  in let x  = SELECT-PAIR-1 pair
+         xs = SELECT-PAIR-2 pair
+     in x
 
   || Miranda
   sum [] = 0
@@ -624,7 +675,8 @@ are *free*.
                ▯ ((λ(BRANCH x y).BRANCH (reflect y) (reflect x)) t)
                ▯ ERROR)
 
-  || - transforms ->
+  || - equivalent ->
+
   reflect = λt.( (UNPACK-SUM-LEAF (λn.LEAF n) t)
                ▯ (UNPACK-SUM-BRANCH (λt₁.λt₂.BRANCH (reflect t₁) (reflect t₂)) t)
                ▯ ERROR)
@@ -644,15 +696,15 @@ are *free*.
               where (x, y) = w
 
   || enriched lambda calculus
-  addPair = λw.(letrec (PAIR x y) = w in (+ x y))
+  addPair = λw.letrec (PAIR x y) = w
+               in (+ x y)
 
-  || - transforms ->
-  addPair = λw.(case w of (PAIR x y) -> (+ x y))
+  || - equivalent ->
 
-  || - transforms ->
-  addPair = λw.(let x = SELECT-PAIR-1 w
-                    y = SELECT-PAIR-2 w
-                in (+ x y))
+  addPair = λw.letrec v = w
+                      x = SELECT-PAIR-1 v
+                      y = SELECT-PAIR-2 v
+               in (+ x y)
 #+end_example
 
 ** General Structured Types
@@ -754,7 +806,7 @@ are *free*.
 - simple pattern :: ~(c v₁ ... vₓ)~, where ~v₁ ... vₓ~ are distinct variables.
 
 - nested pattern :: A constructor pattern that is *not* simple. A pattern
-  that contains patterns within itself.
+  that contains constructor patterns within itself.
 
 - refutable pattern :: A pattern match that can fail.
 
