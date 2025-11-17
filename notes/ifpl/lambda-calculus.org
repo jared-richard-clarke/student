@@ -608,7 +608,7 @@ in the target language, rather than transforming them into the ordinary lambda c
 ** Miranda to Lambda Examples
 
 #+begin_example
-  || Miranda
+  || Miranda: average
   average a b = (a + b) / 2
 
   average 2 (3 + 5)
@@ -622,7 +622,7 @@ in the target language, rather than transforming them into the ordinary lambda c
   || plain lambda calculus
   (λaverage.(average 2 (+ 3 5))) λa.(λb./ (+ a b) 2)
 
-  || Miranda
+  || Miranda: flip
   flip 0 = 1
   flip 1 = 0
 
@@ -637,7 +637,7 @@ in the target language, rather than transforming them into the ordinary lambda c
             ▯ ((λv.IF (= 1 v) 0 FAIL) x)
             ▯ ERROR)
 
-  || Miranda
+  || Miranda: head
   head (x:xs) = x
 
   || enriched lambda calculus
@@ -645,19 +645,41 @@ in the target language, rather than transforming them into the ordinary lambda c
 
   || - equivalent ->
 
-  let (PAIR x xs) = let v = xs'
-                    in ((λ(CONS x xs).PAIR x xs) v) ▯ ERROR
-  in x
+  head = λxs'.let (PAIR x xs) = let v = xs'
+                                in ((λ(CONS x xs).PAIR x xs) v) ▯ ERROR
+              in x
 
   || - equivalent ->
 
-  let pair = let v = xs'
-             in ((λ(CONS x xs).PAIR x xs) v) ▯ ERROR
-  in let x  = SELECT-PAIR-1 pair
-         xs = SELECT-PAIR-2 pair
-     in x
+  head = λxs'.let pair = let v = xs'
+                         in ((λ(CONS x xs).PAIR x xs) v) ▯ ERROR
+              in let x  = SELECT-PAIR-1 pair
+                     xs = SELECT-PAIR-2 pair
+                 in x
 
-  || Miranda
+  || - equivalent ->
+
+  head = λxs'.let pair = let v = xs'
+                         in case v of
+                            NIL       -> ERROR
+                            CONS x xs -> PAIR x xs
+              in let x  = SELECT-PAIR-1 pair
+                     xs = SELECT-PAIR-2 pair
+                 in x
+
+  || - equivalent ->
+
+  head = λxs'.let pair = let v = xs'
+                         in CASE-T v (let e = SELECT-SUM-NIL v
+                                      in ERROR)
+                                     (let x  = SELECT-SUM-CONS-1 v
+                                          xs = SELECT-SUM-CONS-2 v
+                                      in PAIR x xs)
+              in let x  = SELECT-PAIR-1 pair
+                     xs = SELECT-PAIR-2 pair
+                 in x
+
+  || Miranda: sum
   sum [] = 0
   sum (x:xs) = x + sum xs
 
@@ -666,7 +688,13 @@ in the target language, rather than transforming them into the ordinary lambda c
              ▯ ((λ(CONS x xs).+ x (sum xs)) xs')
              ▯ ERROR)
 
-  || Miranda
+  || - equivalent ->
+
+  sum = λxs'.case xs' of
+             NIL       -> 0
+             CONS x xs ->  (+ x (sum xs))
+
+  || Miranda: reflect
   reflect (LEAF n) = LEAF n
   reflect (BRANCH x y) = BRANCH (reflect y) (reflect x)
 
@@ -680,7 +708,8 @@ in the target language, rather than transforming them into the ordinary lambda c
   reflect = λt.( (UNPACK-SUM-LEAF (λn.LEAF n) t)
                ▯ (UNPACK-SUM-BRANCH (λt₁.λt₂.BRANCH (reflect t₁) (reflect t₂)) t)
                ▯ ERROR)
-  || Miranda
+
+  || Miranda: xor
   xor False y    = y
   xor True False = True
   xor True True  = False
@@ -691,7 +720,15 @@ in the target language, rather than transforming them into the ordinary lambda c
               ▯ ((λTRUE.λTRUE.FALSE) x y)
               ▯ ERROR)
 
-  || Miranda
+  || - equivalent ->
+
+  xor = λx.λy.case x of
+              FALSE -> y
+              TRUE  -> case y of
+                       FALSE -> TRUE
+                       TRUE  -> FALSE
+
+  || Miranda: addPair
   addPair w = x + y
               where (x, y) = w
 
