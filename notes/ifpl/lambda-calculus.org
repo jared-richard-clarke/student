@@ -477,13 +477,13 @@ in the target language, rather than transforming them into the ordinary lambda c
       y = 4
   in (* x y)
 
-  || - transforms ->
+  || - equivalent ->
 
   let x = 3
   in let y = 4
      in (* x y)
 
-  || - transforms ->
+  || - equivalent ->
 
   λx.λy.(* x y) 3 4
 
