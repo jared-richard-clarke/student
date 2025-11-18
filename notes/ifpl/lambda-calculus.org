@@ -726,6 +726,14 @@ Equivalency denotes transformation.
                LEAF n     -> LEAF n
                BRANCH x y -> BRANCH (reflect y) (reflect x)
 
+  || - equivalent ->
+
+  reflect = λt.CASE-T t (let n = SELECT-SUM-LEAF t
+                         in LEAF n)
+                        (let x = SELECT-SUM-BRANCH-1 t
+                             y = SELECT-SUM-BRANCH-2 t
+                         in BRANCH (reflect y) (reflect x))
+
   || Miranda: xor
   xor False y    = y
   xor True False = True
