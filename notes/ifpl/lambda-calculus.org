@@ -444,6 +444,15 @@ in the target language, rather than transforming them into the ordinary lambda c
 3. Recursion in the ordinary lambda calculus must be expressed via
    the inefficient *Y-combinator*
 
+#+begin_quote
+  "...[T]he use of let-expressions instead of lambda abstractions has also
+   avoided the introduction of *UNPACK-SUM* and *UNPACK-PRODUCT*. If all
+   pattern-matching is compiled to case-expressions, then *UNPACK-SUM*
+   and *UNPACK-PRODUCT* do not need to be implemented at all!"
+
+  — *The Implementation of Functional Programming Languages*, Simon L. Peyton Jones
+#+end_quote
+
 #+begin_example
             Dependency Analysis
            +-----------------------------+
@@ -550,6 +559,10 @@ in the target language, rather than transforming them into the ordinary lambda c
   let(rec) p = B
 
   || -- conformality transformation --
+  ||
+  || Lazy product-matching ensures the right-hand side of the
+  || definition is not evaluated unless at least one of the
+  || components of the left-hand tuple is used.
 
   let(rec) (t v₁ ... vₓ) = let v = B
                            in ((λp.(t v₁ ... vₓ)) v) ▯ ERROR
@@ -599,17 +612,16 @@ in the target language, rather than transforming them into the ordinary lambda c
 
   || === CASE-T semantics ===
 
-  CASE-T (sₓ a₁ ... aₓ) b₁ ... bₓ ... bₑ = bₓ
-  CASE-T ⊥              b₁ ... bₓ ... bₑ = ⊥
+  CASE-T (sₑ a₁ ... aₓ) b₁ ... bₑ ... bₓ = bₑ
+  CASE-T ⊥              b₁ ... bₑ ... bₓ = ⊥
 
       where T = sum constructor type
 #+end_example
 
 ** Miranda to Lambda Examples
 
-*Side Note*: The examples below follow neither the order nor degree that
+*Side Note*: The examples below express neither the order nor degree that
 a Miranda expression can be transformed into the enriched lambda calculus.
-Equivalency denotes transformation.
 
 #+begin_example
   || Miranda: average
@@ -649,6 +661,7 @@ Equivalency denotes transformation.
 
   || - equivalent ->
 
+  || conformality transformation for lazy evaluation
   head = λxs'.let (PAIR x xs) = let v = xs'
                                 in ((λ(CONS x xs).PAIR x xs) v) ▯ ERROR
               in x
@@ -674,11 +687,11 @@ Equivalency denotes transformation.
   || - equivalent ->
 
   head = λxs'.let pair = let v = xs'
-                         in CASE-T v (let e = SELECT-SUM-NIL v
-                                      in ERROR)
-                                     (let x  = SELECT-SUM-CONS-1 v
-                                          xs = SELECT-SUM-CONS-2 v
-                                      in PAIR x xs)
+                         in CASE-list v (let e = SELECT-SUM-NIL v
+                                         in ERROR)
+                                        (let x  = SELECT-SUM-CONS-1 v
+                                             xs = SELECT-SUM-CONS-2 v
+                                         in PAIR x xs)
               in let x  = SELECT-PAIR-1 pair
                      xs = SELECT-PAIR-2 pair
                  in x
@@ -697,42 +710,6 @@ Equivalency denotes transformation.
   sum = λxs'.case xs' of
              NIL       -> 0
              CONS x xs ->  (+ x (sum xs))
-
-  || - equivalent ->
-
-  sum = λxs'.CASE-T xs' (let n = SELECT-SUM-NIL xs' in 0)
-                        (let x  = SELECT-SUM-CONS-1 xs'
-                             xs = SELECT-SUM-CONS-2 xs'
-                         in (+ x (sum xs)))
-
-  || Miranda: reflect
-  reflect (LEAF n) = LEAF n
-  reflect (BRANCH x y) = BRANCH (reflect y) (reflect x)
-
-  || enriched lambda calculus
-  reflect = λt.( ((λ(LEAF n).LEAF n) t)
-               ▯ ((λ(BRANCH x y).BRANCH (reflect y) (reflect x)) t)
-               ▯ ERROR)
-
-  || - equivalent ->
-
-  reflect = λt.( (UNPACK-SUM-LEAF (λn.LEAF n) t)
-               ▯ (UNPACK-SUM-BRANCH (λx.λy.BRANCH (reflect y) (reflect x)) t)
-               ▯ ERROR)
-
-  || - equivalent ->
-
-  reflect = λt.case t of
-               LEAF n     -> LEAF n
-               BRANCH x y -> BRANCH (reflect y) (reflect x)
-
-  || - equivalent ->
-
-  reflect = λt.CASE-T t (let n = SELECT-SUM-LEAF t
-                         in LEAF n)
-                        (let x = SELECT-SUM-BRANCH-1 t
-                             y = SELECT-SUM-BRANCH-2 t
-                         in BRANCH (reflect y) (reflect x))
 
   || Miranda: xor
   xor False y    = y
