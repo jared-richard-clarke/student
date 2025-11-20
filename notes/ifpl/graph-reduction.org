@@ -1,4 +1,4 @@
-* Graph Reduction: Program Representation
+* Graph Reduction
 
 ** Sources
 
@@ -42,6 +42,18 @@ tag of the node, which indicates function application.
     :
    / \
   E1 E2
+
+  === expression ===
+  λx.+ x 1
+
+  === syntax tree ===
+      λx
+      |
+      @
+     / \
+    @   1
+   / \
+  +   x
 #+end_example
 
 ** The Graph
@@ -51,98 +63,146 @@ this process the *tree* becomes a *graph*. The term *graph* here meaning a netwo
 of nodes connected together by *directed edges*. A graph differs from a tree in that
 two edges can point to the same node.
 
-*** Concrete Representations
-
-In a typical implementation each node of the tree would be represented by a small
-contiguous area of store, called a cell. A cell holds a *tag*, which tells the type
-of the cell and two or more fields. Many implement fixed-size cell with two fields, but
-some have variable-sized cells.
-
-If the implementation supports only fixed-size cells, then the structure must be
-implemented as a linked collection of cells.
+** Concrete Representations
 
 #+begin_example
-  === cell ===
-  | tag | field 1 | field 2 |
-
-      where field = | Pointer | -> Another cell
-         or field = | data    |
+  Node Type   | Abstract Node | Concrete Cell
+  ------------+---------------+-----------------
+              |               | +---+---+---+
+  application |   @           | | @ |   |   |
+              |  / \          | +---+-|-+-|-+
+              | f   x         |       V   V
+              |               |       f   x
+  ------------+---------------+-----------------
+              |               | +---+-----+---+
+  lambda      |   λx          | | λ | "x" |   |
+  abstraction |   |           | +---+-----+-|-+
+              |  body         |             V
+              |               |            body
+  ------------+---------------+-----------------
+              |               | +---+---+---+
+  CONS cell   |   :           | | : |   |   |
+              |  / \          | +---+-|-+-|-+
+              | x   y         |       V   V
+              |               |       x   y
+  ------------+---------------+-----------------
+              |               | +---+---+---+
+  number      | 7             | | N | 7 |   |
+              |               | +---+---+---+
+  ------------+---------------+-----------------
+              |               | +---+---+---+
+  built-in    | +             | | P | + |   |
+  function    |               | +---+---+---+
+              |               |   ^
+              |               |   +- cell tag
 #+end_example
 
-*** Compile-Time and Run-Time Checking
+In a typical implementation each node of the tree would be represented by a small
+contiguous area of store, called a cell. A cell holds a *tag* — which describes
+the type of the cell — and two or more fields.
 
-Some functional languages are polymorphically typed and type-checked at compile time.
-Only distinct tags are required to identify system objects uniquely and to distinguish
-data objects of a given type from each other. A tag is typically represented in eight
-bits or fewer.
+#+begin_example
+  === variable-sized cell ===
+  +-----+---------+-----+---------+
+  | tag | field 1 | ... | field n |
+  +-----+---------+-----+---------+
 
-Other languages rely on run-time checking, where each built-in operator checks the
-types of its arguments before proceeding. Such languages have only a fixed set of types
-so that a fixed-size tag is sufficient.
+  === fixed-sized cell ===
+  +-----+---------+---+
+  | tag | field 1 |   |
+  +-----+---------+-|-+
+     +--------------+
+     V
+  +-----+---------+---+
+  | tag | field 1 |   |
+  +-----+---------+-|-+
+                   ...
+                    |
+     +--------------+
+     V
+  +-----+-------------+---------+
+  | tag | field n - 1 | field n |
+  +-----+-------------+---------+
 
-Even in statically type-checked systems it is often desirable to carry around type
-information to aid in debugging. This can cause problems in languages that allow
-user-defined types, because the number of distinct types is unbounded. An escape
-mechanism, such as tagged fields in user-defined types, is used to solve this problem.
+      where field = pointer -> another cell
+         or field = data
+#+end_example
 
 *** Boxed and Unboxed Objects
 
-Data objects that can be completely described by a single field are called /unboxed/,
-while those that are represented by one or more cells are called /boxed/. Typical
-canidates for unboxed representation are integers, booleans, characters, and built-in
-operators.
+- unboxed :: Data objects described by a single field — integers, booleans, characters,
+  and built-in operators. Any field that may contain a pointer may also contain an
+  unboxed object. These fields must be distinguished by a pointer-bit.
+
+- boxed :: Data objects described by one or more cells. The tag of a cell completely
+  determines which fields of the cell are pointers and which are not.
 
 #+begin_example
   === expression ===
   (+ 7 11)
 
   === boxed ===
-   ------------       -----------
+  +------------+     +-----------+
   | @ | ptr |  | --> | N | 11 |  |
-   ------------       -----------
+  +------------+     +-----------+
          |
     +----+
     V
-   ------------       ----------
+  +------------+     +----------+
   | @ | ptr |  | --> | N | 7 |  |
-   ------------       ----------
+  +------------+     +----------+
          |
     +----+        Tags: @ application
     V                   P built-in
-   ----------           N number
+  +----------+          N number
   | P | + |  |
-   ----------
+  +----------+
 
   === unboxed ===
-   --------------
+  +--------------+
   | @ | ptr | 11 |
-   --------------
+  +--------------+
          |
     +----+
     V
-   -----------
+  +-----------+
   | @ | + | 7 |
-   -----------
+  +-----------+
+
+  --- unboxed: pointer field ---
+
+  +---+----------+
+  | 1 | address -|->
+  +---+----------+
+    ^
+    +- pointer bit
+
+  --- unboxed: non-pointer field ---
+
+  +---+------+
+  | 0 | data |
+  +---+------+
 #+end_example
 
 *** Storage Management and Garbage Collection
 
-Cells are abstracted from an area of storage called the /heap/, which is simply an
+Cells are abstracted from an area of storage called the *heap*, which is simply an
 unordered collection of cells. The term heap emphasizes that the physical adjacency
 of two cells is purely coincidental. What matters is which cell points to which.
 
 Graph reduction allocates and discards cells, or rather discards pointers to cells.
 A cell can be reused once there are no more pointers pointing to it. Cells with no
-pointers are said to be /garbage/. A garbage collector automatically identifies and
+pointers are said to be *garbage*. A garbage collector automatically identifies and
 recycles garbage cells.
 
 ** Selecting the Next Redex
 
-When the graph of a functional program has been loaded into a computer, an
-evaluator is called to reduce the graph to normal form. These reductions are performed
+When the graph of a functional program has been loaded into a computer, an evaluator
+is called to reduce the graph to normal form. These reductions are performed
 in two distinct tasks:
 
 1. Selecting the next redex.
+
 2. Reducing it.
 
 ** Lazy Evaluation
@@ -200,7 +260,7 @@ outermost, leftmost redex is reduced first.
 - Pointer substitution
 - Updating redex root with the result
 
-** Reduction Algorithm So Far
+* Reduction Algorithm So Far
 
 1. Unwind the spine until something other than an application node is encountered.
 
