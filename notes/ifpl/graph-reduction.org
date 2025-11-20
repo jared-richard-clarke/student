@@ -260,7 +260,7 @@ outermost, leftmost redex is reduced first.
 - Pointer substitution
 - Updating redex root with the result
 
-* Reduction Algorithm So Far
+** Reduction Algorithm So Far
 
 1. Unwind the spine until something other than an application node is encountered.
 
