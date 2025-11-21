@@ -1,4 +1,4 @@
-* Graph Reduction: Program Representation
+* Graph Reduction
 
 ** Sources
 
