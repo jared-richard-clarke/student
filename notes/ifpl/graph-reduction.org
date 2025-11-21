@@ -1,4 +1,4 @@
-* Graph Reduction
+* Graph Reduction: Program Representation
 
 ** Sources
 
@@ -63,7 +63,7 @@ this process the *tree* becomes a *graph*. The term *graph* here meaning a netwo
 of nodes connected together by *directed edges*. A graph differs from a tree in that
 two edges can point to the same node.
 
-** Concrete Representations
+*** Concrete Representations
 
 #+begin_example
   Node Type   | Abstract Node | Concrete Cell
@@ -219,7 +219,7 @@ called *eager evaluation*.
    The exact time in which an argument is evaluated is crucial to the correct
    behavior of a program.
 
-2. *Call by need* is hard to implement in a stack-based implementation.
+2. It is hard to implement in a stack-based implementation.
 
 *** Normal Order Reduction
 
@@ -227,37 +227,66 @@ Any implementation of *lazy evaluation* has two ingredients:
 
 1. Arguments to functions should be evaluated only when their value is needed, not
    when the function is applied.
+
 2. Arguments should only be evaluated once, and, if possible, not at all.
 
 The first ingredient is directly implemented using normal order reduction, where the
 outermost, leftmost redex is reduced first.
 
-#+begin_src
-  -- lazy evaluation   -> 7
-  -- strict evaluation -> non-terminating
+#+begin_example
+  === Strict and Non-Strict Evaluation ===
+
+  non-strict evaluation -> 7
+  strict evaluation     -> non-terminating
 
   (λx.7) <infinity>
-#+end_src
 
-*** Weak Head Normal Form
+  === Weak Head Normal Form ===
 
-#+begin_example
   A lambda expression is in weak head normal form if and only if it is of the form
 
-      F E1 E2 ... En
+      F E₁ E₂ ... Eₓ
 
-  where n >= 0
+  where x ≥ 0
   and   either F is a variable or data object
         or F is a lambda abstraction or built-in function
-           and (F E1 E2 ... Em) is not a redex or any m >= n.
+           and (F E₁ E₂ ... Eₑ) is not a redex or any e ≥ x.
 
   An expression has no top-level redex if and only if it is in weak head normal form.
+
+  === Head Normal Form ===
+
+  A lambda expression is in head normal form if and only if it is of the form
+
+      λx₁.λx₂...λxₓ.(v E₁ E₂ ... Eₑ)
+
+  where x, e ≥ 0
+        v is a variable (xₓ), data object, or built-in function
+  and   (v E₁ E₂ ... Eₐ) is not a redex for any a ≥ e
+
+  === Normal Order Reduction ===
+
+  original expression
+      |
+      | normal order reductions
+      | of top-level redexes
+      |
+      V
+  weak head normal form (no top-level redexes)
+      |
+      | normal order reductions
+      | of inner redexes
+      |
+      V
+  normal form (no redexes at all)
 #+end_example
 
 *** Lazy Graph Reduction = Lazy Evaluation
 
 - Normal order evaluation to weak head normal form
+
 - Pointer substitution
+
 - Updating redex root with the result
 
 ** Reduction Algorithm So Far
@@ -265,6 +294,7 @@ outermost, leftmost redex is reduced first.
 1. Unwind the spine until something other than an application node is encountered.
 
 2. Examine the objects found at the tip of the spine.
+
    - A Data Object :: Check that it is not applied to anything. If not, the expression
      is in *weak head normal form* so STOP. Otherwise there is an ERROR.
 
@@ -277,3 +307,21 @@ outermost, leftmost redex is reduced first.
      in WHNF so STOP. Otherwise instantiate the body of the lambda abstraction, substituting
      pointers to the arguments for the formal parameters, and overwrite the root of the
      redex with the result.
+
+#+begin_example
+  === The Spine ===
+
+              +- spine / graph (heap storage)
+  base        |
+  +---+       V   +
+  | ◍-|-----> @   |
+  |---|      / \  |
+  | ◍-|---> @   Y | unwinding the spine
+  |---|    / \    |
+  | ◍-|-> f   X   |
+  +---+   ^   ^   V
+  top     |   |
+   ^     tip  +- rib
+   |
+   +- pointer stack
+#+end_example
