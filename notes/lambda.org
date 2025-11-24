@@ -29,6 +29,20 @@
    theory of functions."
 
   — *Some History of Functional Programming Languages*, David Turner
+
+  "In the pure untyped lambda calculus everything is a function —
+   a closed term in normal form can only be an abstraction, λx.A.
+   An applied lambda calculus adds constants representing various
+   types of data and primitive functions on them ... and appropriate
+   additional reduction rules — Church (1941) calls these δ-rules —
+   this can be done while ensuring that Church-Rosser and other
+   technical properties of the calculus are preserved. A type
+   discipline can be imposed to prevent the formation of
+   meaningless terms."
+
+   *Side Note*: The term *pure* here means all variables are atomic symbols.
+
+  — *Some History of Functional Programming Languages*, David Turner
 #+end_quote
 
 For lambda terms *Λ*:
@@ -168,17 +182,17 @@ If *FV(M) = ∅* then *M* is called a *combinator*.
 
 *** Avoiding Variable Capture
 
-- M[x := N] :: Substitute *N* for every free occurrence of *x* in *M*.
+- M[N/x] :: Substitute *N* for every free occurrence of *x* in *M*.
 
-1. x[x := N] = N, y[x := N] = y if y ≠ x
+1. x[N/x] = N, y[N/x] = y if y ≠ x
 
-2. (M_{1}M_{2})[x := N] = (M_{1}[x := N])(M_{2}[x := N])
+2. (M_{1}M_{2})[N/x] = (M_{1}[N/x])(M_{2}[N/x])
 
-3. (λx.M)[x := N] = λx.M
+3. (λx.M)[N/x] = λx.M
 
-4. (λy.M)[x := N] = λy.(M[x := N]) if y ∉ FV(N)
+4. (λy.M)[N/x] = λy.(M[N/x]) if y ∉ FV(N)
 
-5. If y ∈ FV(N), α-convert λy.M to λy'.M[y := y']
+5. If y ∈ FV(N), α-convert λy.M to λy'.M[y'/y]
 
 ** Combinators
 
