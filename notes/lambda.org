@@ -145,7 +145,7 @@ For lambda terms *Λ*:
 - λx.M[x] → λy.M[y] :: α-conversion, which renames bound variables in an expression. Used to avoid
   name collisions.
 
-- (λx.M) N → M[x := N] :: β-reduction, which replaces bound variables with the argument expression
+- (λx.M) N → M[N/x] :: β-reduction, which replaces bound variables with the argument expression
   in the body of the abstraction.
 
 - λx.M → M, where x ∉ FV(M) :: η-conversion, which allows adding or dropping an abstraction
