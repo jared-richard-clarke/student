@@ -7,6 +7,7 @@
 | *The Implementation of Functional Programming Languages* | Simon L. Peyton Jones               |
 | *The Lambda Calculus*                                    | Stanford Encyclopedia of Philosophy |
 | *Church's Thesis and Functional Programming*             | David Turner                        |
+| *Miranda System Manual*                                  | David Turner                        |
 
 ** Expression Syntax and Notational Conventions
 
@@ -790,19 +791,28 @@ a Miranda expression can be transformed into the enriched lambda calculus.
 
 ** Pattern Matching
 
-1. overlapping patterns
+- pattern :: Either a variable, a constant, or a constructor of the form
+  ~(c p₁ ... pₓ)~ where ~c~ is a constructor of arity ~x~ and ~p₁ ... pₓ~
+  are patterns.
 
-2. constant patterns
+- sum pattern :: ~(s p₁ ... pₓ)~. A pattern that matches on a sum type —
+  an algebraic data type that can be one of several distinct but related
+  constructors, containing zero or more fields.
 
-3. nested patterns
+- product pattern :: ~(t p₁ ... pₓ)~. A pattern that matches on a product type —
+  an algebraic data type that has only one constructor and has at least one field.
 
-4. multiple arguments
+- simple pattern :: ~(c v₁ ... vₓ)~, where ~v₁ ... vₓ~ are distinct variables.
 
-5. non-exhaustive sets of equations
+- nested pattern :: A constructor pattern that contains constructor patterns within itself.
 
-6. conditional equations (guards)
+- refutable pattern :: A pattern match that can fail.
 
-7. repeated variables
+- irrefutable pattern :: A pattern composed only of non-repeating identifiers and
+  product consttructors of the form *(t p₁ ... pₓ)*, where *p₁ ... pₓ*
+  are irrefutable patterns.
+
+- exhaustive pattern :: A pattern that matches all possible cases for its data type.
 
 #+begin_example
   || 0 is both a literal constant and a pattern
@@ -834,26 +844,27 @@ a Miranda expression can be transformed into the enriched lambda calculus.
   dedup [x:y:ys] = dedup x : dedup y:ys
 #+end_example
 
-- pattern :: Either a variable, a constant, or a constructor pattern
-  of the form ~(c p₁ ... pₓ)~ where ~c~ is a constructor of arity ~x~
-  and ~p₁ ... pₓ~ are patterns. All patterns should be distinct.
+*** Pattern Usage
 
-- sum pattern :: ~(s p₁ ... pₓ)~
+1. function definitions
 
-- product pattern :: ~(t p₁ ... pₓ)~
+   - The main use of pattern matching is in the left-hand side of function
+     definitions, providing the right-hand side with names for subcomponents
+     of a data structure.
 
-- simple pattern :: ~(c v₁ ... vₓ)~, where ~v₁ ... vₓ~ are distinct variables.
+   - More generally, patterns provide case analysis on a function's arguments.
 
-- nested pattern :: A constructor pattern that is *not* simple. A pattern
-  that contains constructor patterns within itself.
+2. conformal definitions
 
-- refutable pattern :: A pattern match that can fail.
+   - *pattern = rhs*
 
-- irrefutable pattern :: A pattern *p* is irrefutable if is either a variable, *v*,
-  or a product pattern *(t p₁ ... pₓ)*, where *p₁ ... pₓ* are irrefutable patterns.
-  A sum pattern is irrefutable if the type system proves the pattern match exhaustive.
+   - If the value of the right-hand side (rhs) matches the structure of the given
+     pattern, the variables on the left are bound to the corresponding
+     components of the value.
 
-- exhaustive pattern :: A pattern that matches all possible cases for its data type.
+   - If the match fails anywhere, all left-hand variables are undefined.
+
+3. The left of ~<-~ (generators) in list comprehensions.
 
 #+begin_quote
   "Intuitively, we expect the semantics to be 'try the first equation,
