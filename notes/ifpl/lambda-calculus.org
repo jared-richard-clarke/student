@@ -334,7 +334,7 @@ are *free*.
   where E = expression
         B = boolean expression
         L = list
-        Q = qualifiers (zero or more)
+        Q = qualifiers (zero or more generators or boolean expressions)
         v = variable
 
   || - optimizations ->
