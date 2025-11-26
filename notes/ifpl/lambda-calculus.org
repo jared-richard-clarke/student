@@ -332,9 +332,9 @@ are *free*.
   TE[ [E | ] ]          ≡ CONS TE[E] NIL
 
   where E = expression
-        B = boolean expression
+        B = filter (boolean expression)
         L = list
-        Q = qualifiers (zero or more generators or boolean expressions)
+        Q = qualifiers (zero or more generators and/or filters)
         v = variable
 
   || - optimizations ->
