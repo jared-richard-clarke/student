@@ -306,9 +306,12 @@ are *free*.
     | = ...           |          ...
     | = Aₓ, Gₓ        |          TD[Dₓ]
     | where D₁ ... Dₓ |   in
-    +-               -+      (IF TE[G₁] TE[A₁]
-                              ...
-                             (IF TE[Gₓ] TE[Aₓ] FAIL) ...)
+    +-               -+      (IF TE[G₁]
+                                 TE[A₁]
+                                 ...
+                                 (IF TE[Gₓ]
+                                     TE[Aₓ]
+                                     FAIL) ...)
 
   If Gₓ is absent, or True, then the final IF-expression
   should be replaced by TE[Aₓ].
