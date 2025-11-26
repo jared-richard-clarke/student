@@ -34,6 +34,8 @@
 Pattern matching drives evaluation.
 
 #+begin_src haskell
+  -- === Example 1 ===
+
   -- f1 thunk = [thunk, thunk]
   f1 :: Maybe a -> [Maybe a]
   f1 m = [m, m]
@@ -44,11 +46,27 @@ Pattern matching drives evaluation.
   f2 :: Maybe a -> [a]
   f2 Nothing  = []
   f2 (Just x) = [x]
-#+end_src
 
-*** Example 1: Build and Take
+  -- === Example 2 ===
 
-#+begin_src haskell
+  -- thunk-x && thunk-y =
+  --   case thunk-x of
+  --     False -> False
+  --     True  -> thunk-y
+  (&&) :: Bool -> Bool -> Bool
+  False && y      = False
+  True  && y      = y
+
+  -- thunk-x || thunk-y =
+  --   case thunk-x of
+  --     False -> thunk-y
+  --     True  -> True
+  (||) :: Bool -> Bool -> Bool
+  False || y = y
+  True  || y = True
+
+  -- === Example 3 ===
+
   repeat :: a -> [a]
   repeat x = x : repeat x
 
@@ -68,23 +86,7 @@ Pattern matching drives evaluation.
   = 7 : 7 : []
 #+end_src
 
-*** Example 2: Take and Drop
-
-#+begin_src haskell
-  take :: Int -> [a] -> [a]
-  take 0 _         = []
-  take _ []        = []
-  take (n+1) (x:xs) = x : take n xs
-
-  drop :: Int -> [a] -> [a]
-  drop 0 xs         = xs
-  drop _ []         = []
-  drop (n+1) (_:xs) = drop n xs
-
-  take n x ++ drop n x = x
-#+end_src
-
-*** Space Usage
+** Space Usage
 
 #+begin_src haskell
   foldl :: (b -> a -> b) -> [a] -> b
@@ -120,7 +122,7 @@ Pattern matching drives evaluation.
   = 6
 #+end_src
 
-*** Evaluation and Thunks
+** Evaluation and Thunks
 
 #+begin_example
   === expression ===
