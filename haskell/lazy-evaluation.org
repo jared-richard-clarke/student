@@ -33,6 +33,19 @@
 
 Pattern matching drives evaluation.
 
+#+begin_src haskell
+  -- f1 thunk = [thunk, thunk]
+  f1 :: Maybe a -> [Maybe a]
+  f1 m = [m, m]
+
+  -- f2 thunk = case thunk of
+  --              Nothing    -> []
+  --              Just thunk -> [thunk]
+  f2 :: Maybe a -> [a]
+  f2 Nothing  = []
+  f2 (Just x) = [x]
+#+end_src
+
 *** Example 1: Build and Take
 
 #+begin_src haskell
