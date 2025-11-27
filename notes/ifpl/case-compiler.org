@@ -9,7 +9,10 @@
 ** Introduction
 
 Unlike sequential match expressions, case expressions — if compiled properly —
-do not backtrack on multiple and nested patterns.
+do not backtrack on multiple, nested, and non-uniform patterns.
+
+*Side Note*: To keep the ~match~ compiler simple, the author, Philip Wadler,
+assumes constant patterns have been replaced by conditional equations.
 
 #+begin_example
   || === Miranda ===
@@ -31,6 +34,9 @@ do not backtrack on multiple and nested patterns.
   ||     where us = variables
   ||           qs = (patterns, expression)
   ||           E  = default expression
+  ||
+  || Side Note: The list of variables is the same length
+  ||            as each list of patterns, 
 
   match [u₁ ... uₓ]
         [( [p₁₁ ... p₁ₓ], E₁ ),
@@ -183,12 +189,11 @@ do not backtrack on multiple and nested patterns.
 
  || === Mixture Rule ===
  ||
- || The equation list is partitioned into "x" lists
- || so that "qsₓ" has every equation beginning with
- || a variable or a constructor.
+ || The equation list is partitioned into "x" lists so that
+ || every equation begins with a matching rule.
  ||
- || If "match" fails on "qs₁", try through "qsₓ"
- || until either success or default value "E".
+ || "match" recursively builds out case clauses for "qs₁" through "qsₓ"
+ || bottoming out for either successful matches or default value "E".
 
  qs = qs₁ ++ ... ++ qsₓ
 
