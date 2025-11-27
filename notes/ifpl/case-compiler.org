@@ -224,6 +224,35 @@ assumes constant patterns have been replaced by conditional equations.
                       ERROR))
 #+end_example
 
+** Uniform Definitions
+
+A set of equations is *uniform* if one of the following three conditions hold:
+
+1. All equations begin with a variable pattern. Applying the variable rule
+   yields a new, uniform set of equations.
+
+2. All equations begin with a constructor pattern. Applying the constructor
+   rule yields a new, uniform set of equations.
+
+3. All equations have an empty list of patterns and there is zero or one
+   equations in the set.
+
+Changing the order of uniform equations does not change the meaning
+of their definition. Compilation of such definitions is simpler and
+more efficient.
+
+#+begin_example
+  || === uniform definition ===
+  mappairs f [] ys         = []
+  mappairs f (x:xs) []     = []
+  mappairs f (x:xs) (y:ys) = f x y : mappairs f xs ys
+
+  || === non-uniform definition ===
+  mappairs f [] ys         = []
+  mappairs f xs []         = []
+  mappairs f (x:xs) (y:ys) = f x y : mappairs f xs ys
+#+end_example
+
 ** Miranda: Case Compiler
 
 #+begin_src
