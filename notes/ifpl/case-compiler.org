@@ -94,7 +94,7 @@ assumes constant patterns have been replaced by conditional equations.
   ||
   || If every equation in the equations list begins with a variable pattern,
   || replace said patterns with the first variable in the variables list.
-  || Variable patterns need not be the same.
+  || Variable patterns need not be the same identifier.
 
   match (u:us)
         [( (v₁:ps₁), E₁ ),
