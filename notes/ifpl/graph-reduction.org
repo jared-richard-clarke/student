@@ -197,6 +197,14 @@ recycles garbage cells.
 
 ** Lazy Evaluation
 
+- lazy evaluation :: An implementation strategy of lazy graph reduction.
+
+   - Normal order evaluation to weak head normal form.
+
+   - Pointer substitution.
+
+   - Overwriting the root of the redex with its result.
+
 In most imperative languages, arguments to a function are evaluated before the function
 is called — *call by value*. The inverse of this is *call by need*. In the context of
 functional languages, *call by need* is often called *lazy evaluation*, since it
@@ -271,13 +279,62 @@ outermost, leftmost redex is reduced first.
   normal form (no redexes at all)
 #+end_example
 
-*** Lazy Graph Reduction = Lazy Evaluation
+*** Pointer Substitution
 
-- Normal order evaluation to weak head normal form
+To avoid copying large expressions and duplicating redexes, substitute
+pointers to an argument when overwriting a formal parameter.
 
-- Pointer substitution
+- sharing :: One or more pointers to the same expression, wherein
+  an expression tree becomes a graph.
 
-- Updating redex root with the result
+#+begin_example
+  === Tree to Graph Reduction ====
+
+       +-- @ --+          - reduces ->       @
+       |       |                            / \
+      λx       @                           @   \
+       |      / \                         / \   \
+       @   NOT   TRUE                   AND  +-- @
+      / \                                       / \
+     @   x                                   NOT   TRUE
+    / \
+  AND  x
+
+  (λx.AND x x) (NOT TRUE) - reduces -> AND (NOT TRUE) (NOT TRUE)
+#+end_example
+
+*** Overwriting the Root of the Redex
+
+#+begin_example
+       @              - reduces ->            @
+      / \                                    / \
+     @   \                                  @   \
+    / \   \                                / \   \
+  AND  +-- @ <- root                     AND  +-- FALSE <- root
+          / \
+       NOT   TRUE                             NOT   TRUE
+                                               ^--+--^
+                                                  |
+                                              If unreachable, reclaim with
+                                              garbage collector.
+
+  AND (NOT TRUE) (NOT TRUE) - reduces -> AND FALSE FALSE
+#+end_example
+
+*** Constructing the Lambda Body
+
+Lambda abstractions must remain intact in case they are shared
+amongst multiple expressions.
+
+#+begin_example
+        @ <- root                         @ <- root
+       / \                               / \
+     λx  TRUE  - reduces ->  λx <-+   NOT   TRUE
+      |                       |   |
+      @                       @   +- original abstraction
+     / \                     / \
+  NOT   x                 NOT   x
+#+end_example
 
 ** Reduction Algorithm So Far
 
