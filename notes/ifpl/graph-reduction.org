@@ -195,16 +195,6 @@ A cell can be reused once there are no more pointers pointing to it. Cells with 
 pointers are said to be *garbage*. A garbage collector automatically identifies and
 recycles garbage cells.
 
-** Selecting the Next Redex
-
-When the graph of a functional program has been loaded into a computer, an evaluator
-is called to reduce the graph to normal form. These reductions are performed
-in two distinct tasks:
-
-1. Selecting the next redex.
-
-2. Reducing it.
-
 ** Lazy Evaluation
 
 In most imperative languages, arguments to a function are evaluated before the function
