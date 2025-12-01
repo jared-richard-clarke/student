@@ -290,15 +290,15 @@ pointers to an argument when overwriting a formal parameter.
 #+begin_example
   === Tree to Graph Reduction ====
 
-  (λx.AND x x) (NOT TRUE) - reduces -> AND (NOT TRUE) (NOT TRUE)
+  (λx.AND x x) (NOT TRUE) -> AND (NOT TRUE) (NOT TRUE)
 
-       +-- @ --+                             @
-       |       |                            / \
-      λx       @                           @   \
-       |      / \                         / \   \
-       @   NOT   TRUE                   AND  +-- @
-      / \                                       / \
-     @   x                                   NOT   TRUE
+       +-- @ --+                  @
+       |       |                 / \
+      λx       @                @   \
+       |      / \              / \   \
+       @   NOT   TRUE        AND  +-- @
+      / \                            / \
+     @   x                        NOT   TRUE
     / \
   AND  x
 #+end_example
@@ -306,19 +306,19 @@ pointers to an argument when overwriting a formal parameter.
 *** Overwriting the Root of the Redex
 
 #+begin_example
-  AND (NOT TRUE) (NOT TRUE) - reduces -> AND FALSE FALSE
+  AND (NOT TRUE) (NOT TRUE) -> AND FALSE FALSE
 
-       @                                      @
-      / \                                    / \
-     @   \                                  @   \
-    / \   \                                / \   \
-  AND  +-- @ <- root                     AND  +-- FALSE <- root
+       @                            @
+      / \                          / \
+     @   \                        @   \
+    / \   \                      / \   \
+  AND  +-- @ <- root           AND  +-- FALSE <- root
           / \
-       NOT   TRUE                             NOT   TRUE
-                                               ^--+--^
-                                                  |
-                                              If unreachable, reclaim with
-                                              garbage collector.
+       NOT   TRUE                   NOT   TRUE
+                                     ^--+--^
+                                        |
+                                    If unreachable, reclaim with
+                                    garbage collector.
 #+end_example
 
 *** Constructing the Lambda Body
@@ -327,9 +327,11 @@ Lambda abstractions must remain intact in case they are shared
 amongst multiple expressions.
 
 #+begin_example
+  (λx.NOT x) TRUE -> NOT TRUE
+
         @ <- root                         @ <- root
        / \                               / \
-     λx  TRUE  - reduces ->  λx <-+   NOT   TRUE
+     λx  TRUE                λx <-+   NOT   TRUE
       |                       |   |
       @                       @   +- original abstraction
      / \                     / \
@@ -342,7 +344,8 @@ amongst multiple expressions.
   (+ 7 (* 11 2)) -> (+ 7 22) -> 29
 
        @ <- root
-     /   \
+    +--+--+
+    |     |
     @     @
    / \   / \
   +   7 @   2
@@ -352,7 +355,8 @@ amongst multiple expressions.
   - reduces ->
 
        @ <- root
-     /   \
+    +--+--+
+    |     |
     @     22
    / \
   +   7 @   2
