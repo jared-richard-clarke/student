@@ -1,0 +1,136 @@
+* Polymorphic Type Checking
+
+** Sources
+
+| source                                                   | author                |
+|----------------------------------------------------------+-----------------------|
+| *The Implementation of Functional Programming Lanugages* | Simon L. Peyton Jones |
+
+** Notation
+
+#+begin_example
+  === value :: TYPE ===
+
+  a :: A
+
+  === tuple ===
+
+  - Coordinates need not be the same type.
+  - Tuple type determines dimension and internal types.
+
+  (A₁ ... Aₓ) <- type
+
+  (a₁ ... aₓ) <- value
+
+  === list ===
+
+  - []
+  - a:as, where a:A and as::[A]
+
+  [A]         <- type
+
+  [a₁ ... aₓ] <- value, if all successive entries
+                 of a finite list are known.
+
+  === structured type ===
+
+  name v₁ ... vₓ ::= c₁ t₁₁ ... t₁ₓ
+                   | ...
+                   | cₓ tₓ₁ ... tₓₓ
+
+  where name = type-forming operator
+        vₓ   = type variable
+        cₓ   = constructor
+        tₓ   = type expression
+
+  === function ===
+  - Function "f" applicable to objects a::A, whose values, (f a),
+    are of type B.
+
+  A -> B
+
+  - right associative, binary operation
+  A -> B -> C = A -> (B -> C)
+#+end_example
+
+** Polymorphism
+
+- monomorphic :: Every value has a single, concrete type:
+  ~map :: (num -> num) -> [num] -> [num]~.
+
+- polymorphic :: Every value may be one of many concrete types,
+  depending on its context: ~map :: (A -> B) -> [A] -> [B]~.
+
+- ad hoc polymorphism :: A type discipline that permits the same expression
+  to denote distinct operations for distinct types. The addition operator
+  might denote the addition of both integers, rationals, reals, and complex
+  numbers.
+
+- parametric polymorphism :: A type discipline where generic expressions
+  are denoted by schematic variables. A polymorphic object may be one
+  of many different types, depending on its context.
+
+#+begin_example
+  length :: [A] -> num, for all types A
+  length []     = 0
+  length (x:xs) = (length xs) +  1
+
+  where A = schematic variable
+
+  length :: [num] -> num
+  length [7, 11]
+
+  length :: [(char, char)] -> num
+  length [('a', 'b'), ('c', 'd')]
+
+  (.) :: (B -> C) -> (A -> B) -> A -> C
+  (f . g) x = f (g x)
+
+  where A, B, C = schematic variables
+
+  foldr :: (A -> B -> B) -> B -> [A] -> B
+  foldr f b []     = b
+  foldr f b (a:as) = f a (foldr f b as)
+
+  where A, B = schematic variables
+
+  foldr :: (num -> num -> num) -> num -> [num] -> num
+  foldr + 0 [7, 11, 15]
+
+  foldr :: (string -> string -> string) -> string -> [string] -> string
+  foldr append [] ["abc", "def", "ghi"]
+#+end_example
+
+** Type Inference
+
+#+begin_quote
+  "...[W]e have two type expressions that will usually contain variables,
+   the first giving the form of the type required by the context
+   (deduced from the 'outside'), and the second giving the form of the type
+   which the object can take (deduced from the 'inside'). For the whole
+   expression to be well typed, these two type expressions must match,
+   in the sense that by substituting for the schematic variables
+   of the type expressions, they can be brought to the same form."
+
+  — *The Implementation of Functional Programming Languages*,
+    Simon L. Peyton Jones and Peter Hancock
+#+end_quote
+
+** Intermediate Language
+
+A transformed program should be type checked after dependency analysis
+but before lambda lifting or transformation into a supercombinator.
+
+#+begin_example
+  expression ::= variable
+               | λvariable.expression
+               | expression expression
+               | let variable-1
+                     ...
+                     variable-x
+                 in expression
+               | letrec variable-1
+                        ...
+                        variable-x
+                 in <expression>
+#+end_example
