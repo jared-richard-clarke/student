@@ -336,7 +336,7 @@ amongst multiple expressions.
   NOT   x                 NOT   x
 #+end_example
 
-** Built-In Function Application
+*** Built-In Function Application
 
 #+begin_example
   (+ 7 (* 11 2)) -> (+ 7 22) -> 29
