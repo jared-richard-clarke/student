@@ -290,7 +290,9 @@ pointers to an argument when overwriting a formal parameter.
 #+begin_example
   === Tree to Graph Reduction ====
 
-       +-- @ --+          - reduces ->       @
+  (λx.AND x x) (NOT TRUE) - reduces -> AND (NOT TRUE) (NOT TRUE)
+
+       +-- @ --+                             @
        |       |                            / \
       λx       @                           @   \
        |      / \                         / \   \
@@ -299,14 +301,14 @@ pointers to an argument when overwriting a formal parameter.
      @   x                                   NOT   TRUE
     / \
   AND  x
-
-  (λx.AND x x) (NOT TRUE) - reduces -> AND (NOT TRUE) (NOT TRUE)
 #+end_example
 
 *** Overwriting the Root of the Redex
 
 #+begin_example
-       @              - reduces ->            @
+  AND (NOT TRUE) (NOT TRUE) - reduces -> AND FALSE FALSE
+
+       @                                      @
       / \                                    / \
      @   \                                  @   \
     / \   \                                / \   \
@@ -317,8 +319,6 @@ pointers to an argument when overwriting a formal parameter.
                                                   |
                                               If unreachable, reclaim with
                                               garbage collector.
-
-  AND (NOT TRUE) (NOT TRUE) - reduces -> AND FALSE FALSE
 #+end_example
 
 *** Constructing the Lambda Body
@@ -334,6 +334,62 @@ amongst multiple expressions.
       @                       @   +- original abstraction
      / \                     / \
   NOT   x                 NOT   x
+#+end_example
+
+** Built-In Function Application
+
+#+begin_example
+  (+ 7 (* 11 2)) -> (+ 7 22) -> 29
+
+       @ <- root
+     /   \
+    @     @
+   / \   / \
+  +   7 @   2
+       / \
+      *   11
+
+  - reduces ->
+
+       @ <- root
+     /   \
+    @     22
+   / \
+  +   7 @   2
+       / \
+      *   11
+
+  - reduces ->
+
+       29 <- root
+
+    @     22
+   / \
+  +   7 @   2
+       / \
+      *   11
+#+end_example
+
+*** Implementing Y
+
+#+begin_example
+  Y f -> f (Y f)
+
+  1. Acyclic
+
+       @ <- root    @ <- root
+      / \          / \
+     Y   f        f   @
+                     / \
+                    Y   f
+
+  2. Cyclic (cyclic or knot-tying Y)
+
+                    +----------+
+                    V          |
+       @ <- root    @ <- root  |
+      / \          / \         |
+     Y   f        f   +--------+
 #+end_example
 
 ** Reduction Algorithm So Far
