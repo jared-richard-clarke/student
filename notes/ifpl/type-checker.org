@@ -130,6 +130,37 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
   More specifically: if *(T1 -> T2) = (T1' -> T2')*, then *T1 = T1'* and *T2 = T2'*.
 
 #+begin_example
+  (λf.λx.λy f x y)
+
+   f   x
+    \ /
+     @   y
+      \ /
+       @
+       |
+    λf.λx.λy
+
+  f::T0 x::T1
+  ----------- @
+       T2         y::T3
+       ---------------- @
+              T4
+              -- λf.λx.λy
+              T5
+
+  T0 = T1 -> T2
+  T2 = T3 -> T4
+  T5 = T0 -> T1 -> T2
+
+  f::T1 -> T3 -> T4 x::T1
+  ----------------------- @
+       T3 -> T4              y::T3
+       --------------------------- @
+                    T4
+       ---------------------------------- λf.λx.λy
+       (T1 -> T3 -> T4) -> T1 -> T3 -> T4
+       (A  -> B  -> C)  -> A  -> B  -> C
+
   (λx.λy.λz. x z (y z))
 
   x   z y   z
@@ -163,8 +194,8 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
                         -- λx.λy.λz
                         T7
 
-  - If we assume both instances of lmabda-bound "z" are of the same type,
-  - we can add two equations:
+  - If we assume both instances of lambda-bound "z" are of the same type,
+  - we add the two equations:
 
   T1 = T3
   T7 = (T0 -> T2 -> T1 -> T6)
@@ -176,6 +207,7 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
                           T6
      ------------------------------------------ λx.λy.λz
      (T1 -> T5 -> T6) -> (T1 -> T5) -> T1 -> T6
+     (A -> B -> C)    -> (A -> B)   -> A  -> C
 #+end_example
 
 ** Intermediate Language
