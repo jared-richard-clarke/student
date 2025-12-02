@@ -580,6 +580,90 @@ in the target language, rather than transforming them into the ordinary lambda c
   Var((c p₁ ... pₓ)) = Var(p₁) ∪ ... ∪ Var(pₓ)
 #+end_example
 
+*** Dependency Analysis
+
+- Replaces ~letrec~ expressions with more efficient ~let~ expressions
+  wherever possible.
+
+- Sorts mutually recursive definitions into minimal groups.
+
+- Makes type checking possible. A definition in a ~letrec~ expression
+  whose right-hand side does not depend on the other names defined in
+  the ~letrec~ might confuse the type checker.
+
+- Makes strictness analysis more efficient.
+
+#+begin_example
+  === simple letrec ==
+
+  letrec
+      a = ...
+      b = ...a...
+      c = ...h...b...d...
+      d = ...c...
+      f = ...g...h...a...
+      g = ...f...
+      h = ...g...
+  in
+      ...
+
+  === dependency graph ===
+
+  node               = variable
+  arc                = x depends on y | x -> y
+  strongly-connected = x depends on y, y depends on x | x -> y -+
+                                                        ^       |
+                                                        +- ... -+
+  +---------------+
+  |               |
+  +--> c ---> d --+
+      / \
+  +--+   +-------+
+  |              |
+  |              V
+  V      +-----> h ---+
+  b      |            |
+  |      +-- f <----- g <--+
+  |         /|             |
+  V        / +-------------+
+  a <-----+
+
+  === strongly-connected components ===
+
+  {c, d} {f, g, h} {b} {a}
+
+  === coalesced graph ===
+
+   +--- {c, d} ---+
+   |              |
+   V              V
+  {b}         {f, g, h}
+   |              |
+   +---> {a} <----+
+
+  === topological sort ===
+
+  <------ dependent ------
+
+  {c, d} {b} {f, g, h} {a}
+
+  === generated expression ===
+
+  let
+         a = ...
+  in let
+         b = ...a...
+  in letrec
+         f = ...g...h...a...
+         g = ...f...
+         h = ...g...
+  in letrec
+         c = ...h...b...d...
+         d = ...c...
+  in
+      ...
+#+end_example
+
 *** ~case~ Expressions
 
 #+begin_example
