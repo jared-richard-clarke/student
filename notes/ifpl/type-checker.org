@@ -120,9 +120,8 @@ In order to be sure that expression *(E_{1} E_{2})* is well-typed, the function 
 must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is of type
 *B*.
 
-- The function part *f* of an application *(f a)* has a function type *(A -> V)*,
-  where *A* is the type of the argument part *a* and *V* is the type of the application
-  *(f a)*.
+- The function *f* of an application *(f a)* has type *(A -> V)*,
+  where *a* has type *A* and *(f a)* has type *V*.
 
 - All occurrences of a λ-bound variable must have the same types.
 
