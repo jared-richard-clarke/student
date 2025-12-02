@@ -127,7 +127,7 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
 
 - If two compound type expressions are equal, then they must be formed with
   the same construction and their corresponding parts must be equal.
-  More specifically, if *(T1 -> T2) = (T1' -> T2')*, then *T1 = T1'* and *T2 = T2'*.
+  More specifically: if *(T1 -> T2) = (T1' -> T2')*, then *T1 = T1'* and *T2 = T2'*.
 
 #+begin_example
   (λx.λy.λz. x z (y z))
