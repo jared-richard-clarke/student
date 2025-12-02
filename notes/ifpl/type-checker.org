@@ -116,6 +116,69 @@
     Simon L. Peyton Jones and Peter Hancock
 #+end_quote
 
+In order to be sure that expression *(E_{1} E_{2})* is well-typed, the function *E_{1}*
+must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is of type
+*B*.
+
+- The function part *f* of an application *(f a)* has a function type *(A -> V)*,
+  where *A* is the type of the argument part *a* and *V* is the type of the application
+  *(f a)*.
+
+- All occurrences of a λ-bound variable must have the same types.
+
+- If two compound type expressions are equal, then they must be formed with
+  the same construction and their corresponding parts must be equal.
+  More specifically, if *(T1 -> T2) = (T1' -> T2')*, then *T1 = T1'* and *T2 = T2'*.
+
+#+begin_example
+  (λx.λy.λz. x z (y z))
+
+  x   z y   z
+   \ /   \ /
+    @     @
+    |     |
+    +--@--+
+       |
+    λx.λy.λz
+
+  x::T0 z::T1    y::T2 z::T3
+  ----------- @  ----------- @
+       T4             T5
+       ----------------- @
+              T6
+              -- λx.λy.λz
+              T7
+
+  - The types of the sub-expressions must be related
+  - by the following equations:
+
+  T0 = T1 -> T4
+  T2 = T3 -> T5
+  T4 = T5 -> T6
+
+  x::T1 -> T5 -> T6 z::T1    y:T3 -> T5 z::T3
+  ----------------------- @  ---------------- @
+           T5 -> T6               T5
+           ------------------------- @
+                        T6
+                        -- λx.λy.λz
+                        T7
+
+  - If we assume both instances of lmabda-bound "z" are of the same type,
+  - we can add two equations:
+
+  T1 = T3
+  T7 = (T0 -> T2 -> T1 -> T6)
+
+  x::T1 -> T5 -> T6 z:: T1     y::T1 -> T5 z::T1
+  ------------------------ @   ----------------- @
+           T5 -> T6                   T5
+           ----------------------------- @
+                          T6
+     ------------------------------------------ λx.λy.λz
+     (T1 -> T5 -> T6) -> (T1 -> T5) -> T1 -> T6
+#+end_example
+
 ** Intermediate Language
 
 A transformed program should be type checked after dependency analysis
