@@ -125,12 +125,12 @@ but before lambda lifting or transformation into a supercombinator.
   expression ::= variable
                | λvariable.expression
                | expression expression
-               | let variable-1
+               | let variable-1 = expression-1
                      ...
-                     variable-x
+                     variable-x = expression-x
                  in expression
-               | letrec variable-1
+               | letrec variable-1 = expression-1
                         ...
-                        variable-x
+                        variable-x = expression-x
                  in <expression>
 #+end_example
