@@ -458,7 +458,7 @@ in the target language, rather than transforming them into the ordinary lambda c
 #+end_quote
 
 #+begin_example
-            Dependency Analysis
+                Dependency Analysis
            +-----------------------------+
            |                             V
           +-------------------------------+
@@ -622,7 +622,7 @@ in the target language, rather than transforming them into the ordinary lambda c
   |              |
   |              V
   V      +-----> h ---+
-  b      |            |
+  b      |            V
   |      +-- f <----- g <--+
   |         /|             |
   V        / +-------------+
