@@ -271,3 +271,255 @@ but before lambda lifting or transformation into a supercombinator.
                         variable-x = expression-x
                  in <expression>
 #+end_example
+
+** The Type Checker
+
+#+begin_quote
+  "The unification algorithm has many applications other than type-checking.
+   in particular it is a key algorithm in the implementation of programming
+   languages such as Prolog."
+
+  — *The Implementation of Functional Programming Languages*,
+    Simon L. Peyton Jones and Peter Hancock
+   
+  "There is a partial analogy between type schemes and lambda abstractions.
+   The schematic variables of a type scheme correspond to the formal parameter
+   of a lambda abstraction, and the unknowns of a type scheme correspond to
+   the free variables of a lambda abstraction. Applying a lambda abstraction
+   to an argument involves constructing an instance of its body, substituting
+   the argument for occurrences of the formal parameter
+   (but copying free variables unchanged). This is very similar to the process
+   of instantiating a type scheme, which involves constructing an instance
+   of the type scheme template, substituting fresh type variables for
+   occurrences of the schematic variables (but copying unknowns unchanged)."
+
+  — *The Implementation of Functional Programming Languages*,
+    Simon L. Peyton Jones and Peter Hancock
+#+end_quote
+
+#+begin_src
+  || === Program Expressions ===
+
+  vname == [char]
+
+  vexp ::= VAR vname
+         | LAMBDA vname vexp
+         | AP vexp vexp
+         | LET [vname] [vexp] vexp
+         | LETREC [vname] [vexp] vexp
+
+  || === Type Expressions ===
+
+  tvname == [char]
+
+  type_exp ::= TVAR tvname             || type variable
+             | TCONS [char] [type_exp] || compound type
+
+  || t1 -> t2
+
+  arrow :: type_exp -> type_exp
+  arrow t1 t2 = TCONS "arrow" [t1, t2]
+
+  int :: type_exp
+  int = TCONS "int" []
+
+  || (t1, t2)
+
+  cross :: type_exp -> type_exp -> type_exp
+  cross t1 t2 = TCONS "cross" [t1, t2]
+
+  || [t]
+
+  list :: type_exp type_exp
+  list t = TCONS "list" [t]
+
+  || Returns a list of the variable names that occur in a type expression.
+
+  tvars_in :: type_exp -> [tvname]
+  tvars t = f t []
+            where
+                f (TVAR x) xs     = x:xs
+                f (TCONS y ts) xs = foldr f xs ts
+
+  || === Success and Failure ===
+
+  reply * ::= OK * | FAILURE
+
+  || === Solving Equations ===
+  ||
+  || "An alleged solution of a system of type equations can be expressed
+  ||  as a function from type variables (the unknowns) to type expressions
+  ||  (their values)...[E]quations are satisfied when we replace (i.e. substitute)
+  ||  the unknowns by their values under the function."
+  ||
+  || — Chapter 9: A Type-checker, Peter Hancock
+
+  || substitutions
+
+  subst == tvname -> type_exp
+
+  || The phi substitution on all the type variables in te,
+  || where phi, phi', psi = variables over substitutions
+
+  sub_type :: subst -> type_exp -> type_exp
+  sub_type phi (TVAR tvn)     = phi tvn
+  sub_type phi (TCONS tcn ts) = TCONS tcn (map (sub_type phi) ts)
+
+  map :: (* -> **) -> [*] -> [**]
+  map f []     = []
+  map f (x:xs) = fx : map f xs
+
+  || composition: sub_type (scomp phi psi) = (sub_type phi) . (sub_type psi)
+
+  scomp :: subst -> subst -> subst
+  scomp sub2 sub1 tvn = sub_type sub2 (sub1 tvn)
+
+  || identity: sub_type id_subst t = t
+
+  id_subst :: subst
+  id_subst tvn = TVAR tvn
+
+  || delta substitution
+
+  delta :: tvname -> type_exp -> subst
+  delta tvn t tvn' = t,           if tvn = tvn'
+                   = TVAR tvn',   otherwise
+
+  || idempotent: (sub_type phi) . (sub_type phi) = sub_type phi
+  ||
+  || fixed point substitution: sub_type phi t = t
+
+  || === Unification ===
+
+  || type expression: (t1, t2) or t1 = t2
+  ||
+  || phi unifies (t1, t2) if sub_type phi t1 = sub_type phi t2
+  ||
+  || psi extends phi if psi = scomp rho phi
+
+  || Expression (extend phi tvn t) will only be evaluated when
+  ||
+  || 1. phi is an idempotent substitution (the solution we are trying to extend)
+  || 2. t is a fixed point of phi
+  || 3. tvn is unmoved by phi (tvn does not already have a value under phi)
+
+  extend :: subst -> tvname -> type_exp -> reply subst
+  extend phi tvn t = OK phi,                        if t = TVAR tvn
+                   = FAILURE,                       if (in tvn (tvars_in t))
+                   = OK (scomp (delta tvn t) phi),  otherwise
+
+  --- unification algorithm ---
+
+  unify :: subst -> (type_exp, type_exp) -> reply subst
+
+  unify phi ((TVAR tvn), t)
+      = extend phi tvn phit,       if phitvn = TVAR tvn
+      = unify phi (phitvn, phit),  otherwise
+        where phitvn = phi tvn
+              phit   = sub_type phi t
+
+  unify phi ((TCONS tcn ts), (TVAR tvn))
+      = unify phi ((TVAR tv), (TCONS tcn ts))
+
+  unify phi ((TCONS tcn ts), (TCONS tcn' ts'))
+      = unifyl phi (zip ts ts'),    if tcn = tcn'
+      = FAILURE,                    otherwise
+
+  zip :: [*] -> [**] -> [(*, **)]
+  zip [] xs     = []
+  zip (x:xs) [] = []
+  zip (x:xs) (y:ys) = (x, y) : zip xs ys
+
+  || (unifyl phi pts) constructs a substitution extending phi,
+  || which unifies corresponding entries in the list of pairs pts.
+
+  unifyl :: subst -> [(type_exp, type_exp)] -> reply subst
+  unifyl phi eqns = foldr f (OK phi) eqns
+                    where
+                        f eqn (OK phi) = unify phi eqn
+                        f eqn FAILURE  = FAILURE
+
+  || === Type Scheme ===
+
+  type_scheme ::= SCHEME [tvname] type_exp
+
+  unknowns_scheme :: type_scheme -> [tvname]
+  unknowns_scheme (SCHEME scvs t) = tvars_in (bar t scvs)
+
+  bar :: [*] -> [*] -> [*]
+  bar xs ys = [ x <- xs | ~(x $in ys)]
+
+  in :: * -> [*] -> bool
+  in x' [] = False
+  in x' (x:xs) = True,      if x = x'
+               = x' $in xs, otherwise
+
+  sub_scheme :: subst -> type_scheme -> type_scheme
+  sub_scheme phi (SCHEME scvs t)
+      = SCHEME scvs (sub_type (exclude phi scvs) t)
+
+  exclude phi scvs tvn = TVAR tvn,    if tvn $in scvs
+                       = phi tvn,     otherwise
+
+  || type environment = [(free variable, type scheme)]
+
+  assoc_list * ** == [(*, **)]
+
+  dom :: assoc_list * ** -> [*]
+  dom al = [ k | (k, v) <- al ]
+
+  val :: assoc_list * ** -> * -> **
+  val al k = hd [ v | (k', v) <- al; k = k' ]
+
+  install al k v = (k, v):al
+
+  rng :: assoc_list * ** -> [**]
+  rng al = map (val al) (dom al)
+
+  type_env == assoc_list vname type_scheme
+
+  unknowns_te :: type_env -> [tvname]
+  unknowns_te gamma = appendlist (map unknowns_scheme (rng gamma))
+
+  appendlist :: [ [*] ] -> [*]
+  appendlist lls = foldr (++) [] lls
+
+  sub_te :: subst -> type_env -> type_env
+  sub_te phi gamma
+      = [ (x, sub_scheme phi st) | (x, st) <- gamma ]
+
+  || === new variables ===
+
+  next_name :: name_supply -> tvname
+  deplete   :: name_supply -> name_supply
+  split     :: name_supply -> (name_supply, name_supply)
+
+  tvname      == [num]
+  name_supply == tvname
+
+  next_name ns   = ns
+  deplete (n:ns) = (n+2:ns)
+  split ns       = (0:ns, 1:ns)
+
+  name_sequence :: name_supply -> [tvname]
+  name_sequence ns = next_name ns : name_sequence (deplete ns)
+
+  || === Type Checker ===
+  ||
+  || (tc gamma ns e) -> reply (phi, t)
+  ||
+  || where gamma = type environment
+  ||       ns    = supply of type variable names
+  ||       e     = expression to be checked
+  ||       phi   = substitution defined on unknown type variables in gamma
+  ||       t     = a type derived for the expression e
+  ||               in the type environment (sub_te phi gamma).
+  ||               Fixed point of the substitution of phi.
+
+  tc :: type_env -> name_supply -> vexp -> reply (subst, type_exp)
+  tc gamma ns (VAR x)          = tcvar gamma ns x
+  tc gamma ns (AP e1 e2)       = tcap gamma ns e1 e2
+  tc gamma ns (LAMBDA x e)     = tclambda gamma ns x e
+  tc gamma ns (LET xs es e)    = tclet gamma ns xs es e
+  tc gamma ns (LETREC xs es e) = tcletrec gamma ns xs es e
+#+end_src
