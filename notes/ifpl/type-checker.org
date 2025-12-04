@@ -281,7 +281,7 @@ but before lambda lifting or transformation into a supercombinator.
 
   — *The Implementation of Functional Programming Languages*,
     Simon L. Peyton Jones and Peter Hancock
-   
+
   "There is a partial analogy between type schemes and lambda abstractions.
    The schematic variables of a type scheme correspond to the formal parameter
    of a lambda abstraction, and the unknowns of a type scheme correspond to
@@ -522,4 +522,140 @@ but before lambda lifting or transformation into a supercombinator.
   tc gamma ns (LAMBDA x e)     = tclambda gamma ns x e
   tc gamma ns (LET xs es e)    = tclet gamma ns xs es e
   tc gamma ns (LETREC xs es e) = tcletrec gamma ns xs es e
+
+  || --- type checking lists of expressions ---
+
+  tcl :: type_env -> name_supply -> [vexp] -> reply (subst, [type_exp])
+  tcl gamma ns [] = OK (id_subst, [])
+  tcl gamma ns (e:es) = tcl1 gamma ns0 es (tc gamm ns1 e)
+                        where (ns0, ns1) =  split ns
+
+  tcl1 gamma ns es FAILURE = FAILURE
+  tcl1 gamma ns es (OK (phi, t)) = tcl2 phi t (tcl gamma' ns es)
+                                   where gamma' = sub_te phi gamma
+
+  tcl2 phi t FAILURE        = FAILURE
+  tcl2 phi t (OK (psi, ts)) = OK (scomp psi phi, (subt_type psi t) : ts)
+
+  || --- variables ---
+
+  tcvar :: type_env -> name_supply -> vname -> reply (subst, type_exp)
+  tcvar gamma ns x = OK (id_subst, newinstance ns scheme)
+                     where scheme = val gamma x
+
+  newinstance :: name_supply -> type_scheme -> type_exp
+  newinstance ns (SCHEME scvs t) =
+      sub_type phi t
+      where al  = zip scvs (name_sequence ns)
+            phi = al_to_subst al
+
+  al_to_subst :: assoc_list tvname tvname -> subst
+  al_to_subst al tvn = TVAR (val al tvn),    if tvn $in (dom al)
+                     = TVAR tvn,             otherwise
+
+  || --- application ---
+
+  tcap :: type_env -> name_supply -> vexp -> vexp -> reply (subst, type_exp)
+  tcap gamma ns e1 e2
+      = tcap1 tvn (tcl gamma ns' [e1. e2])
+        where tvn = next_name ns
+              ns' = deplete ns
+
+  tcap1 tvn FAILURE = FAILURE
+  tcap1 tvn (OK (phi, [t1, t2]))
+      = tcap2 tvn (unify phi (t1, arrow t2 (TVAR tvn)))
+
+  tcap2 tvn FAILURE = FAILURE
+  tcap2 tvn (OK phi) = OK (phi, phi tvn)
+
+  || --- Lambda Abstractions ---
+
+  tclambda :: type_env -> name_supply -> vname -> vexp -> reply (subst, type_exp)
+  tclambda gamma ns x e
+      = tclambda1 tvn (tc gamma' ns' e)
+        where ns'   = deplete ns
+              gamma = new_bvar (x, tvn) : gamma
+              tvn   = next_name ns
+
+  tclambda1 tvn FAILURE       = FAILURE
+  tclambda1 tvn (OK (phi, t)) = OK (phi, arrow (phi tvn) t)
+
+  new_bvar (x, tvn) = (x, SCHEME [] (TVAR tvn))
+
+  || --- let expressions ---
+
+  tclet :: type_env -> name_supply
+           -> [vname] -> [vexp] -> vexp
+           -> reply (subst, type_exp)
+  tclet gamma ns xs es e
+      = tclet1 gamma ns0 xs e (tcl gamma ns1 es)
+        where (ns0, ns1) = split ns
+
+  tclet1 gamma ns xs e FAILURE = FAILURE
+  tclet1 gamma ns xs e (OK (phi, ts))
+      = tclet2 phi (tc gamma'' ns1 e)
+        where gamma''    = add_decls gamma' ns0 xs ts
+              gamma'     = sub_te phi gamma
+              (ns0, ns1) = split ns
+
+  tclet2 phi FAILURE        = FAILURE
+  tclet2 phi (OK (phi', t)) = OK (scomp phi' phi, t)
+
+  || Update a type environment "gamma" so that it associates schematic types
+  || formed from the types "ts" with the variables "xs".
+
+  add_decls :: type_env -> name_supply -> [vname] -> [type_exp] -> type_env
+  add_decls gamma ns xs ts
+      = (zip xs schemes) ++ gamma
+        where schemes  = map (genbar unknowns ns) ts
+              unknowns = unknowns_te gamma
+
+  genbar unknowns ns t
+      = SCHEME (map snd al) t'
+        where al   = zip scvs (name_sequence ns)
+              scvs = bar (nodups (tvars_in t)) unknowns
+              t'   = sub_type (al_to_subst al) t
+
+  fst :: (*, **) -> *
+  fst (x, y) = x
+
+  snd :: (*, **) -> **
+  snd (x, y) = y
+
+  nodups xs = f [] xs
+              where
+                  f acc [] = acc
+                  f acc (x:xs) = f acc xs,       if x $in acc
+                               = f (x:acc) xs    otherwise
+
+  || --- letrec expressions ---
+
+  tcletrec :: type_env -> name_supply
+              -> [vname] -> [vexp] -> vexp
+              -> reply (subst, type_exp)
+  tcletrec gamma ns xs es e
+      = tcletrec1 gamma ns0 nbvs e (tcl (nbvs ++ gamma) ns1 es)
+        where (ns0, ns') = split ns
+              (ns1, ns2) = split ns'
+              nbvs       = new_bvars xs ns2
+
+  new_bvars xs ns = map new_bvar (zip xs (name_sequence ns))
+
+  tcletrec1 gamma ns nbvs e FAILURE = FAILURE
+  tcletrec1 gamma ns nbvs e (OK (phi, ts))
+      = tcletrec2 gamma' ns nbvs' e (unifyl phi (zip ts ts'))
+        where ts'    = map old_bvar nbvs'
+              nbvs'  = sub_te phi nbvs
+              gamma' = sub_te phi gamma
+
+  old_bvar (x, SCHEME [] t) = t
+
+  tcletrec2 gamma ns nbvs e FAILURE = FAILURE
+  tcletrec2 gamm ns nbvs e (OK phi)
+      = tclet2 phi (tc gamma'' ns1 e)
+        where ts         = map old_bvar nbvs'
+              nbvs'      = sub_te phi nbvs
+              gamma'     = sub_te phi gamma
+              gamma''    = add_decls gamma' ns0 (map fst nbvs) ts
+              (ns0, ns1) = split ns
 #+end_src
