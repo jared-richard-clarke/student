@@ -5,6 +5,7 @@
 | source                                                   | author                |
 |----------------------------------------------------------+-----------------------|
 | *The Implementation of Functional Programming Lanugages* | Simon L. Peyton Jones |
+| *Hindley-Milner Type System*                             | Wikipedia             |
 
 ** Notation
 
@@ -128,6 +129,11 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
 - If two compound type expressions are equal, then they must be formed with
   the same construction and their corresponding parts must be equal.
   More specifically: if *(T1 -> T2) = (T1' -> T2')*, then *T1 = T1'* and *T2 = T2'*.
+
+- If *T1 = ...T1...*, where type variable *T1* occurs properly within
+  the right-hand side of the equation, then the system of equations
+  cannot be solved, and the expression from which the system was derived
+  is ill-typed.
 
 #+begin_example
   (λf.λx.λy f x y)
@@ -272,7 +278,92 @@ but before lambda lifting or transformation into a supercombinator.
                  in <expression>
 #+end_example
 
+** Hindley-Milner Type System
+
+#+begin_example
+  || === Expressions ===
+
+  e = x
+    | e₁ e₂
+    | λx.e
+    | let x = e₁ in e₂
+
+  || === Types ===
+
+  monomorphic τ = α
+                | C τ ... τ
+
+  polymorphic σ = τ
+                | ∀α.σ
+
+  || === Context and Typing ===
+
+  Context Γ = ε (empty)
+            | Γ, x : σ
+
+  Typing    = Γ ⊢ e : σ
+
+  || === Free Type Variables ===
+
+  free(α)           = {α}
+                       n
+  free(C τ₁ ... τₓ) =  ∪ free(τ₁)
+                     i = 1
+
+  free(Γ)           = ∪ = free(σ)
+                    x : σ ∈ Γ
+
+  free(∀α.σ)        = free(σ) - {α}
+  free(Γ ⊢ e : σ)   = free(σ) - free(Γ)
+
+  || === Declarative Rule System ===
+
+  || --- Variable ---
+
+  x : σ ∈ Γ
+  ---------                        [Var]
+  Γ ⊢ x : σ
+
+  || --- Application ---
+
+  Γ ⊢ e₁ : τ₁ → τ₂    Γ ⊢ e₂ : τ₁
+  -------------------------------- [App]
+           Γ ⊢ e₁ e₂ : τ₂
+
+  || --- Abstraction ---
+
+  Γ, x : τ₁ ⊢ e : τ₂
+  ------------------- [Abs]
+  Γ ⊢ λx.e : τ₁ → τ₂
+
+  || --- Let ---
+
+  Γ ⊢ e₁ : σ   Γ, x : σ ⊢ e₂ : τ
+  -------------------------------  [Let]
+     Γ ⊢ let x = e₁ in e₂ : τ
+
+  || --- Instantiation ---
+
+  Γ ⊢ e : σ₁    σ₁ ⊑ σ₂
+  ---------------------            [Inst]
+       Γ ⊢ e : σ₂
+
+  || --- Generalization ---
+
+  Γ ⊢ e : σ    α ∉ free(Γ)
+  ------------------------         [Gen]
+      Γ ⊢ e : ∀α.σ
+#+end_example
+
 ** The Type Checker
+
+- unification :: Finding a variable substitution that makes two terms equivalent.
+
+1. Assign symbolic type names.
+
+2. Generate a list of type equations.
+
+3. Solve equations using unification.
 
 #+begin_quote
   "The unification algorithm has many applications other than type-checking.
@@ -367,7 +458,7 @@ but before lambda lifting or transformation into a supercombinator.
 
   map :: (* -> **) -> [*] -> [**]
   map f []     = []
-  map f (x:xs) = fx : map f xs
+  map f (x:xs) = f x : map f xs
 
   || composition: sub_type (scomp phi psi) = (sub_type phi) . (sub_type psi)
 
