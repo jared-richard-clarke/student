@@ -56,11 +56,9 @@
 
 ** Polymorphism
 
-- monomorphic :: Every value has a single, concrete type:
-  ~map :: (num -> num) -> [num] -> [num]~.
+- monomorphic :: Operations accept values of one type.
 
-- polymorphic :: Every value may be one of many concrete types,
-  depending on its context: ~map :: (A -> B) -> [A] -> [B]~.
+- polymorphic :: Operations accept values of more than one type.
 
 - ad hoc polymorphism :: A type discipline that permits the same expression
   to denote distinct operations for distinct types. The addition operator
@@ -68,15 +66,19 @@
   numbers.
 
 - parametric polymorphism :: A type discipline where generic expressions
-  are denoted by schematic variables. A polymorphic object may be one
-  of many different types, depending on its context.
+  are denoted by schematic variables. Polymorphic types become monomorphic
+  by consistent substitution of their variables.
 
-#+begin_example
-  length :: [A] -> num, for all types A
+#+begin_src
+  || === parametric polymorphic ===
+  ||
+  || A = schematic variable
+
+  length :: [A] -> num
   length []     = 0
   length (x:xs) = (length xs) +  1
 
-  where A = schematic variable
+  || === monomorphic ===
 
   length :: [num] -> num
   length [7, 11]
@@ -84,23 +86,29 @@
   length :: [(char, char)] -> num
   length [('a', 'b'), ('c', 'd')]
 
+  || === parametric polymorphic ===
+  ||
+  || A, B, C = schematic variables
+
   (.) :: (B -> C) -> (A -> B) -> A -> C
   (f . g) x = f (g x)
 
-  where A, B, C = schematic variables
+  || === parametric polymorphic ===
+  ||
+  || A, B = schematic variables
 
   foldr :: (A -> B -> B) -> B -> [A] -> B
   foldr f b []     = b
   foldr f b (a:as) = f a (foldr f b as)
 
-  where A, B = schematic variables
+  || === monomorphic ===
 
   foldr :: (num -> num -> num) -> num -> [num] -> num
   foldr + 0 [7, 11, 15]
 
   foldr :: (string -> string -> string) -> string -> [string] -> string
   foldr append [] ["abc", "def", "ghi"]
-#+end_example
+#+end_src
 
 ** Type Inference
 
@@ -290,22 +298,39 @@ but before lambda lifting or transformation into a supercombinator.
 
   || === Types ===
 
-  monomorphic τ = α
-                | C τ ... τ
+  || Monotypes designate a particular type. Not to be confused
+  || with monomorphic types, which exclude variables and allow
+  || only ground terms.
 
-  polymorphic σ = τ
-                | ∀α.σ
+  monotype τ = α
+             | C τ ... τ
+
+  || Polytypes — or type schemes — are types containing
+  || variables bound by zero or more for-all quantifiers.
+
+  polytype σ = τ
+             | ∀α.σ
 
   || === Context and Typing ===
+  ||
+  || Brings together syntax expressions and types.
+
+  || A context is a list of pairs (x : σ)
 
   Context Γ = ε (empty)
             | Γ, x : σ
 
+  || Under the assumptions Γ, the expression e has type σ.
+
   Typing    = Γ ⊢ e : σ
 
   || === Free Type Variables ===
+  ||
+  || For type ∀α₁ ... ∀αₓ.τ, ∀ is the quantifier binding the type variables
+  || αₓ in the monotype τ.
 
   free(α)           = {α}
+
                        n
   free(C τ₁ ... τₓ) =  ∪ free(τ₁)
                      i = 1
@@ -315,6 +340,22 @@ but before lambda lifting or transformation into a supercombinator.
 
   free(∀α.σ)        = free(σ) - {α}
   free(Γ ⊢ e : σ)   = free(σ) - free(Γ)
+
+  || === Syntax of Rules ===
+
+  Predicate  = σ₁ ⊑ σ₂
+             | α ∉ free(Γ)
+             | x : σ ∈ Γ
+
+  Judgement  = Typing
+
+  Premise    = Judgement | Predicate
+
+  Conclusion = Judgement
+
+               Premise ...
+  Rule       = ----------- [Name]
+               Conclusion
 
   || === Declarative Rule System ===
 
@@ -353,17 +394,52 @@ but before lambda lifting or transformation into a supercombinator.
   Γ ⊢ e : σ    α ∉ free(Γ)
   ------------------------         [Gen]
       Γ ⊢ e : ∀α.σ
+
+  || === Syntactical Rule System ===
+
+  || --- Variable and Instantiation ---
+
+   x : σ ∈ Γ    σ ⊑ τ
+   ------------------                    [Var]
+       Γ ⊢ x : τ
+
+  || --- Application ---
+
+  Γ ⊢ e₁ : τ₁ → τ₂    Γ ⊢ e₂ : τ₁
+  --------------------------------       [App]
+           Γ ⊢ e₁ e₂ : τ₂
+
+  || --- Abstraction ---
+
+  Γ, x : τ₁ ⊢ e : τ₂
+  -------------------                    [Abs]
+  Γ ⊢ λx.e : τ₁ → τ₂
+
+  || --- Let and Generalization ---
+
+  Γ ⊢ e₁ : τ₁   Γ, x : Γ'(τ₁) ⊢ e₂ : τ₂
+  -------------------------------------  [Let]
+        Γ ⊢ let x = e₁ in e₂ : τ₂
+
+  || Quantify all monotype variables not bound in Γ.
+
+  Γ'(τ) = ∀α'.τ
+
+  α' = free(τ) - free(Γ)
 #+end_example
 
 ** The Type Checker
 
-- unification :: Finding a variable substitution that makes two terms equivalent.
+1. *Assign type variables*: Assign fresh type variables to expressions whose
+   type is unknown.
 
-1. Assign symbolic type names.
+2. *Collect constraints*: Traverse the abstract syntax tree of a program,
+   gathering type constraints based on how expressions are used.
+   If *f* has type *T1 -> T2*, then *x* in *(f x)* must have type *T1*.
 
-2. Generate a list of type equations.
-
-3. Solve equations using unification.
+3. *Unify*: Find substitutions for type variables that satisfy all constraints.
+   Determine either the concrete types or most general polymorphic types.
+   Consistent substitution means an expression is well-typed.
 
 #+begin_quote
   "The unification algorithm has many applications other than type-checking.
