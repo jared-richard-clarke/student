@@ -333,7 +333,7 @@ but before lambda lifting or transformation into a supercombinator.
   || --- Abstraction ---
 
   Γ, x : τ₁ ⊢ e : τ₂
-  ------------------- [Abs]
+  -------------------              [Abs]
   Γ ⊢ λx.e : τ₁ → τ₂
 
   || --- Let ---
