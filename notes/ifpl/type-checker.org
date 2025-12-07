@@ -288,6 +288,26 @@ but before lambda lifting or transformation into a supercombinator.
 
 ** Hindley-Milner Type System
 
+- substitution :: A map from type variables to types.
+
+- constraint :: A requirement that two types have a common substitution
+  instance. Of the the form *A = B*.
+
+- unification :: A partial function that either turns a set of constraints
+  into a substitution or fails when it encounters unsatisfiable constraints.
+
+  - unify(∅) = []
+
+  - unify({A = A} ∪ C) = unify(C)
+
+  - unify({a = A} ∪ C) = unify([a ↦ A]C)∘[a ↦ A] when a ∉ free(A)
+
+  - unify({A = a} ∪ C) = unify([a ↦ A]C)∘[a ↦ A] when a ∉ free(A)
+
+  - unify({A → B = A' → B'} ∪ C) = unify({A = A', B = B'} ∪ C)
+
+  - unify({A = B} ∪ C) = FAIL
+
 #+begin_example
   || === Expressions ===
 
