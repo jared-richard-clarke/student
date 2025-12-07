@@ -307,6 +307,8 @@ but before lambda lifting or transformation into a supercombinator.
 
   || Polytypes — or type schemes — are types containing
   || variables bound by zero or more for-all quantifiers.
+  || Qualifiers can only appear top level. ∀α.α -> ∀α.α
+  || is not allowed.
 
   polytype σ = τ
              | ∀α.σ
