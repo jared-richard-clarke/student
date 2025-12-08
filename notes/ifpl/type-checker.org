@@ -298,15 +298,15 @@ but before lambda lifting or transformation into a supercombinator.
 
   - unify(∅) = []
 
-  - unify({A = A} ∪ C) = unify(C)
+  - unify({ A = A } ∪ C) = unify(C)
 
-  - unify({a = A} ∪ C) = unify([a ↦ A]C)∘[a ↦ A] when a ∉ free(A)
+  - unify({ α = A } ∪ C) = unify([α ↦ A]C)∘[α ↦ A] when α ∉ free(A)
 
-  - unify({A = a} ∪ C) = unify([a ↦ A]C)∘[a ↦ A] when a ∉ free(A)
+  - unify({ A = α } ∪ C) = unify([α ↦ A]C)∘[α ↦ A] when α ∉ free(A)
 
-  - unify({A → B = A' → B'} ∪ C) = unify({A = A', B = B'} ∪ C)
+  - unify({ A → B = A' → B' } ∪ C) = unify({ A = A', B = B' } ∪ C)
 
-  - unify({A = B} ∪ C) = FAIL
+  - unify({ A = B } ∪ C) = FAIL
 
 #+begin_example
   || === Expressions ===
