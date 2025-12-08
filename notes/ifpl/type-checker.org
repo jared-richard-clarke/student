@@ -288,7 +288,7 @@ but before lambda lifting or transformation into a supercombinator.
 
 ** Hindley-Milner Type System
 
-- substitution :: A map from type variables to types.
+- substitution :: A mapping from variables to terms.
 
 - constraint :: A requirement that two types have a common substitution
   instance. Of the the form *A = B*.
