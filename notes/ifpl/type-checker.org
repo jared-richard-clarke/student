@@ -291,7 +291,7 @@ but before lambda lifting or transformation into a supercombinator.
 - substitution :: A mapping from variables to terms.
 
 - constraint :: A requirement that two types have a common substitution
-  instance. Of the the form *A = B*.
+  instance.
 
 - unification :: A partial function that either turns a set of constraints
   into a substitution or fails when it encounters unsatisfiable constraints.
