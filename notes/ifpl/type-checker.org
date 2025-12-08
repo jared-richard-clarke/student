@@ -502,7 +502,7 @@ but before lambda lifting or transformation into a supercombinator.
   tvname == [char]
 
   type_exp ::= TVAR tvname             || type variable
-             | TCONS [char] [type_exp] || compound type
+             | TCONS [char] [type_exp] || concrete type
 
   || t1 -> t2
 
