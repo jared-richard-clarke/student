@@ -655,7 +655,7 @@ the constraint *X = Y* off the stack:
   bar xs ys = [ x <- xs | ~(x $in ys)]
 
   in :: * -> [*] -> bool
-  in x' [] = False
+  in x' []     = False
   in x' (x:xs) = True,      if x = x'
                = x' $in xs, otherwise
 
