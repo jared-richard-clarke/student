@@ -622,7 +622,7 @@ the constraint *X = Y* off the stack:
                    = FAILURE,                       if tvn $in (tvars_in t)
                    = OK (scomp (delta tvn t) phi),  otherwise
 
-  --- unification algorithm ---
+  || --- unification algorithm ---
 
   unify :: subst -> (type_exp, type_exp) -> reply subst
 
