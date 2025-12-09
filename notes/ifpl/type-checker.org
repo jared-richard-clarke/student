@@ -619,7 +619,7 @@ the constraint *X = Y* off the stack:
 
   extend :: subst -> tvname -> type_exp -> reply subst
   extend phi tvn t = OK phi,                        if t = TVAR tvn
-                   = FAILURE,                       if (in tvn (tvars_in t))
+                   = FAILURE,                       if tvn $in (tvars_in t)
                    = OK (scomp (delta tvn t) phi),  otherwise
 
   --- unification algorithm ---
