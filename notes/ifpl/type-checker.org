@@ -731,11 +731,11 @@ the constraint *X = Y* off the stack:
   || --- type checking lists of expressions ---
 
   tcl :: type_env -> name_supply -> [vexp] -> reply (subst, [type_exp])
-  tcl gamma ns [] = OK (id_subst, [])
+  tcl gamma ns []     = OK (id_subst, [])
   tcl gamma ns (e:es) = tcl1 gamma ns0 es (tc gamm ns1 e)
                         where (ns0, ns1) =  split ns
 
-  tcl1 gamma ns es FAILURE = FAILURE
+  tcl1 gamma ns es FAILURE       = FAILURE
   tcl1 gamma ns es (OK (phi, t)) = tcl2 phi t (tcl gamma' ns es)
                                    where gamma' = sub_te phi gamma
 
