@@ -289,41 +289,6 @@ but before lambda lifting or transformation into a supercombinator.
 
 ** Hindley-Milner Type System
 
-- substitution :: A mapping from variables to terms.
-
-- constraint :: A requirement that two types have a common substitution
-  instance.
-
-- unification :: A partial function that either turns a set of constraints
-  into a substitution or fails when it encounters unsatisfiable constraints.
-  A unification algorithm may be described in three parts:
-
-  1. Any type variable unifies with any type expression, and is instantiated
-     to that expression. A specific theory might restrict this rule with an
-     occurs check.
-
-  2. Two type constants unify only if they are the same type.
-
-  3. Two type constructions unify only if they are applications of the same
-     type constructor and all of their component types recursively unify.
-
-The unification algorithm begins with an empty substitution. Push all constraints
-onto a stack. If the stack is empty, return the substitution. Otherwise, pop
-the constraint *X = Y* off the stack:
-
-1. If X and Y are identical identifiers, do nothing.
-
-2. If X is an identifier, replace all occurrences of X by Y both on the stack
-   and in the substitution. Add X ↦ Y to the substitution.
-
-3. If Y is an identifier, replace all occurrences of Y by X both on the stack
-   and in the substitution. Add Y ↦ X to the substitution.
-
-4. If X is of the form C(X₁ ... Xₓ) for some constructor C and Y is of the
-   form C(Y₁ ... Yₓ), then push all Xₓ = Yₓ onto the stack.
-
-5. Otherwise, X and Y do not unify. Report an error.
-
 #+begin_example
   || === Expressions ===
 
@@ -369,12 +334,12 @@ the constraint *X = Y* off the stack:
 
   free(α)           = {α}
 
-                       n
-  free(C τ₁ ... τₓ) =  ∪ free(τ₁)
+                       x
+  free(C τ₁ ... τₓ) =  ∪ free(τᵢ)
                      i = 1
 
-  free(Γ)           = ∪ = free(σ)
-                    x : σ ∈ Γ
+  free(Γ)           =  ∪ free(σ)
+                     x : σ ∈ Γ
 
   free(∀α.σ)        = free(σ) - {α}
   free(Γ ⊢ e : σ)   = free(σ) - free(Γ)
@@ -464,6 +429,53 @@ the constraint *X = Y* off the stack:
   Γ'(τ) = ∀α'.τ
 
   α' = free(τ) - free(Γ)
+#+end_example
+
+- substitution :: A mapping from variables to terms.
+
+- constraint :: A requirement that two types have a common substitution
+  instance.
+
+- unification :: A partial function that either turns a set of constraints
+  into a substitution or fails when it encounters unsatisfiable constraints.
+  A unification algorithm may be described in three parts:
+
+  1. Any type variable unifies with any type expression, and is instantiated
+     to that expression. A specific theory might restrict this rule with an
+     occurs check.
+
+  2. Two type constants unify only if they are the same type.
+
+  3. Two type constructions unify only if they are applications of the same
+     type constructor and all of their component types recursively unify.
+
+#+begin_example
+  || === unification ===
+
+  a ~ b (s) = [s]a = [s]b
+
+  || Terms "a" and "b" are unifiable by substitution "s".
+
+  || --- same ---
+  α ~ α ([])
+
+  || --- left-hand side ---
+
+  α ∉ free(τ)
+  ---------------
+  α ~ τ ([α ↦ τ])
+
+  || --- right-hand side ---
+
+  α ∉ free(τ)
+  ---------------
+  τ ~ α ([α ↦ τ])
+
+  || --- arrow (→) ---
+
+  τ₁ ~ τ'₂ (s₁)    [s₁]τ₂ ~ [s₁]τ'₂ (s₂)
+  --------------------------------------
+  τ₁ → τ₂ ~ τ'₁ → τ'₂ (s₂ ∘ s₁)
 #+end_example
 
 ** The Type Checker
