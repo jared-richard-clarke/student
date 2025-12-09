@@ -323,10 +323,10 @@ the constraint *X = Y* off the stack:
 1. If X and Y are identical identifiers, do nothing.
 
 2. If X is an identifier, replace all occurrences of X by Y both on the stack
-   and in the substitution and add X ↦ Y to the substitution.
+   and in the substitution. Add X ↦ Y to the substitution.
 
 3. If Y is an identifier, replace all occurrences of Y by X both on the stack
-   and in the substitution and add Y ↦ X to the substitution.
+   and in the substitution. Add Y ↦ X to the substitution.
 
 4. If X is of the form C(X₁ ... Xₓ) for some constructor C and Y is of the
    form C(Y₁ ... Yₓ), then push all Xₓ = Yₓ onto the stack.
