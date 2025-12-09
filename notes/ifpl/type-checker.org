@@ -295,26 +295,17 @@ but before lambda lifting or transformation into a supercombinator.
   instance.
 
 - unification :: A partial function that either turns a set of constraints
-  into a substitution or fails when it encounters unsatisfiable constraints:
-  *unify: constraints → substitution | FAIL*.
+  into a substitution or fails when it encounters unsatisfiable constraints.
+  A unification algorithm may be described in three parts:
 
-  - unify(∅) = []
+  1. Any type variable unifies with any type expression, and is instantiated
+     to that expression. A specific theory might restrict this rule with an
+     occurs check.
 
-  - unify({ A = A } ∪ C) = unify(C)
+  2. Two type constants unify only if they are the same type.
 
-  - unify({ α = A } ∪ C) = unify([α ↦ A]C)∘[α ↦ A] when α ∉ free(A)
-
-  - unify({ A = α } ∪ C) = unify([α ↦ A]C)∘[α ↦ A] when α ∉ free(A)
-
-  - unify({ A → B = A’ → B’ } ∪ C) = unify({ A = A’, B = B’ } ∪ C)
-
-  - unify({ A = B } ∪ C) = FAIL
-
-  - A, B = terms
-
-  - C = constraints
-
-  - α = type variable
+  3. Two type constructions unify only if they are applications of the same
+     type constructor and all of their component types recursively unify.
 
 The unification algorithm begins with an empty substitution. Push all constraints
 onto a stack. If the stack is empty, return the substitution. Otherwise, pop
