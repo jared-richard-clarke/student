@@ -6,6 +6,7 @@
 |----------------------------------------------------------+-----------------------|
 | *The Implementation of Functional Programming Lanugages* | Simon L. Peyton Jones |
 | *Hindley-Milner Type System*                             | Wikipedia             |
+| *Programming Languages: Application and Interpretation*  | Shriram Krishnamurthi |
 
 ** Notation
 
@@ -294,7 +295,8 @@ but before lambda lifting or transformation into a supercombinator.
   instance.
 
 - unification :: A partial function that either turns a set of constraints
-  into a substitution or fails when it encounters unsatisfiable constraints.
+  into a substitution or fails when it encounters unsatisfiable constraints:
+  *unify: constraints → substitution | FAIL*.
 
   - unify(∅) = []
 
@@ -304,9 +306,32 @@ but before lambda lifting or transformation into a supercombinator.
 
   - unify({ A = α } ∪ C) = unify([α ↦ A]C)∘[α ↦ A] when α ∉ free(A)
 
-  - unify({ A → B = A' → B' } ∪ C) = unify({ A = A', B = B' } ∪ C)
+  - unify({ A → B = A’ → B’ } ∪ C) = unify({ A = A’, B = B’ } ∪ C)
 
   - unify({ A = B } ∪ C) = FAIL
+
+  - A, B = terms
+
+  - C = constraints
+
+  - α = type variable
+
+The unification algorithm begins with an empty substitution. Push all constraints
+onto a stack. If the stack is empty, return the substitution. Otherwise, pop
+the constraint *X = Y* off the stack:
+
+1. If X and Y are identical identifiers, do nothing.
+
+2. If X is an identifier, replace all occurrences of X by Y both on the stack
+   and in the substitution and add X ↦ Y to the substitution.
+
+3. If Y is an identifier, replace all occurrences of Y by X both on the stack
+   and in the substitution and add Y ↦ X to the substitution.
+
+4. If X is of the form C(X₁ ... Xₓ) for some constructor C and Y is of the
+   form C(Y₁ ... Yₓ), then push all Xₓ = Yₓ onto the stack.
+
+5. Otherwise, X and Y do not unify. Report an error.
 
 #+begin_example
   || === Expressions ===
