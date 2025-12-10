@@ -6,7 +6,7 @@
 |----------------------------------------------------------+-----------------------|
 | *The Implementation of Functional Programming Lanugages* | Simon L. Peyton Jones |
 | *Hindley-Milner Type System*                             | Wikipedia             |
-| *Programming Languages: Application and Interpretation*  | Shriram Krishnamurthi |
+| *Implementing a Hindley-Milner Type System*              | 05st                  |
 
 ** Notation
 
@@ -500,6 +500,18 @@ but before lambda lifting or transformation into a supercombinator.
    allowing the bound variable to be different types in the body of the expression.
 
 #+begin_quote
+  "Essentially, type inference is the process of descending the abstract syntax
+   tree, assigning fresh type variables to every expression, and generating a set
+   of constraints based on what information is available. Afterwards, solving the
+   set of constraints (much like solving a system of equations), will result in
+   a substitution. This substitution will map every generated type variable to
+   an inferred principal type. The process of solving the constraints is known
+   as unification. (The principal type is, more or less, the most general type
+   of an expression, i.e. any other possible types for the expression are
+   instances of the principal type.)"
+
+  — *Implementing a Hindley-Milner Type System*, O5st
+
   "There is a partial analogy between type schemes and lambda abstractions.
    The schematic variables of a type scheme correspond to the formal parameter
    of a lambda abstraction, and the unknowns of a type scheme correspond to
