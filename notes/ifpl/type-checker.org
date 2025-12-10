@@ -499,13 +499,6 @@ but before lambda lifting or transformation into a supercombinator.
    allowing the bound variable to be different types in the body of the expression.
 
 #+begin_quote
-  "The unification algorithm has many applications other than type-checking.
-   in particular it is a key algorithm in the implementation of programming
-   languages such as Prolog."
-
-  — *The Implementation of Functional Programming Languages*,
-    Simon L. Peyton Jones and Peter Hancock
-
   "There is a partial analogy between type schemes and lambda abstractions.
    The schematic variables of a type scheme correspond to the formal parameter
    of a lambda abstraction, and the unknowns of a type scheme correspond to
