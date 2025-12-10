@@ -451,12 +451,13 @@ but before lambda lifting or transformation into a supercombinator.
 
 #+begin_example
   || === unification ===
+  
+  || Terms "a" and "b" are unifiable by substitution "s".
 
   a ~ b (s) = [s]a = [s]b
 
-  || Terms "a" and "b" are unifiable by substitution "s".
-
   || --- same ---
+
   α ~ α ([])
 
   || --- left-hand side ---
