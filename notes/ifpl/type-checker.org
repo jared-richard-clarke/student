@@ -342,6 +342,7 @@ but before lambda lifting or transformation into a supercombinator.
                      x : σ ∈ Γ
 
   free(∀α.σ)        = free(σ) - {α}
+
   free(Γ ⊢ e : σ)   = free(σ) - free(Γ)
 
   || === Syntax of Rules ===
@@ -387,12 +388,20 @@ but before lambda lifting or transformation into a supercombinator.
      Γ ⊢ let x = e₁ in e₂ : τ
 
   || --- Instantiation ---
+  || Replace all instances of a quantified type variable
+  || with a fresh monotype variable.
+  ||
+  || σ₁ ⊑ σ₂ reads "σ₂ is an instantiation of σ₁",
+  || where "instantiation" here informally means
+  || "resemble".
 
   Γ ⊢ e : σ₁    σ₁ ⊑ σ₂
   ---------------------            [Inst]
        Γ ⊢ e : σ₂
 
   || --- Generalization ---
+  || Converts monotype τ into polytype σ by closing
+  || over all free type variables in τ.
 
   Γ ⊢ e : σ    α ∉ free(Γ)
   ------------------------         [Gen]
