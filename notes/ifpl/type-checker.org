@@ -433,7 +433,8 @@ but before lambda lifting or transformation into a supercombinator.
 
 *** Unification
 
-- substitution :: A mapping from variables to terms.
+- substitution :: A mapping from a free variable in a type to its corresponding
+  term in an environment.
 
 - constraint :: A requirement that two types have a common substitution
   instance.
