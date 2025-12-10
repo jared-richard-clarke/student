@@ -66,9 +66,10 @@
   might denote the addition of both integers, rationals, reals, and complex
   numbers.
 
-- parametric polymorphism :: A type discipline where generic expressions
-  are denoted by schematic variables. Polymorphic types become monomorphic
-  by consistent substitution of their variables.
+- parametric polymorphism :: A type discipline where operations work uniformly
+  for arguments of different types. Polymorphic expressions are denoted by
+  schematic variables. Polymorphic types become monomorphic by consistent
+  substitution of their schematic variables.
 
 #+begin_src
   || === parametric polymorphic ===
