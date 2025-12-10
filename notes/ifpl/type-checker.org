@@ -767,7 +767,7 @@ but before lambda lifting or transformation into a supercombinator.
 
   tcl :: type_env -> name_supply -> [vexp] -> reply (subst, [type_exp])
   tcl gamma ns []     = OK (id_subst, [])
-  tcl gamma ns (e:es) = tcl1 gamma ns0 es (tc gamm ns1 e)
+  tcl gamma ns (e:es) = tcl1 gamma ns0 es (tc gamma ns1 e)
                         where (ns0, ns1) =  split ns
 
   tcl1 gamma ns es FAILURE       = FAILURE
