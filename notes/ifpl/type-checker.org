@@ -431,6 +431,8 @@ but before lambda lifting or transformation into a supercombinator.
   α' = free(τ) - free(Γ)
 #+end_example
 
+*** Unification
+
 - substitution :: A mapping from variables to terms.
 
 - constraint :: A requirement that two types have a common substitution
@@ -491,6 +493,10 @@ but before lambda lifting or transformation into a supercombinator.
 3. *Unify*: Find substitutions for type variables that satisfy all constraints.
    Determine either the concrete types or most general polymorphic types.
    Consistent substitution means an expression is well-typed.
+
+4. *Generalize*: For a ~let~ expression, the inferred monotype for the bound
+   value is generalized to a polytype by quantifying over all free type variables,
+   allowing the bound variable to be different types in the body of the expression.
 
 #+begin_quote
   "The unification algorithm has many applications other than type-checking.
