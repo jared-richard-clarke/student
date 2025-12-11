@@ -1075,7 +1075,7 @@ but before lambda lifting or transformation into a supercombinator.
   -- --- occurs check ---
   bind :: TVar -> Type -> Solve Subst
   bind v t
-      | v `Set.member` tvs t = throwError $ "Infinite type " ++ show v ++ " ~ " ++ show t -- Occurs check
+      | (Set.member v tvs) t = throwError $ "Infinite type " ++ show v ++ " ~ " ++ show t -- Occurs check
       | otherwise = return $ Map.singleton v t
 
   -- === Solve ===
