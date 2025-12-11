@@ -1054,11 +1054,11 @@ returns a monotype and substitution pairing.
       apply s (TCon c ts) = TCon c $ map (apply s) ts
 
   instance Substitutable Scheme where
-      tvs (Forall vs t)     = tvs (Set.difference t vs)
+      tvs (Forall vs t)     = Set.difference (tvs t) vs
       apply s (Forall vs t) = Forall vs $ apply (foldr Map.delete s vs) t
 
   instance Substitutable Constraint where
-      tvs (Constraint t1 t2)     = tvs (Set.union t1 tvs) t2
+      tvs (Constraint t1 t2)     = Set.union (tvs t1) (tvs t2)
       apply s (Constraint t1 t2) = Constraint (apply s t1) (apply s t2)
 
   instance Substitutable a => Substitutable [a] where
@@ -1068,7 +1068,7 @@ returns a monotype and substitution pairing.
   -- === Generalization and Instantiation ===
 
   generalize :: Context -> Type -> Scheme
-  generalize ctx t = Forall (tvs (Set.difference t tvs) (Map.elems ctx)) t
+  generalize ctx t = Forall (Set.difference (tvs t) (tvs (Map.elems ctx))) t
 
   instantiate :: Scheme -> Infer Type
   instantiate (Forall vs t) = do
@@ -1145,7 +1145,7 @@ returns a monotype and substitution pairing.
   -- --- occurs check ---
   bind :: TVar -> Type -> Solve Subst
   bind v t
-      | (Set.member v tvs) t = throwError $ "Infinite type " ++ show v ++ " ~ " ++ show t -- Occurs check
+      | Set.member v (tvs t) = throwError $ "Infinite type " ++ show v ++ " ~ " ++ show t -- Occurs check
       | otherwise = return $ Map.singleton v t
 
   -- === Solve ===
