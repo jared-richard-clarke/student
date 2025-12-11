@@ -498,7 +498,7 @@ but before lambda lifting or transformation into a supercombinator.
 
 *** Algorithm J
 
-The rule *Γ ⊢ e : τ* specify a procedure that accepts a context and expression
+The rule *Γ ⊢ e : τ* specifies a procedure that accepts a context and expression
 and returns a monotype.
 
 #+begin_example
