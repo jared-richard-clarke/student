@@ -984,11 +984,11 @@ but before lambda lifting or transformation into a supercombinator.
       apply s (TCon c ts) = TCon c $ map (apply s) ts
 
   instance Substitutable Scheme where
-      tvs (Forall vs t)     = tvs t `Set.difference` vs
+      tvs (Forall vs t)     = tvs (Set.difference t vs)
       apply s (Forall vs t) = Forall vs $ apply (foldr Map.delete s vs) t
 
   instance Substitutable Constraint where
-      tvs (Constraint t1 t2)     = tvs t1 `Set.union` tvs t2
+      tvs (Constraint t1 t2)     = tvs (Set.union t1 tvs) t2
       apply s (Constraint t1 t2) = Constraint (apply s t1) (apply s t2)
 
   instance Substitutable a => Substitutable [a] where
