@@ -434,7 +434,9 @@ but before lambda lifting or transformation into a supercombinator.
   -------------------------------------  [Let]
         Γ ⊢ let x = e₁ in e₂ : τ₂
 
-  || Quantify all monotype variables not bound in Γ.
+  || Quantify all monotype variables not bound in Γ
+  || to give the most general type for a given
+  || expression.
 
   Γ'(τ) = ∀α'.τ
 
@@ -464,7 +466,7 @@ but before lambda lifting or transformation into a supercombinator.
 
 #+begin_example
   || === unification ===
-  
+
   || Terms "a" and "b" are unifiable by substitution "s".
 
   a ~ b (s) = [s]a = [s]b
@@ -492,7 +494,75 @@ but before lambda lifting or transformation into a supercombinator.
   τ₁ → τ₂ ~ τ'₁ → τ'₂ (s₂ ∘ s₁)
 #+end_example
 
-** The Type Checker
+** Inference Algorithms
+
+*** Algorithm J
+
+The rules specify a procedure *Γ ⊢ e : τ* that accepts a context
+and expression and returns a monotype.
+
+#+begin_example
+  x : σ ∈ Γ    τ = inst(σ)
+  ------------------------                                        [Var]
+  Γ ⊢ x : τ
+
+  Γ ⊢ e₁ : τ₁    Γ ⊢ e₂ : τ₂    τ' = newvar    unify(τ₁, τ₂ → τ')
+  --------------------------------------------------------------- [App]
+  Γ ⊢ e₁ e₂ : τ'
+
+  τ = newvar    Γ, x : τ ⊢ e : τ'
+  -------------------------------                                 [Abs]
+  Γ ⊢ λx.e : τ → τ'
+
+  Γ ⊢ e₁ : τ    Γ, x : Γ'(τ) ⊢ e₂ : τ'
+  ------------------------------------                            [Let]
+  Γ ⊢ let x = e₁ in e₂ : τ'
+
+  || "inst(σ)" specializes the polytype "σ" by copying the term
+  || and replacing bound type variables consistently by new
+  || monotype variables.
+
+  || "newvar" produces new monotype variables.
+
+  || Quantify all monotype variables not bound in Γ
+  || to give the most general type for a given
+  || expression.
+
+  Γ'(τ) = ∀α'.τ
+
+  α' = free(τ) - free(Γ)
+#+end_example
+
+*** Algorithm W
+
+Makes the side effects imposed by the procedure *union* explicit by expressing
+its serial composition by means of the substitution *Sₓ*. The judgement
+*Γ ⊢ e : τ, S* denotes a function that accepts a context and expression and
+returns a monotype and substitution pairing.
+
+#+begin_example
+  x : σ ∈ Γ    τ = inst(σ)
+  ------------------------                         [Var]
+  Γ ⊢ x : τ, ∅
+
+  Γ ⊢ e₁ : τ₁, S₁    S₁Γ ⊢ e₂ : τ₂, S₂
+  τ' = newvar        S₃ = mgu(S₂τ₁, τ₂ → τ')
+  ------------------------------------------       [App]
+  Γ ⊢ e₁ e₂ : S₃τ', S₃S₂S₁
+
+  τ = newvar    Γ, x : τ ⊢ e : τ', S
+  ----------------------------------               [Abs]
+  Γ ⊢ λx.e : Sτ → τ', S
+
+  Γ ⊢ e₁ : τ , S₁   S₁Γ, x : S₁Γ'(τ) ⊢ e₂ : τ', S₁
+  ------------------------------------------------ [Let]
+  Γ ⊢ let x = e₁ in e₂ : τ', S₂S₁
+
+  || "mgu" is a side-effect free version of "union", producing a substitution,
+  || which is the most general unifier.
+#+end_example
+
+** Miranda Example
 
 1. *Assign type variables*: Assign fresh type variables to expressions whose
    type is unknown.
@@ -900,7 +970,7 @@ but before lambda lifting or transformation into a supercombinator.
               (ns0, ns1) = split ns
 #+end_src
 
-** Alorithm W: Haskell
+** Haskell Example: Algorithm W
 
 #+begin_quote
   "The specific algorithm we will be implementing is known as Algorithm W.
