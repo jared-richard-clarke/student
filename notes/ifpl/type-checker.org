@@ -899,3 +899,193 @@ but before lambda lifting or transformation into a supercombinator.
               gamma''    = add_decls gamma' ns0 (map fst nbvs) ts
               (ns0, ns1) = split ns
 #+end_src
+
+** Alorithm W: Haskell
+
+#+begin_quote
+  "The specific algorithm we will be implementing is known as Algorithm W.
+   This algorithm differs from Algorithm J by the fact that we build up a
+   set of constraints first, then perform unification and substitution.
+   In Algorithm J, you would unify and substitute while generating the
+   constraints."
+
+  — *Implementing a Hindley-Milner Type System (Part 2)*, 05st
+#+end_quote
+
+#+begin_src
+  {-# Language PatternSynonyms #-}
+  {-# Language LambdaCase #-}
+
+  import qualified Data.Map as Map
+  import qualified Data.Set as Set
+  import Control.Monad.RWS
+  import Control.Monad.Except
+
+  type Name = String
+
+  data Expr
+      = EVar Name
+      | EIf Expr Expr Expr
+      | EAbs Name Expr
+      | EApp Expr Expr
+      | ELet Name Expr Expr
+      | EInt Integer
+      | EBool Bool
+      | EBin Oper Expr Expr
+      deriving Show
+
+  data Oper = Add | Sub deriving Show
+
+  newtype TVar = TV Name deriving (Eq, Show)
+
+  data Type
+      = TCon Name [Type]
+      | TVar TVar
+      deriving (Eq, Show)
+
+  -- Pattern Synonyms
+  pattern TInt    = TCon "Int" []
+  pattern TBool   = TCon "Bool" []
+  pattern a :-> b = TCon "->" [a, b]
+
+  data Scheme = Forall (Set.Set TVar) Type
+  data Constraint = Constraint Type Type
+
+  type Context = Map.Map Name Scheme
+  type Count = Int
+  type Constraints = [Constraint]
+
+  type Infer a = RWST Context Constraints Count (Except String) a
+
+  constrain :: Type -> Type -> Infer ()
+  constrain = tell . (:[]) . Constraint
+
+  fresh :: Infer Type
+  fresh = do
+      count <- get
+      put (count + 1)
+      return . TVar . TV $ show count
+
+  -- === Substitutions ===
+
+  type Subst = Map.Map TVar Type
+
+  compose :: Subst -> Subst -> Subst
+  compose a b = Map.map (apply a) (b `Map.union` a)
+
+  class Substitutable a where
+      apply :: Subst -> a -> a
+      tvs :: a -> Set.Set TVar
+
+  instance Substitutable Type where
+      tvs (TVar tv)       = Set.singleton tv
+      tvs (TCon _ ts)     = foldr (Set.union . tvs) Set.empty ts
+      apply s t@(TVar tv) = Map.findWithDefault t tv s
+      apply s (TCon c ts) = TCon c $ map (apply s) ts
+
+  instance Substitutable Scheme where
+      tvs (Forall vs t)     = tvs t `Set.difference` vs
+      apply s (Forall vs t) = Forall vs $ apply (foldr Map.delete s vs) t
+
+  instance Substitutable Constraint where
+      tvs (Constraint t1 t2)     = tvs t1 `Set.union` tvs t2
+      apply s (Constraint t1 t2) = Constraint (apply s t1) (apply s t2)
+
+  instance Substitutable a => Substitutable [a] where
+      tvs l   = foldr (Set.union . tvs) Set.empty l
+      apply s = map (apply s)
+
+  -- === Generalization and Instantiation ===
+
+  generalize :: Context -> Type -> Scheme
+  generalize ctx t = Forall (tvs (Set.difference t tvs) (Map.elems ctx)) t
+
+  instantiate :: Scheme -> Infer Type
+  instantiate (Forall vs t) = do
+      let vars = Set.toList vs
+      ftvs <- traverse (const fresh) vars
+      let subst = Map.fromList (zip vars ftvs)
+      return $ apply subst t
+
+  -- === Inference ===
+
+  infer :: Expr -> Infer Type
+  infer = \case
+      EInt _ -> TInt -- Integer literal
+      EBool _ -> TBool -- Boolean literal
+      EVar v -> do
+          ctx <- ask -- Retrieve context from Reader
+          case Map.lookup v ctx of
+              Just t -> instantiate t -- Instantiate type scheme for use
+              Nothing -> throwError $ "Undefined variable " ++ v -- Variable not defined
+      EIf c a b -> do
+          ct <- infer c -- Infer type of condition expression
+          at <- infer a -- Infer type of main branch
+          bt <- infer b -- Infer type of else branch
+          constrain ct TBool -- Condition expression should be a Bool
+          constrain at bt -- Branches should be of same type
+          return at -- Return type of any branch
+      EAbs p e -> do
+          pt <- fresh -- Generate fresh type variable for param
+          let ps = Forall Set.empty pt
+          et <- local (Map.insert p ps) (infer e) -- Infer function definition with param defined
+          return $ pt :-> et -- Function has type pt -> et
+      EApp f a -> do
+          ft <- infer f -- Infer type of expression being called
+          at <- infer a -- Infer type of argument
+          rt <- fresh -- Fresh type variable for result type
+          constrain ft (at :-> rt)
+          return rt
+      EBin o a b -> do
+          let ot = -- Operators are functions
+              case o of
+                  Add -> TInt :-> (TInt :-> TInt)
+                  Sub -> TInt :-> (TInt :-> TInt)
+                  -- NOTE: ADD MORE OPERATORS!!
+          at <- infer a -- Infer left operand
+          bt <- infer b -- Infer right operand
+          t <- fresh -- Result type
+          constrain ot (at :-> (bt :-> t))
+          return t
+      ELet v e b -> do
+          et <- infer e -- Infer variable type
+          ctx <- ask
+          let es = generalize ctx et -- Generalize variable type
+          bt <- local (Map.insert v es) (infer b) -- Infer body with variable defined
+          return bt
+
+  -- === Unification ===
+
+  type Solve a = Except String a
+
+  unify :: Type -> Type -> Solve Subst
+  unify a b | a == b = return Map.empty -- Same
+  unify (TVar v) t = bind v t -- Var Left
+  unify t (TVar v) = bind v t -- Var Right
+  unify a@(TCon n1 ts1) b@(TCon n2 ts2) -- Arrow (->) / other TCons
+      | a /= b = throwError $ "Type mismatch " ++ show a ++ " and " ++ show b
+      | otherwise = unifyMany ts1 ts2
+      where
+          unifyMany [] []                 = return Map.empty
+          unifyMany (t1 : ts1) (t2 : ts2) = do
+              s1 <- unify t1 t2
+              s2 <- unifyMany (apply s1 ts1) (apply s1 ts2)
+               return (compose s2 s1)
+
+  -- --- occurs check ---
+  bind :: TVar -> Type -> Solve Subst
+  bind v t
+      | v `Set.member` tvs t = throwError $ "Infinite type " ++ show v ++ " ~ " ++ show t -- Occurs check
+      | otherwise = return $ Map.singleton v t
+
+  -- === Solve ===
+
+  solve :: Subst -> [Constraint] -> Solve Subst
+  solve s [] = return s
+  solve s ((Constraint t1 t2) : cs) = do
+      s1 <- unify t1 t2
+      solve (compose s1 s) (apply s1 cs)
+
+  runSolve :: [Constraint] -> Either TypeError Subst
+  runSolve = runExcept . solve Map.empty
+#+end_src
