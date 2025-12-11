@@ -971,7 +971,7 @@ but before lambda lifting or transformation into a supercombinator.
   type Subst = Map.Map TVar Type
 
   compose :: Subst -> Subst -> Subst
-  compose a b = Map.map (apply a) (b `Map.union` a)
+  compose a b = Map.map (apply a) (Map.union b a)
 
   class Substitutable a where
       apply :: Subst -> a -> a
