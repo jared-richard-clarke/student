@@ -912,7 +912,7 @@ but before lambda lifting or transformation into a supercombinator.
   — *Implementing a Hindley-Milner Type System (Part 2)*, 05st
 #+end_quote
 
-#+begin_src
+#+begin_src haskell
   {-# Language PatternSynonyms #-}
   {-# Language LambdaCase #-}
 
