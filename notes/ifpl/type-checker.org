@@ -1140,7 +1140,7 @@ returns a monotype and substitution pairing.
           unifyMany (t1 : ts1) (t2 : ts2) = do
               s1 <- unify t1 t2
               s2 <- unifyMany (apply s1 ts1) (apply s1 ts2)
-               return (compose s2 s1)
+              return (compose s2 s1)
 
   -- --- occurs check ---
   bind :: TVar -> Type -> Solve Subst
