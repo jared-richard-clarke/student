@@ -535,7 +535,7 @@ and returns a monotype.
 
 *** Algorithm W
 
-Makes the side effects imposed by the procedure *union* explicit by expressing
+Makes the side effects imposed by the procedure *unify* explicit by expressing
 its serial composition by means of the substitution *Sₓ*. The judgement
 *Γ ⊢ e : τ, S* denotes a function that accepts a context and expression and
 returns a monotype and substitution pairing.
@@ -558,7 +558,7 @@ returns a monotype and substitution pairing.
   ------------------------------------------------ [Let]
   Γ ⊢ let x = e₁ in e₂ : τ', S₂S₁
 
-  || "mgu" is a side-effect free version of "union", producing a substitution,
+  || "mgu" is a side-effect free version of "unify", producing a substitution,
   || which is the most general unifier.
 #+end_example
 
