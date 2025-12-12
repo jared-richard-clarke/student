@@ -55,7 +55,7 @@
   A -> B -> C = A -> (B -> C)
 #+end_example
 
-** Polymorphism
+* Polymorphism
 
 - monomorphic :: Operations accept values of one type.
 
@@ -288,7 +288,7 @@ but before lambda lifting or transformation into a supercombinator.
                  in <expression>
 #+end_example
 
-** Hindley-Milner Type System
+* Hindley-Milner Type System
 
 #+begin_example
   || === Expressions ===
@@ -300,33 +300,60 @@ but before lambda lifting or transformation into a supercombinator.
 
   || === Types ===
 
+  || --- monotype ---
+  ||
   || Monotypes designate a particular type. Not to be confused
   || with monomorphic types, which exclude variables and allow
   || only ground terms.
 
-  monotype τ = α
-             | C τ ... τ
+  τ = α
+    | C τ ... τ
 
+  where α = type variable
+        C = type constructor
+
+  || --- polytype ---
+  ||
   || Polytypes — or type schemes — are types containing
   || variables bound by zero or more for-all quantifiers.
   || Qualifiers can only appear top level. ∀α.α -> ∀α.α
   || is not allowed.
 
-  polytype σ = τ
-             | ∀α.σ
+  σ = τ
+    | ∀α.σ
 
+  where τ    = monotype
+        ∀α.σ = for-all quantifier
+
+  +----------------------------------------+
+  |     +--------------------------------+ |
+  |     | +----------------------------+ | |
+  |     | |      +-------------------+ | | |
+  |     | |      |   +---+   +---+   | | | |
+  | ∀α. | | List | ( | α | → | α | ) | | | |
+  |     | |      |   +var+   +var+   | | | |
+  |     | |      +--- constructor ---+ | | |
+  |     | +---------- constructor -----+ | |
+  |     +------------ monotype ----------+ |
+  +------------------ quantifier ----------+
+
+      
   || === Context and Typing ===
   ||
   || Brings together syntax expressions and types.
 
-  || A context is a list of pairs (x : σ)
+  || --- context --
+  ||
+  || A context is a list of pairs (x : σ).
 
-  Context Γ = ε (empty)
-            | Γ, x : σ
+  Γ = ε (empty)
+    | Γ, x : σ
 
+  || --- typing ---
+  ||
   || Under the assumptions Γ, the expression e has type σ.
 
-  Typing    = Γ ⊢ e : σ
+  Γ ⊢ e : σ
 
   || === Free Type Variables ===
   ||
@@ -429,8 +456,8 @@ but before lambda lifting or transformation into a supercombinator.
   Γ ⊢ λx.e : τ₁ → τ₂
 
   || --- Let and Generalization ---
-
-  Γ ⊢ e₁ : τ₁   Γ, x : Γ'(τ₁) ⊢ e₂ : τ₂
+                       -
+  Γ ⊢ e₁ : τ₁   Γ, x : Γ(τ₁) ⊢ e₂ : τ₂
   -------------------------------------  [Let]
         Γ ⊢ let x = e₁ in e₂ : τ₂
 
@@ -438,7 +465,8 @@ but before lambda lifting or transformation into a supercombinator.
   || to give the most general type for a given
   || expression.
 
-  Γ'(τ) = ∀α'.τ
+  -
+  Γ(τ) = ∀α'.τ
 
   α' = free(τ) - free(Γ)
 #+end_example
@@ -513,8 +541,8 @@ and returns a monotype.
   τ = newvar    Γ, x : τ ⊢ e : τ'
   -------------------------------                                 [Abs]
   Γ ⊢ λx.e : τ → τ'
-
-  Γ ⊢ e₁ : τ    Γ, x : Γ'(τ) ⊢ e₂ : τ'
+                       -
+  Γ ⊢ e₁ : τ    Γ, x : Γ(τ) ⊢ e₂ : τ'
   ------------------------------------                            [Let]
   Γ ⊢ let x = e₁ in e₂ : τ'
 
@@ -527,10 +555,11 @@ and returns a monotype.
   || Quantify all monotype variables not bound in Γ
   || to give the most general type for a given
   || expression.
+  
+  -
+  Γ(τ) = ∀α₁...αₓ.τ
 
-  Γ'(τ) = ∀α'.τ
-
-  α' = free(τ) - free(Γ)
+  α₁...αₓ = free(τ) - free(Γ)
 #+end_example
 
 *** Algorithm W
@@ -553,13 +582,22 @@ returns a monotype and substitution pairing.
   τ = newvar    Γ, x : τ ⊢ e : τ', S
   ----------------------------------               [Abs]
   Γ ⊢ λx.e : Sτ → τ', S
-
-  Γ ⊢ e₁ : τ , S₁   S₁Γ, x : S₁Γ'(τ) ⊢ e₂ : τ', S₁
+                               -
+  Γ ⊢ e₁ : τ , S₁   S₁Γ, x : S₁Γ(τ) ⊢ e₂ : τ', S₁
   ------------------------------------------------ [Let]
   Γ ⊢ let x = e₁ in e₂ : τ', S₂S₁
 
   || "mgu" is a side-effect free version of "unify", producing a substitution,
   || which is the most general unifier.
+
+  || Quantify all monotype variables not bound in Γ
+  || to give the most general type for a given
+  || expression.
+  
+  -
+  Γ(τ) = ∀α₁...αₓ.τ
+
+  α₁...αₓ = free(τ) - free(Γ)
 #+end_example
 
 ** Miranda Example
