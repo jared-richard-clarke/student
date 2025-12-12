@@ -55,7 +55,7 @@
   A -> B -> C = A -> (B -> C)
 #+end_example
 
-* Polymorphism
+** Polymorphism
 
 - monomorphic :: Operations accept values of one type.
 
@@ -288,7 +288,7 @@ but before lambda lifting or transformation into a supercombinator.
                  in <expression>
 #+end_example
 
-* Hindley-Milner Type System
+** Hindley-Milner Type System
 
 #+begin_example
   || === Expressions ===
