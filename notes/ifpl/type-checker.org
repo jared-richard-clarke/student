@@ -466,9 +466,24 @@ but before lambda lifting or transformation into a supercombinator.
   || expression.
 
   -
-  Γ(τ) = ∀α'.τ
+  Γ(τ) = ∀α₁...αₓ.τ
 
-  α' = free(τ) - free(Γ)
+  α₁...αₓ = free(τ) - free(Γ)
+
+  || === Recursive Extension ===
+  ||
+  || Merge [Abs] and [Let], where left of "in" allows monotype variables
+  || and right of "in" allows polytype variables.
+
+  Γ, Γ' ⊢ e₁ : τ₁ ... Γ, Γ' ⊢ eₓ : τₓ    Γ, Γ''  ⊢ e : τ
+  ------------------------------------------------------ [Letrec]
+  Γ ⊢ letrec v₁ = e₁ ... vₓ = eₓ in e : τ
+
+  || --- monotype variables ---
+  where Γ'  = v₁ : τ₁, ... , vₓ : τₓ
+  || --- polytype variables ---
+                   -                 -
+        Γ'' = v₁ : Γ(τ₁), ... , vₓ : Γ(τₓ)
 #+end_example
 
 *** Unification
