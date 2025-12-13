@@ -7,6 +7,7 @@
 | *The Implementation of Functional Programming Lanugages* | Simon L. Peyton Jones |
 | *Hindley-Milner Type System*                             | Wikipedia             |
 | *Implementing a Hindley-Milner Type System*              | 05st                  |
+| *Type Systems: Lambda Calculus to Hindley Milner*        | Adam Jones            |
 
 ** Notation
 
@@ -416,18 +417,20 @@ but before lambda lifting or transformation into a supercombinator.
      Γ ⊢ let x = e₁ in e₂ : τ
 
   || --- Instantiation ---
+  ||
   || Replace all instances of a quantified type variable
   || with a fresh monotype variable.
   ||
-  || σ₁ ⊑ σ₂ reads "σ₂ is an instantiation of σ₁",
-  || where "instantiation" here informally means
-  || "resemble".
+  || σ₁ ⊑ σ₂ reads "σ₁ is either more general than or equally general to σ₂".
+  || More formally, σ₁ is more general than σ₂ if there is a substitution S
+  || that maps the for-all quantified variables in σ₁, and S(σ₁) = σ₂
 
   Γ ⊢ e : σ₁    σ₁ ⊑ σ₂
   ---------------------            [Inst]
        Γ ⊢ e : σ₂
 
   || --- Generalization ---
+  ||
   || Converts monotype τ into polytype σ by closing
   || over all free type variables in τ.
 
