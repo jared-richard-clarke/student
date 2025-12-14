@@ -227,31 +227,6 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
      ------------------------------------------ λx.λy.λz
      (T1 -> T5 -> T6) -> (T1 -> T5) -> T1 -> T6
      (A -> B -> C)    -> (A -> B)   -> A  -> C
-
-  || === expression ===
-
-  f x
-
-  || --- AST ---
-
-  f   x
-   \ /
-    @
-
-  || --- type tree ---
-
-  f : T4 ∈ Γ          x : T5 ∈ Γ
-  ---------- [Var]    ---------- [Var]
-  Γ ⊢ f : T1 → T2     Γ ⊢ x : T3
-  ------------------------------ [App]
-            Γ ⊢ f x : T0
-
-  || --- constraints ---
-
-       T0 ~ T2
-       T1 ~ T3
-  T1 → T2 ~ T4
-       T3 ~ T5
 #+end_example
 
 ** Intermediate Language
