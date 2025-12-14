@@ -178,6 +178,8 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
        (T1 -> T3 -> T4) -> T1 -> T3 -> T4
        (A  -> B  -> C)  -> A  -> B  -> C
 
+  || =======
+
   (λx.λy.λz. x z (y z))
 
   x   z y   z
@@ -217,8 +219,8 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
   T1 = T3
   T7 = (T0 -> T2 -> T1 -> T6)
 
-  x::T1 -> T5 -> T6 z:: T1     y::T1 -> T5 z::T1
-  ------------------------ @   ----------------- @
+  x::T1 -> T5 -> T6 z::T1     y::T1 -> T5 z::T1
+  ----------------------- @   ----------------- @
            T5 -> T6                   T5
            ----------------------------- @
                           T6
@@ -226,48 +228,30 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
      (T1 -> T5 -> T6) -> (T1 -> T5) -> T1 -> T6
      (A -> B -> C)    -> (A -> B)   -> A  -> C
 
-  λf.λa.λb.λc. c (f a) (f b)
+  || === expression ===
 
-        f     a
-        |     |
-   c    +- @ -+   f     b
-   |       |      |     |
-   +-- @ --+      +- @ -+
-       |             |
-       +----- @ -----+
-              |
-         λf.λa.λb.λc
+  f x
 
-          f::T0 a::T1
-          ----------- @
-  c::T2        T3        f::T4 b::T5
-  --------------- @      ----------- @
-         T6                   T7
-         ----------------------- @
-                    T8
-                    -- λf.λa.λb.λc
-                    T9
-  T0 = T1 -> T3
-  T2 = T3 -> T6
-  T4 = T5 -> T7
-  T6 = T7 -> T8
+  || --- AST ---
 
-  - Require all occurrences of a variable bound
-  - by a lambda abstraction to have the same type.
-  T0 = T4
-  T1 = T5
-  T3 = T7
+  f   x
+   \ /
+    @
 
-              f::T1 -> T3 a::T1
-              ----------------- @
-  c::T3 -> T3 -> T8   T3           f::T1 -> T3 b::T1
-  ---------------------- @         ----------------- @
-         T3 -> T8                          T3
-         ------------------------------------ @
-                          T8
-  ------------------------------------------------ λf.λa.λb.λc
-  (T1 -> T3) -> T1 -> T1 -> (T3 -> T3 -> T8) -> T8
-  (A  -> B)  -> A  -> A  -> (B  -> B  -> C)  -> C
+  || --- type tree ---
+
+  f : T4 ∈ Γ          x : T5 ∈ Γ
+  ---------- [Var]    ---------- [Var]
+  Γ ⊢ f : T1 → T2     Γ ⊢ x : T3
+  ------------------------------ [App]
+            Γ ⊢ f x : T0
+
+  || --- constraints ---
+
+       T0 ~ T2
+       T1 ~ T3
+  T1 → T2 ~ T4
+       T3 ~ T5
 #+end_example
 
 ** Intermediate Language
