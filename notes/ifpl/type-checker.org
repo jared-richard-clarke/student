@@ -217,7 +217,7 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
   odd : Integer -> Boolean ∈ Γ         age : Integer ∈ Γ
   ---------------------------- [Var]   ----------------- [Var]
   Γ ⊢ odd : Integer -> Boolean         Γ ⊢ age : Integer
-  --------------------------------------------------------- [App]
+  ------------------------------------------------------ [App]
                     Γ ⊢ odd age : Boolean
 #+end_example
 
