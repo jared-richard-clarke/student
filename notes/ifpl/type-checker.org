@@ -214,7 +214,7 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
 
   || === unification ===
 
-  odd : Boolean ∈ Γ                    age : Integer ∈ Γ
+  odd : Integer -> Boolean ∈ Γ         age : Integer ∈ Γ
   ---------------------------- [Var]   ----------------- [Var]
   Γ ⊢ odd : Integer -> Boolean         Γ ⊢ age : Integer
   --------------------------------------------------------- [App]
