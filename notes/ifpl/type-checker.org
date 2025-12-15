@@ -178,7 +178,7 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
   T1 ~ T3
   T7 ~ (T0              -> T2         -> T1 -> T6)
        (T1 -> T5 -> T6) -> (T1 -> T5) -> T1 -> T6
-       (A -> B -> C)    -> (A -> B)   -> A  -> C
+       (A  -> B  -> C)  -> (A  -> B)  -> A  -> C
 #+end_example
 
 ** Intermediate Language
