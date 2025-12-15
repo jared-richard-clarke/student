@@ -389,7 +389,7 @@ but before lambda lifting or transformation into a supercombinator.
   || Merge [Abs] and [Let], where left of "in" allows monotype variables
   || and right of "in" allows polytype variables.
 
-  Γ, Γ' ⊢ e₁ : τ₁ ... Γ, Γ' ⊢ eₓ : τₓ    Γ, Γ''  ⊢ e : τ
+  Γ, Γ' ⊢ e₁ : τ₁ ... Γ, Γ' ⊢ eₓ : τₓ    Γ, Γ'' ⊢ e : τ
   ------------------------------------------------------ [Letrec]
   Γ ⊢ letrec v₁ = e₁ ... vₓ = eₓ in e : τ
 
