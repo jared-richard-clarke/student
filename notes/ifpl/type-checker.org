@@ -147,7 +147,11 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
   is ill-typed.
 
 #+begin_example
+  || === expression ===
+
   (λx.λy.λz. x z (y z))
+
+  || === AST ===
 
   x   z y   z
    \ /   \ /
@@ -157,6 +161,8 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
        |
     λx.λy.λz
 
+  || === type tree ===
+
   x::T0 z::T1    y::T2 z::T3
   ----------- @  ----------- @
        T4             T5
@@ -164,6 +170,8 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
               T6
               -- λx.λy.λz
               T7
+
+  || === constraints ===
 
   - The types of the sub-expressions must be related
   - by the following equations:
@@ -179,25 +187,38 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
   T7 ~ (T0              -> T2         -> T1 -> T6)
        (T1 -> T5 -> T6) -> (T1 -> T5) -> T1 -> T6
        (A  -> B  -> C)  -> (A  -> B)  -> A  -> C
-#+end_example
 
-** Intermediate Language
+  || === expression ===
 
-A transformed program should be type checked after dependency analysis
-but before lambda lifting or transformation into a supercombinator.
+  odd :: Integer -> Boolean
+  age :: Integer
 
-#+begin_example
-  expression ::= variable
-               | λvariable.expression
-               | expression expression
-               | let variable-1 = expression-1
-                     ...
-                     variable-x = expression-x
-                 in expression
-               | letrec variable-1 = expression-1
-                        ...
-                        variable-x = expression-x
-                 in <expression>
+  odd age
+
+  || === type tree ===
+
+  odd : T4 ∈ Γ               age : T5 ∈ Γ
+  ------------------ [Var]   ------------ [Var]
+  Γ ⊢ odd : T1 -> T2         Γ ⊢ age : T3
+  --------------------------------------- [App]
+             Γ ⊢ odd age : T0
+
+  || === constraints ===
+
+        T0 ~ T2
+        T1 ~ T3
+  T1 -> T2 ~ T4
+        T4 ~ Integer -> Boolean
+        T3 ~ T5
+        T5 ~ Integer
+
+  || === unification ===
+
+  odd : Boolean ∈ Γ                      age : Integer ∈ Γ
+  ------------------------------ [Var]   ----------------- [Var]
+  Γ ⊢ odd : Integer Boolean -> T2        Γ ⊢ age : Integer
+  -------------------------------------------------------- [App]
+                    Γ ⊢ odd age : Boolean
 #+end_example
 
 ** Hindley-Milner Type System
