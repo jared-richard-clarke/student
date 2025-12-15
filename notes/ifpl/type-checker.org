@@ -476,9 +476,6 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
 
 *** Algorithm J
 
-The rule *Γ ⊢ e : τ* specifies a procedure that accepts a context and expression
-and returns a monotype.
-
 #+begin_example
   x : σ ∈ Γ    τ = inst(σ)
   ------------------------                                        [Var]
