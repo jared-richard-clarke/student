@@ -584,18 +584,6 @@ returns a monotype and substitution pairing.
    allowing the bound variable to be different types in the body of the expression.
 
 #+begin_quote
-  "Essentially, type inference is the process of descending the abstract syntax
-   tree, assigning fresh type variables to every expression, and generating a set
-   of constraints based on what information is available. Afterwards, solving the
-   set of constraints (much like solving a system of equations), will result in
-   a substitution. This substitution will map every generated type variable to
-   an inferred principal type. The process of solving the constraints is known
-   as unification. (The principal type is, more or less, the most general type
-   of an expression, i.e. any other possible types for the expression are
-   instances of the principal type.)"
-
-  — *Implementing a Hindley-Milner Type System*, O5st
-
   "There is a partial analogy between type schemes and lambda abstractions.
    The schematic variables of a type scheme correspond to the formal parameter
    of a lambda abstraction, and the unknowns of a type scheme correspond to
@@ -722,6 +710,12 @@ returns a monotype and substitution pairing.
   || 1. phi is an idempotent substitution (the solution we are trying to extend)
   || 2. t is a fixed point of phi
   || 3. tvn is unmoved by phi (tvn does not already have a value under phi)
+  ||
+  || Given a pair (t1, t2) of type expressions, and an idempotent
+  || substitution phi, our algorithm should return FAILURE if there
+  || is no extension of phi that unifies (t1, t2), and it should
+  || return (OK psi), where psi is an idempotent unifier of (t1, t2)
+  || that extends phi.
 
   extend :: subst -> tvname -> type_exp -> reply subst
   extend phi tvn t = OK phi,                        if t = TVAR tvn
@@ -760,6 +754,17 @@ returns a monotype and substitution pairing.
                         f eqn FAILURE  = FAILURE
 
   || === Type Scheme ===
+  ||
+  || 1. The schematic type variables in a type scheme associated
+  ||    with a variable are those that may be freely instantiated
+  ||    to conform with the type constraints on various occurrences
+  ||    of that variable. Also known as generic variables.
+  ||
+  || 2. All other variables in a type scheme are constrained
+  ||    and must not be instantiated. They are the unknowns,
+  ||    type variables whose values we seek by solving the
+  ||    system of type constraints implied by the structure
+  ||    of an expression. Also known as non-generic variables.
 
   type_scheme ::= SCHEME [tvname] type_exp
 
