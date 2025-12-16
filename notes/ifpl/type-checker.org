@@ -976,7 +976,7 @@ returns a monotype and substitution pairing.
   old_bvar (x, SCHEME [] t) = t
 
   tcletrec2 gamma ns nbvs e FAILURE = FAILURE
-  tcletrec2 gamm ns nbvs e (OK phi)
+  tcletrec2 gamma ns nbvs e (OK phi)
       = tclet2 phi (tc gamma'' ns1 e)
         where ts         = map old_bvar nbvs'
               nbvs'      = sub_te phi nbvs
