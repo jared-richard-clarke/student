@@ -1012,13 +1012,13 @@ returns a monotype and substitution pairing.
     | Lam Name Expr
     | Let Name Expr Expr
     | Lit Lit
-    | If Expr Expr Expr
+    | If  Expr Expr Expr
     | Fix Expr
-    | Op Binop Expr Expr
+    | Op  Binop Expr Expr
     deriving (Show, Eq, Ord)
 
   data Lit
-    = LInt Integer
+    = LInt  Integer
     | LBool Bool
     deriving (Show, Eq, Ord)
 
@@ -1041,10 +1041,17 @@ returns a monotype and substitution pairing.
     deriving (Show, Eq, Ord)
 
   typeInt, typeBool :: Type
-  typeInt = TCon "Int"
+  typeInt  = TCon "Int"
   typeBool = TCon "Bool"
 
   data Scheme = Forall [TVar] Type
+
+  data TypeError
+    = UnificationFail Type Type
+    | InfiniteType    TVar Type
+    | UnboundVariable String
+
+  data Unique = Unique { count :: Int }
 
   -- === Context ===
 
@@ -1057,14 +1064,34 @@ returns a monotype and substitution pairing.
 
   type Infer a = ExceptT TypeError (State Unique) a
 
-  -- Functions "initUnique" and "closeOver" and data type "TypeError"
-  -- are not defined here. They are part of a more elaborate
-  -- Haskell compiler implementation as defined by author Stephen Diehl.
+  -- The function "closeOver" is not fully defined here.
+  -- It is are part of a more elaborate Haskell compiler
+  -- implementation as defined by author Stephen Diehl.
 
   runInfer :: Infer (Subst, Type) -> Either TypeError Scheme
   runInfer m = case evalState (runExceptT m) initUnique of
-    Left err -> Left err
+    Left err  -> Left err
     Right res -> Right $ closeOver res
+
+  closeOver :: (Map.Map TVar Type, Type) -> Scheme
+  closeOver (sub, ty) = normalize sc
+                        where sc = generalize emptyTyenv (apply sub ty)
+
+  initUnique :: Unique
+  initUnique = Unique { count = 0 }
+
+  extend :: TypeEnv -> (Var, Scheme) -> TypeEnv
+  extend (TypeEnv env) (x, s) = TypeEnv $ Map.insert x s env
+
+  emptyTyenv :: TypeEnv
+  emptyTyenv = TypeEnv Map.empty
+
+  lookupEnv :: TypeEnv -> Var -> Infer (Subst, Type)
+  lookupEnv (TypeEnv env) x = do
+    case Map.lookup x env of
+      Nothing -> throwError $ UnboundVariable (show x)
+      Just s  -> do t <- instantiate s
+                    return (nullSubst, t)
 
   -- === Substitution ===
 
@@ -1078,15 +1105,15 @@ returns a monotype and substitution pairing.
 
   class Substitutable a where
     apply :: Subst -> a -> a
-    ftv :: a -> Set.Set TVar
+    ftv   :: a -> Set.Set TVar
 
   instance Substitutable Type where
-    apply _ (TCon a) = TCon a
-    apply s t@(TVar a) = Map.findWithDefault t a s
+    apply _ (TCon a)       = TCon a
+    apply s t@(TVar a)     = Map.findWithDefault t a s
     apply s (t1 ‘TArr‘ t2) = apply s t1 ‘TArr‘ apply s t2
 
-    ftv TCon{} = Set.empty
-    ftv (TVar a) = Set.singleton a
+    ftv TCon{}         = Set.empty
+    ftv (TVar a)       = Set.singleton a
     ftv (t1 `TArr` t2) = ftv t1 `Set.union` ftv t2
 
   instance Substitutable Scheme where
@@ -1120,15 +1147,15 @@ returns a monotype and substitution pairing.
   occursCheck a t = a `Set.member` ftv t
 
   unify :: Type -> Type -> Infer Subst
-  unify (l `TArr` r) (l' `TArr` r') = do
+  unify (TArr l r) (TArr l' r') = do
     s1 <- unify l l'
     s2 <- unify (apply s1 r) (apply s1 r')
     return (s2 `compose` s1)
 
-  unify (TVar a) t = bind a t
-  unify t (TVar a) = bind a t
+  unify (TVar a) t                 = bind a t
+  unify t (TVar a)                 = bind a t
   unify (TCon a) (TCon b) | a == b = return nullSubst
-  unify t1 t2 = throwError $ UnificationFail t1 t2
+  unify t1 t2                      = throwError $ UnificationFail t1 t2
 
   bind :: TVar -> Type -> Infer Subst
   bind a t | t == TVar a     = return nullSubst
@@ -1170,10 +1197,10 @@ returns a monotype and substitution pairing.
     -- -------------------------------- [App]
     --          Γ ⊢ e₁ e₂ : τ₂
     App e1 e2 -> do
-      tv <- fresh
+      tv       <- fresh
       (s1, t1) <- infer env e1
       (s2, t2) <- infer (apply s1 env) e2
-      s3 <- unify (apply s2 t1) (TArr t2 tv)
+      s3       <- unify (apply s2 t1) (TArr t2 tv)
       return (s3 `compose` s2 `compose` s1, apply s3 tv)
 
     -- Γ ⊢ e₁ : σ   Γ, x : σ ⊢ e₂ : τ
@@ -1190,8 +1217,8 @@ returns a monotype and substitution pairing.
       (s1, t1) <- infer env cond
       (s2, t2) <- infer env tr
       (s3, t3) <- infer env fl
-      s4 <- unify t1 typeBool
-      s5 <- unify t2 t3
+      s4       <- unify t1 typeBool
+      s5       <- unify t2 t3
       return (s5 `compose` s4 `compose` s3 `compose` s2 `compose` s1, apply s5 t2)
 
     Fix e1 -> do
@@ -1203,17 +1230,10 @@ returns a monotype and substitution pairing.
     Op op e1 e2 -> do
       (s1, t1) <- infer env e1
       (s2, t2) <- infer env e2
-      tv <- fresh
-      s3 <- unify (TArr t1 (TArr t2 tv)) (ops Map.! op)
+      tv       <- fresh
+      s3       <- unify (TArr t1 (TArr t2 tv)) (ops Map.! op)
       return (s1 `compose` s2 `compose` s3, apply s3 tv)
 
     Lit (LInt _)  -> return (nullSubst, typeInt)
     Lit (LBool _) -> return (nullSubst, typeBool)
-
-  lookupEnv :: TypeEnv -> Var -> Infer (Subst, Type)
-  lookupEnv (TypeEnv env) x = do
-    case Map.lookup x env of
-      Nothing -> throwError $ UnboundVariable (show x)
-      Just s  -> do t <- instantiate s
-                    return (nullSubst, t)
 #+end_src
