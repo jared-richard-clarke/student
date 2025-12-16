@@ -1003,11 +1003,6 @@ returns a monotype and substitution pairing.
 
 #+begin_src haskell
   -- === Syntax ===
-  --
-  -- The syntax of our first type inferred language will effectively
-  -- be an extension of our untyped lambda calculus,
-  -- with fixpoint operator, booleans, integers, let, and a few
-  -- basic arithmetic operations.
 
   type Name = String
 
@@ -1061,6 +1056,10 @@ returns a monotype and substitution pairing.
   -- === Inference Monad ===
 
   type Infer a = ExceptT TypeError (State Unique) a
+
+  -- Functions "initUnique" and "closeOver" and data type "TypeError"
+  -- are not defined here. They are part of a more elaborate
+  -- Haskell compiler implementation as defined by author Stephen Diehl.
 
   runInfer :: Infer (Subst, Type) -> Either TypeError Scheme
   runInfer m = case evalState (runExceptT m) initUnique of
