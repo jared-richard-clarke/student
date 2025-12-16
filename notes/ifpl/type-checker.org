@@ -1055,12 +1055,25 @@ returns a monotype and substitution pairing.
 
   data Unique = Unique { count :: Int }
 
+  initUnique :: Unique
+  initUnique = Unique { count = 0 }
+
   -- === Context ===
 
   newtype TypeEnv = TypeEnv (Map.Map Var Scheme)
 
   extend :: TypeEnv -> (Var, Scheme) -> TypeEnv
   extend (TypeEnv env) (x, s) = TypeEnv (Map.insert x s env)
+
+  emptyTyenv :: TypeEnv
+  emptyTyenv = TypeEnv Map.empty
+
+  lookupEnv :: TypeEnv -> Var -> Infer (Subst, Type)
+  lookupEnv (TypeEnv env) x = do
+    case Map.lookup x env of
+      Nothing -> throwError (UnboundVariable (show x))
+      Just s  -> do t <- instantiate s
+                    return (nullSubst, t)
 
   -- === Inference Monad ===
 
@@ -1078,22 +1091,6 @@ returns a monotype and substitution pairing.
   closeOver :: (Map.Map TVar Type, Type) -> Scheme
   closeOver (sub, ty) = normalize sc
                         where sc = generalize emptyTyenv (apply sub ty)
-
-  initUnique :: Unique
-  initUnique = Unique { count = 0 }
-
-  extend :: TypeEnv -> (Var, Scheme) -> TypeEnv
-  extend (TypeEnv env) (x, s) = TypeEnv (Map.insert x s env)
-
-  emptyTyenv :: TypeEnv
-  emptyTyenv = TypeEnv Map.empty
-
-  lookupEnv :: TypeEnv -> Var -> Infer (Subst, Type)
-  lookupEnv (TypeEnv env) x = do
-    case Map.lookup x env of
-      Nothing -> throwError (UnboundVariable (show x))
-      Just s  -> do t <- instantiate s
-                    return (nullSubst, t)
 
   -- === Substitution ===
 
