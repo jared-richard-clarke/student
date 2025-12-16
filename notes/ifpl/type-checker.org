@@ -8,6 +8,7 @@
 | *Hindley-Milner Type System*                             | Wikipedia             |
 | *Write You a Haskell*                                    | Stephen Diehl         |
 | *Type Systems: Lambda Calculus to Hindley Milner*        | Adam Jones            |
+| *Implementing a Hindley-Milner Type System*              | 05st                  |
 
 ** Notation
 
@@ -985,9 +986,7 @@ returns a monotype and substitution pairing.
               (ns0, ns1) = split ns
 #+end_src
 
-** Haskell Example
-
-*Side Note*: This implementation intermingles constraint solving and traversal.
+** Haskell Example: Algorithm W
 
 #+begin_quote
   "The Hindley-Milner type system ... is a family of type systems
@@ -1013,237 +1012,169 @@ returns a monotype and substitution pairing.
 #+end_quote
 
 #+begin_src haskell
-  -- === Syntax ===
+  {-# Language PatternSynonyms #-}
+  {-# Language LambdaCase #-}
+
+  import qualified Data.Map as Map
+  import qualified Data.Set as Set
+  import Control.Monad.RWS
+  import Control.Monad.Except
 
   type Name = String
 
   data Expr
-    = Var Name
-    | App Expr Expr
-    | Lam Name Expr
-    | Let Name Expr Expr
-    | Lit Lit
-    | If  Expr Expr Expr
-    | Fix Expr
-    | Op  Binop Expr Expr
-    deriving (Show, Eq, Ord)
+    = EVar Name
+    | EIf Expr Expr Expr
+    | EAbs Name Expr
+    | EApp Expr Expr
+    | ELet Name Expr Expr
+    | EInt Integer
+    | EBool Bool
+    | EBin Oper Expr Expr
+    deriving Show
 
-  data Lit
-    = LInt  Integer
-    | LBool Bool
-    deriving (Show, Eq, Ord)
+  data Oper = Add | Sub deriving Show
 
-  data Binop = Add | Sub | Mul | Eql
-    deriving (Eq, Ord, Show)
-
-  data Program = Program [Decl] Expr deriving Eq
-
-  type Decl = (String, Expr)
-
-  -- === Types ===
-
-  newtype TVar = TV String
-    deriving (Show, Eq, Ord)
+  newtype TVar = TV Name deriving (Eq, Show)
 
   data Type
-    = TVar TVar
-    | TCon String
-    | TArr Type Type
-    deriving (Show, Eq, Ord)
+    = TCon Name [Type]
+    | TVar TVar
+    deriving (Eq, Show)
 
-  typeInt :: Type
-  typeInt = TCon "Int"
-  
-  typeBool :: Type
-  typeBool = TCon "Bool"
+  -- --- Pattern Synonyms ---
+  pattern TInt    = TCon "Int" []
+  pattern TBool   = TCon "Bool" []
+  pattern a :-> b = TCon "->" [a, b]
 
-  data Scheme = Forall [TVar] Type
+  data Scheme = Forall [Set.Set TVar] Type
+  data Constraint = Constraint Type Type
 
-  data TypeError
-    = UnificationFail Type Type
-    | InfiniteType    TVar Type
-    | UnboundVariable String
+  type Context = Map.Map Name Scheme
+  type Count = Int
+  type Constraints = [Constraint]
 
-  data Unique = Unique { count :: Int }
+  type Infer a = RWST Context Constraints Count (Except String) a
 
-  initUnique :: Unique
-  initUnique = Unique { count = 0 }
-
-  -- === Context ===
-
-  newtype TypeEnv = TypeEnv (Map.Map Var Scheme)
-
-  extend :: TypeEnv -> (Var, Scheme) -> TypeEnv
-  extend (TypeEnv env) (x, s) = TypeEnv (Map.insert x s env)
-
-  emptyTyenv :: TypeEnv
-  emptyTyenv = TypeEnv Map.empty
-
-  lookupEnv :: TypeEnv -> Var -> Infer (Subst, Type)
-  lookupEnv (TypeEnv env) x = do
-    case Map.lookup x env of
-      Nothing -> throwError (UnboundVariable (show x))
-      Just s  -> do t <- instantiate s
-                    return (nullSubst, t)
-
-  -- === Inference Monad ===
-
-  type Infer a = ExceptT TypeError (State Unique) a
-
-  runInfer :: Infer (Subst, Type) -> Either TypeError Scheme
-  runInfer m = case evalState (runExceptT m) initUnique of
-    Left err  -> Left err
-    Right res -> Right (closeOver res)
-
-  -- The function "closeOver" is not fully defined here.
-  -- It is part of a more elaborate Haskell compiler
-  -- implementation as defined by author Stephen Diehl.
-
-  closeOver :: (Map.Map TVar Type, Type) -> Scheme
-  closeOver (sub, ty) = normalize sc
-                        where sc = generalize emptyTyenv (apply sub ty)
-
-  -- === Substitution ===
-
-  type Subst = Map.Map TVar Type
-
-  nullSubst :: Subst
-  nullSubst = Map.empty
-
-  compose :: Subst -> Subst -> Subst
-  compose s1 s2 = Map.map (apply s1) (Map.union s2 s1)
-
-  class Substitutable a where
-    apply :: Subst -> a -> a
-    ftv   :: a -> Set.Set TVar
-
-  instance Substitutable Type where
-    apply _ (TCon a)     = TCon a
-    apply s t@(TVar a)   = Map.findWithDefault t a s
-    apply s (TArr t1 t2) = TArr (apply s t1) (apply s t2)
-
-    ftv TCon{}       = Set.empty
-    ftv (TVar a)     = Set.singleton a
-    ftv (TArr t1 t2) = Set.union (ftv t1) (ftv t2)
-
-  instance Substitutable Scheme where
-    apply s (Forall as t) = Forall as (apply s' t)
-                            where s' = foldr Map.delete s as
-
-    ftv (Forall as t) = Set.difference (ftv t) (Set.fromList as)
-
-  instance Substitutable a => Substitutable [a] where
-    apply = fmap . apply
-    ftv = foldr (Set.union . ftv) Set.empty
-
-  instance Substitutable TypeEnv where
-    apply s (TypeEnv env) = TypeEnv (Map.map (apply s) env)
-    ftv (TypeEnv env) = ftv (Map.elems env)
-
-  -- === Name Generation ===
-
-  letters :: [String]
-  letters = [1..] >>= flip replicateM ['a'..'z']
+  constrain :: Type -> Type -> Infer ()
+  constrain = tell . (:[]) . Constraint
 
   fresh :: Infer Type
   fresh = do
-    s <- get
-    put s{count = count s + 1}
-    return (TVar (TV (letters !! count s)))
+    count <- get
+    put (count + 1)
+    return . TVar . TV (show count)
 
-  -- === Unification ===
+  type Subst = Map.Map TVar Type
 
-  occursCheck :: Substitutable a => TVar -> a -> Bool
-  occursCheck a t = Set.member a (ftv t)
+  compose :: Subst -> Subst -> Subst
+  compose a b = Map.map (apply a) (Map.union b a)
 
-  unify :: Type -> Type -> Infer Subst
-  unify (TArr l r) (TArr l' r') = do
-    s1 <- unify l l'
-    s2 <- unify (apply s1 r) (apply s1 r')
-    return (compose s2 s1)
+  class Substitutable a where
+    apply :: Subst -> a -> a
+    tvs :: a -> Set.Set TVar
 
-  unify (TVar a) t                 = bind a t
-  unify t (TVar a)                 = bind a t
-  unify (TCon a) (TCon b) | a == b = return nullSubst
-  unify t1 t2                      = throwError (UnificationFail t1 t2)
+  instance Substitutable Type where
+    tvs (TVar tv)   = Set.singleton tv
+    tvs (TCon _ ts) = foldr (Set.union . tvs) Set.empty ts
 
-  bind :: TVar -> Type -> Infer Subst
-  bind a t | t == TVar a     = return nullSubst
-           | occursCheck a t = throwError (InfiniteType a t)
-           | otherwise       = return (Map.singleton a t)
+    apply s t@(TVar tv) = Map.findWithDefault t tv s
+    apply s (TCon c ts) = TCon c (map (apply s) ts)
 
-  -- === Generalization and Instantiation ===
+  instance Substitutable Scheme where
+    tvs (Forall vs t) = Set.difference (tvs t) vs
+    apply s (Forall vs t) = Forall vs (apply (foldr Map.delete s vs) t)
+
+  instance Substitutable Constraint where
+    tvs (Constraint t1 t2) = Set.union (tvs t1) (tvs t2)
+    apply s (Constraint t1 t2) = Constraint (apply s t1) (apply s t2)
+
+  instance Substitutable a => Substitutable [a] where
+    tvs l = foldr (Set.union . tvs) Set.empty l
+    apply s = map (apply s)
+
+  generalize :: Context -> Type -> Scheme
+  generalize ctx t = Forall (Set.difference (tvs t) (tvs (Map.elems ctx))) t
 
   instantiate :: Scheme -> Infer Type
-  instantiate (Forall as t) = do
-    as' <- mapM (const fresh) as
-    let s = Map.fromList (zip as as')
-    return (apply s t)
+  instantiate (Forall vs t) = do
+    let vars = Set.toList vs
+    ftvs <- traverse (const fresh) vars
+    let subst = Map.fromList (zip vars ftvs)
+    return (apply subst t)
 
-  generalize :: TypeEnv -> Type -> Scheme
-  generalize env t = Forall as t
-                     where as = Set.toList (Set.difference (ftv t) (ftv env))
+  infer :: Expr -> Infer Type
+  infer = \case
+    EInt _  -> TInt  -- Integer literal
+    EBool _ -> TBool -- Boolean literal
+    EVar v -> do
+      ctx <- ask -- Retrieve context from Reader
+      case Map.lookup v ctx of
+        Just t -> instantiate t -- Instantiate type scheme for use
+        Nothing -> throwError $ "Undefined variable " ++ v -- Variable not defined
+    EIf c a b -> do
+      ct <- infer c -- Infer type of condition expression
+      at <- infer a -- Infer type of main branch
+      bt <- infer b -- Infer type of else branch
+      constrain ct TBool -- Condition expression should be a Bool
+      constrain at bt -- Branches should be of same type
+      return at -- Return type of any branch
+    EAbs p e -> do
+      pt <- fresh -- Generate fresh type variable for param
+      let ps = Forall Set.empty pt
+      et <- local (Map.insert p ps) (infer e) -- Infer function definition with param defined
+      return $ pt :-> et -- Function has type pt -> et
+    EApp f a -> do
+      ft <- infer f -- Infer type of expression being called
+      at <- infer a -- Infer type of argument
+      rt <- fresh -- Fresh type variable for result type
+      constrain ft (at :-> rt)
+      return rt
+    EBin o a b -> do
+      let ot = -- Operators are functions
+        case o of
+                Add -> TInt :-> (TInt :-> TInt)
+                Sub -> TInt :-> (TInt :-> TInt)
+                -- NOTE: ADD MORE OPERATORS!!
+      at <- infer a -- Infer left operand
+      bt <- infer b -- Infer right operand
+      t <- fresh -- Result type
+      constrain ot (at :-> (bt :-> t))
+      return t
+    ELet v e b -> do
+      et <- infer e -- Infer variable type
+      ctx <- ask
+      let es = generalize ctx et -- Generalize variable type
+      bt <- local (Map.insert v es) (infer b) -- Infer body with variable defined
+      return bt
 
-  -- === Typing Rules ===
+  type Solve a = Except String a
 
-  infer :: TypeEnv -> Expr -> Infer (Subst, Type)
-  infer env ex = case ex of
+  unify :: Type -> Type -> Solve Subst
+  unify a b | a == b = return Map.empty -- Same
+  unify (TVar v) t = bind v t -- Var Left
+  unify t (TVar v) = bind v t -- Var Right
+  unify a@(TCon n1 ts1) b@(TCon n2 ts2) -- Arrow (->) / other TCons
+    | a /= b = throwError $ "Type mismatch " ++ show a ++ " and " ++ show b
+    | otherwise = unifyMany ts1 ts2
+    where
+      unifyMany [] [] = return Map.empty
+      unifyMany (t1 : ts1) (t2 : ts2) = do
+        s1 <- unify t1 t2
+        s2 <- unifyMany (apply s1 ts1) (apply s1 ts2)
+        return (s2 `compose` s1)
 
-    -- x : σ ∈ Γ
-    -- --------- [Var]
-    -- Γ ⊢ x : σ
-    Var x -> lookupEnv env x
+  bind :: TVar -> Type -> Solve Subst
+  bind v t
+    | Set.member v (tvs t) = throwError $ "Infinite type " ++ show v ++ " ~ " ++ show t -- Occurs check
+    | otherwise = return (Map.singleton v t)
 
-    -- Γ, x : τ₁ ⊢ e : τ₂
-    -- ------------------- [Abs]
-    -- Γ ⊢ λx.e : τ₁ → τ₂
-    Lam x e -> do
-      tv <- fresh
-      let env' = extend env (x, Forall [] tv)
-      (s1, t1) <- infer env' e
-      return (s1, apply s1 (TArr tv t1))
+  solve :: Subst -> [Constraint] -> Solve Subst
+  solve s [] = return s
+  solve s ((Constraint t1 t2) : cs) = do
+    s1 <- unify t1 t2
+    solve (s1 `compose` s) (apply s1 cs)
 
-    -- Γ ⊢ e₁ : τ₁ → τ₂    Γ ⊢ e₂ : τ₁
-    -- -------------------------------- [App]
-    --          Γ ⊢ e₁ e₂ : τ₂
-    App e1 e2 -> do
-      tv       <- fresh
-      (s1, t1) <- infer env e1
-      (s2, t2) <- infer (apply s1 env) e2
-      s3       <- unify (apply s2 t1) (TArr t2 tv)
-      return (s3 `compose` s2 `compose` s1, apply s3 tv)
-
-    -- Γ ⊢ e₁ : σ   Γ, x : σ ⊢ e₂ : τ
-    -- -------------------------------  [Let]
-    --    Γ ⊢ let x = e₁ in e₂ : τ
-    Let x e1 e2 -> do
-      (s1, t1) <- infer env e1
-      let env' = apply s1 env
-      t' = generalize env' t1
-      (s2, t2) <- infer (extend env' (x, t')) e2
-      return (s1 `compose` s2, t2)
-
-    If cond tr fl -> do
-      (s1, t1) <- infer env cond
-      (s2, t2) <- infer env tr
-      (s3, t3) <- infer env fl
-      s4       <- unify t1 typeBool
-      s5       <- unify t2 t3
-      return (s5 `compose` s4 `compose` s3 `compose` s2 `compose` s1, apply s5 t2)
-
-    Fix e1 -> do
-      (s1, t) <- infer env e1
-      tv      <- fresh
-      s2      <- unify (TArr tv tv) t
-      return (s2, apply s1 tv)
-
-    Op op e1 e2 -> do
-      (s1, t1) <- infer env e1
-      (s2, t2) <- infer env e2
-      tv       <- fresh
-      s3       <- unify (TArr t1 (TArr t2 tv)) (ops Map.! op)
-      return (s1 `compose` s2 `compose` s3, apply s3 tv)
-
-    Lit (LInt _)  -> return (nullSubst, typeInt)
-    Lit (LBool _) -> return (nullSubst, typeBool)
+  runSolve :: [Constraint] -> Either TypeError Subst
+  runSolve = runExcept . solve Map.empty
 #+end_src
