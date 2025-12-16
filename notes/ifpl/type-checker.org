@@ -1079,14 +1079,14 @@ returns a monotype and substitution pairing.
 
   type Infer a = ExceptT TypeError (State Unique) a
 
-  -- The function "closeOver" is not fully defined here.
-  -- It is are part of a more elaborate Haskell compiler
-  -- implementation as defined by author Stephen Diehl.
-
   runInfer :: Infer (Subst, Type) -> Either TypeError Scheme
   runInfer m = case evalState (runExceptT m) initUnique of
     Left err  -> Left err
     Right res -> Right (closeOver res)
+
+  -- The function "closeOver" is not fully defined here.
+  -- It is part of a more elaborate Haskell compiler
+  -- implementation as defined by author Stephen Diehl.
 
   closeOver :: (Map.Map TVar Type, Type) -> Scheme
   closeOver (sub, ty) = normalize sc
