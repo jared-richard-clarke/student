@@ -1192,7 +1192,7 @@ returns a monotype and substitution pairing.
     Lam x e -> do
       tv <- fresh
       let env' = extend env (x, Forall [] tv)
-      (s1, t1) <- infer env’ e
+      (s1, t1) <- infer env' e
       return (s1, apply s1 (TArr tv t1))
 
     -- Γ ⊢ e₁ : τ₁ → τ₂    Γ ⊢ e₂ : τ₁
@@ -1225,8 +1225,8 @@ returns a monotype and substitution pairing.
 
     Fix e1 -> do
       (s1, t) <- infer env e1
-      tv <- fresh
-      s2 <- unify (TArr tv tv) t
+      tv      <- fresh
+      s2      <- unify (TArr tv tv) t
       return (s2, apply s1 tv)
 
     Op op e1 e2 -> do
