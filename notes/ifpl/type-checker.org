@@ -1133,9 +1133,9 @@ returns a monotype and substitution pairing.
     EBin o a b -> do
       let ot = -- Operators are functions
         case o of
-                Add -> TInt :-> (TInt :-> TInt)
-                Sub -> TInt :-> (TInt :-> TInt)
-                -- NOTE: ADD MORE OPERATORS!!
+          Add -> TInt :-> (TInt :-> TInt)
+          Sub -> TInt :-> (TInt :-> TInt)
+          -- NOTE: ADD MORE OPERATORS!!
       at <- infer a -- Infer left operand
       bt <- infer b -- Infer right operand
       t <- fresh -- Result type
