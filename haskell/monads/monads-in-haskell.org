@@ -142,6 +142,20 @@ An identity monad used to derive a monad from a monad transformer:
       mzero             = Nothing
       Nothing `mplus` x = x
       x `mplus` _       = x
+
+  -- === example ===
+
+  example = do
+      user    <- lookup "user" config
+      address <- lookup "address" user
+      street  <- lookup "street" address
+      return street
+
+  example =
+      lookup "user" config    >>= \user ->
+      lookup "address" user   >>= \address ->
+      lookup "street" address >>= \street ->
+      return street
 #+end_src
 
 *** Error
