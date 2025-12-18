@@ -216,6 +216,18 @@ An identity monad used to derive a monad from a monad transformer:
   instance MonadPlus [] where
       mzero = []
       mplus = (++)
+
+  -- === example ===
+
+  example = [x + 1 | x <- [1, 2]]
+
+  example = do
+      x <- [1, 2]
+      return (x + 1)
+
+  example = [1, 2] >>= \x -> return (x + 1)
+
+  example = concatMap (\x -> [x + 1]) [1, 2]
 #+end_src
 
 *** IO
