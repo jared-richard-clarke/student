@@ -312,6 +312,20 @@ used with a selector or lookup function.
 
   asks :: (MonadReader e m) => (e -> a) -> m a
   asks selector = ask >>= return . selector
+
+  -- === example ===
+
+  -- environment = 10
+  example :: Reader Int Int
+  example = do
+      x <- (* 7)      -- x = 70
+      y <- (+ 11)     -- y = 21
+      return (x + y)  -- 70 + 21
+
+  example =
+      (* 7)  >>= \x ->
+      (+ 11) >>= \y ->
+      return (x + y)
 #+end_src
 
 ** Defining Functors, Applicatives, and Monads
