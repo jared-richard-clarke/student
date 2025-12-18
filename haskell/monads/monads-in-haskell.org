@@ -247,6 +247,21 @@ in-place update.
   instance MonadState (State s) s where
       get   = State $ \s -> (s,s)
       put s = State $ \_ -> ((),s)
+
+  -- === example ===
+
+  example :: State Int Int
+  example = do
+      x <- get
+      put (x + 1)
+      y <- get
+      return (x * y)
+
+  example =
+      get         >>= \x ->
+      put (x + 1) >>= \_ ->
+      get         >>= \y ->
+      return (x * y)
 #+end_src
 
 *** Reader
