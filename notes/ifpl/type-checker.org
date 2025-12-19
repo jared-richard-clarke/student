@@ -243,6 +243,29 @@ but before lambda lifting or transformation into a supercombinator.
 
 ** Hindley-Milner Type System
 
+#+begin_quote
+  "The Hindley-Milner type system ... is a family of type systems
+  that admit the serendipitous property of having a tractable
+  algorithm for determining types from untyped syntax. This is
+  achieved by a process known as unification, whereby the types
+  for a well-structured program give rise to a set of constraints
+  that when solved always have a unique principal type.
+
+  ...
+
+  Milner’s observation was that since the typing rules map uniquely
+  onto syntax, we can in effect run the typing rules 'backwards'
+  and whenever we don’t have a known type for a subexpression,
+  we 'guess' by putting a fresh variable in its place, collecting
+  constraints about its usage induced by subsequent typing judgements.
+  This is the essence of type inference in the ML family of languages,
+  that by the generation and solving of a class of unification problems
+  we can reconstruct the types uniquely from the syntax. The algorithm
+  itself is largely just the structured use of a unification solver."
+
+  — *Write You a Haskell*, Stephen Diehl
+#+end_quote
+
 #+begin_example
   || === Expressions ===
 
@@ -987,29 +1010,6 @@ returns a monotype and substitution pairing.
 #+end_src
 
 ** Haskell Example: Algorithm W
-
-#+begin_quote
-  "The Hindley-Milner type system ... is a family of type systems
-  that admit the serendipitous property of having a tractable
-  algorithm for determining types from untyped syntax. This is
-  achieved by a process known as unification, whereby the types
-  for a well-structured program give rise to a set of constraints
-  that when solved always have a unique principal type.
-
-  ...
-
-  Milner’s observation was that since the typing rules map uniquely
-  onto syntax, we can in effect run the typing rules 'backwards'
-  and whenever we don’t have a known type for a subexpression,
-  we 'guess' by putting a fresh variable in its place, collecting
-  constraints about its usage induced by subsequent typing judgements.
-  This is the essence of type inference in the ML family of languages,
-  that by the generation and solving of a class of unification problems
-  we can reconstruct the types uniquely from the syntax. The algorithm
-  itself is largely just the structured use of a unification solver."
-
-  — *Write You a Haskell*, Stephen Diehl
-#+end_quote
 
 #+begin_src haskell
   {-# Language PatternSynonyms #-}
