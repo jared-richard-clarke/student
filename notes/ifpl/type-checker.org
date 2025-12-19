@@ -150,47 +150,6 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
 #+begin_example
   || === expression ===
 
-  (λx.λy.λz. x z (y z))
-
-  || === AST ===
-
-  x   z y   z
-   \ /   \ /
-    @     @
-    |     |
-    +--@--+
-       |
-    λx.λy.λz
-
-  || === type tree ===
-
-  x::T0 z::T1    y::T2 z::T3
-  ----------- @  ----------- @
-       T4             T5
-       ----------------- @
-              T6
-              -- λx.λy.λz
-              T7
-
-  || === constraints ===
-
-  - The types of the sub-expressions must be related
-  - by the following equations:
-
-  T0 ~ T1 -> T4
-  T2 ~ T3 -> T5
-  T4 ~ T5 -> T6
-
-  - If we assume both instances of lambda-bound "z"
-  - are of the same type, we add the two equations:
-
-  T1 ~ T3
-  T7 ~ (T0              -> T2         -> T1 -> T6)
-       (T1 -> T5 -> T6) -> (T1 -> T5) -> T1 -> T6
-       (A  -> B  -> C)  -> (A  -> B)  -> A  -> C
-
-  || === expression ===
-
   odd :: Integer -> Boolean
   age :: Integer
 
@@ -204,14 +163,14 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
   --------------------------------------- [App]
              Γ ⊢ odd age : T0
 
-  || === constraints ===
+  || === substitutions ===
 
-        T0 ~ T2
-        T1 ~ T3
-  T1 -> T2 ~ T4
-        T4 ~ Integer -> Boolean
-        T3 ~ T5
-        T5 ~ Integer
+       { T0 ↦ T2 }
+       { T1 ↦ T3 }
+  { T1 → T2 ↦ T4 }
+       { T4 ↦ Integer → Boolean }
+       { T3 ↦ T5 }
+       { T5 ↦ Integer }
 
   || === unification ===
 
@@ -220,6 +179,59 @@ must have type *(A -> B)*, where *E_{2}* is of type *A* and *(E_{1} E_{2})* is o
   Γ ⊢ odd : Integer -> Boolean         Γ ⊢ age : Integer
   ------------------------------------------------------ [App]
                     Γ ⊢ odd age : Boolean
+
+                  
+  || === expression ===
+
+  λx.λy.λz. x z (y z)
+
+  || === AST ===
+
+  x   z y   z
+   \ /   \ /
+    @     @
+    |     |
+    +--@--+
+       |
+      λz
+       |
+      λy
+       |
+      λx
+
+  || === type tree ===
+
+  x : T0 ∈ Γ          z : T2 ∈ Γ          y : T1 ∈ Γ          z : T2 ∈ Γ
+  ---------- [Var]    ---------- [Var]    ---------- [Var]    ---------- [Var]
+
+  Γ ⊢ x : T2 → T3    Γ ⊢ z : T2           Γ ⊢ y : T2 → T4    Γ ⊢ z : T2
+  -------------------------------- [App]  -------------------------------- [App]
+           Γ ⊢ x z : T3                            Γ ⊢ x z : T4
+
+                     Γ ⊢ (x z) : T4 → T5    Γ ⊢ (y z) : T4
+                     ------------------------------------- [App]
+                            Γ ⊢ x z (y z) : T5
+
+                            Γ, x : T2 ⊢ e : T5
+                            ------------------- [Abs]
+                            Γ ⊢ λz.e : T2 → T5
+
+                            Γ, x : T1 ⊢ e : T2 → T5
+                            ----------------------- [Abs]
+                            Γ ⊢ λy.e : T1 → T2 → T5
+
+                            Γ, x : T0 ⊢ e : T2 → T4 → T5
+                            ---------------------------- [Abs]
+                            Γ ⊢ λx.e : T0 → T2 → T4 → T5
+
+                    Type: (T2 → T4 → T5) → (T2 → T4) → T2 → T5
+                          (A  → B  → C)  → (A  → B)  → A  → C
+
+  || === substitutions ===
+
+  { T0 ↦ T2 → T3 }
+  { T1 ↦ T2 → T4 }
+  { T3 ↦ T4 → T5 }
 #+end_example
 
 ** Intermediate Language
