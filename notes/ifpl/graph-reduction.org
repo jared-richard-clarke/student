@@ -5,6 +5,7 @@
 | source                                                   | author                |
 |----------------------------------------------------------+-----------------------|
 | *The Implementation of Functional Programming Languages* | Simon L. Peyton Jones |
+| *What is Weak Head Normal Form?*                         | Stack Overflow        |
 
 ** Abstract Syntax Trees
 
@@ -246,7 +247,7 @@ outermost, leftmost redex is reduced first.
    Therefore, every normal form expression is also in weak head
    normal form, though the opposite does not hold in general."
 
-  — *Stack Overflow*
+  — *What is Weak Head Normal Form*, Stack Overflow
 #+end_quote
 
 #+begin_example
