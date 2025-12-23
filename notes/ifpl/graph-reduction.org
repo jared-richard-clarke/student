@@ -199,7 +199,7 @@ recycles garbage cells.
 
 ** Lazy Evaluation
 
-- lazy evaluation :: An implementation strategy of lazy graph reduction.
+- lazy evaluation :: An implementation strategy for lazy graph reduction:
 
    - Normal order evaluation to weak head normal form.
 
