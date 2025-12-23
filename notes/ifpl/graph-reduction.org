@@ -252,6 +252,28 @@ outermost, leftmost redex is reduced first.
            and (F E₁ E₂ ... Eₑ) is not a redex or any e ≥ x.
 
   An expression has no top-level redex if and only if it is in weak head normal form.
+  
+  An expression is in weak head normal form (WHNF) if it is either a constructor,
+  a built-in function applied to too few arguments, or a lambda abstraction.
+
+  --- expression ---
+
+  (4, [1, 2])
+
+  --- evaluation / reduction ---
+
+               >
+  unevaluated | thunk
+               >
+               >
+              | (thunk, thunk)
+  WHNF        | (4, thunk)
+              | (4, 1:thunk)
+              | (4, 1:2:thunk)
+               >
+               >
+  Normal Form | (4, 1:2:[])
+               >
 
   === Head Normal Form ===
 
@@ -279,6 +301,16 @@ outermost, leftmost redex is reduced first.
       V
   normal form (no redexes at all)
 #+end_example
+
+#+begin_quote
+  "An expression in weak head normal form has been evaluated
+   to the outermost data constructor or lambda abstraction
+   (the head). Sub-expressions may or may not have been evaluated.
+   Therefore, every normal form expression is also in weak head
+   normal form, though the opposite does not hold in general."
+
+  — *Stack Overflow*
+#+end_quote
 
 *** Pointer Substitution
 
