@@ -1,4 +1,4 @@
-* Graph Reduction
+* Graph Reduction: Program Representation
 
 ** Sources
 
@@ -207,31 +207,13 @@ recycles garbage cells.
 
    - Overwriting the root of the redex with its result.
 
-In most imperative languages, arguments to a function are evaluated before the function
-is called — *call by value*. The inverse of this is *call by need*. In the context of
-functional languages, *call by need* is often called *lazy evaluation*, since it
-postpones work until it becomes unavoidable. Conversely, *call by value* is often
-called *eager evaluation*.
+*** Normal Order Reduction to WHNF
 
-*Call by need* is rarely implemented in imperative languages for two main reasons:
+- normal order reduction :: The leftmost, outermost redex reduces first.
 
-1. The evaluation of an argument my cause side-effects in other parts of the program.
-   The exact time in which an argument is evaluated is crucial to the correct
-   behavior of a program.
-
-2. It is hard to implement in a stack-based implementation.
-
-*** Normal Order Reduction
-
-Any implementation of *lazy evaluation* has two ingredients:
-
-1. Arguments to functions should be evaluated only when their value is needed, not
-   when the function is applied.
-
-2. Arguments should only be evaluated once, and, if possible, not at all.
-
-The first ingredient is directly implemented using normal order reduction, where the
-outermost, leftmost redex is reduced first.
+- weak head normal form (WHNF) :: An expression that has been evaluated
+  to the outermost data constructor or lambda abstraction — the head of
+  an expression.
 
 #+begin_quote
   "We pursue normal order reduction, but stop at WHNF rather than
@@ -240,14 +222,6 @@ outermost, leftmost redex is reduced first.
    normal form risks performing unnecessary reductions."
 
   — *The Implementation of Functional Programming Languages*, Simon L. Peyton Jones
-
-  "An expression in weak head normal form has been evaluated
-   to the outermost data constructor or lambda abstraction
-   (the head). Sub-expressions may or may not have been evaluated.
-   Therefore, every normal form expression is also in weak head
-   normal form, though the opposite does not hold in general."
-
-  — *What is Weak Head Normal Form*, Stack Overflow
 #+end_quote
 
 #+begin_example
@@ -345,6 +319,9 @@ pointers to an argument when overwriting a formal parameter.
 #+end_example
 
 *** Overwriting the Root of the Redex
+
+In combination with pointer substitution, overwriting the root of a redex
+ensures a shared argument need only be computed once.
 
 #+begin_example
   AND (NOT TRUE) (NOT TRUE) -> AND FALSE FALSE
