@@ -456,6 +456,24 @@ amongst multiple expressions.
      pointers to the arguments for the formal parameters, and overwrite the root of the
      redex with the result.
 
+#+begin_quote
+  "[T]o find *f* we just go down the left branch of each application
+   node from the root. This left-branching chain of application nodes
+   is called the *spine* of the expression, and the act of "going down"
+   the spine is sometimes called *unwinding* the spine. Continuing
+   the analogy, the *vertebrae* of the spine are the application nodes
+   encountered during unwinding, the *ribs* are the arguments of the
+   vertebrae, and the *tip* of the spine is the extreme bottom of
+   the spine."
+
+  "It is therefore rather easy to find the next redex to reduce.
+   We just unwind the spine until we find a function, and then,
+   based on the function we find, we go back up the spine
+   to find the root of the redex."
+
+  — *The Implementation of Functional Programming Languages*, Simon L. Peyton Jones
+#+end_quote
+
 #+begin_example
   === The Spine ===
 
