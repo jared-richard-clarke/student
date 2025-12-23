@@ -201,13 +201,11 @@ recycles garbage cells.
 
 - lazy evaluation :: An implementation strategy of lazy graph reduction.
 
-   - Normal order evaluation to weak head normal form. Reducing
-     through to normal form may perform unnecessary reductions.
+   - Normal order evaluation to weak head normal form.
 
-   - Pointer substitution. Avoids duplication of unevaluated arguments.
+   - Pointer substitution.
 
-   - Overwriting the root of the redex with its result. Reduction
-     happens only once for shared arguments.
+   - Overwriting the root of the redex with its result.
 
 In most imperative languages, arguments to a function are evaluated before the function
 is called — *call by value*. The inverse of this is *call by need*. In the context of
