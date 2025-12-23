@@ -232,6 +232,23 @@ Any implementation of *lazy evaluation* has two ingredients:
 The first ingredient is directly implemented using normal order reduction, where the
 outermost, leftmost redex is reduced first.
 
+#+begin_quote
+  "We pursue normal order reduction, but stop at WHNF rather than
+   proceeding all the way to normal form. This is an essential
+   ingredient of lazy evaluation, since reducing through to
+   normal form risks performing unnecessary reductions."
+
+  — *The Implementation of Functional Programming Languages*, Simon L. Peyton Jones
+
+  "An expression in weak head normal form has been evaluated
+   to the outermost data constructor or lambda abstraction
+   (the head). Sub-expressions may or may not have been evaluated.
+   Therefore, every normal form expression is also in weak head
+   normal form, though the opposite does not hold in general."
+
+  — *Stack Overflow*
+#+end_quote
+
 #+begin_example
   === Strict and Non-Strict Evaluation ===
 
@@ -252,9 +269,25 @@ outermost, leftmost redex is reduced first.
            and (F E₁ E₂ ... Eₑ) is not a redex or any e ≥ x.
 
   An expression has no top-level redex if and only if it is in weak head normal form.
-  
+
   An expression is in weak head normal form (WHNF) if it is either a constructor,
   a built-in function applied to too few arguments, or a lambda abstraction.
+
+  === Normal Order Reduction -> WHNF ===
+
+  original expression
+      |
+      | normal order reductions
+      | of top-level redexes
+      |
+      V
+  weak head normal form (no top-level redexes)
+      |
+      | normal order reductions
+      | of inner redexes
+      |
+      V
+  normal form (no redexes at all)
 
   --- expression ---
 
@@ -284,33 +317,7 @@ outermost, leftmost redex is reduced first.
   where x, e ≥ 0
         v is a variable (xₓ), data object, or built-in function
   and   (v E₁ E₂ ... Eₐ) is not a redex for any a ≥ e
-
-  === Normal Order Reduction ===
-
-  original expression
-      |
-      | normal order reductions
-      | of top-level redexes
-      |
-      V
-  weak head normal form (no top-level redexes)
-      |
-      | normal order reductions
-      | of inner redexes
-      |
-      V
-  normal form (no redexes at all)
 #+end_example
-
-#+begin_quote
-  "An expression in weak head normal form has been evaluated
-   to the outermost data constructor or lambda abstraction
-   (the head). Sub-expressions may or may not have been evaluated.
-   Therefore, every normal form expression is also in weak head
-   normal form, though the opposite does not hold in general."
-
-  — *Stack Overflow*
-#+end_quote
 
 *** Pointer Substitution
 
