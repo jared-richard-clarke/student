@@ -414,7 +414,7 @@ amongst multiple expressions.
      Y   f        f   +--------+
 #+end_example
 
-** Reduction Algorithm So Far
+** Reduction Algorithm
 
 1. Unwind the spine until something other than an application node is encountered.
 
