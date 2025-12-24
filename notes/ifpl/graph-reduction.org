@@ -377,7 +377,7 @@ amongst multiple expressions.
     |     |
     @     77
    / \
-  +   7 @   2
+  +   7 @   7
        / \
       *   11
 
