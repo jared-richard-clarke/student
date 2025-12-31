@@ -1,0 +1,103 @@
+* Supercombinators
+
+** Sources
+
+| source                                                   | author                |
+|----------------------------------------------------------+-----------------------|
+| *The Implementation of Functional Programming Languages* | Simon L. Peyton Jones |
+
+** Definition
+
+#+begin_example
+  Supercombinator, $S, of arity x:
+
+      λx₁.x₂...λxₓ.E
+
+  where E is not a lambda abstraction such that
+
+  1. $S has no free variables.
+  2. Any lambda abstraction in E is a supercombinator.
+  3. x ≥ 0 so that there need be no lambdas at all.
+
+  A supercombinator redex consists of the application of a
+  supercombinator to x arguments, where x is its arity.
+  A supercombinator reduction replaces a supercombinator
+  redex by an instance of the supercombinator body with
+  the arguments substituted for free occurrences of the
+  corresponding formal parameter.
+
+  A supercombinator reduction only takes place when all
+  arguments are present. In this way, supercombinators
+  are similar to multi-argument functions
+  in other languages.
+
+  || === Representation ===
+
+    $ADD x y = + x y
+  ≡ λx.λy.+ x y
+
+  +------------------+ <
+  | supercombinators | |
+  | ...              | |
+  |------------------| +- compilation unit
+  | expression       | |
+  +------------------+ <
+
+  || --- for example -->
+
+  +------------------+
+  | $ADD x y = + x y |
+  |------------------|
+  | $ADD 3 4         |
+  +------------------+
+#+end_example
+
+** Lambda Abstractions to Supercombinators
+
+Until there are no more lambda abstractions:
+
+1. Choose any lambda abstraction that has no lambda abstractions
+   in its body.
+
+2. Convert all its free variables to extra parameters.
+
+3. Give an arbitrary name to the lambda abstraction.
+
+4. Replace the occurrence of the lambda abstraction by
+   the name applied to the free variables.
+
+5. Compile the lambda abstraction and associated the name
+   with the compiled code.
+
+#+begin_example
+  || === Lambda Abstraction ===
+
+  (λx.(λy.+ y x) x) 4
+
+  || === Beta Abstraction ===
+
+  (λy.+ y x) -> (λx.λy.+ y x) x
+
+  || === Alpha Conversion ===
+
+  (λx.λy.+ y x) x -> (λw.λy.+ y w) x
+
+  || === Transformation ===
+
+  (λx.(λy.+ y x) x) 4
+
+  (λx.(λw.λy.+ y w) x x) 4
+
+  +----------------+
+  | $Y w y = + y w |
+  |----------------|
+  | (λx.$Y x x) 4  |
+  +----------------+
+
+  +-----------------+
+  | $Y w y = + y w  |
+  | $X x   = $Y x x |
+  |-----------------|
+  | $X 4            |
+  +-----------------+
+#+end_example
