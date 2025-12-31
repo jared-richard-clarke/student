@@ -1,4 +1,4 @@
-* Supercombinators
+* Supercombinators and Lambda Lifting
 
 ** Sources
 
@@ -6,7 +6,15 @@
 |----------------------------------------------------------+-----------------------|
 | *The Implementation of Functional Programming Languages* | Simon L. Peyton Jones |
 
-** Definition
+** Definitions
+
+- combinator :: A lambda expression that contains no free variables.
+
+- supercombinator :: Either a constant or a combinator that contains
+  only supercombinators as sub-expressions.
+
+- constant applicative forms (CAF) :: Supercombinators of arity zero.
+  A constant expression that need never be instantiated.
 
 #+begin_example
   Supercombinator, $S, of arity x:
@@ -52,7 +60,46 @@
   +------------------+
 #+end_example
 
-** Lambda Abstractions to Supercombinators
+** Lambda Lifting
+
+Unlike lambda abstractions with free variableas, supercombinators are amenable
+to static compilation.
+
+#+begin_quote
+  "Consider, for example, the lambda abstraction
+
+       *λx.(λy.- y x)*
+
+   When we apply the *λx* abstraction to an argument, *3* say,
+   we instantiate its body, thus creating a brand new lambda
+   abstraction *(λy.- y 3)*. Furthermore, each application of
+   the *λx* abstraction to a different argument will create a
+   new and different *λy* abstraction, thus making nonsense of
+   our hope to compile a single fixed code sequence for each
+   lambda abstraction.
+
+   ...
+
+   One way around this problem would be to allow the code
+   sequence to access the values of free variables in some way,
+   thus parameterizing the code sequence on the values of the
+   free variables. This approach leads us to the SECD machine,
+   in which the code sequence for a lambda abstraction has
+   access to an environment which contains values for each of
+   the free variables, thus allowing a single code sequence
+   for each lambda abstraction. It is also the route followed
+   by all block-structured languages, in which the values of
+   free variables are found by looking in the appropriate stack frame.
+
+   In this book, however, we will study a totally different approach,
+   called *supercombinator graph reduction*, which does not require
+   the addition of an environment to our model of graph reduction."
+
+  — *The Implementation of Functional Programming Languages*,
+    Simon L. Peyton Jones
+#+end_quote
+
+*** Algorithm
 
 Until there are no more lambda abstractions:
 
@@ -69,6 +116,10 @@ Until there are no more lambda abstractions:
 5. Compile the lambda abstraction and associated the name
    with the compiled code.
 
+*Side Note*: Free variables should be ordered according to scope,
+with those bound at the inner scopes coming last in the parameter
+list of the supercombinator.
+
 #+begin_example
   || === Lambda Abstraction ===
 
@@ -82,7 +133,7 @@ Until there are no more lambda abstractions:
 
   (λx.λy.+ y x) x -> (λw.λy.+ y w) x
 
-  || === Transformation ===
+  || === Translation ===
 
   (λx.(λy.+ y x) x) 4
 
