@@ -178,6 +178,12 @@ list of the supercombinator.
 
 ** SK Combinators
 
+The following is a graph reduction technique based on a fixed
+set of supercombinators. The most important members of this set
+are *S*, *K*, and *I*. This method provides an extremely simple
+reduction machine, a machine that only has to support built-in
+operators and requires no template-instantiation mechanism.
+
 #+begin_example
   || === SKI Rules ===
 
@@ -195,7 +201,19 @@ list of the supercombinator.
   | λx.e₁ e₂ ⟹ S (λx.e₁) (λx.e₂) |
   +-------------------------------+
 
+  (S K K) - extensionally equal -> (I x)
+
+  I x → x
+
+  (S K K) x → K x (K x) → x
+
+
   || === SK Compilation Algorithm ===
+  ||
+  || For every S-transformation, a lambda abstraction
+  || is compiled into two smaller lambda abstractions
+  || until each lambda body is composed entirely of
+  || atomic objects — identity and constant functions.
 
   +---------------------------------------------+
   | name      = syntactic object                |
@@ -216,4 +234,91 @@ list of the supercombinator.
   | A x [ x ]     = I                           |
   | A x [ cv ]    = K cv                        |
   +---------------------------------------------+
+
+  || === Example Transformations and Reductions ===
+
+  || --- Transformation ---
+
+       λx.OR x TRUE
+  S ⟹ S (λx.OR x) (λx.TRUE)
+  S ⟹ S (S (λx.OR) (λx.x)) (λx.TRUE)
+  I ⟹ S (S (λx.OR) I) (λx.TRUE)
+  K ⟹ S (S (K OR) I) (K TRUE)
+
+  || --- Reduction ---
+
+      S (S (K OR) I) (K TRUE) x
+  S → S (K OR) I x (K TRUE x)
+  S → K OR x (I x) (K TRUE x)
+  K → OR (I x) (K TRUE x)
+  I → OR x (K TRUE x)
+  K → OR x TRUE
+
+  || --- Transformation ---
+
+       (λx.+ x x)
+  S ⟹ S (λx.+ x) (λx.x)
+  S ⟹ S (S (λx.+) (λx.x)) (λx.x)
+  I ⟹ S (S (λx.+) I) (λx.x)
+  I ⟹ S (S (λx.+) I) I
+  K ⟹ S (S (K +) I) I
+
+  || --- Reduction ---
+
+    S (S (K +) I) I 5
+  → S (K +) I 5 (I 5)
+  → K + 5 (I 5) (I 5)
+  → + (I 5) (I 5)
+  → + 5 5
+  → 10
+
+  || === Extended SK  Rules ===
+
+  +----------------------------+
+  | Base                       |
+  |----------------------------|
+  | S f g x → f x (g x)        |
+  | K c x   → c                |
+  | I x     → x                |
+  |----------------------------|
+  | Extensions                 |
+  |----------------------------|
+  | B f g x    → f (g x)       |
+  | C F g x    → f x g         |
+  | S' c f g x → c (f x) (g x) |
+  | B* c f g x → c (f (g x))   |
+  | C' c f g x → c (f x) g     |
+  +----------------------------+
+
+  || === Optimized SK Compilation Algorithm ===
+
+  +----------------------------------------------------+
+  | name      = syntactic object                       |
+  | e, e₁, e₂ = expressions                            |
+  | f, f₁, f₂ = expressions with no inner λ            |
+  | x         = variable                               |
+  | cv        = constant or variable                   |
+  |----------------------------------------------------|
+  | C[ e ] = compiles e to SK combinators              |
+  |                                                    |
+  | C[ e₁ e₂ ] = C[ e₁ ] C[ e₂ ]                       |
+  | C[ λx.e ]  = A x [ C[ e ] ]                        |
+  | C[ cv ]    = cv                                    |
+  |----------------------------------------------------|
+  | A x [ f ] = abstracts x from f                     |
+  |                                                    |
+  | A x [ f₁ f₂ ] = Opt[ S (A x [ f₁ ]) (A x [ f₂ ]) ] |
+  | A x [ x ]     = I                                  |
+  | A x [ cv ]    = K cv                               |
+  |----------------------------------------------------|
+  | Opt[ e ] = optimizes e                             |
+  |                                                    |
+  | Opt[ S (K p) (K q) ]   = K (p q)                   |
+  | Opt[ S (K p) I ]       = p                         |
+  | Opt[ S (K p) q ]       = B* p q r                  |
+  | Opt[ S (K p) q ]       = B p q                     |
+  | Opt[ S (B p q) (K r) ] = C' p q r                  |
+  | Opt[ S p (K q) ]       = C p q                     |
+  | Opt[ S (B p q) r ]     = S' p q r                  |
+  +----------------------------------------------------+
 #+end_example
