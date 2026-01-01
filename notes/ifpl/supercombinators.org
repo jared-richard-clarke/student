@@ -36,8 +36,8 @@
 
   A supercombinator reduction only takes place when all
   arguments are present. In this way, supercombinators
-  are similar to multi-argument functions
-  in other languages.
+  are similar to multi-argument functions in other
+  languages.
 
   || === Representation ===
 
