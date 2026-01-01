@@ -62,7 +62,7 @@
 
 ** Lambda Lifting
 
-Unlike lambda abstractions with free variableas, supercombinators are amenable
+Unlike lambda abstractions with free variables, supercombinators are amenable
 to static compilation.
 
 #+begin_quote
