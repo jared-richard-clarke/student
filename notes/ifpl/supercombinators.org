@@ -151,4 +151,69 @@ list of the supercombinator.
   |-----------------|
   | $X 4            |
   +-----------------+
+
+  || === Example Program ===
+
+  f = g 4
+  g x y = y + (sqrt x)
+
+  (f 1) + (f 2)
+
+  || --- equivalent -->
+
+  letrec f = g 4
+         g = λx.λy.+ y (sqrt x)
+  in + (f 1) (f 2)
+
+  || --- equivalent -->
+
+  +--------------------------+
+  | $G x y = + y (sqrt x)    |
+  | $F     = $G 4            |
+  | $MAIN  = + ($F 1) ($F 2) |
+  |--------------------------|
+  | $MAIN                    |
+  +--------------------------+
+#+end_example
+
+** SK Combinators
+
+#+begin_example
+  || === SKI Rules ===
+
+  +-------------------------------+
+  | Reduction                     |
+  |-------------------------------|
+  | S f g x → f x (g x)           |
+  | K c x   → c                   |
+  | I x     → x                   |
+  |-------------------------------|
+  | Transformation                |
+  |-------------------------------|
+  | λx.x     ⟹ I                 |
+  | λx.c     ⟹ K c, where c ≠ x  |
+  | λx.e₁ e₂ ⟹ S (λx.e₁) (λx.e₂) |
+  +-------------------------------+
+
+  || === SK Compilation Algorithm ===
+
+  +---------------------------------------------+
+  | name      = syntactic object                |
+  | e, e₁, e₂ = expressions                     |
+  | f, f₁, f₂ = expressions with no inner λ     |
+  | x         = variable                        |
+  | cv        = constant or variable            |
+  |---------------------------------------------|
+  | C[ e ] = compiles e to SK combinators       |
+  |                                             |
+  | C[ e₁ e₂ ] = C[ e₁ ] C[ e₂ ]                |
+  | C[ λx.e ]  = A x [ C[ e ] ]                 |
+  | C[ cv ]    = cv                             |
+  |---------------------------------------------|
+  | A x [ f ] = abstracts x from f              |
+  |                                             |
+  | A x [ f₁ f₂ ] = S (A x [ f₁ ]) (A x [ f₂ ]) |
+  | A x [ x ]     = I                           |
+  | A x [ cv ]    = K cv                        |
+  +---------------------------------------------+
 #+end_example
