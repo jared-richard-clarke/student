@@ -284,7 +284,7 @@ operators and requires no template-instantiation mechanism.
   | Extensions                 |
   |----------------------------|
   | B f g x    → f (g x)       |
-  | C F g x    → f x g         |
+  | C f g x    → f x g         |
   | S' c f g x → c (f x) (g x) |
   | B* c f g x → c (f (g x))   |
   | C' c f g x → c (f x) g     |
