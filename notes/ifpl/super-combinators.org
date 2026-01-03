@@ -182,7 +182,7 @@ The following is a graph reduction technique based on a fixed
 set of supercombinators. The most important members of this set
 are *S*, *K*, and *I*. This method provides an extremely simple
 reduction machine, a machine that only has to support built-in
-operators and requires no template-instantiation mechanism.
+operators, requiring no template-instantiation mechanism.
 
 #+begin_example
   || === SKI Rules ===
@@ -277,14 +277,14 @@ operators and requires no template-instantiation mechanism.
   +----------------------------+
   | Base                       |
   |----------------------------|
-  | S f g x → f x (g x)        |
-  | K c x   → c                |
-  | I x     → x                |
+  | S f g x → f x (g x)        | fusion
+  | K c x   → c                | constant
+  | I x     → x                | identity
   |----------------------------|
   | Extensions                 |
   |----------------------------|
-  | B f g x    → f (g x)       |
-  | C f g x    → f x g         |
+  | B f g x    → f (g x)       | compose
+  | C f g x    → f x g         | swap
   | S' c f g x → c (f x) (g x) |
   | B* c f g x → c (f (g x))   |
   | C' c f g x → c (f x) g     |
@@ -315,10 +315,10 @@ operators and requires no template-instantiation mechanism.
   |                                                    |
   | Opt[ S (K p) (K q) ]   = K (p q)                   |
   | Opt[ S (K p) I ]       = p                         |
-  | Opt[ S (K p) q ]       = B* p q r                  |
   | Opt[ S (K p) q ]       = B p q                     |
-  | Opt[ S (B p q) (K r) ] = C' p q r                  |
+  | Opt[ S (K p) (B q r) ] = B* p q r                  |
   | Opt[ S p (K q) ]       = C p q                     |
+  | Opt[ S (B p q) (K r) ] = C' p q r                  |
   | Opt[ S (B p q) r ]     = S' p q r                  |
   +----------------------------------------------------+
 #+end_example
