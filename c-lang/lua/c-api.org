@@ -1,10 +1,11 @@
-* Lua's C API (5.4)
+* Lua's C API (5.4 and 5.5)
 
 ** Sources
 
 | source                                           | author                                                                 |
 |--------------------------------------------------+------------------------------------------------------------------------|
-| *Lua Manual*, version 5.4                        | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
+| *Lua Manual* 5.4                                 | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
+| *Lua Manual* 5.5                                 | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
 | *A Look at the Design of Lua*                    | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
 | *Passing a Language through the Eye of a Needle* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
 | *Programming in Lua*                             | Roberto Ierusalimschy                                                  |
@@ -743,7 +744,7 @@ stack, also in direct order, and returns in C the number of results.
   // uppercase("abc") -->  "ABC"
 #+end_src
 
-Lua's generic buffer implementation.
+Lua's generic buffer implementation (5.5):
 
 #+begin_src c
   // LUAI_MAXALIGN defines fields that, when used in a union, ensure
@@ -762,6 +763,17 @@ Lua's generic buffer implementation.
     } init;
   };
 #+end_src
+
+A string buffer allows C code to build Lua strings piecemeal:
+
+- Declare a variable ~b~ of type ~luaL_Buffer~.
+
+- Initialize with ~luaL_buffinit(L, &b)~.
+
+- Then add string pieces to buffer, using any of the ~luaL_add~ functions.
+
+- Finish by calling ~luaL_pushresult(&b)~, which leaves the final string
+  on top of the stack.
 
 ** Lua C Bit Array
 
