@@ -41,27 +41,25 @@ to Lua values, and place them on a virtual stack.
   — *First-Class Functions in an Imperative World*, Roberto Ierusalimschy
 #+end_quote
 
-*** Lua State
+*** Lua State (5.5)
 
 #+begin_src c
   // === Per Thread State ===
+
   struct lua_State {
     // CommonHeader -----------+
     struct GCObject *next; //  |
     lu_byte tt;            //  |
     lu_byte marked;        // <+
-    lu_byte status;
-    lu_byte allowhook;
-    // Number of items in call information list.
-    unsigned short nci;
+    TStatus status;
     // First free slot in the stack.
     StkIdRel top;
     // Reference to state shared by all threads. Contains mostly data
     // for memory allocation and garbage collection.
-    global_State *l_G;
+    struct global_State *l_G;
     // Call information for current function.
     CallInfo *ci;
-    // End of the stack (last element + 1).
+    // End of stack (last element + 1)
     StkIdRel stack_last;
     // Stack base.
     StkIdRel stack;
@@ -73,31 +71,34 @@ to Lua values, and place them on a virtual stack.
     GCObject *gclist;
     // List of threads with open upvalues.
     struct lua_State *twups;
-    // Current error recovery point.
+    // Current errory recovery point.
     struct lua_longjmp *errorJmp;
-    // Call information for first level (C calling Lua).
+    // Call information for first level (C host).
     CallInfo base_ci;
+    // Function to be called by the debugger.
     volatile lua_Hook hook;
     // Current error handling function (stack index).
     ptrdiff_t errfunc;
-    // Number of nested (non-yieldable | C) calls.
+    // Number of nested, (non-yieldable | C) calls.
     l_uint32 nCcalls;
-    // Last pc traced.
+    // Last program counter traced.
     int oldpc;
+    // Number of items in call information list.
+    int nci;
     int basehookcount;
     int hookcount;
     volatile l_signalT hookmask;
+    // Information about transferred values for (call | return) hooks.
+    struct {
+      // Offset of first value transferred.
+      int ftransfer;
+      // Number of values transferred.
+      int ntransfer;
+    } transferinfo;
   };
 
-  // === Stack Pointers ===
-  // During reallocation, all pointers to the stack are changed
-  // to their proper offsets.
-  typedef union {
-    StkId p;
-    ptrdiff_t offset;
-  } StkIdRel;
-
   // === Function Call Information ===
+
   struct CallInfo {
     // Function index in the stack.
     StkIdRel func;
@@ -133,19 +134,67 @@ to Lua values, and place them on a virtual stack.
       int nyield;
       // Number of values returned.
       int nres;
-      // Information about transferred values for call/return hooks.
-      // Used before a function starts or after it ends.
-      struct {
-        // Offset of first value transferred.
-        unsigned short ftransfer;
-        // Number of values transferred.
-        unsigned short ntransfer;
-      } transferinfo;
     } u2;
-    // Expected number of results from this function.
-    short nresults;
-    unsigned short callstatus;
+    // Bit mask denoting function status.
+    // - number of results.
+    // - metamethod?
+    // - etc.
+    l_uint32 callstatus;
   };
+
+  // === Lua Stack ===
+
+  // Lua stack entries. Field "tbclist" forms a list of all
+  // to-be-closed variables active in this stack. Dummy entries are
+  // used when the distance between two tbc variables does not fit
+  // in an unsigned short. They are represented by delta == 0.
+  // Their real delta is always the maximum value that fits in
+  // that field.
+  typedef union StackValue {
+    TValue val;
+    struct {
+      // Lua value.
+      Value value_;
+      // Type tag.
+      lu_byte tt_;
+      unsigned short delta;
+    } tbclist;
+  } StackValue;
+
+  // Index to stack elements.
+  typedef StackValue *StkId;
+
+  // === Stack Pointers ===
+  typedef union {
+    // Pointer
+    StkId p;
+    // Offset used during stack reallocation.
+    ptrdiff_t offset;
+  } StkIdRel;
+
+  // === Lua Values ===
+
+  typedef union Value {
+    // Garbage-collectable objects.
+    struct GCObject *gc;
+    // Light userdata.
+    void *p;
+    // Light C functions.
+    lua_CFunction f;
+    // Integers.
+    lua_Integer i;
+    // Floats.
+    lua_Number n;
+    // Not used. May avoid warnings for uninitialized values.
+    lu_byte ub;
+  } Value;
+
+  typedef struct TValue {
+    // Lua value.
+    Value value_;
+    // Type tag.
+    lu_byte tt_;
+  } TValue;
 #+end_src
 
 *** Pushing Elements
