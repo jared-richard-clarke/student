@@ -51,6 +51,7 @@ to Lua values, and place them on a virtual stack.
     struct GCObject *next; //  |
     lu_byte tt;            //  |
     lu_byte marked;        // <+
+    // Type for thread status/error codes.
     TStatus status;
     // First free slot in the stack.
     StkIdRel top;
