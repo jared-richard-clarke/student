@@ -6,6 +6,7 @@
 |---------------------------------+------------------------------------------------------------------------------|
 | *The Implementation of Lua 5.0* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
 | *Lua Source Code*, 5.4          | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
+| *Lua Source Code*, 5.5          | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
 | *Crafting Interpreters*         | Robert Nystrom                                                               |
 
 As of version 5.4, there are 83 instructions in Lua's virtual machine. Most instructions
@@ -247,9 +248,245 @@ instructions for implementing control flow.
   -- | 2     | m    | 2       | 7     |
 #+end_src
 
-** Lua Data Types
+** Lua State (5.5)
 
 #+begin_src c
+  // === Global State ===
+  // Shared state between threads.
+
+  typedef struct global_State {
+    // Function to reallocate memory.
+    lua_Alloc frealloc;
+    // Auxiliary data to "frealloc".
+    void *ud;
+    // Number of bytes currently allocated + debt.
+    l_mem GCtotalbytes;
+    // Bytes counted but not yet allocated.
+    l_mem GCdebt;
+    // Number of objects marked in a GC cycle.
+    l_mem GCmarked;
+    // Auxiliary counter to control major-minor shifts.
+    l_mem GCmajorminor;
+    // Hash table for strings.
+    stringtable strt;
+    TValue l_registry;
+    // Nil value.
+    TValue nilvalue;
+    // Randomized seed for hashes.
+    unsigned int seed;
+    lu_byte gcparams[LUA_GCPN];
+    lu_byte currentwhite;
+    // Garbage collector state.
+    lu_byte gcstate;
+    // Kind of GC running.
+    lu_byte gckind;
+    // Stops emergency collections.
+    lu_byte gcstopem;
+    // Control whether GC is running.
+    lu_byte gcstp;
+    // True if this is an emergency collection.
+    lu_byte gcemergency;
+    // List of all collectable objects.
+    GCObject *allgc;
+    // Current position in sweep of list.
+    GCObject **sweepgc;
+    // List of collectable objects with finalizers.
+    GCObject *finobj;
+    // List of gray objects.
+    GCObject *gray;
+    // List of gray objects to be traversed atomically.
+    GCObject *grayagain;
+    // List of tables with weak values.
+    GCObject *weak;
+    // List of ephemeron tables (weak keys).
+    GCObject *ephemeron;
+    // list of all-weak tables.
+    GCObject *allweak;
+    // list of userdata to be GC.
+    GCObject *tobefnz;
+    // List of objects not to be collected.
+    GCObject *fixedgc;
+    // --- fields for generational collector ---
+    // Start of objects that survived one GC cycle.
+    GCObject *survival;
+    GCObject *old1;
+    // Objects more than one cycle old.
+    GCObject *reallyold;
+    GCObject *firstold1;
+    // --- Lists of objects with finalizers ---
+    GCObject *finobjsur;
+    GCObject *finobjold1;
+    GCObject *finobjrold;
+    // List of threads with open upvalues.
+    struct lua_State *twups;
+    // To be called in unprotected errors.
+    lua_CFunction panic;
+    // Message for memory-allocation errors.
+    TString *memerrmsg;
+    // Array with tag-method names.
+    TString *tmname[TM_N];
+    // Metatables for basic types.
+    struct Table *mt[LUA_NUMTYPES];
+    // Cache for strings in API.
+    TString *strcache[STRCACHE_N][STRCACHE_M];
+    // Warning function.
+    lua_WarnFunction warnf;
+    // Auxiliary data to "warnf".
+    void *ud_warn;
+    // Main thread of this state.
+    LX mainth;
+  } global_State;
+
+  // === Per Thread State ===
+
+  struct lua_State {
+    // CommonHeader -----------+
+    struct GCObject *next; //  |
+    lu_byte tt;            //  |
+    lu_byte marked;        // <+
+    // Type for thread status/error codes.
+    TStatus status;
+    // First free slot in the stack.
+    StkIdRel top;
+    // Reference to state shared by all threads. Contains mostly data
+    // for memory allocation and garbage collection.
+    struct global_State *l_G;
+    // Call information for current function.
+    CallInfo *ci;
+    // End of stack (last element + 1)
+    StkIdRel stack_last;
+    // Stack base.
+    StkIdRel stack;
+    // List of open upvalues in this stack.
+    UpVal *openupval;
+    // List of to-be-closed variables.
+    StkIdRel tbclist;
+    // List of garbage-collectable objects.
+    GCObject *gclist;
+    // List of threads with open upvalues.
+    struct lua_State *twups;
+    // Current errory recovery point.
+    struct lua_longjmp *errorJmp;
+    // Call information for first level (C host).
+    CallInfo base_ci;
+    // Function to be called by the debugger.
+    volatile lua_Hook hook;
+    // Current error handling function (stack index).
+    ptrdiff_t errfunc;
+    // Number of nested, (non-yieldable | C) calls.
+    l_uint32 nCcalls;
+    // Last program counter traced.
+    int oldpc;
+    // Number of items in call information list.
+    int nci;
+    int basehookcount;
+    int hookcount;
+    volatile l_signalT hookmask;
+    // Information about transferred values for (call | return) hooks.
+    struct {
+      // Offset of first value transferred.
+      int ftransfer;
+      // Number of values transferred.
+      int ntransfer;
+    } transferinfo;
+  };
+
+  // === Function Call Information ===
+
+  struct CallInfo {
+    // Function index in the stack.
+    StkIdRel func;
+    // Top index for this function.
+    StkIdRel top;
+    // Dynamic call link.
+    struct CallInfo *previous, *next;
+    union {
+      // === Lua Function ===
+      struct {
+        // Saved pointer to bytecode instruction.
+        const Instruction *savedpc;
+        // Function tracing lines/counts.
+        volatile l_signalT trap;
+        // Number of extra arguments in variable-argument functions.
+        int nextraargs;
+      } l;
+      // === C Function ===
+      struct {
+        // Continuation in case of yields.
+        lua_KFunction k;
+        ptrdiff_t old_errfunc;
+        // Context information in case of yields.
+        lua_KContext ctx;
+      } c;
+    } u;
+    union {
+      // Called function index. Used only by C functions during
+      // a protected call.
+      int funcidx;
+      // Number of values yielded. Used only by functions
+      // that are yielding.
+      int nyield;
+      // Number of values returned.
+      int nres;
+    } u2;
+    // Bit mask denoting function status.
+    // - number of results.
+    // - metamethod?
+    // - etc.
+    l_uint32 callstatus;
+  };
+
+  // === Lua Stack ===
+
+  // Lua stack entries. Field "tbclist" forms a list of all
+  // to-be-closed variables active in this stack. Dummy entries are
+  // used when the distance between two tbc variables does not fit
+  // in an unsigned short. They are represented by delta == 0.
+  // Their real delta is always the maximum value that fits in
+  // that field.
+  typedef union StackValue {
+    TValue val;
+    struct {
+      // Lua value.
+      Value value_;
+      // Type tag.
+      lu_byte tt_;
+      unsigned short delta;
+    } tbclist;
+  } StackValue;
+
+  // Index to stack elements.
+  typedef StackValue *StkId;
+
+  // === Stack Pointers ===
+  typedef union {
+    // Pointer
+    StkId p;
+    // Offset used during stack reallocation.
+    ptrdiff_t offset;
+  } StkIdRel;
+#+end_src
+
+** Lua Data Types (5.5)
+
+#+begin_src c
+  // === Lua Values ===
+
+  typedef union Value {
+    // Garbage-collectable objects.
+    struct GCObject *gc;
+    // Light userdata.
+    void *p;
+    // Light C functions.
+    lua_CFunction f;
+    // Integers.
+    lua_Integer i;
+    // Floats.
+    lua_Number n;
+    // Not used. May avoid warnings for uninitialized values.
+    lu_byte ub;
+  } Value;
+
   // tagged union (value_, tt_)
   // where value_ = the union of C types that implement a Lua value
   //       tt_    = the type tag: an unsigned char that identifies the Lua value
@@ -257,27 +494,11 @@ instructions for implementing control flow.
     Value value_;
     lu_byte tt_;
   } TValue;
-
-  // The union of all Lua values
-  typedef union Value {
-    // strings, tables, functions (referenced and garbage-collected data)
-    struct GCObject *gc;
-    // light userdata
-    void *p;
-    // light C functions
-    lua_CFunction f;
-    // integers
-    lua_Integer i;
-    // floating point (double)
-    lua_Number n;
-    // unused field
-    lu_byte ub;
-  } Value;
 #+end_src
 
 ** Register Based (Lua 5.0)
 
-#+begin_src lua
+#+begin_src
   local a, t, i  -- 1: LOADNIL  0 2 0
   a = a + i      -- 2: ADD      0 0 2
   a = a + 1      -- 3: ADD      0 0 250 ; 1
@@ -286,7 +507,7 @@ instructions for implementing control flow.
 
 ** Stack Based (Lua 4.0)
 
-#+begin_src lua
+#+begin_src
   local a, t, i   --  1: PUSHNIL    3
   a = a + i       --  2: GETLOCAL   0 ; a
                   --  3: GETLOCAL   2 ; i
@@ -321,7 +542,7 @@ instructions for implementing control flow.
   — *The Implementation of Lua 5.0*
 #+end_quote
 
-*** Sample Source Code: Function Prototype and Closure
+*** Sample Source Code: Function Prototype and Closure (5.4)
 
 #+begin_src c
   // === source: lobject.h ===
