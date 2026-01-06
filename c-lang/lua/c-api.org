@@ -190,10 +190,11 @@ to Lua values, and place them on a virtual stack.
     lu_byte ub;
   } Value;
 
+  // tagged union (value_, tt_)
+  // where value_ = the union of C types that implement a Lua value
+  //       tt_    = the type tag: an unsigned char that identifies the Lua value
   typedef struct TValue {
-    // Lua value.
     Value value_;
-    // Type tag.
     lu_byte tt_;
   } TValue;
 #+end_src
