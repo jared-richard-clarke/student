@@ -5,7 +5,6 @@
 | source                          | author                                                                       |
 |---------------------------------+------------------------------------------------------------------------------|
 | *The Implementation of Lua 5.0* | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
-| *Lua Source Code*, 5.4          | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
 | *Lua Source Code*, 5.5          | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
 | *Crafting Interpreters*         | Robert Nystrom                                                               |
 
@@ -21,7 +20,6 @@ instructions for implementing control flow.
 - ~K[x]~: ~xth~ constant.
 
 - ~RK[x]~: if ~k(i)~ then ~K[x]~ else ~R[x]~.
-
 
 ** Instruction Set
 
@@ -156,7 +154,7 @@ instructions for implementing control flow.
   We assume that instructions are unsigned 32-bit integers.
   All instructions have an opcode in the first 7 bits.
   Instructions can have the following formats:
-  
+
          |3 3 2 2 2 2 2 2|2 2 2 2 1 1 1 1|1|1 1 1 1 1 0 0 0|0 0 0 0 0 0 0|
          |---------------|---------------|-|---------------|-------------|
          |1 0 9 8 7 6 5 4|3 2 1 0 9 8 7 6|5|4 3 2 1 0 9 8 7|6 5 4 3 2 1 0|
@@ -176,7 +174,7 @@ instructions for implementing control flow.
   corresponding unsigned argument.
 
   === Size and position of opcode arguments ===
-  
+
   SIZE_C  = 8
   SIZE_B  = 8
   SIZE_Bx = SIZE_C + SIZE_B + 1
@@ -248,11 +246,13 @@ instructions for implementing control flow.
   -- | 2     | m    | 2       | 7     |
 #+end_src
 
-** Lua State (5.5)
+** Runtime
+
+*** Global State
 
 #+begin_src c
   // === Global State ===
-  // Shared state between threads.
+  // State shared by all threads.
 
   typedef struct global_State {
     // Function to reallocate memory.
@@ -270,56 +270,56 @@ instructions for implementing control flow.
     // Hash table for strings.
     stringtable strt;
     TValue l_registry;
-    // Nil value.
+    // Bottom value, nil.
     TValue nilvalue;
     // Randomized seed for hashes.
     unsigned int seed;
     lu_byte gcparams[LUA_GCPN];
     lu_byte currentwhite;
-    // Garbage collector state.
+    // State of garbage collector.
     lu_byte gcstate;
-    // Kind of GC running.
+    // Kind of garbage collection.
     lu_byte gckind;
     // Stops emergency collections.
     lu_byte gcstopem;
     // Control whether GC is running.
     lu_byte gcstp;
-    // True if this is an emergency collection.
+    // True for emergency collections.
     lu_byte gcemergency;
     // List of all collectable objects.
     GCObject *allgc;
-    // Current position in sweep of list.
+    // Current position in sweep list.
     GCObject **sweepgc;
     // List of collectable objects with finalizers.
     GCObject *finobj;
     // List of gray objects.
     GCObject *gray;
-    // List of gray objects to be traversed atomically.
+    // List of objects to be traversed atomically.
     GCObject *grayagain;
     // List of tables with weak values.
     GCObject *weak;
     // List of ephemeron tables (weak keys).
     GCObject *ephemeron;
-    // list of all-weak tables.
+    // List of all-weak tables.
     GCObject *allweak;
-    // list of userdata to be GC.
+    // List of userdata to be garbage collected.
     GCObject *tobefnz;
     // List of objects not to be collected.
     GCObject *fixedgc;
-    // --- fields for generational collector ---
-    // Start of objects that survived one GC cycle.
+    // --- Fields for Generational Collector ---
+    // Objects that survived one GC cycle.
     GCObject *survival;
     GCObject *old1;
     // Objects more than one cycle old.
     GCObject *reallyold;
     GCObject *firstold1;
-    // --- Lists of objects with finalizers ---
+    // --- List of Objects with Finalizers ---
     GCObject *finobjsur;
     GCObject *finobjold1;
     GCObject *finobjrold;
     // List of threads with open upvalues.
     struct lua_State *twups;
-    // To be called in unprotected errors.
+    // Function to be called for unprotected errors.
     lua_CFunction panic;
     // Message for memory-allocation errors.
     TString *memerrmsg;
@@ -331,12 +331,23 @@ instructions for implementing control flow.
     TString *strcache[STRCACHE_N][STRCACHE_M];
     // Warning function.
     lua_WarnFunction warnf;
-    // Auxiliary data to "warnf".
+    // Auxiliary data for warning function.
     void *ud_warn;
     // Main thread of this state.
     LX mainth;
   } global_State;
 
+  // === Thread State + Extra Space ===
+
+  typedef struct LX {
+    lu_byte extra_[LUA_EXTRASPACE];
+    lua_State l;
+  } LX;
+#+end_src
+
+*** Thread State
+
+#+begin_src c
   // === Per Thread State ===
 
   struct lua_State {
@@ -467,10 +478,10 @@ instructions for implementing control flow.
   } StkIdRel;
 #+end_src
 
-** Lua Data Types (5.5)
+*** Data Types
 
 #+begin_src c
-  // === Lua Values ===
+  // === Values ===
 
   typedef union Value {
     // Garbage-collectable objects.
@@ -494,34 +505,64 @@ instructions for implementing control flow.
     Value value_;
     lu_byte tt_;
   } TValue;
+
+  // === Collectable Objects ===
+  // Type shared by all collectable objects:
+  // Tables, strings, functions, threads, and full userdata.
+
+  typedef struct GCObject {
+    struct GCObject *next;
+    lu_byte tt;
+    lu_byte marked;
+  } GCObject;
 #+end_src
 
-** Register Based (Lua 5.0)
+*** Tables
 
-#+begin_src
-  local a, t, i  -- 1: LOADNIL  0 2 0
-  a = a + i      -- 2: ADD      0 0 2
-  a = a + 1      -- 3: ADD      0 0 250 ; 1
-  a = t[i]       -- 4: GETTABLE 0 1 2
+#+begin_src c
+  // === Lua Table ===
+
+  typedef struct Table {
+    // CommonHeader -----------+
+    struct GCObject *next; //  |
+    lu_byte tt;            //  |
+    lu_byte marked;        // <+
+    // 1 << p means tagmethod(p) is not present.
+    lu_byte flags;
+    // log2 of number of slots in "node" array.
+    lu_byte lsizenode;
+    // Number of slots in "array" array.
+    unsigned int asize;
+    // Array part.
+    Value *array;
+    // Hash table nodes.
+    Node *node;
+    struct Table *metatable;
+    GCObject *gclist;
+  } Table;
+
+  // === Hash Table Node ===
+  // A key-value pair plus a "next" field to link colliding entries.
+  // The separation of "key_tt" and "key_val" shrinks the memory
+  // footprint for 4-byte and 8-byte alignments.
+
+  typedef union Node {
+    struct NodeKey {
+      // Fields for value -+
+      Value value_;        |
+      lu_byte tt_; <-------+
+      // Key type.
+      lu_byte key_tt;
+      int next;
+      // Key value.
+      Value key_val;
+    } u;
+    // Direct access to node as a proper "TValue".
+    TValue i_val;
+  } Node;
 #+end_src
 
-** Stack Based (Lua 4.0)
-
-#+begin_src
-  local a, t, i   --  1: PUSHNIL    3
-  a = a + i       --  2: GETLOCAL   0 ; a
-                  --  3: GETLOCAL   2 ; i
-                  --  4: ADD
-                  --  5: SETLOCAL   0 ; a
-  a = a + 1       --  6: GETLOCAL   0 ; a
-                  --  7: ADDI       1
-                  --  8: SETLOCAL   0 ; a
-  a = t[i]        --  9: GETLOCAL   1 ; t
-                  -- 10: GETINDEXED 2 ; i
-                  -- 11: SETLOCAL   0 ; a
-#+end_src
-
-** Functions, Closures, and UpValues
+*** Functions, Closures, and UpValues
 
 #+begin_quote
   "When Lua compiles a function it generates a *prototype* containing the virtual machine
@@ -542,21 +583,18 @@ instructions for implementing control flow.
   — *The Implementation of Lua 5.0*
 #+end_quote
 
-*** Sample Source Code: Function Prototype and Closure (5.4)
-
 #+begin_src c
-  // === source: lobject.h ===
-  
-  // Function Prototype
+  // === Function Prototype ===
+
   typedef struct Proto {
     // CommonHeader -----------+
     struct GCObject *next; //  |
     lu_byte tt;            //  |
     lu_byte marked;        // <+
-    // Number of fixed, named parameters
+    // Number of fixed (named) parameters.
     lu_byte numparams;
-    lu_byte is_vararg;
-    // Number of registers needed by this function
+    lu_byte flag;
+    // Number of Registers needed by this function.
     lu_byte maxstacksize;
     int sizeupvalues;
     int sizek;
@@ -565,28 +603,29 @@ instructions for implementing control flow.
     int sizep;
     int sizelocvars;
     int sizeabslineinfo;
-    // Debug information
+    // Debug information.
     int linedefined;
     int lastlinedefined;
-    // List of constants used by this function
+    // Constants used by function.
     TValue *k;
-    // List of opcode instructions
+    // Opcodes.
     Instruction *code;
-    // List of functions defined within this function
+    // Functions defined inside function.
     struct Proto **p;
-    // List of upvalue descriptions: name, kind, In stack?
+    // upvalue information.
     Upvaldesc *upvalues;
-    // Debug information
+    // Debug information.
     ls_byte *lineinfo;
-    // Absolute line source for a given instruction
     AbsLineInfo *abslineinfo;
-    // List of local variable lifetimes
+    // Debug information: local variables.
     LocVar *locvars;
+    // Debug information: source string.
     TString  *source;
     GCObject *gclist;
   } Proto;
 
-  // Upvalues for Lua closures
+  // === Upvalues ===
+
   typedef struct UpVal {
     // CommonHeader -----------+
     struct GCObject *next; //  |
@@ -611,6 +650,7 @@ instructions for implementing control flow.
   } UpVal;
 
   // Closures for C functions registered with Lua.
+
   typedef struct CClosure {
     ClosureHeader;
     // typedef int (*lua_CFunction) (lua_State *L);
@@ -619,7 +659,8 @@ instructions for implementing control flow.
     TValue upvalue[1];
   } CClosure;
 
-  // Lua Closure
+  // Closures for function defined in Lua.
+
   typedef struct LClosure {
     // ClosureHeader -------------+
     // CommonHeader -----------+  |
@@ -638,8 +679,6 @@ instructions for implementing control flow.
     LClosure l;
   } Closure;
 #+end_src
-
-*** Closure Diagram
 
 #+begin_example
   === Closures ===
