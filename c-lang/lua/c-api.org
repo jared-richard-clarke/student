@@ -221,7 +221,7 @@ The API has a dedicated push function for each Lua type with a direct representa
 
 #+begin_src c
   // === API Signatures ===
-  
+
   // Returns the number of elements on the stack, which is also the top element's index.
   LUA_API int  (lua_gettop)    (lua_State *L);
 
@@ -250,7 +250,7 @@ The API has a dedicated push function for each Lua type with a direct representa
   #define lua_pop(L, n)        lua_settop(L, -(n) - 1)
 
   // === Example Implementations ===
- 
+
   LUA_API int lua_gettop (lua_State *L) {
     return cast_int(L->top.p - (L->ci->func.p + 1));
   }
@@ -260,13 +260,16 @@ The API has a dedicated push function for each Lua type with a direct representa
     StkId func, newtop;
     ptrdiff_t diff;
     lua_lock(L);
+    // Function call information.
     ci = L->ci;
+    // Function pointer.
     func = ci->func.p;
     if (idx >= 0) {
       api_check(L, idx <= ci->top.p - (func + 1), "new top too large");
+      // Offset from top of stack.
       diff = ((func + 1) + idx) - L->top.p;
       for (; diff > 0; diff--) {
-        // Clear new slots.
+        // Clear new slots. Set to nil value
         setnilvalue(s2v(L->top.p++));
       }
     } else {
@@ -276,10 +279,10 @@ The API has a dedicated push function for each Lua type with a direct representa
     api_check(L, L->tbclist.p < L->top.p, "previous pop of an unclosed slot");
     newtop = L->top.p + diff;
     if (diff < 0 && L->tbclist.p >= newtop) {
-      lua_assert(hastocloseCfunc(ci->nresults));
+      lua_assert(ci->callstatus & CIST_TBC);
       newtop = luaF_close(L, newtop, CLOSEKTOP, 0);
     }
-    // Adjust call frame only after closing any upvalues.
+    // Adjust stack only after closing any upvalues.
     L->top.p = newtop;
     lua_unlock(L);
   }
