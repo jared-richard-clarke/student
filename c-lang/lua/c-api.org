@@ -105,66 +105,67 @@ The API has a dedicated push function for each Lua type with a direct representa
 #+begin_src c
   // === API Signatures ===
 
-  // Returns the number of elements on the stack, which is also the top element's index.
-  LUA_API int  (lua_gettop)    (lua_State *L);
+  LUA_API void        (lua_pushnil)            (lua_State *L);
+  LUA_API void        (lua_pushnumber)         (lua_State *L, lua_Number n);
+  LUA_API void        (lua_pushinteger)        (lua_State *L, lua_Integer n);
+  LUA_API const char *(lua_pushlstring)        (lua_State *L, const char *s, size_t len);
+  LUA_API const char *(lua_pushexternalstring) (lua_State *L, const char *s, size_t len, lua_Alloc falloc, void *ud);
+  LUA_API const char *(lua_pushstring)         (lua_State *L, const char *s);
+  LUA_API const char *(lua_pushvfstring)       (lua_State *L, const char *fmt, va_list argp);
+  LUA_API const char *(lua_pushfstring)        (lua_State *L, const char *fmt, ...);
+  LUA_API void        (lua_pushcclosure)       (lua_State *L, lua_CFunction fn, int n);
+  LUA_API void        (lua_pushboolean)        (lua_State *L, int b);
+  LUA_API void        (lua_pushlightuserdata)  (lua_State *L, void *p);
+  LUA_API int         (lua_pushthread)         (lua_State *L);
 
-  // Sets the number of elements on the stack. lua_settop(L, 0) empties the stack.
-  LUA_API void (lua_settop)    (lua_State *L, int idx);
+  // Ensures stack has space for at least "n" extra elements.
+  LUA_API int         (lua_checkstack)         (lua_State *L, int n);
 
-  // Pushes onto the stack a copy of the element at the given index.
-  LUA_API void (lua_pushvalue) (lua_State *L, int idx);
-
-  // Rotates the stack elements from the given index to the top of the stack by "n" positions.
-  LUA_API void (lua_rotate)    (lua_State *L, int idx, int n);
-
-  // Copies the element at one index into another, leaving the original untouched.
-  LUA_API void (lua_copy)      (lua_State *L, int fromidx, int toidx);
-
-  // Removes element at given index, shifting elements above it to fill in the gap.
-  #define lua_remove(L, idx)   (lua_rotate(L, (idx), -1), lua_pop(L, 1))
-
-  // Inserts top element into given index, shifting elements above to open space.
-  #define lua_insert(L, idx)   lua_rotate(L, (idx), 1)
-
-  // Pops an element and sets it at the given index.
-  #define lua_replace(L, idx)  (lua_copy(L, -1, (idx)), lua_pop(L, 1))
-
-  // Pops n elements from the stack.
-  #define lua_pop(L, n)        lua_settop(L, -(n) - 1)
+  // Similar to "lua_checkstack" but raises an error with the given message
+  // if unable to complete operation.
+  LUALIB_API void     (luaL_checkstack)        (lua_State *L, int n, const char *msg);
 
   // === Example Implementations ===
 
-  LUA_API int lua_gettop (lua_State *L) {
-    return cast_int(L->top.p - (L->ci->func.p + 1));
+  // Push float of value "n" onto the stack.
+  LUA_API void lua_pushnumber (lua_State *L, lua_Number n) {
+    // "lua_lock" and "lua_unlock" are placeholders for what
+    // would be a mutex in multi-threaded environments.
+    lua_lock(L);
+    // Set the top of the stack to the given value "n".
+    setfltvalue(s2v(L->top.p), n);
+    // Increment the top of the stack, checking for overflow.
+    api_incr_top(L);
+    lua_unlock(L);
   }
 
-  LUA_API void lua_settop (lua_State *L, int idx) {
+  // Convert StackValue to TValue.
+  #define s2v(o) (&(o)->val)
+  // Set type tag.
+  #define settt_(o,t) ((o)->tt_=(t))
+  // Set Lua value of type float.
+  #define setfltvalue(obj,x) { TValue *io=(obj); val_(io).n=(x); settt_(io, LUA_VNUMFLT); }
+
+  // Ensures stack has space for at least "n" extra elements.
+  LUA_API int lua_checkstack (lua_State *L, int n) {
+    int res;
     CallInfo *ci;
-    StkId func, newtop;
-    ptrdiff_t diff;
     lua_lock(L);
+    // Call information for current function.
     ci = L->ci;
-    func = ci->func.p;
-    if (idx >= 0) {
-      api_check(L, idx <= ci->top.p - (func + 1), "new top too large");
-      diff = ((func + 1) + idx) - L->top.p;
-      for (; diff > 0; diff--) {
-        // Clear new slots.
-        setnilvalue(s2v(L->top.p++));
-      }
+    api_check(L, n >= 0, "negative 'n'");
+    // If more space is needed, grow call stack.
+    if (L->stack_last.p - L->top.p > n) {
+      res = 1;
     } else {
-      api_check(L, -(idx+1) <= (L->top.p - (func + 1)), "invalid new top");
-      diff = idx + 1;
+      res = luaD_growstack(L, n, 0);
     }
-    api_check(L, L->tbclist.p < L->top.p, "previous pop of an unclosed slot");
-    newtop = L->top.p + diff;
-    if (diff < 0 && L->tbclist.p >= newtop) {
-      lua_assert(hastocloseCfunc(ci->nresults));
-      newtop = luaF_close(L, newtop, CLOSEKTOP, 0);
+    // Adjust call frame.
+    if (res && ci->top.p < L->top.p + n) {
+      ci->top.p = L->top.p + n;
     }
-    // Adjust call frame only after closing any upvalues.
-    L->top.p = newtop;
     lua_unlock(L);
+    return res;
   }
 #+end_src
 
