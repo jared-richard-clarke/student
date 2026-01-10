@@ -548,8 +548,8 @@ instructions for implementing control flow.
   typedef union Node {
     struct NodeKey {
       // Fields for value -+
-      Value value_;        |
-      lu_byte tt_; <-------+
+      Value value_; //     |
+      lu_byte tt_;  // <---+
       // Key type.
       lu_byte key_tt;
       int next;
