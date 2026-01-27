@@ -28,7 +28,7 @@ Example implementation of file pointers in the C standard library.
   #define stderr (&_iob[2])
 
   enum _flags {
-    _READ =  01,  // File open for reading.
+    _READ  = 01,  // File open for reading.
     _WRITE = 02,  // File open for writing.
     _UNBUF = 04,  // File is unbuffered.
     _EOF   = 010, // EOF has occurred in this file.
