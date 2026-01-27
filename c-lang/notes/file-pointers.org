@@ -21,7 +21,7 @@ Example implementation of file pointers in the C standard library.
     int  fd;    // File descriptor.
   } FILE;
 
-  extern FILE _iobuf[OPEN_MAX];
+  extern FILE _iob[OPEN_MAX];
 
   #define stdin  (&_iob[0])
   #define stdout (&_iob[1])
