@@ -36,14 +36,14 @@
 
 ** Implementation
 
-Pulled from ~lobject.h~ of Lua 5.4, many of these examples are simplified and renamed for clarity.
+Pulled from ~lobject.h~ of Lua 5.5, many of these examples are simplified and renamed for clarity.
 
 #+begin_src c
   /* Side Note: "lu_byte" alias for "unsigned char" */
 
   /* === Lua Value === */
   typedef union Value {
-      /* Collectable Objects */
+      /* Garbage Collectable Objects */
       struct GCObject *gc;
       /* Light Userdata */
       void *p;
@@ -51,7 +51,7 @@ Pulled from ~lobject.h~ of Lua 5.4, many of these examples are simplified and re
       lua_CFunction f;
       /* Integers */
       lua_Integer i;
-      /* Doubles */
+      /* Floats */
       lua_Number n;
       /* Type may suppress warnings for uninitialized values. */
       lu_byte ub;
@@ -59,9 +59,9 @@ Pulled from ~lobject.h~ of Lua 5.4, many of these examples are simplified and re
 
   typedef struct TValue {
       /* One of five Lua values. */
-      Value value;
+      Value value_;
       /* Type Tag */
-      lu_byte tt;
+      lu_byte tt_;
   } TValue;
 
   /*
@@ -74,9 +74,9 @@ Pulled from ~lobject.h~ of Lua 5.4, many of these examples are simplified and re
   typedef union Node {
       struct NodeKey {
           /* One of five Lua values. */
-          Value value;
+          Value value_;
           /* Value Type Tag */
-          lu_byte tt;
+          lu_byte tt_;
           /* Key Type Tag */
           lu_byte key_tt;
           /* Chained Entries */
@@ -98,14 +98,12 @@ Pulled from ~lobject.h~ of Lua 5.4, many of these examples are simplified and re
       lu_byte flags;
       /* log2 size of "node" array. */
       lu_byte lsizenode;
-      /* Array limit. */
-      unsigned int alimit;
+      /* Number of slots in array. */
+      unsigned int asize;
       /* Pointer to array. */
       TValue *array;
       /* Pointer to hashtable node. */
       Node *node;
-      /* Any free position is before this position. */
-      Node *lastfree;
       /* Pointer to table's metatable. */
       struct Table *metatable;
       GCObject *gclist;
