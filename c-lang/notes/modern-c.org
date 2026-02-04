@@ -205,7 +205,7 @@ in an arithmetic expression.
   x   = 1;
   while (x <= 10) {
       sum += x;
-      x += 1;
+      x   += 1;
   }
 
   int sum = 0;
@@ -225,7 +225,7 @@ in an arithmetic expression.
       int x = 1;
       while (x <= 10) {
           sum += x;
-          x += 1;
+          x   += 1;
       }
   }
 
@@ -245,15 +245,15 @@ in an arithmetic expression.
 
   /* === comma operator === */
 
-  int x, a, b, c;
-  x = (a = 7, b = 11, a + b);
+  int a, b, c;
+  c = (a = 7, b = 11, a + b);
 
   /* - equivalent -> */
 
-  int x, a, b, c;
+  int a, b, c;
   a = 7;
   b = 11;
-  x = a + b;
+  c = a + b;
 #+end_src
 
 ** The C Libraries
