@@ -146,6 +146,116 @@ in an arithmetic expression.
   Although parentheses need only wrap types, its good practice to be consistent and wrap both types
   and expressions.
 
+** Assorted Syntax and Semantics
+
+#+begin_src c
+  /* === Compound Assignment === */
+
+  x += y;
+
+  /* - equivalent -> */
+
+  x = x + y;
+
+  /* === Definition and Intialization === */
+
+  int variable = 11;
+
+  /* - equivalent -> */
+
+  int variable;
+  variable = 11;
+
+  /* === Prefix Increment/Decrement === */
+
+  x = ++i;
+  x = --i;
+
+  /* - equivalent -> */
+
+  i = i + 1;
+  x = i;
+  i = i - 1;
+  x = i;
+
+  /* === Postfix Increment/Decrement === */
+
+  x = i++;
+  x = i--;
+
+  /* - equivalent -> */
+
+  x = i;
+  i = i + 1;
+  x = i;
+  i = i - 1;
+
+  /* === For Loop === */
+
+  int x, sum;
+  sum = 0;
+  for (x = 1; x <= 10; x += 1) {
+      sum += x;
+  }
+
+  /* - equivalent -> */
+
+  int x, sum;
+  sum = 0;
+  x   = 1;
+  while (x <= 10) {
+      sum += x;
+      x += 1;
+  }
+
+  int sum = 0;
+  /*
+    Starting in C99, a variable declared in the initialization
+    part of a for loop's header has block scope restricted to the
+    loop and its body.
+  */
+  for (int x = 1; x <= 10; x += 1) {
+      sum += x;
+  }
+
+  /* - equivalent -> */
+
+  int sum = 0;
+  {
+      int x = 1;
+      while (x <= 10) {
+          sum += x;
+          x += 1;
+      }
+  }
+
+  /* === Infinite For Loop === */
+
+  int sum = 0;
+  for (;;) {
+      sum += 1;
+  }
+
+  /* - equivalent -> */
+
+  int sum = 0;
+  while (true) {
+      sum += 1;
+  }
+
+  /* === comma operator === */
+
+  int x, a, b, c;
+  x = (a = 7, b = 11, a + b);
+
+  /* - equivalent -> */
+
+  int x, a, b, c;
+  a = 7;
+  b = 11;
+  x = a + b;
+#+end_src
+
 ** The C Libraries
 
 | name              | description                                  |
