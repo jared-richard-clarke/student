@@ -1,0 +1,79 @@
+* UTF-8
+
+** Sources
+
+| source                    | author      |
+|---------------------------+-------------|
+| *Unicode*                 | unicode.org |
+| *UTF-8, Explained Simply* | Nic Barker  |
+
+** Overview
+
+- UTF-8 :: Unicode Transformation Format. 8-bit base size.
+
+- Encodes up to 4 bytes
+
+- ASCII compatible
+
+- Self synchronizing
+
+- Compressible
+
+#+begin_example
+  === Bit Base Sizes ===
+
+           +---+---+---+---+
+  UTF-8  = | x |   |   |   |
+           +---+---+---+---+
+           +---+---+---+---+
+  UTF-16 = | x | x |   |   |
+           +---+---+---+---+
+           +---+---+---+---+
+  UTF-32 = | x | x | x | x |
+           +---+---+---+---+
+#+end_example
+
+| code point | decimal | character | utf-8 encoding                        | utf-8 (hex)   |
+|------------+---------+-----------+---------------------------------------+---------------|
+| U+0041     |      65 | A         | ~01000001~                            | ~41~          |
+| U+03BB     |     955 | λ         | ~11001110 10111011~                   | ~CE BB~       |
+| U+2318     |    8984 | ⌘         | ~11100010 10001100 10011000~          | ~E2 8C 98~    |
+| U+1F44D    |  128077 | 👍        | ~11110000 10011111 10010001 10001101~ | ~F0 9F 91 8D~ |
+
+#+begin_example
+ +---+
+ | 0 | Single-Byte ASCII Codepoint
+ +---+
+ +---+
+ | 1 | Multi-Byte Codepoint
+ +---+
+ +---+---+
+ | 1 | 1 | Lead Byte
+ +---+---+
+ +---+---+
+ | 1 | 0 | Continuation Byte
+ +---+---+
+
+ === UTF-8 Encoding: ⌘ ===
+
+    +- Multi-Byte Codepoint
+    |    +- 3-Byte Codepoint
+    |    |      +-----------+-------------+---------+
+    |    |      |           |             |         |
+    |    |  +------+    +--------+    +--------+    |
+  +----------------+-------------+-------------+    |
+  | 1 | 110 | 0010 | 10 | 001100 | 10 | 011000 |    |
+  +----------------+-------------+-------------+    |
+  ^----------------^---------------------------^    |
+     Leading Byte       Continuation Bytes          |
+            ^                                       |
+            |                                       |
+   (Synchronization Point)                          |
+                                   +----------------+
+  === Code Point: ⌘ ===            |
+                        +---------------------+
+  +---------------------+---------------------+
+  | 0000 0000 0000 0000 | 0010 0011 0001 1000 | <- UTF-8 standard mandates that
+  +---------------------+---------------------+    the shortest encoding of a
+                                                   codepoint be used.
+#+end_example
