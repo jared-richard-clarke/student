@@ -459,6 +459,8 @@ such as offset addition and subtraction. They have state, including a dedicated 
   //
   double sum(size_t length, double const* a) {
     double sum = 0.0;
+    // Constant pointer to a constant double.
+    // Neither the pointer nor double may be mutated.
     for (double const*const end = a + length; a < end; a += 1) {
       sum += *a;
     }
