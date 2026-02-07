@@ -217,7 +217,7 @@
     +------------------------------------------------------+
 #+end_example
 
-*** Bytes-to-Character Map
+*** Bytes-to-Class Map
 
 For bytes that may occur at the beginning of a multi-byte sequence, the character
 class number is used to remove the most significant bits from the byte, which do
