@@ -80,6 +80,18 @@
                                                        codepoint be used.
 #+end_example
 
+** Code Point to UTF-8 Conversion
+
+| first code point | last code point | byte 1   | byte 2   | byte 3   | byte 4   |
+|------------------+-----------------+----------+----------+----------+----------|
+| U+0000           | U+007F          | 0yyyzzzz |          |          |          |
+|------------------+-----------------+----------+----------+----------+----------|
+| U+0080           | U+07FF          | 110xxxyy | 10yyzzzz |          |          |
+|------------------+-----------------+----------+----------+----------+----------|
+| U+0800           | U+FFFF          | 1110wwww | 10xxxxyy | 10yyzzzz |          |
+|------------------+-----------------+----------+----------+----------+----------|
+| U+010000         | U+10FFFF        | 11110uvv | 10vvwwww | 10xxxxyy | 10yyzzzz |
+
 ** Byte Map
 
 |   | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9  | A   | B   | C       | D  | E  | F   |
@@ -162,9 +174,12 @@
   // "The utf8d table consists of two parts. The first part maps bytes
   //  to character classes, the second part encodes a deterministic
   //  finite automaton using these character classes as transitions."
-  //
   //  ...
-  //
+  // "For bytes that may occur at the beginning of a multibyte sequence,
+  //  the character class number is also used to remove the most significant
+  //  bits from the byte, which do not contribute to the actual code point
+  //  value."
+  //  ...
   // "The states in the automaton are numbered such that, assuming C's
   //  division operator, state / 3 + 1 is that number."
   //
