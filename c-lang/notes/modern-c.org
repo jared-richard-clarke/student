@@ -899,21 +899,24 @@ pointers more generically. These are pointers to non-type ~void~.
 **** C Source Code
 
 #+begin_src c
-  #define BOUND 10
+  #include <stddef.h>
 
   int add(int x, int y) { return x + y; }
 
   int main(int argc, const char* argv[]) {
       int sum = 0;
-      int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-      for(int index = 0; index < BOUND; index += 1) {
+      int numbers[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+      size_t length = sizeof(numbers) / sizeof(numbers[0]);
+
+      for(size_t index = 0; index < length; index += 1) {
           sum = add(sum, numbers[index]);
       }
+
       return 0;
   }
 #+end_src
 
-**** Assembly Output ~x86-64 gcc 14.2~
+**** Assembly Output ~x86-64 gcc 15.2~
 
 #+begin_src asm
   add:
@@ -929,35 +932,36 @@ pointers more generically. These are pointers to non-type ~void~.
   main:
           push    rbp                           ; <+
           mov     rbp, rsp                      ;  |
-          sub     rsp, 64                       ;  |- Setup up callframe for "main" function.
-          mov     DWORD PTR [rbp-52], edi       ;  |
-          mov     QWORD PTR [rbp-64], rsi       ; <+
-          mov     DWORD PTR [rbp-4], 0          ; <-- Move 0 into "sum".
-          mov     DWORD PTR [rbp-48], 1         ; <+
-          mov     DWORD PTR [rbp-44], 2         ;  |
-          mov     DWORD PTR [rbp-40], 3         ;  |
-          mov     DWORD PTR [rbp-36], 4         ;  |
-          mov     DWORD PTR [rbp-32], 5         ;  |- Setup "numbers" array.
-          mov     DWORD PTR [rbp-28], 6         ;  |
-          mov     DWORD PTR [rbp-24], 7         ;  |
-          mov     DWORD PTR [rbp-20], 8         ;  |
-          mov     DWORD PTR [rbp-16], 9         ;  |
-          mov     DWORD PTR [rbp-12], 10        ; <+
-          mov     DWORD PTR [rbp-8], 0          ; <- Start of "for" loop. Initialize "index".
-          jmp     .L4                           ; <- Jump to predicate.
+          sub     rsp, 80                       ;  |- Setup up callframe for "main" function.
+          mov     DWORD PTR [rbp-68], edi       ;  |
+          mov     QWORD PTR [rbp-80], rsi       ; <+
+          mov     DWORD PTR [rbp-4],  0         ; <-- Move 0 into "sum".
+          mov     DWORD PTR [rbp-64], 1         ; <+
+          mov     DWORD PTR [rbp-60], 2         ;  |
+          mov     DWORD PTR [rbp-56], 3         ;  |
+          mov     DWORD PTR [rbp-52], 4         ;  |
+          mov     DWORD PTR [rbp-48], 5         ;  |- Setup "numbers" array.
+          mov     DWORD PTR [rbp-44], 6         ;  |
+          mov     DWORD PTR [rbp-40], 7         ;  |
+          mov     DWORD PTR [rbp-36], 8         ;  |
+          mov     DWORD PTR [rbp-32], 9         ;  |
+          mov     DWORD PTR [rbp-28], 10        ; <+
+          mov     QWORD PTR [rbp-24], 10        ; <-- "numbers" array length
+          mov     DWORD PTR [rbp-8], 0          ; <-- Start of "for" loop. Initialize "index".
+          jmp     .L4                           ; <-- Jump to predicate.
   .L5:
-          mov     eax, DWORD PTR [rbp-8]        ; <-- Move "index" into register "eax".
-          cdqe                                  ; <-- RAX := SignExtend(EAX)
-          mov     edx, DWORD PTR [rbp-48+rax*4] ; <-- Index into "numbers" array.
+          mov     rax, DWORD PTR [rbp-16]       ; <-- Move "index" into register "rax".
+          mov     edx, DWORD PTR [rbp-64+rax*4] ; <-- Index into "numbers" array.
           mov     eax, DWORD PTR [rbp-4]        ; <-- Move "sum" into "eax" register.
           mov     esi, edx                      ; <-- Move "numbers[index]" into "esi" register
           mov     edi, eax                      ; <-- Move "sum" from "eax" register to "edi" register.
           call    add                           ; <-- Call "add" function.
           mov     DWORD PTR [rbp-4], eax        ; <-- Move result into "sum" register.
-          add     DWORD PTR [rbp-8], 1          ; <-- Add 1 into "index" register
+          add     DWORD PTR [rbp-16], 1         ; <-- Add increment "index" register by 1.
   .L4:
-          cmp     DWORD PTR [rbp-8], 9          ; <-- Compare "index" to "BOUND".
-          jle     .L5                           ; <-- Jumps to body of "for" loop if condition is satisfied.
+          mov     rax, QWORD PTR [rbp-16]       ; <-- Initialize "index".
+          cmp     rax, QWORD PTR [rbp-24]       ; <-- Compare "index" to "length".
+          jb      .L5                           ; <-- Jumps to body of "for" loop if condition is satisfied.
           mov     eax, 0                        ; <-- Return success code 0 from "main".
           leave                                 ; <-- Exit "main".
           ret                                   ; <+
