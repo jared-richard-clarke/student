@@ -997,6 +997,7 @@ pointers more generically. These are pointers to non-type ~void~.
 #+begin_src asm
   name:
           .string "Jared Clarke"           ; <- string constant
+
   copy_string:
           push    rbp                      ; <+
           mov     rbp, rsp                 ;  |- Set up state for "copy_string" function.
