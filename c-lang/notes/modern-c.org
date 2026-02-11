@@ -429,7 +429,7 @@ such as offset addition and subtraction. They have state, including a dedicated 
   //                          |
   //                        a + i
   //
-  double sum(size_t length, double const* a) {
+  double sum(size_t length, const double* a) {
     double sum = 0.0;
     for (size_t i = 0; i < length; i += 1) {
       sum += *(a + i);
@@ -447,7 +447,7 @@ such as offset addition and subtraction. They have state, including a dedicated 
   //                     |                             |
   //                     p                           a + length
   //
-  double sum(size_t length, double const* a) {
+  double sum(size_t length, const double* a) {
     double sum = 0.0;
     for (const double* p = a; p < a+length; p += 1) {
       sum += *p;
