@@ -348,16 +348,24 @@ in an arithmetic expression.
 - A string is a 0-terminated array of *char*. An array of *char* without a 0-terminator
   is not a string.
 
-#+begin_src c
-  // Equivalent declarations.
-  char ted1    = "ted";
-  char ted2    = { "ted" };
-  char ted3    = { 't', 'e', 'd', '\0' };
-  char ted4[4] = { 't', 'e', 'd' };
+| declaration                         | storage location                      | mutability | scope                | persistence      |
+|-------------------------------------+---------------------------------------+------------+----------------------+------------------|
+| ~char *string = "literal;"~         | read-only data segment                | immutable  | local/global         | program duration |
+| ~const char *string = "literal;"~   | read-only data segment                | immutable  | local/global         | program duration |
+| ~const char string[] = "literal;"~  | read-only data segment                | immutable  | local/global         | program duration |
+| ~char string[] = "literal;"~        | stack local, read-write static/global | mutable    | local/global         | varies by scope  |
+| ~static char string[] = "literal;"~ | read-write data segment               | mutable    | local or file global | program duration |
 
-  // Not a string.
-  char ted5[3] = { 't', 'e', 'd' };
-#+end_src
+- Use ~const char string[]~ when you need an immutable, fixed-size string,
+  whose size is known at compile time and you do not need to reassign the
+  variable to a different string. ~sizeof~ returns the length of the string,
+  including its null terminator.
+
+- Use ~const char* string~ when you need a pointer to an immutable string,
+  whose pointer can be reassigned to point to different immutable strings.
+  This is also the common way to pass constant strings to functions, where
+  the array decays into a pointer. ~sizeof~ returns the size of the string's
+  pointer.
 
 - Using a string function with a non-string has undefined behavior.
 
