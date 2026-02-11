@@ -970,7 +970,7 @@ pointers more generically. These are pointers to non-type ~void~.
 #+begin_src c
   #include <stdlib.h>
 
-  #define NAME "Jared Clarke"
+  const char name[] = "Jared Clarke";
 
   char* copy_string(char* destination, const char* source) {
       char* base = destination;
@@ -984,17 +984,19 @@ pointers more generically. These are pointers to non-type ~void~.
   }
 
   int main(int argc, const char* argv[]) {
-      char* text = malloc(sizeof(NAME));
-      copy_string(text, NAME);
+      char* text = malloc(sizeof(name));
+      copy_string(text, name);
       free(text);
       text = NULL;
       return 0;
   }
 #+end_src
 
-**** Assembly Output ~x86-64 gcc 14.2~
+**** Assembly Output ~x86-64 gcc 15.2~
 
 #+begin_src asm
+  name:
+          .string "Jared Clarke"           ; <- string constant
   copy_string:
           push    rbp                      ; <+
           mov     rbp, rsp                 ;  |- Set up state for "copy_string" function.
@@ -1020,8 +1022,6 @@ pointers more generically. These are pointers to non-type ~void~.
           mov     rax, QWORD PTR [rbp-8]   ; <-- Return first pointer to "destination".
           pop     rbp                      ; <+- Return to caller of "copy_string".
           ret                              ; <+
-  .LC0:
-          .string "Jared Clarke"           ; <-- String literal.
 
   main:
           push    rbp                      ; <+
@@ -1033,7 +1033,7 @@ pointers more generically. These are pointers to non-type ~void~.
           call    malloc                   ;  |- Allocate a 13-part array of type "char".
           mov     QWORD PTR [rbp-8], rax   ; <+
           mov     rax, QWORD PTR [rbp-8]   ; <+
-          mov     esi, OFFSET FLAT:.LC0    ;  |- Call "copy_string".
+          mov     esi, OFFSET FLAT:.name   ;  |- Call "copy_string".
           mov     rdi, rax                 ;  |
           call    copy_string              ; <+
           mov     rax, QWORD PTR [rbp-8]   ; <+
