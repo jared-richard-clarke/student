@@ -234,6 +234,14 @@
   — *bjoern.hoehrmann.de/utf-8/decoder/dfa/*, Bjöern Höehrman
 #+end_quote
 
+- ASCII (~00-7F~ or ~0000_0000-0111_1111~): Accept state.
+
+- Lead Byte (~C2-DF~ or ~1100_0010-1101_1111~): Expect one continuation state.
+
+- Lead Byte (~E0-EF~ or ~1110_0000-1110_1111~): Expect two continuation states.
+
+- Lead Byte (~F0-F4~ or ~1111_0000-1111_0100~): Expect three continuation states.
+
 #+begin_example
                                               2 = c2..df
              +--------------------------------------------------------------------------+
