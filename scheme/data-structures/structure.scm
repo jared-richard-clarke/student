@@ -5,7 +5,7 @@
 ;; whose underlying implementation is a vector.
 (define-syntax define-structure
   (lambda (x)
-    (define gen-id
+    (define generate-id
       (lambda (template-id . args)
         (datum->syntax template-id
                        (string->symbol
@@ -17,14 +17,15 @@
                                      args))))))
     (syntax-case x ()
       [(_ name field ...)
-       (with-syntax ([constructor (gen-id #'name "make-" #'name)]
-                     [predicate (gen-id #'name #'name "?")]
+       (for-all identifier? #'(name field ...))
+       (with-syntax ([constructor (generate-id #'name "make-" #'name)]
+                     [predicate (generate-id #'name #'name "?")]
                      [(access ...)
-                      (map (lambda (x) (gen-id x #'name "-" x))
+                      (map (lambda (x) (generate-id x #'name "-" x))
                            #'(field ...))]
                      [(assign ...)
                       (map (lambda (x)
-                             (gen-id x "set-" #'name "-" x "!"))
+                             (generate-id x "set-" #'name "-" x "!"))
                            #'(field ...))]
                      [structure-length (+ (length #'(field ...)) 1)]
                      [(index ...)
