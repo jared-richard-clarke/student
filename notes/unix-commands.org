@@ -62,12 +62,12 @@
 
 ** Searching
 
-| command                        | description                                 |
-|--------------------------------+---------------------------------------------|
-| ~grep pattern files~           | search for *pattern* in *files*             |
-| ~grep -r pattern dir~          | search recursively for *pattern* in *dir*   |
-| ~command \vert{} grep pattern~ | search for *pattern* in output of *command* |
-| ~locate file~                  | find all instances of *file*                |
+| command                  | description                                 |
+|--------------------------+---------------------------------------------|
+| ~grep pattern files~     | search for *pattern* in *files*             |
+| ~grep -r pattern dir~    | search recursively for *pattern* in *dir*   |
+| ~command | grep pattern~ | search for *pattern* in output of *command* |
+| ~locate file~            | find all instances of *file*                |
 
 ** System Info
 
