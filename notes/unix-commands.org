@@ -8,27 +8,27 @@
 
 ** File Commands
 
-| command           | description                           |
-|-------------------+---------------------------------------|
-| ~ls~              | directory listing                     |
-| ~ls -al~          | formatted listing with hidden files   |
-| ~cd dir~          | change directory to *dir*             |
-| ~pwd~             | show current directory                |
-| ~mkdir dir~       | create directory *dir*                |
-| ~rm file~         | delete file                           |
-| ~rm -r dir~       | delete directory *dir*                |
-| ~rm -f file~      | force remove file                     |
-| ~rm -rf dir~      | force remove directory                |
-| ~cp file1 file2~  | copy *file1* into *file2*             |
-| ~cp -r dir1 dir2~ | copy *dir1* into *dir2*               |
-| ~mv file1 file2~  | rename or move *file1* to *file2*     |
-| ~ln -s file link~ | create symbolic link *link* to file   |
-| ~touch file~      | create or update *file*               |
-| ~cat > file~      | places standard input into *file*     |
-| ~more file~       | output contents of *file*             |
-| ~head file~       | output first 10 lines of *file*       |
-| ~tail file~       | output last 10 lines of *file*        |
-| ~tail -f file~    | output contents of *file* as it grows |
+| command           | description                         |
+|-------------------+-------------------------------------|
+| ~ls~              | directory listing                   |
+| ~ls -al~          | formatted listing with hidden files |
+| ~cd dir~          | change directory                    |
+| ~pwd~             | show current directory              |
+| ~mkdir dir~       | create directory                    |
+| ~rm file~         | delete file                         |
+| ~rm -r dir~       | delete directory                    |
+| ~rm -f file~      | force remove file                   |
+| ~rm -rf dir~      | force remove directory              |
+| ~cp file1 file2~  | copy *file1* into *file2*           |
+| ~cp -r dir1 dir2~ | copy *dir1* into *dir2*             |
+| ~mv file1 file2~  | rename or move *file1* to *file2*   |
+| ~ln -s file link~ | create symbolic link to file        |
+| ~touch file~      | create or update file               |
+| ~cat > file~      | places standard input into file     |
+| ~more file~       | output contents of file             |
+| ~head file~       | output first 10 lines of file       |
+| ~tail file~       | output last 10 lines of file        |
+| ~tail -f file~    | output contents of file as it grows |
 
 ** Process Management
 
