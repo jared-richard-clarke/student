@@ -71,7 +71,8 @@
   # mkdir --parents {foo,bar}/baz
   mkdir -p {foo,bar}/baz
   # Create a temporary directory.
-  mktemp -d # mktemp --directory
+  # mktemp --directory
+  mktemp -d 
 #+end_src
 
 ** Move Directories
