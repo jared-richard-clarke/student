@@ -1,0 +1,135 @@
+* Unix Command Reference
+
+** Sources
+
+| source                         | author       |
+|--------------------------------+--------------|
+| *Unix/Linux Command Reference* | FOSSwire.com |
+
+** File Commands
+
+| command           | description                           |
+|-------------------+---------------------------------------|
+| ~ls~              | directory listing                     |
+| ~ls -al~          | formatted listing with hidden files   |
+| ~cd dir~          | change directory to *dir*             |
+| ~pwd~             | show current directory                |
+| ~mkdir dir~       | create directory *dir*                |
+| ~rm file~         | delete file                           |
+| ~rm -r dir~       | delete directory *dir*                |
+| ~rm -f file~      | force remove file                     |
+| ~rm -rf dir~      | force remove directory                |
+| ~cp file1 file2~  | copy *file1* into *file2*             |
+| ~cp -r dir1 dir2~ | copy *dir1* into *dir2*               |
+| ~mv file1 file2~  | rename or move *file1* to *file2*     |
+| ~ln -s file link~ | create symbolic link *link* to file   |
+| ~touch file~      | create or update *file*               |
+| ~cat > file~      | places standard input into *file*     |
+| ~more file~       | output contents of *file*             |
+| ~head file~       | output first 10 lines of *file*       |
+| ~tail file~       | output last 10 lines of *file*        |
+| ~tail -f file~    | output contents of *file* as it grows |
+
+** Process Management
+
+| command        | description                                              |
+|----------------+----------------------------------------------------------|
+| ~ps~           | display currently active processes                       |
+| ~top~          | display all running processes                            |
+| ~kill pid~     | kill process id *pid*                                    |
+| ~killall proc~ | kill all processes named *proc*                          |
+| ~bg~           | lists stopped or background jobs, resume background jobs |
+| ~fg~           | brings most recent job to foreground                     |
+| ~fg n~         | brings *n* jobs to foreground                            |
+
+** File Permissions
+
+- chmod octal file :: change the permissions of *file* to *octal*: read(r) = 4,
+  write(w) = 2, and execute(x) = 1.
+
+| command     | description                              |
+|-------------+------------------------------------------|
+| ~chmod 777~ | read, write, and execute for all         |
+| ~chmod 755~ | rwx for owner and rx for group and world |
+
+** SSH (Secure Shell)
+
+| command                 | description                                |
+|-------------------------+--------------------------------------------|
+| ~ssh user@host~         | connect to *host* as *user*                |
+| ~ssh -p port user@host~ | connect to *host* on port *port* as *user* |
+| ~ssh-copy-id user@host~ | enable a keyed or passwordless login       |
+
+** Searching
+
+| command                        | description                                 |
+|--------------------------------+---------------------------------------------|
+| ~grep pattern files~           | search for *pattern* in *files*             |
+| ~grep -r pattern dir~          | search recursively for *pattern* in *dir*   |
+| ~command \vert{} grep pattern~ | search for *pattern* in output of *command* |
+| ~locate file~                  | find all instances of *file*                |
+
+** System Info
+
+| command             | description                             |
+|---------------------+-----------------------------------------|
+| ~date~              | show the current date and time          |
+| ~cal~               | show this month's calendar              |
+| ~uptime~            | show current uptime                     |
+| ~w~                 | display who is online                   |
+| ~whoami~            | who are you logged in as                |
+| ~finger user~       | display information about *user*        |
+| ~uname -a~          | show kernel information                 |
+| ~cat /proc/cpuinfo~ | cpu information                         |
+| ~cat /proc/meminfo~ | memory information                      |
+| ~man command~       | show the manual for *command*           |
+| ~df~                | show disk usage                         |
+| ~du~                | show directory space usage              |
+| ~free~              | show memory and swap usage              |
+| ~whereis app~       | show possible locations of *app*        |
+| ~which app~         | show which *app* will be run by default |
+
+** Compression
+
+| command                     | description                                      |
+|-----------------------------+--------------------------------------------------|
+| ~tar cf file.tar files~     | create a tar named *file.tar* containing *files* |
+| ~tar xf file.tar~           | extract files from *file.tar*                    |
+| ~tar czf file.tar.gz files~ | create a tar with Gzip compression               |
+| ~tar xzf file.tar.gz~       | extract a tar using Gzip                         |
+| ~tar cjf file.tar.bz2~      | create a tar with Bzip2 compression              |
+| ~tar xjf file.tar.bz2~      | extract a tar using Bzip2                        |
+| ~gzip file~                 | compresses *file* and renames it *file.gz*       |
+| ~gzip -d file.gz~           | decompresses *file.gz* back to *file*            |
+
+** Network
+
+| command        | description                        |
+|----------------+------------------------------------|
+| ~ping host~    | ping *host* and output results     |
+| ~whois domain~ | get whois information for *domain* |
+| ~dig domain~   | get DNS information for *domain*   |
+| ~dig -x host~  | reverse lookup *host*              |
+| ~wget file~    | download *file*                    |
+| ~wget -c file~ | continue a stopped download        |
+
+** Installation
+
+- ~./configure~
+
+- ~make~
+
+- ~make install~
+
+** Shortcuts
+
+| command  | description                                         |
+|----------+-----------------------------------------------------|
+| *Ctrl+C* | halts the current command                           |
+| *Ctrl+Z* | stops the current command, resume with *fg* or *bg* |
+| *Ctrl+D* | log out of current session, similar to *exit*       |
+| *Ctrl+W* | erases one word in the current line                 |
+| *Ctrl+U* | erases the whole line                               |
+| *Ctrl+R* | type to bring ip a recent command                   |
+| ~!!~     | repeats the last command                            |
+| ~exit~   | log out of current session                          |
