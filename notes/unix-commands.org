@@ -2,9 +2,10 @@
 
 ** Sources
 
-| source                         | author       |
-|--------------------------------+--------------|
-| *Unix/Linux Command Reference* | FOSSwire.com |
+| source                         | author             |
+|--------------------------------+--------------------|
+| *Unix/Linux Command Reference* | FOSSwire.com       |
+| *bash-cheatsheet.sh*           | Julien Le Coupanec |
 
 ** File Commands
 
@@ -133,3 +134,194 @@
 | *Ctrl+R* | type to bring ip a recent command                   |
 | ~!!~     | repeats the last command                            |
 | ~exit~   | log out of current session                          |
+
+** Shell Scripting
+
+#+begin_src sh
+  #!/bin/bash
+
+  # === Variables ===
+
+  varname=value                # Define a variable.
+  varname=value command        # Define a variable to be in the environment of a particular subprocess
+  echo $varname                # Checks a variable's value.
+  echo $$                      # Print process ID of the current shell.
+  echo $!                      # Prints process ID of the most recently invoked background job.
+  echo $?                      # Display the exit status of the last command.
+  export VARNAME=value         # Define an environment variable (will be available in subprocesses).
+
+  array[0] = val               # Several ways to define an array.
+  array[1] = val
+  array[2] = val
+  array=([2]=val [0]=val [1]=val)
+  array(val val val)
+
+  ${array[i]}                  # Display array's value for this index. If no index is supplied,
+                               # array element 0 is assumed.
+  ${#array[i]}                 # Find the length of an element within an array.
+  ${#array[@]}                 # Find the length of an array.
+
+  declare -a                   # Treat variables as arrays.
+  declare -f                   # Use function names only.
+  declare -F                   # Displays function names without definitions.
+  declare -i                   # Treat variables as integers.
+  declare -r                   # Makes variables read-only.
+  declare -x                   # Mark variables for export via the environment.
+
+  ${varname:-word}             # If varname exists and isn't null, return its value. Otherwise return word.
+  ${varname:=word}             # If varname exists and isn't null, return its value. Otherwise set it
+                               # to word and return its value.
+  ${varname:?message}          # If varname exists and isn't null, return its value. Otherwise print
+                               # varname followed by message. Abort the current command or script.
+  ${varname:+word}             # If varname exists and isn't null, return word. Otherwise return null.
+  ${varname:offset:length}     # Performs substring expansion. Returns the substring of $varname starting
+                               # at offset and up to length characters.
+
+  ${variable#pattern}          # If the pattern matches the beginning of the variable's value, delete
+                               # the shortest part that matches and return the rest.
+  ${variable##pattern}         # If the pattern matches the beginning of the variable's value, delete
+                               # the longest part that matches and return the rest.
+  ${variable%pattern}          # If the pattern matches the end of the variable's value, delete the
+                               # shortest part that matches and return the rest.
+  ${variable%%pattern}         # If the pattern matches the end of the variable's value, delete the
+                               # longest part that matches and return the rest.
+  ${variable/pattern/string}   # The longest pattern match in variable is replaced by string.
+                               # Only the first match is replaced.
+  ${variable//pattern/string}  # The longest pattern match in variable is replaced by string.
+                               # All matches are replaced.
+
+  ${#varname}                  # Returns the length of the value of the variable as a character string.
+
+  *(patternlist)               # Matches zero or more occurences of the given patterns.
+  +(patternlist)               # Matches one or more occurences of the given patterns.
+  ?(patternlist)               # Matches zero or one occurence of the given patterns
+  @(patternlist)               # Matches exactly one of the given patterns.
+  !(patternlist)               # Matches anything except one of the given patterns
+
+  $(UNIX command)              # Command Substitution: Runs the command and returns standard output.
+
+
+  # === Functions ===
+  #
+  # Function refer to passed arguments by position (as if they were positional parameters),
+  # that is, $1, $2, and so forth. $@ is equal to "$1" "$2"... "$N", where N is the number
+  # of positional parameters. $# holds the number of positional parameters.
+
+
+  name() {
+    shell commands
+  }
+
+  function name {
+    shell commands
+  }
+
+  unset -f name             # Deletes a function definition.
+  declare -f                # Displays all defined functions in your login session.
+
+
+  # === Control Flow ===
+
+  statement1 && statement2  # and operator
+  statement1 || statement2  # or operator
+
+  -a                        # and operator inside a test conditional expression.
+  -o                        # or operator inside a test conditional expression.
+
+  str1 = str2               # str1 matches str2.
+  str1 != str2              # str1 does not match str2.
+  str1 < str2               # str1 is less than str2.
+  str1 > str2               # str1 is greater than str2.
+  -n str1                   # str1 is not null (has length greater than 0).
+  -z str1                   # str1 is null (has length 0).
+
+  -a file                   # file exists
+  -d file                   # file exists and is a directory
+  -e file                   # file exists; same -a
+  -f file                   # file exists and is a regular file (i.e., not a directory or other special type of file)
+  -r file                   # you have read permission
+  -r file                   # file exists and is not empty
+  -w file                   # your have write permission
+  -x file                   # you have execute permission on file, or directory search permission if it is a directory
+  -N file                   # file was modified since it was last read
+  -O file                   # you own file
+  -G file                   # file's group ID matches yours (or one of yours, if you are in multiple groups)
+  file1 -nt file2           # file1 is newer than file2
+  file1 -ot file2           # file1 is older than file2
+
+  -lt                       # less than
+  -le                       # less than or equal
+  -eq                       # equal
+  -ge                       # greater than or equal
+  -gt                       # greater than
+  -ne                       # not equal
+
+  if condition
+  then
+    statements
+  [elif condition
+    then statements...]
+  [else
+    statements]
+  fi
+
+  for x := 1 to 10 do
+  begin
+    statements
+  end
+
+  for name [in list]
+  do
+    statements that can use $name
+  done
+
+  for (( initialisation ; end condition ; update ))
+  do
+    statements...
+  done
+
+  case expression in
+    pattern1 )
+      statements ;;
+    pattern2 )
+      statements ;;
+    ...
+  esac
+
+  select name [in list]
+  do
+    statements that can use $name
+  done
+
+  while condition; do
+    statements
+  done
+
+  until condition; do
+    statements
+  done
+
+  # === Input/Output Redirection ===
+
+  cmd1 | cmd2  # pipe: Take standard output of cmd1 as standard input to cmd2.
+  > file       # Direct standard output to file.
+  < file       # Take standard input from file.
+  >> file      # Direct standard output to file. Append to file if it already exists.
+  >| file      # Forces standard output to file even if noclobber is set.
+  n >| file    # Forces output to file from file descriptor n even if noclobber is set.
+  <> file      # Use file as both standard input and standard output.
+  n <> file    # Use file as both input and output for file descriptor n.
+  << label     # here-document
+  n > file     # Directs file descriptor n to file.
+  n < file     # Takes file descriptor n from file.
+  n >> file    # Directs file description n to file. Append to file if it already exists.
+  n >&         # Duplicates standard output to file descriptor n.
+  n <&         # Duplicates standard input from file descriptor n.
+  n >& m       # File descriptor n is made to be a copy of the output file descriptor.
+  n <& m       # File descriptor n is made to be a copy of the input file descriptor.
+  &> file      # Directs standard output and standard error to file.
+  <&-          # Close the standard input.
+  >&-          # Close the standard output.
+  n>&-         # Close the output from file descriptor n.
+  n<&-         # Close the input from file descripor n.
+#+end_src
