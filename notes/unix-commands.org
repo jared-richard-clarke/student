@@ -270,40 +270,44 @@
   -gt                       # greater than
   -ne                       # not equal
 
-  if condition; then
-    statements
-  [elif condition; then
-    statements...]
-  [else
-    statements]
+  if [ condition ]; then
+    # statements
+  elif [ condition ]; then
+    # statements
+  else
+    # statements
   fi
 
-  for name [in list]; do
-    statements that can use $name
+  for name in list; do
+    # statements that can use $name
   done
 
-  for (( initialisation ; end condition ; update )) do
-    statements
+  for (( start; condition; update )) do
+    # statements
   done
 
   case expression in
-    pattern1 )
-      statements ;;
-    pattern2 )
-      statements ;;
-    # ...
+    pattern_1 )
+      # statements
+      ;;
+    pattern_2|pattern_3 )
+      # statements
+      ;;
+    * )
+      # default statements
+      ;;
   esac
 
-  select name [in list]; do
-    statements that can use $name
+  select name in list; do
+    # statements that can use $name
   done
 
-  while condition; do
-    statements
+  while [ condition ]; do
+    # statements
   done
 
-  until condition; do
-    statements
+  until [ condition ]; do
+    # statements
   done
 
   # === Input/Output Redirection ===
