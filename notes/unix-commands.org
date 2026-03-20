@@ -138,7 +138,19 @@
 ** Shell Scripting
 
 #+begin_src sh
-  #!/bin/bash
+  #!/usr/bin/env bash
+
+  # #!/bin/bash         : Hardcodes the exact path to the Bash interpreter.
+  # #!/src/bin/env bash : Uses a system's env command to search the user's PATH
+  #                       for the first available bash executable.
+  # #!/usr/bin/sh       : Specifies the system's default, POSIX-compliant shell.
+
+  # === Bash Strict Mode ===
+  set -euo pipefail
+
+  # set -e          : Exit if any command has a non-zero exit status. 
+  # set -u          : Exit on any reference to an undefined variable.
+  # set -o pipefail : Prevent errors in a pipeline from being masked.
 
   # === Variables ===
 
@@ -192,7 +204,7 @@
 
   ${#varname}                  # Returns the length of the value of the variable as a character string.
 
-  *(patternlist)               # Matches zero or more occurences of the given patterns.
+  ,*(patternlist)               # Matches zero or more occurences of the given patterns.
   +(patternlist)               # Matches one or more occurences of the given patterns.
   ?(patternlist)               # Matches zero or one occurence of the given patterns
   @(patternlist)               # Matches exactly one of the given patterns.
@@ -215,6 +227,8 @@
   function name {
     shell commands
   }
+
+  name x                    # Function application.
 
   unset -f name             # Deletes a function definition.
   declare -f                # Displays all defined functions in your login session.
@@ -256,27 +270,19 @@
   -gt                       # greater than
   -ne                       # not equal
 
-  if condition
-  then
+  if condition; then
     statements
-  [elif condition
-    then statements...]
+  [elif condition; then
+    statements...]
   [else
     statements]
   fi
 
-  for x := 1 to 10 do
-  begin
-    statements
-  end
-
-  for name [in list]
-  do
+  for name [in list]; do
     statements that can use $name
   done
 
-  for (( initialisation ; end condition ; update ))
-  do
+  for (( initialisation ; end condition ; update )) do
     statements...
   done
 
@@ -288,8 +294,7 @@
     ...
   esac
 
-  select name [in list]
-  do
+  select name [in list]; do
     statements that can use $name
   done
 
