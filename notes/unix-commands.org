@@ -283,7 +283,7 @@
   done
 
   for (( initialisation ; end condition ; update )) do
-    statements...
+    statements
   done
 
   case expression in
@@ -291,7 +291,7 @@
       statements ;;
     pattern2 )
       statements ;;
-    ...
+    # ...
   esac
 
   select name [in list]; do
@@ -316,7 +316,6 @@
   n >| file    # Forces output to file from file descriptor n even if noclobber is set.
   <> file      # Use file as both standard input and standard output.
   n <> file    # Use file as both input and output for file descriptor n.
-  << label     # here-document
   n > file     # Directs file descriptor n to file.
   n < file     # Takes file descriptor n from file.
   n >> file    # Directs file description n to file. Append to file if it already exists.
@@ -325,8 +324,8 @@
   n >& m       # File descriptor n is made to be a copy of the output file descriptor.
   n <& m       # File descriptor n is made to be a copy of the input file descriptor.
   &> file      # Directs standard output and standard error to file.
-  <&-          # Close the standard input.
-  >&-          # Close the standard output.
-  n>&-         # Close the output from file descriptor n.
-  n<&-         # Close the input from file descripor n.
+  <& -         # Close the standard input.
+  >& -         # Close the standard output.
+  n >& -       # Close the output from file descriptor n.
+  n <& -       # Close the input from file descripor n.
 #+end_src
