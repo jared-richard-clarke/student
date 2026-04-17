@@ -10,6 +10,10 @@
 
 Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
 
+- Name :: Identifiers, which can be any string of Latin letters, Arabic-Indic
+  digits, and underscores. Must not be a reserved word or begin
+  with an underscore or digit.
+
 #+begin_src ebnf
   chunk               ::= block
 
@@ -24,12 +28,15 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
                         |  "do" block "end"
                         |  "while" expression "do" block "end"
                         |  "repeat" block "until" expression
-                        |  "if" expression "then" block { "elseif" expression "then" block } [ "else" block ] end 
+                        |  "if" expression "then" block { "elseif" expression "then" block } [ "else" block ] end
                         |  "for" Name "=" expression "," expression [ "," expression ] "do" block "end"
                         |  "for" names "in" expressions "do" block "end"
                         |  "function" function-name function-body
                         |  "local" "function" Name function-body
+                        |  "global" "function" Name function-body
                         |  "local" attributes [ "=" expressions ]
+                        |  "global" attributes
+                        |  "global" [ attribute ] "*"
 
   attributes          ::=  Name attribute { "," Name attribute }
 
@@ -78,8 +85,8 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
 
   function-body       ::= "(" [ parameters ] ")" block "end"
 
-  parameters          ::= names [ "," "..." ]
-                        | "..."
+  parameters          ::= names [ "," "..." [ Name ] ]
+                        | "..." [ Name ]
 
   table-constructor   ::= "{" [ fields ] "}"
 
