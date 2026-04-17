@@ -145,7 +145,7 @@ Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
    All values in Lua are first-class values. This means that all values can be stored
    in variables, passed as arguments to other functions, and returned as results."
 
-  — *Lua 5.4 Reference Manual*
+  — *Lua 5.5 Reference Manual*
 #+end_quote
 
 - nil :: A single value whose main property is to be different from any other value. It often
