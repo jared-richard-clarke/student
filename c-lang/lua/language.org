@@ -10,10 +10,6 @@
 
 Extended BNF grammar where *{E}* is 0 or more *Es* and *[E]* is optional.
 
-- Name :: Identifiers, which can be any string of Latin letters, Arabic-Indic
-  digits, and underscores. Must not be a reserved word or begin
-  with an underscore or digit.
-
 #+begin_src ebnf
   chunk               ::= block
 
