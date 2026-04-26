@@ -716,28 +716,28 @@ instructions for implementing control flow.
 
   sum(1)
 
-                            Function Prototype
-                           +-------------+
-          Closure      +-->| chunk       |--> Bytecode Array
-         +----------+  |   |-------------|
-     +-->| function |--+   | constants   |--> Value Array
-     |   |----------|      +-------------+
-     |   | upvalues |--+
-     |   +----------+  |    Upvalue Pointer Array
-     |                 |   +-------------+-------------+
-     |                 +-->| index 0     | index 1     |
-     |                     +-------------+-------------+
-     |                            |           |
-     |                  +---------+           |
-     |                  |   Closed Upvalue    |   Closed Upvalue
-     |                  |  +-------------+    |  +-------------+
-     |  Open Upvalues <----| next        |<------| next        |
-     |                  |  +-------------+    |  +-------------+
-     |                  +->| location    |--+ +->| location    |--+
-     |                     +-------------+  |    +-------------+  |
-     |                     | closed 7    |<-+    | closed 11   |<-+
-     |                     +-------------+       +-------------+
-     |
+                           Function Prototype
+                          +-------------+
+         Closure      +-->| chunk       |--> Bytecode Array
+        +----------+  |   |-------------|
+    +-->| function |--+   | constants   |--> Value Array
+    |   |----------|      +-------------+
+    |   | upvalues |--+
+    |   +----------+  |    Upvalue Pointer Array
+    |                 |   +-------------+-------------+
+    |                 +-->| index 0     | index 1     |
+    |                     +-------------+-------------+
+    |                            |           |
+    |                  +---------+           |
+    |                  |   Closed Upvalue    |   Closed Upvalue
+    |                  |  +-------------+    |  +-------------+
+    |  Open Upvalues <----| next        |<------| next        |
+    |                  |  +-------------+    |  +-------------+
+    |                  +->| location    |--+ +->| location    |--+
+    |                     +-------------+  |    +-------------+  |
+    |                     | closed 7    |<-+    | closed 11   |<-+
+    |                     +-------------+       +-------------+
+    |
   +------->
   | g | 1 | <-- Stack
   +------->
