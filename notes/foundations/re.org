@@ -43,8 +43,8 @@ is regular.
 | ε                  | { "" }                                    | epsilon        |
 | a                  | { "a" }                                   | singleton      |
 | s \vert{} t        | L(s) ∪ L(t)                               | union          |
-| st or s • t        | { v • w : v ∈ L(s) ∧ w ∈ L(t) }           | concatenation  |
-| s*                 | { "" } ∪ { v • w : v ∈ L(s) ∧ w ∈ L(s*) } | Kleene closure |
+| st or s • t        | { s • t : s ∈ L(s) ∧ t ∈ L(t) }           | concatenation  |
+| s*                 | { "" } ∪ { s • s : s ∈ L(s) ∧ s ∈ L(s*) } | Kleene closure |
 
 *** Formal Definition
 
