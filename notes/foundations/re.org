@@ -17,7 +17,22 @@
 
   - For example, *Σ = {0, 1}* is an alphabet, and *001*, *1*, and *11* are all strings over *Σ*.
 
-*** Operations on Strings
+- ε :: Epsilon, the empty string. A string of length *0*. The identity element for string concatenation.
+
+- Σ\star{} :: The set of all strings over alphabet *Σ*.
+
+For *Σ* with *n* elements, there is *1* string with *0* symbols, *n* strings with *1* symbol,
+*n^{2}* strings with *2* symbols, *n^{3}* strings with *3* symbols, etc.
+
+A language over an alphabet *Σ* is a subset of *Σ\star{}*. Thus, a language over *Σ* is an element
+of *P(Σ\star{})*, the power set of *Σ\star{}*.
+
+For any alphabet *Σ*, the number of languages over *Σ* is uncountable. The power set of a countably
+infinite set is uncountable.
+
+*Side Note*: By convention, *(a, b, c, ...)* are symbols and *(u, v, w, ...)* are strings.
+
+*** String Operations
 
 - length :: The number of symbols in a string. Denoted by *|x|* where *x* is a string.
 
@@ -28,21 +43,6 @@
   - Non-commutative: *xy ≠ yx* for all strings *x* and *y*.
 
 - reversal :: If *x = a_{1} a_{2} ... a_{n}* then *x^{R} = a_{n} ... a_{2} a_{1}*.
-
-*Side Note*: By convention, *(a, b, c, ...)* are symbols and *(u, v, w, ...)* are strings.
-
-- empty string :: The symbol *ε*, which represents a string with no symbols in it.
-
-- Σ\star{} :: The set of strings made up of zero or more symbols from alphabet *Σ*.
-
-For *Σ* with *n* elements, there is *1* string with *0* symbols, *n* strings with *1* symbol,
-*n^{2}* strings with *2* symbols, *n^{3}* strings with *3* symbols, etc.
-
-A language over an alphabet *Σ* is a subset of *Σ\star{}*. Thus, a language over *Σ* is an element
-of *P(Σ\star{})*, the power set of *Σ\star{}*.
-
-For any alphabet *Σ*, the number of languages over *Σ* is uncountable. The power set of a countably
-infinite set is uncountable.
 
 - Kleene Closure :: *S\star{}*, where the union of *S⁰ ∪ S¹ ∪ S² ∪ ...* results in the set of
   all strings that is concatenated zero or more times from *S*.
