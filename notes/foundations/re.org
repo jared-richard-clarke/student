@@ -55,7 +55,7 @@ The collection of regular languages over an alphabet *Σ* is defined recursively
 2. For each *a ∈ Σ*, the singleton language *{a}* is a regular language.
 
 3. If *A* is a regular language, *A\star{}* is a regular language. Due to this, the empty string
-   language *{ε}* is also regular.
+   language *ε* is also regular.
 
 4. If *A* and *B* are regular languages, then *A ∪ B* and *A • B* are regular languages.
 
