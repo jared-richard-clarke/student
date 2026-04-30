@@ -30,7 +30,7 @@
   - For any alphabet *Σ*, the number of languages over *Σ* is uncountable. The power set of a countably
     infinite set is uncountable.
 
-- language (L) :: Any subset of *Σ\star{}*.
+- language (L) :: Any subset of *Σ\star{}*. A collection of strings over alphabet *Σ*.
 
   - A language over an alphabet *Σ* is a subset of *Σ\star{}*. Thus, a language over *Σ* is an element
     of *P(Σ\star{})*, the power set of *Σ\star{}*.
