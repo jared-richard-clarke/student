@@ -9,15 +9,16 @@
 
 ** Languages
 
-- alphabet :: A finite, non-empty set.
+- alphabet (Σ) :: A finite, non-empty set of symbols.
 
-- symbols :: The elements of a set.
+- symbols (a, b, c, ...) :: The elements of an alphabet.
 
-- string :: A finite sequence of symbols from an alphabet. Called a *string over an alphabet*.
+- string (u, v, w, ...) :: A finite sequence of symbols from an alphabet.
+  Called a *string over an alphabet*.
 
-  - For example, *Σ = {0, 1}* is an alphabet, and *001*, *1*, and *11* are all strings over *Σ*.
+  - *Σ = {0, 1}* is an alphabet, and *001*, *1*, and *11* are all strings over *Σ*.
 
-- ε :: Epsilon, the empty string. A string of length *0*. The identity element for string concatenation.
+- empty string (ε) :: A string of length *0*. The identity element for string concatenation.
 
 - Σ\star{} :: The set of all strings over alphabet *Σ*.
 
@@ -30,22 +31,14 @@ of *P(Σ\star{})*, the power set of *Σ\star{}*.
 For any alphabet *Σ*, the number of languages over *Σ* is uncountable. The power set of a countably
 infinite set is uncountable.
 
-*Side Note*: By convention, *(a, b, c, ...)* are symbols and *(u, v, w, ...)* are strings.
-
-*** String Operations
-
-- length :: The number of symbols in a string. Denoted by *|x|* where *x* is a string.
-
-- concatenation :: The combination of two strings, where *x* and *y* become *x • y* or *xy*.
-
-  - Associative: *(xy)z = x(yz)* for all strings *x*, *y*, and *z*.
-
-  - Non-commutative: *xy ≠ yx* for all strings *x* and *y*.
-
-- reversal :: If *x = a_{1} a_{2} ... a_{n}* then *x^{R} = a_{n} ... a_{2} a_{1}*.
-
-- Kleene Closure :: *S\star{}*, where the union of *S⁰ ∪ S¹ ∪ S² ∪ ...* results in the set of
-  all strings that is concatenated zero or more times from *S*.
+| regular expression | regular language                          | name           |
+|--------------------+-------------------------------------------+----------------|
+| Ø                  | {}                                        | empty set      |
+| ε                  | { "" }                                    | epsilon        |
+| a                  | { "a" }                                   | singleton      |
+| s \vert{} t        | L(s) ∪ L(t)                               | union          |
+| st or s • t        | { v • w : v ∈ L(s) ∧ w ∈ L(t) }           | concatenation  |
+| s*                 | { "" } ∪ { v • w : v ∈ L(s) ∧ w ∈ L(s*) } | Kleene closure |
 
 ** Regular Expressions
 
