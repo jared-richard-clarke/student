@@ -18,7 +18,7 @@
 
   - *Σ = {0, 1}* is an alphabet, and *001*, *1*, and *11* are all strings over *Σ*.
 
-- empty string (Ø) :: The set containing no strings.
+- empty set (Ø) :: The set containing no strings.
 
 - empty string (ε) :: A string of length *0*. The identity element for string concatenation.
 
