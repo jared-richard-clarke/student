@@ -27,8 +27,15 @@
   - For *Σ* with *n* elements, there is *1* string with *0* symbols, *n* strings with *1* symbol,
     *n^{2}* strings with *2* symbols, *n^{3}* strings with *3* symbols, etc.
 
-  - For any alphabet *Σ*, the number of languages over *Σ* is uncountable. The power set of a countably
-    infinite set is uncountable.
+#+begin_example
+  Σ  = { 0, 1 }
+  Σ⁰ = { ε }
+  Σ¹ = { 0, 1 }
+  Σ² = { 00, 01, 10, 11 }
+  Σ³ = { 000, 001, 010, 011, 100, 101, 110, 111 }
+  ...
+  Σ* = { ε, 0, 1, 00, 01, ... }
+#+end_example
 
 - language (L) :: Any subset of *Σ\star{}*. A collection of strings over alphabet *Σ*.
 
