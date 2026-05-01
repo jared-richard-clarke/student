@@ -77,7 +77,7 @@ The collection of regular languages over an alphabet *Σ* is defined recursively
 
 - L(r₁ • r₂) = L(r₁) • L(r₂)
 
-- L(r\star{}) = L(r)\star{}
+- L(r\star{}) = L(r)\star{} = { ε } ∪ L(r) ∪ L(r)* ...
 
 - L((r)) = L(r)
 
