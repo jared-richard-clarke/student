@@ -167,6 +167,46 @@ may change but no input is consumed. The formal description of *δ* is *δ: Q ×
 The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ Σ\star{}* that are
 accepted by *M: L(M) = { w ∈ Σ\star{} | δ\star{}(q₀, w) ∩ F ≠ Ø }*.
 
+#+begin_example
+   === State Machine Graph ==
+
+   + 0 +    + 0 +     + 0 +
+   V   |    V   |     V   |
+   +---+    +---+    +=====+
+   | x |-1->| y |-1->|| z ||
+   +---+    +---+    +=====+
+                      ^   |
+                      + 1 +
+
+  === State Machine Table ===
+
+    +- state
+    V
+  +-----------+
+  |   | 0 | 1 | <- input
+  |---+---+---|
+  | x | x | y |
+  |---+---+---|
+  | y | y | z |
+  |---+---+---|
+  | z | z | z |
+  +-----------+
+
+  === State Machine Tuple ===
+
+  M = (Q, Σ, δ, q₀, F)
+  where Q = { x, y, z}
+        Σ = { 0, 1 }
+        δ = { (x, 0) -> x,
+              (y, 0) -> y,
+              (z, 0) -> z,
+              (x, 1) -> y,
+              (y, 1) -> z,
+              (z, 1) -> z }
+        q₀ = x
+        F  = { z }
+#+end_example
+
 *** NFA to DFA Conversion
 
 The epsilon closure *E(q)* of a state *q* in *Q* is the union of the set *{q}* with the set of all states
