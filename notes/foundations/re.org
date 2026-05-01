@@ -168,6 +168,10 @@ The language accepted by *M*, denoted *L(M)*, is the set of all strings *w ∈ �
 accepted by *M: L(M) = { w ∈ Σ\star{} | δ\star{}(q₀, w) ∩ F ≠ Ø }*.
 
 #+begin_example
+   === Language ===
+
+   L(M) = { w ∈ { 0, 1 }* | n₁(w) ≥ 2 }
+
    === State Machine Graph ==
 
      + 0 +    + 0 +     + 0 +
