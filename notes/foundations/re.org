@@ -22,7 +22,7 @@
 
 - empty string (ε) :: A string of length *0*. The identity element for string concatenation.
 
-- Σ\star{} :: The set of all strings over alphabet *Σ*, including *ε*.
+- Σ\star{} :: The set of all strings over alphabet *Σ*, including *ε*. The universal set.
 
   - For *Σ* with *n* elements, there is *1* string with *0* symbols, *n* strings with *1* symbol,
     *n^{2}* strings with *2* symbols, *n^{3}* strings with *3* symbols, etc.
