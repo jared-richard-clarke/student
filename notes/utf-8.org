@@ -234,7 +234,7 @@
   //  in the transition table can be pre-multiplied with 16 which would
   //  save a shift instruction for every byte...We actually just need 12
   //  and can throw away the filler values previously in the table making
-  //  the table 36 bytes shorter and save the shift in the code. "
+  //  the table 36 bytes shorter and save the shift in the code."
   //
   // — Bjöern Höehrman
 
