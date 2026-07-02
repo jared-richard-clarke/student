@@ -60,11 +60,24 @@ provide a means to structure the building of such computations.
 ** Parsers
 
 #+begin_src haskell
+  (++)             :: [a] -> [a] -> [a]
+  []     ++ ys      = ys
+  (x:xs) ++ ys      = x:(xs++ys)
+
+  foldl            :: (a -> b -> a) -> a -> [b] -> a
+  foldl f z []      = z
+  foldl f z (x:xs)  = foldl f (f z x) xs
+
+  foldr            :: (a -> b -> b) -> b -> [a] -> b
+  foldr f z []      = z
+  foldr f z (x:xs)  = f x (foldr f z xs)
+
+  concat           :: [[a]] -> [a]
+  concat            = foldr (++) []
+
   -- Parser is a function that inputs a string and outputs a list
   -- of zero or more (value, string) pairs.
   type Parser a = String -> [(a, String)]
-
-  -- primitives
 
   item :: Parser Char
   item = \inp -> case inp of
@@ -76,7 +89,7 @@ provide a means to structure the building of such computations.
     a list of (value, string) pairs. Since "f" is a function that takes
     a value and evaluates to a parser, it can be applied to each value
     and unconsumed input string in turn. This results in a list of lists
-    of (value, string) pairs that can then be flattened to a single list
+    of (value, string) pairs that are then flattened to a single list
     using "concat".
   -}
 
