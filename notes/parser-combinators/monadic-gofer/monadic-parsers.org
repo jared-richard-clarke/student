@@ -341,9 +341,9 @@ provide a means to structure the building of such computations.
   symbol xs = token (string xs)
 
   -- identifier ks = token (do x <- ident
-  --                           if (not (elem x ks))
-  --                              return x
-  --                              zero)
+  --                           if not (elem x ks)
+  --                              then return x
+  --                              else zero)
   identifier :: [String] -> Parser String
   identifier ks = token [x | x <- ident, not (elem x ks)]
 #+end_src
