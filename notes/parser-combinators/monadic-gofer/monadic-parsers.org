@@ -126,15 +126,12 @@ provide a means to structure the building of such computations.
 
   -- combinators
 
+  -- sat p = item `bind` \x ->
+  --         if p x
+  --         then result x
+  --         else zero
   sat :: (Char -> Bool) -> Parser Char
   sat p = [x | x <- item, p x]
-
-  {-
-    === equivalent ===
-    sat :: (Char -> Bool) -> Parser Char
-    sat p = item `bind` \x ->
-            if p x then result x else zero
-  -}
 
   {-
     force: ensures "many" has the expected behavior under lazy evaluation.
