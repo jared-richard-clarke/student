@@ -171,6 +171,15 @@ provide a means to structure the building of such computations.
     the deterministic combinator, to improve parser efficiency.
   -}
 
+  -- many p = force (bind p        \x  ->
+  --                 bind (many p) \xs ->
+  --                 result (x:xs)
+  --                +++ [[]])
+  --
+  -- many p = force (do x  <- p
+  --                    xs <- many p
+  --                    result (x:xs)
+  --                 +++ [[]])
   many :: Parser a -> Parser [a]
   many p = force ([x:xs | x <- p, xs <- many p] +++ [[]])
 
@@ -180,6 +189,11 @@ provide a means to structure the building of such computations.
   sepby :: Parser a -> Parser b -> Parser [a]
   p `sepby` sep = (p `sepby1` sep) +++ [[]]
 
+  -- sepby1 p sep = do x  <- p
+  --                   xs <- many (do _ <- sep
+  --                                  y <- p
+  --                                  result y)
+  --                   result (x:xs)
   sepby1 :: Parser a -> Parser b -> Parser [a]
   p `sepby1` sep = [x:xs | x <- p,
                          , xs <- many [y | _ <- sep, y <- p]]
@@ -201,11 +215,21 @@ provide a means to structure the building of such computations.
   chainr :: Parser a -> Parser (a -> a -> a) -> a -> Parser a
   chainr p op v = (p `chainr1` op) +++ [v]
 
+  -- chainr1 p op = do x <- p
+  --                  (do f <- op
+  --                      y <- chainr1 p op
+  --                      result (f x y))
+  --                  +++ [x]
   chainr1 :: Parser a -> Parser (a -> a -> a) -> Parser a
   p `chainr1` op =
       p `bind` \x ->
           [f x y | f <- op, y <- p `chainr1` op] +++ [x]
 
+  -- ops xs = foldr (++) do (p, op) <- xs
+  --                        result (do _ <- p
+  --                                   result op)
+  --                               |------------| parser monad
+  --                     |----------------------| list monad
   ops :: [(Parser a, b)] -> Parser b
   ops xs = foldr1 (++) [[op | _ <- p] | (p, op) <- xs]
 
@@ -229,13 +253,34 @@ provide a means to structure the building of such computations.
   alphanum :: Parser Char
   alphanum = letter +++ digit
 
+  -- string ""     = [""]
+  -- string (x:xs) = do _ <- char x
+  --                    _ <- string xs
+  --                    result (x:xs)
+  --
+  -- string ""     = [""]
+  -- string (x:xs) = bind (char x)    \_ ->
+  --                 bind (string xs) \_ ->
+  --                 result (x:xs)
   string :: String -> Parser String
   string ""     = [""]
   string (x:xs) = [x:xs | _ <- char x, _ <- string xs]
 
+  -- ident = do x  <- lower
+  --            xs <- many alphanum
+  --            result (x:xs)
+  --
+  -- ident = bind lower           \x  ->
+  --         bind (many alphanum) \xs ->
+  --         result (x:xs)
   ident :: Parser String
   ident = [x:xs | x <- lower, xs <- many alphanum]
 
+  -- nat = chainl1 (do x <- digit
+  --                   result (ord x - ord '0'))
+  --               [op]
+  --       where
+  --         op m n = 10*m + n
   nat :: Parser Int
   nat = [ord x - ord '0' | x <- digit] `chainl1` [op]
         where
@@ -250,6 +295,12 @@ provide a means to structure the building of such computations.
             m `op` n = 10*m + n
   -}
 
+  -- int = do f <- op
+  --          n <- nat
+  --       where
+  --         op = (do _ <- char '-'
+  --                  result negate)
+  --              +++ [id]
   int :: Parser Int
   int = [f n | f <- op, n <- nat]
         where
@@ -289,6 +340,10 @@ provide a means to structure the building of such computations.
   symbol :: String -> Parser String
   symbol xs = token (string xs)
 
+  -- identifier ks = token (do x <- ident
+  --                           if (not (elem x ks))
+  --                              return x
+  --                              zero)
   identifier :: [String] -> Parser String
   identifier ks = token [x | x <- ident, not (elem x ks)]
 #+end_src
