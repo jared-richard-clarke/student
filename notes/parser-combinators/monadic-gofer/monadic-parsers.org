@@ -311,7 +311,7 @@ provide a means to structure the building of such computations.
   spaces = [() | _ <- many1 (sat isSpace)]
            where
              isSpace x =
-             (x == ' ') || (x == '\n') || (x == '\t')
+               (x == ' ') || (x == '\n') || (x == '\t')
 
   comment :: Parser ()
   comment = [() | _ <- string "--"
