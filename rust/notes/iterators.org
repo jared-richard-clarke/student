@@ -191,6 +191,93 @@ where ~into_iter~ delegates to ~iter_mut()~.
   }
 #+end_src
 
+** More Iterators
+
+*** FromFn Iterator
+
+Allows the creation of custom iterators without using the more verbose syntax
+of creating a dedicated type and implementing the ~Iterator~ trait.
+The provided closure, ~FnMut() -> Option<T>~, can track state within
+its captures and the environment across iterations.
+
+#+begin_src rust
+  fn from_fn<T, F>(f: F) -> FromFn<F>
+  where
+      F: FnMut() -> Option<T>,
+  {
+      FromFn(f)
+  }
+
+  struct FromFn<F>(F);
+
+
+  impl<T, F> Iterator for FromFn<F>
+  where
+      F: FnMut() -> Option<T>,
+  {
+      type Item = T;
+
+      fn next(&mut self) -> Option<Self::Item> {
+          (self.0)()
+      }
+  }
+
+  // === Implementation of Count ===
+  let mut count = 0;
+  let counter = std::iter::from_fn(move || {
+      counter += 1;
+      if count < 6 {
+          Some(count)
+      } else {
+          None
+      }
+  });
+
+  // numbers = &[1, 2, 3, 4, 5]
+  let numbers = counter.collect::<Vec<_>>();
+#+end_src
+
+*** Repeat Iterator
+
+An iterator that repeats a single element endlessly.
+
+#+begin_src rust
+  fn repeat<T: Clone>(elt: T) -> Repeat<T> {
+      Repeat { element: elt }
+  }
+
+  pub struct Repeat<A> {
+      element: A,
+  }
+
+  impl<A: Clone> Iterator for Repeat<A> {
+      type Item = A;
+
+      fn next(&mut self) -> Option<A> {
+          Some(self.element.clone())
+      }
+
+      // Advancing an infinite iterator of a single element is a no-op.
+      fn advance_by(&mut self, n: usize) -> Result<(), NonZero<usize>> {
+          let _ = n;
+          Ok(())
+      }
+
+      fn nth(&mut self, n: usize) -> Option<A> {
+          let _ = n;
+          Some(self.element.clone())
+      }
+
+      fn last(self) -> Option<A> {
+          panic!("iterator is infinite");
+      }
+
+      fn count(self) -> usize {
+          panic!("iterator is infinite");
+      }
+  }
+#+end_src
+
 ** Adapters
 
 Functions which take an ~Iterator~ and return another ~Iterator~, such as ~map~, ~take~,
