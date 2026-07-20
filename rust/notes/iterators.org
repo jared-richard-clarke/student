@@ -455,7 +455,7 @@ An iterator which uses a closure to determine if an element of the underlying it
 
 *** Scan Adapter
 
-An iterator adapter similar to ~fold~. ~scan()~ takes two arguments: an initial value
+An iterator adapter similar to ~fold()~. ~scan()~ takes two arguments: an initial value
 that seeds the internal state and a closure with two arguments, the first being
 a mutable reference to the internal state and the second an iterator element.
 
