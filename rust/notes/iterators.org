@@ -503,6 +503,47 @@ a mutable reference to the internal state and the second an iterator element.
   let numbers = counter.collect::<Vec<_>>();
 #+end_src
 
+*** Cycle Adapter
+
+Repeats an iterator endlessly.
+
+#+begin_src rust
+  fn cycle(self) -> Cycle<Self>
+  where
+      Self: Sized + [const] Clone,
+  {
+      Cycle::new(self)
+  }
+
+  struct Cycle<I> {
+      original: I,
+      iter: I,
+  }
+
+  const impl<I: [const] Clone> Cycle<I> {
+      fn new(iter: I) -> Cycle<I> {
+          Cycle { original: iter.clone(), iter }
+      }
+  }
+
+  impl<I> Iterator for Cycle<I>
+  where
+      I: Clone + Iterator,
+  {
+      type Item = <I as Iterator>::Item;
+
+      fn next(&mut self) -> Option<<I as Iterator>::Item> {
+          match self.iter.next() {
+              None => {
+                  self.iter = self.original.clone();
+                  self.iter.next()
+              }
+              y => y,
+          }
+      }
+  }
+#+end_src
+
 ** General ~Iterator~ Trait Methods
 
 Not all methods provided by the ~Iterator~ trait return adapters.
