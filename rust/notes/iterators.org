@@ -233,7 +233,7 @@ its captures and the environment across iterations.
       }
   });
 
-  // numbers = &[1, 2, 3, 4, 5]
+  // let numbers = &[1, 2, 3, 4, 5]
   let numbers = counter.collect::<Vec<_>>();
 #+end_src
 
@@ -451,6 +451,56 @@ An iterator which uses a closure to determine if an element of the underlying it
       }
       try { accum }
   }
+#+end_src
+
+*** Scan Adapter
+
+An iterator adapter similar to ~fold~. ~scan()~ takes two arguments: an initial value
+that seeds the internal state and a closure with two arguments, the first being
+a mutable reference to the internal state and the second an iterator element.
+
+#+begin_src rust
+  fn scan<St, B, F>(self, initial_state: St, f: F) -> Scan<Self, St, F>
+  where
+      Self: Sized,
+      F: FnMut(&mut St, Self::Item) -> Option<B>,
+  {
+      Scan::new(self, initial_state, f)
+  }
+
+  struct Scan<I, St, F> {
+      iter: I,
+      f: F,
+      state: St,
+  }
+
+  impl<I, St, F> Scan<I, St, F> {
+      const fn new(iter: I, state: St, f: F) -> Scan<I, St, F> {
+          Scan { iter, state, f }
+      }
+  }
+  impl<B, I, St, F> Iterator for Scan<I, St, F>
+  where
+      I: Iterator,
+      F: FnMut(&mut St, I::Item) -> Option<B>,
+  {
+      type Item = B;
+
+      fn next(&mut self) -> Option<B> {
+          let a = self.iter.next()?;
+          (self.f)(&mut self.state, a)
+      }
+  }
+
+  // === Counter with Scan ===
+
+  let counter = Counter::new().scan(1, |state, x| {
+      *state = *state + x;
+      Some(*state)
+  });
+
+  // let numbers = &[2, 4, 7, 11];
+  let numbers = counter.collect::<Vec<_>>();
 #+end_src
 
 ** General ~Iterator~ Trait Methods
