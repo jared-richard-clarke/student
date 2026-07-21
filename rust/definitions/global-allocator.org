@@ -144,7 +144,7 @@
   }
 #+end_src
 
-** Implementing Simple Arena Allocator
+** Implement ~GlobalAlloc~ for Arena Allocator
 
 #+begin_src rust
   use std::alloc::{GlobalAlloc, Layout};
