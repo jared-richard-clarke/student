@@ -53,7 +53,7 @@
   }
 #+end_src
 
-** Implement ~GlobalAlloc~ for System
+** Implement ~GlobalAlloc~ for ~System~
 
 #+begin_src rust
   use super::{MIN_ALIGN, realloc_fallback};
