@@ -299,7 +299,7 @@
               }
           }
       }
-
+      // .size_hint() -> (lower bound, upper bound)
       fn size_hint(&self) -> (usize, Option<usize>) {
           let elem_size = mem::size_of::<T>();
           let len = (self.end as usize - self.start as usize)
