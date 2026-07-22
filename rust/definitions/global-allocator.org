@@ -148,7 +148,7 @@
 ** Implement ~GlobalAlloc~ for ~SimpleAlloc~
 
 I pulled the following text from the *Allocation* section of the *ptr* module
-in the standard library:
+in the Rust Standard Library:
 
 An allocation is a subset of program memory which is addressable from Rust,
 and within which pointer arithmetic is possible. Examples of allocations
