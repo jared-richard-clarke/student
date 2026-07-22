@@ -188,9 +188,9 @@
       }
 
       // vec.remove(1);
-      // +---+---+---+---+    +---+---+---+
-      // | x | w | y | z | -> | x | y | z |
-      // +---+---+---+---+    +---+---+---+
+      // +---+---+---+---+    +---+---+---+---+
+      // | x | w | y | z | -> | x | y | z |   |
+      // +---+---+---+---+    +---+---+---+---+
       pub fn remove(&mut self, index: usize) -> T {
           assert!(index < self.len, "index out of bounds");
           unsafe {
