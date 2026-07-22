@@ -5,6 +5,7 @@
 | source                                        | author        |
 |-----------------------------------------------+---------------|
 | *GlobalAlloc: Rust Standard Library (1.97.1)* | rust-lang.org |
+| *ptr: Rust Standard Library (1.97.1)*         | rust-lang.org |
 
 ** ~GlobalAlloc~ Trait
 
@@ -146,7 +147,51 @@
 
 ** Implement ~GlobalAlloc~ for ~SimpleAlloc~
 
+I pulled the following text from the *Allocation* section of the *ptr* module
+in the standard library:
+
+An allocation is a subset of program memory which is addressable from Rust,
+and within which pointer arithmetic is possible. Examples of allocations
+include heap allocations, stack-allocated variables, statics, and consts.
+The safety preconditions of some Rust operations - such as ~offset~ and
+field projections (~expr.field~) - are defined in terms of the allocations
+on which they operate.
+
+An allocation has a base address, a size, and a set of memory addresses.
+It is possible for an allocation to have zero size, but such an allocation
+will still have a base address. The base address of an allocation is not
+necessarily unique. While it is currently the case that an allocation always
+has a set of memory addresses which is fully contiguous (i.e., has no "holes"),
+there is no guarantee that this will not change in the future.
+
+Allocations must behave like "normal" memory: in particular, reads must not
+have side-effects, and writes must become visible to other threads using
+the usual synchronization primitives.
+
+For any allocation with ~base~ address, ~size~, and a set of ~addresses~,
+the following are guaranteed:
+
+- For all addresses ~a~ in ~addresses~, ~a~ is in the range ~base .. (base + size)~
+  (note that this requires ~a < base + size~, not ~a <= base + size~)
+
+- base is not equal to ~null()~ (i.e., the address with the numerical value ~0~)
+
+- ~base + size <= usize::MAX~
+
+- ~size <= isize::MAX~
+
+As a consequence of these guarantees, given any address ~a~ within the set
+of addresses of an allocation:
+
+- It is guaranteed that ~a - base~ does not overflow ~isize~
+
+- It is guaranteed that ~a - base~ is non-negative
+
+- It is guaranteed that, given ~o = a - base~ (i.e., the offset of a within the allocation),
+  ~base + o~ will not wrap around the address space (in other words, will not overflow ~usize~)
+
 #+begin_src rust
+  // Example pulled from the alloc module in the Rust Standard Library
   use std::alloc::{GlobalAlloc, Layout};
   use std::cell::UnsafeCell;
   use std::ptr::null_mut;
