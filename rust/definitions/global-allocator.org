@@ -7,6 +7,8 @@
 | *GlobalAlloc: Rust Standard Library (1.97.1)* | rust-lang.org |
 | *ptr: Rust Standard Library (1.97.1)*         | rust-lang.org |
 
+All the sections below are examples and text copied from the Rust Standard Library.
+
 ** ~GlobalAlloc~ Trait
 
 #+begin_src rust
@@ -146,9 +148,6 @@
 #+end_src
 
 ** Implement ~GlobalAlloc~ for ~SimpleAlloc~
-
-I pulled the following text from the *Allocation* section of the *ptr* module
-in the Rust Standard Library:
 
 An allocation is a subset of program memory which is addressable from Rust,
 and within which pointer arithmetic is possible. Examples of allocations
