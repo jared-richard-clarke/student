@@ -240,8 +240,9 @@
       fn into_iter(self) -> IntoIter<T> {
           unsafe {
               let iter = RawValIter::new(&self);
-  
+              // Reads the value from "src" without moving it.
               let buf = ptr::read(&self.buf);
+              // Prevents "Vec" from freeing its own memory at end of scope.
               mem::forget(self);
 
               IntoIter {
@@ -261,8 +262,12 @@
       unsafe fn new(slice: &[T]) -> Self {
           RawValIter {
               start: slice.as_ptr(),
+              // For zero-sized types, ".add()" does not advance the pointer address.
+              // Instead the pointer must be cast to usize so that the length of the
+              // slice can be added directly.
               end: if mem::size_of::<T>() == 0 {
                   ((slice.as_ptr() as usize) + slice.len()) as *const _
+              // If the slice has no elements, the "end" pointer is set equal to "start".
               } else if slice.len() == 0 {
                   slice.as_ptr()
               } else {
@@ -279,8 +284,12 @@
               None
           } else {
               unsafe {
+                  // ".offset(1)" is a no-op for zero-sized types. Convert pointer to usize
+                  // and increment byte by byte.
                   if mem::size_of::<T>() == 0 {
                       self.start = (self.start as usize + 1) as *const _;
+                      // Zero-sized types have no data and occupy no memory. Return a dangling
+                      // pointer instead.
                       Some(ptr::read(NonNull::<T>::dangling().as_ptr()))
                   } else {
                       let old_ptr = self.start;
