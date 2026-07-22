@@ -10,6 +10,8 @@
 
 #+begin_src rust
   // === Vec as implemented in the Rustonomicon ===
+  // Rustonomicon, Chapter 9.11
+  // https://doc.rust-lang.org/nomicon/vec/vec-final.html
   //
   // +-------------------------------------+
   // | Vec                                 |
@@ -164,12 +166,15 @@
           }
       }
 
+     // vec.insert(1, w);
+     // +---+---+---+    +---+---+---+---+    +---+---+---+---+
+     // | x | y | z | -> | x |   | y | z | -> | x | w | y | z |
+     // +---+---+---+    +---+---+---+---+    +---+---+---+---+
       pub fn insert(&mut self, index: usize, elem: T) {
           assert!(index <= self.len, "index out of bounds");
           if self.cap() == self.len {
               self.buf.grow();
           }
-
           unsafe {
               // ptr::copy(source, destination, length)
               ptr::copy(
@@ -182,6 +187,10 @@
           }
       }
 
+      // vec.remove(1);
+      // +---+---+---+---+    +---+---+---+
+      // | x | w | y | z | -> | x | y | z |
+      // +---+---+---+---+    +---+---+---+
       pub fn remove(&mut self, index: usize) -> T {
           assert!(index < self.len, "index out of bounds");
           unsafe {
