@@ -243,6 +243,10 @@ of addresses of an allocation:
           {
               return null_mut();
           };
+          // "self.arena.get()" retrieves the base pointer of the arena's memory.
+          // ".cast::<u8>()" converts the pointer to a raw byte pointer so that
+          // pointer arithmetic is calculated in single bytes.
+          // ".add(allocated)" offsets the pointer forward by "allocated".
           unsafe { self.arena.get().cast::<u8>().add(allocated) }
       }
       unsafe fn dealloc(&self, _ptr: *mut u8, _layout: Layout) {}
