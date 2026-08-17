@@ -43,7 +43,7 @@ $$y' = bx + dy + f$$
 
 ## Transformation of a Vector
 
-The sum of the scaled versions of the basis vectors: i-hat and j-hat.
+The sum of the scaled versions of the basis vectors, i-hat and j-hat.
 
 $$x' = ax + cy$$
 
