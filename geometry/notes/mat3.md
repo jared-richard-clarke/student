@@ -63,6 +63,8 @@ bx + dy
 \end{bmatrix}
 $$
 
+$$\vec{v} = \hat{\imath}x + \hat{\jmath}y$$
+
 ## Transformations
 
 ### Identity
