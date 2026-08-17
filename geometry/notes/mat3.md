@@ -108,3 +108,59 @@ $$
 0 & 0 & 1
 \end{bmatrix}
 $$
+
+## Matrix Composition
+
+### Composition
+
+$$\begin{bmatrix}
+a & b\\
+c & d
+\end{bmatrix}
+\begin{bmatrix}
+e & f\\
+g & h
+\end{bmatrix} = \begin{bmatrix}
+ae + bg & af + bh\\
+ce + dg & cf + dh
+\end{bmatrix}$$
+
+### Transform i-hat
+
+$$\begin{bmatrix}
+a & b\\
+c & d
+\end{bmatrix}
+\begin{bmatrix}
+e\\
+g
+\end{bmatrix} = \begin{bmatrix}
+a\\
+c
+\end{bmatrix}e + \begin{bmatrix}
+b\\
+d
+\end{bmatrix}g = \begin{bmatrix}
+ae + bg\\
+ce + dg
+\end{bmatrix}$$
+
+### Transform j-hat
+
+$$\begin{bmatrix}
+a & b\\
+c & d
+\end{bmatrix}
+\begin{bmatrix}
+f\\
+h
+\end{bmatrix} = \begin{bmatrix}
+a\\
+c
+\end{bmatrix}f + \begin{bmatrix}
+b\\
+d
+\end{bmatrix}h = \begin{bmatrix}
+af + bh\\
+cf + dh
+\end{bmatrix}$$
