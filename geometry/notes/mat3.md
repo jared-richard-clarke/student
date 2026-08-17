@@ -43,6 +43,8 @@ $$y' = bx + dy + f$$
 
 ## Transformation of a Vector
 
+Adding scaled versions of the new basis vectors.
+
 $$x' = ax + cy$$
 
 $$y' = bx + dy$$
