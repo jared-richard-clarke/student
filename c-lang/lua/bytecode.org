@@ -34,35 +34,65 @@
 #+begin_src
   === main ===
 
-  -- parameters: 0+
-  -- slots:      5
-  -- upvalue:    1
-  -- locals:     0
-  -- constants:  6
-  -- functions:  2
+  - parameters: 0+
+  - slots:      5
+  - upvalue:    1
+  - locals:     0
+  - constants:  6
+  - functions:  2
 
   function main(...)
-    1     VARARGPREP    0
-    2     NEWTABLE      0 3 0    -- 0
-    3     EXTRAARG      0
-    4     CLOSURE       1 0      -- function add(x, y)
-    5     SETFIELD      0 1 1    -- "add"
-    6     CLOSURE       1 1      -- function sub(x, y)
-    7     SETFIELD      0 2 1    -- "sub"
-    8     SETFIELD      0 3 4k   -- "PI" 3.14159
-    9     SETTABUP      0 0 0    -- _ENV "Library"
-    10    GETTABUP      0 0 0    -- _ENV "Library"
-    11    GETFIELD      0 0 1    -- "add"
-    12    GETTABUP      1 0 0    -- _ENV "Library"
-    13    GETFIELD      1 1 3    -- "PI"
-    14    GETTABUP      2 0 0    -- _ENV "Library"
-    15    GETFIELD      2 2 2    -- "sub"
-    16    LOADI         3 11
-    17    LOADI         4 10
-    18    CALL          2 3 0    -- 2 in all out
-    19    CALL          0 0 2    -- all in 1 out
-    20    SETTABUP      0 5 0    -- _ENV "sum"
-    21    RETURN        0 1 1    -- 0 out
+    1   VARARGPREP  0       - (adjust varargs)
+
+    2   NEWTABLE    0 3 0   - R[A] := {}
+
+    3   EXTRAARG    0       - extra (larger) argument for previous opcode
+
+    4   CLOSURE     1 0     - function add(x, y):
+                              R[A] := closure(KPROTO[Bx])
+
+    5   SETFIELD    0 1 1   - "add": R[A][K[B]:shortstring] := RK(C)
+
+    6   CLOSURE     1 1     - function sub(x, y):
+                              R[A] := closure(KPROTO[Bx])
+
+    7   SETFIELD    0 2 1   - "sub": R[A][K[B]:shortstring] := RK(C)
+
+    8   SETFIELD    0 3 4k  - "PI" 3.14159:
+                              R[A][K[B]:shortstring] := RK(C)
+
+    9   SETTABUP    0 0 0   - _ENV "Library"
+                              UpValue[A][K[B]:shortstring] := RK(C)
+
+    10  GETTABUP    0 0 0   - _ENV "Library":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+    11  GETFIELD    0 0 1   - "add": R[A] := R[B][K[C]:shortstring]
+
+    12  GETTABUP    1 0 0   - _ENV "Library":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+    13  GETFIELD    1 1 3   - "PI": R[A] := R[B][K[C]:shortstring]
+
+    14  GETTABUP    2 0 0   - _ENV "Library":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+    15  GETFIELD    2 2 2   - "sub": R[A] := R[B][K[C]:shortstring]
+
+    16  LOADI       3 11    - R[A] := sBx
+
+    17  LOADI       4 10    - R[A] := sBx
+
+    18  CALL        2 3 0   - 2 in all out:
+                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+
+    19  CALL        0 0 2   - all in 1 out:
+                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+
+    20  SETTABUP    0 5 0   - _ENV "sum":
+                              UpValue[A][K[B]:shortstring] := RK(C)
+
+    21  RETURN      0 1 1   - 0 out: return R[A]...R[A+B-2]
   end
 
   upvalues:
@@ -84,18 +114,22 @@
 
   === add ===
 
-  -- parameters: 2
-  -- slots:      3
-  -- upvalue:    0
-  -- locals:     2
-  -- constants:  0
-  -- functions:  0
+  - parameters: 2
+  - slots:      3
+  - upvalue:    0
+  - locals:     2
+  - constants:  0
+  - functions:  0
 
   function add(x, y)
-    1    ADD       2 0 1
-    2    MMBIN     0 1 6    -- __add
-    3    RETURN1   2
-    4    RETURN0
+    1  ADD      2 0 1  - R[A] := R[B] + R[C]
+
+    2  MMBIN    0 1 6  - __add:
+                         call C metamethod over R[A] and R[B]
+
+    3  RETURN1  2      - return R[A]
+
+    4  RETURN0         - return
   end
 
   locals:
@@ -107,18 +141,22 @@
 
   === sub ===
 
-  -- parameters: 2
-  -- slots:      3
-  -- upvalue:    0
-  -- locals:     2
-  -- constants:  0
-  -- functions:  0
+  - parameters: 2
+  - slots:      3
+  - upvalue:    0
+  - locals:     2
+  - constants:  0
+  - functions:  0
 
   function sub(x, y)
-    1    SUB       2 0 1
-    2    MMBIN     0 1 7    -- __sub
-    3    RETURN1   2
-    4    RETURN0
+    1  SUB      2 0 1  - R[A] := R[B] + R[C]
+
+    2  MMBIN    0 1 7  - __sub:
+                         call C metamethod over R[A] and R[B]
+
+    3  RETURN1  2      - return R[A]
+
+    4  RETURN0         - return
   end
 
   locals:
@@ -162,22 +200,35 @@
 #+begin_src
   === main ===
 
-  -- parameters: 0+
-  -- slots:      2
-  -- upvalue:    1
-  -- locals:     0
-  -- constants:  2
-  -- functions:  1
+  - parameters: 0+
+  - slots:      2
+  - upvalue:    1
+  - locals:     0
+  - constants:  2
+  - functions:  1
 
   function main(...)
-    1    VARARGPREP    0
-    2    CLOSURE       0 0      -- function factorial(x)
-    3    SETTABUP      0 0 0    -- _ENV "factorial"
-    4    GETTABUP      0 0 0    -- _ENV "factorial"
-    5    LOADI         1 4
-    6    CALL          0 2 2    -- 1 in 1 out
-    7    SETTABUP      0 1 0    -- _ENV "total"
-    8    RETURN        0 1 1    -- 0 out
+    1  VARARGPREP  0      - (adjust varargs)
+
+    2  CLOSURE     0 0    - function factorial(x):
+                            R[A] := closure(KPROTO[Bx])
+
+    3  SETTABUP    0 0 0  - _ENV "factorial":
+                            UpValue[A][K[B]:shortstring] := RK(C)
+
+    4  GETTABUP    0 0 0  - _ENV "factorial":
+                            R[A] := UpValue[B][K[C]:shortstring]
+
+    5  LOADI       1 4    - R[A] := sBx
+
+    6  CALL        0 2 2  - 1 in 1 out:
+                            R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+
+    7  SETTABUP    0 1 0  - _ENV "total":
+                            UpValue[A][K[B]:shortstring] := RK(C)
+
+    8  RETURN      0 1 1  - 0 out:
+                            return R[A]...R[A+B-2]
   end
 
   upvalues:
@@ -195,21 +246,31 @@
 
   === factorial ===
 
-  -- parameters: 1
-  -- slots:      5
-  -- upvalue:    0
-  -- locals:     2
-  -- constants:  0
-  -- functions:  1
+  - parameters: 1
+  - slots:      5
+  - upvalue:    0
+  - locals:     2
+  - constants:  0
+  - functions:  1
 
   function factorial(x)
-    1    CLOSURE     1 0       -- function loop(iter, product)
-    2    MOVE        2 1
-    3    MOVE        3 0
-    4    LOADI       4 1
-    5    TAILCALL    2 3 0k    -- 2 in
-    6    RETURN      2 0 0k    -- all out
-    7    RETURN      2 1 0k    -- 0 out
+    1  CLOSURE   1 0     - function loop(iter, product):
+                           R[A] := closure(KPROTO[Bx])
+
+    2  MOVE      2 1     - R[A] := R[B]
+
+    3  MOVE      3 0     - R[A] := R[B]
+
+    4  LOADI     4 1     - R[A] := sBx
+
+    5  TAILCALL  2 3 0k  - 2 in:
+                           return R[A](R[A+1]...R[A+B-1])
+
+    6  RETURN    2 0 0k  - all out:
+                           return R[A]...R[A+B-2]
+
+    7  RETURN    2 1 0k  - 0 out:
+                           return R[A]...R[A+B-2]
   end
 
   locals:
@@ -221,26 +282,41 @@
 
   === loop ===
 
-  -- parameters: 2
-  -- slots:      5
-  -- upvalue:    1
-  -- locals:     2
-  -- constants:  0
-  -- functions:  0
+  - parameters: 2
+  - slots:      5
+  - upvalue:    1
+  - locals:     2
+  - constants:  0
+  - functions:  0
 
   function loop(iter, product)
-    1     LTI         0 2  0
-    2     JMP         2           -- to pc 5
-    3     RETURN1     1
-    4     JMP         7           -- to pc 12
-    5     GETUPVAL    2 0         -- loop
-    6     ADDI        3 0 -1
-    7     MMBINI      0 1  7 0    -- __sub
-    8     MUL         4 0  1
-    9     MMBIN       0 1  8      -- __mul
-    10    TAILCALL    2 3  0      -- 2 in
-    11    RETURN      2 0  0      -- all out
-    12    RETURN0
+    1   LTI       0 2  0    - if ((R[A] < sB) ~= k) then pc++
+
+    2   JMP       2         - to pc 5: pc += sJ
+
+    3   RETURN1   1         - return R[A]
+
+    4   JMP       7         - to pc 12: pc += sJ
+
+    5   GETUPVAL  2 0       - loop: R[A] := UpValue[B]
+
+    6   ADDI      3 0 -1    - R[A] := R[B] + sC
+
+    7   MMBINI    0 1  7 0  - __sub:
+                              call C metamethod over R[A] and sB
+
+    8   MUL       4 0  1    - R[A] := R[B] * R[C]
+
+    9   MMBIN     0 1  8    - __mul:
+                              call C metamethod over R[A] and R[B]
+
+    10  TAILCALL  2 3  0    - 2 in:
+                              return R[A](R[A+1]...R[A+B-1])
+
+    11  RETURN    2 0  0    - all out:
+                              return R[A]...R[A+B-2]
+
+    12  RETURN0             - rerturn
   end
 
   locals:
@@ -255,193 +331,4 @@
   | index | name | instack | idx | kind             |
   |-------+------+---------+-----+------------------|
   | 0     | loop | true    | 1   | VDKREG (regular) |
-#+end_src
-
-*** Registers
-
-#+begin_src
-  function main(...)
-
-    1 VARARGPREP 0
-      -- Adjust vararg parameters, where A holds the fixed number
-      -- of parameters.
-      --
-      -- A: fixed args -> 0
-
-    2 CLOSURE 0 0
-      -- Creates an instance (or closure) of a function prototype.
-      --
-      -- R(A): 0
-      -- Bx:   proto -> 0
-
-    3 SETTABUP 0 0 0
-      -- Similar to SETTABLE, but the table is referenced as an upvalue.
-      -- Copies the value from register R(C) or a constant into a table
-      -- element. The table is referenced by register R(A), while the index
-      -- to the table is given by K(B), which is a constant value.
-      --
-      -- R(A):  table -> 0 -> upvalue _ENV, instack -> true, index: 0, kind: VDKREG
-      -- K(B):  index -> 0 -> constant string = "factorial"
-      -- RK(C): value -> 0
-
-    4 GETTABUP 0 0 0
-      -- Similar to GETTABLE, but the table is referenced as an upvalue.
-      -- Copies the value from a table element into register R(A). The table
-      -- is referenced to register R(B), while the index to the table is given
-      -- by K(C), which is a constant value.
-      --
-      -- R(A): result -> 0
-      -- R(B): table -> 0 -> upvalue _ENV, instack -> true, index: 0, kind: VDKREG
-      -- K(C): index -> 0 -> constant string -> "factorial"
-
-    5 LOADI 1 4
-      -- Loads an integer operand value into register R(A).
-      --
-      -- R(A): 1
-      -- sBx:  value -> 4
-
-    6 CALL 0 2 2
-      -- Performs a function call, with register R(A) holding the reference
-      -- to the function object to be called.
-      --
-      -- R(A):     func -> 0
-      -- R(A + 1): arg #1 -> 1
-      -- B:        args -> 1
-      -- C:        retn -> 1
-
-    7 SETTABUP 0 1 0
-      -- R(A):  table -> 0 -> upvalue _ENV, instack -> true, index: 0, kind: VDKREG
-      -- K(B):  index -> 1 -> constant string = "total"
-      -- RK(C): value -> 0
-
-    8 RETURN 0 1 1
-      -- Returns to the calling function with the optional return values.
-      --
-      -- R(A): 0
-      -- B:    retn -> 0
-  end
-
-  function factorial(x)
-
-    1 CLOSURE 1 0
-      -- R(A): 1
-      -- Bx:   proto -> 0
-
-    2 MOVE 2 1
-      -- Copies the value of register R(B) into register R(A). If R(B) holds a table,
-      -- function, or userdata, then the reference to that object is copied.
-      --
-      -- R(A): 2
-      -- R(B): 1 -> local loop
-
-    3 MOVE 3 0
-      -- R(A): 3
-      -- R(B): 0 -> local x
-
-    4 LOADI 4 1
-      -- R(A): 4
-      -- sBx:  value -> 1
-
-    5 TAILCALL 2 3 0k
-      -- Performs a tail call, which happens when a return statement has a single
-      -- function call as its expression.
-      --
-      -- R(A):     func -> 2
-      -- R(A + 1): arg #1 -> 3
-      -- R(A + 2): arg #2 -> 4
-      -- B:        args -> 2
-      -- C:        retn -> NaN
-
-    6 RETURN 2 0 0k
-      -- R(A): 2
-      -- B:    retn -> set by by the previous instruction (top)
-
-    7 RETURN 2 1 0k
-      -- R(A): 2
-      -- B:    retn -> 0
-  end
-
-  function loop(iter, product)
-
-    1 LTI 0 2 0
-      -- Compares R(A) and integer B for lower than. If the boolean result is not C,
-      -- then skip the next instruction.
-      --
-      -- R(A): 0 -> local iter
-      -- B:    integer -> 2
-      -- C:    boolean -> false
-
-    2 JMP 7
-      -- Performs an unconditional jump with sBx as its signed displacement.
-      --
-      -- A: to pc -> 5
-
-    3 RETURN1 1
-      -- Returns to the calling function with one return value.
-      --
-      -- R(A): 1 -> local product
-
-    4 JMP 7
-      -- A: to pc -> 12
-
-    5 GETUPVAL 2 0
-      -- Copies the upvalue number B into register R(A).
-      --
-      -- R(A): 2
-      -- B:    0 -> upvalue loop, instack true, index: 1, kind: VDKREG
-
-    6 ADDI 3 0 -1
-      -- Performs the addition operation on R(B) and integer C and stores
-      -- the result in R(A).
-      --
-      -- R(A): result -> 3
-      -- R(B): lhs -> 0 -> local iter
-      -- C:    rhs -> -1
-
-    7 MMBINI 0 1 7 0
-      -- Tries to invoke metamethod C (__sub) with R(A) and sB. If successful, puts
-      -- puts the result in R(A) of the previous instruction (ADDI).
-      -- "k" implies that the values R(A) and sB should be flipped when invoking the
-      -- metamethod. This happens when one of the operands is an integer and is on
-      -- the left-hand side of the operation.
-      --
-      -- pi:      prev instr -> ADDI
-      -- R(pi:A): result -> 3
-      -- R(A):    lhs -> 0 -> local iter
-      -- sB:      rhs -> 1
-      -- C:       method -> 7 -> __sub
-      -- k:       flip -> 0 -> false
-
-    8 MUL 4 0 1
-      -- Performs the multiplication operation on RK(B) and RK(C) and stores
-      -- the result in R(A).
-      --
-      -- R(A):  result -> 4
-      -- RK(B): lhs -> 0 -> local iter
-      -- RK(C): rhs -> 1 -> local product
-
-    9 MMBIN 0 1 8
-      -- Tries to invoke the metamethod C (__mul) with R(A) and R(B). If successful, puts
-      -- the result in R(A) of the previous instruction (MUL).
-      --
-      -- pi:      prev instr -> MUL
-      -- R(pi:A): result -> 4
-      -- R(A):    lhs -> 0 -> local iter
-      -- R(B):    rhs -> 1 -> local product
-      -- C:       method -> 8 -> __mul
-
-    10 TAILCALL 2 3 0
-       -- R(A):     func -> 2
-       -- R(A + 1): arg #1 -> 3
-       -- R(A + 2): arg #2 -> 4
-       -- B:        args -> 2
-       -- C:        retn -> LUA_MULTRET (top)
-
-    11 RETURN 2 0 0
-       -- R(A): 2
-       -- B:    retn -> set by previous instruction (top)
-
-    12 RETURN0
-       -- Returns to the calling function without a return value.
-  end
 #+end_src
