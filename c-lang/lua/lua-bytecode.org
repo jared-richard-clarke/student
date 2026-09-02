@@ -125,3 +125,222 @@
   | 0     | x    | 1       | 5     |
   | 1     | y    | 1       | 5     |
 #+end_src
+
+** Factorial Tail Call
+
+*** Source Code
+
+#+begin_src lua
+  function factorial(x)
+      local function loop(iter, product)
+          if iter < 2 then
+              return product
+          else
+              return loop(iter - 1, iter * product)
+          end
+      end
+      return loop(x, 1)
+  end
+
+  total = factorial(4)
+#+end_src
+
+*** Byte Code
+
+#+begin_src
+  === main ===
+
+  -- parameters: 0+
+  -- slots:      2
+  -- upvalue:    1
+  -- locals:     0
+  -- constants:  2
+  -- functions:  1
+
+  function main(...)
+    1    VARARGPREP    0
+    2    CLOSURE       0 0      -- function factorial(x)
+    3    SETTABUP      0 0 0    -- _ENV "factorial"
+    4    GETTABUP      0 0 0    -- _ENV "factorial"
+    5    LOADI         1 4
+    6    CALL          0 2 2    -- 1 in 1 out
+    7    SETTABUP      0 1 0    -- _ENV "total"
+    8    RETURN        0 1 1    -- 0 out
+
+  upvalues:
+
+  | index | name | instack | idx | kind             |
+  |-------+------+---------+-----+------------------|
+  | 0     | _ENV | true    | 0   | VDKREG (regular) |
+
+  constants:
+
+  | index | type   | value       |
+  |-------+--------+-------------|
+  | 0     | string | "factorial" |
+  | 1     | string | "total"     |
+
+  === factorial ===
+
+  -- parameters: 1
+  -- slots:      5
+  -- upvalue:    0
+  -- locals:     2
+  -- constants:  0
+  -- functions:  1
+
+  function factorial(x)
+    1    CLOSURE     1 0       -- function loop(iter, product)
+    2    MOVE        2 1
+    3    MOVE        3 0
+    4    LOADI       4 1
+    5    TAILCALL    2 3 0k    -- 2 in
+    6    RETURN      2 0 0k    -- all out
+    7    RETURN      2 1 0k    -- 0 out
+
+  locals:
+
+  | index | name | startpc | endpc |
+  |-------+------+---------+-------|
+  | 0     | x    | 1       | 8     |
+  | 1     | loop | 2       | 8     |
+
+  === loop ===
+
+  -- parameters: 2
+  -- slots:      5
+  -- upvalue:    1
+  -- locals:     2
+  -- constants:  0
+  -- functions:  0
+
+  function loop(iter, product)
+    1     LTI         0 2  0
+    2     JMP         2           -- to pc 5
+    3     RETURN1     1
+    4     JMP         7           -- to pc 12
+    5     GETUPVAL    2 0         -- loop
+    6     ADDI        3 0 -1
+    7     MMBINI      0 1  7 0    -- __sub
+    8     MUL         4 0  1
+    9     MMBIN       0 1  8      -- __mul
+    10    TAILCALL    2 3  0      -- 2 in
+    11    RETURN      2 0  0      -- all out
+    12    RETURN0
+
+  locals:
+
+  | index | name    | startpc | endpc |
+  |-------+---------+---------+-------|
+  | 0     | iter    | 1       | 13    |
+  | 1     | product | 1       | 13    |
+
+  upvalues:
+
+  | index | name | instack | idx | kind             |
+  |-------+------+---------+-----+------------------|
+  | 0     | loop | true    | 1   | VDKREG (regular) |
+#+end_src
+
+*** Registers
+
+#+begin_src
+  function main(...)
+
+    1 VARARGPREP 0
+      -- Adjust vararg parameters, where A holds the fixed number
+      -- of parameters.
+      --
+      -- A: fixed args -> 0
+
+    2 CLOSURE 0 0
+      -- Creates an instance (or closure) of a function prototype.
+      --
+      -- R(A): 0
+      -- Bx:   proto -> 0
+
+    3 SETTABUP 0 0 0
+      -- Similar to SETTABLE, but the table is referenced as an upvalue.
+      -- Copies the value from register R(C) or a constant into a table
+      -- element. The table is referenced by register R(A), while the index
+      -- to the table is given by K(B), which is a constant value.
+      --
+      -- R(A):  table -> 0 -> upvalue _ENV, instack -> true, index: 0, kind: VDKREG
+      -- K(B):  index -> 0 -> constant string = "factorial"
+      -- RK(C): value -> 0
+
+    4 GETTABUP 0 0 0
+      -- Similar to GETTABLE, but the table is referenced as an upvalue.
+      -- Copies the value from a table element into register R(A). The table
+      -- is referenced to register R(B), while the index to the table is given
+      -- by K(C), which is a constant value.
+      --
+      -- R(A): result -> 0
+      -- R(B): table -> 0 -> upvalue _ENV, instack -> true, index: 0, kind: VDKREG
+      -- K(C): index -> 0 -> constant string -> "factorial"
+
+    5 LOADI 1 4
+      -- Loads an integer operand value into register R(A).
+      --
+      -- R(A): 1
+      -- sBx:  value -> 4
+
+    6 CALL 0 2 2
+      -- Performs a function call, with register R(A) holding the reference
+      -- to the function object to be called.
+      --
+      -- R(A):     func -> 0
+      -- R(A + 1): arg #1 -> 1
+      -- B:        args -> 1
+      -- C:        retn -> 1
+
+    7 SETTABUP 0 1 0
+      -- R(A):  table -> 0 -> upvalue _ENV, instack -> true, index: 0, kind: VDKREG
+      -- K(B):  index -> 1 -> constant string = "total"
+      -- RK(C): value -> 0
+
+    8 RETURN 0 1 1
+      -- Returns to the calling function with the optional return values.
+      --
+      -- R(A): 0
+      -- B:    retn -> 0
+
+  function factorial(x)
+
+    1 CLOSURE 1 0
+      -- R(A): 1
+      -- Bx:   proto -> 0
+
+    2 MOVE 2 1
+      -- Copies the value of register R(B) into register R(A). If R(B) holds a table,
+      -- function, or userdata, then the reference to that object is copied.
+      --
+      -- R(A): 2
+      -- R(B): 1 -> local loop
+
+    3 MOVE 3 0
+      -- R(A): 3
+      -- R(B): 0 -> local x
+
+    4 LOADI 4 1
+      -- R(A): 4
+      -- sBx:  value -> 1
+
+    5 TAILCALL 2 3 0k
+      -- Performs a tail call, which happens when a return statement has a single
+      -- function call as its expression.
+      --
+      -- R(A):     func -> 2
+      -- R(A + 1): arg #1 -> 3
+      -- R(A + 2): arg #2 -> 4
+      -- B:        args -> 2
+      -- C:        retn -> NaN
+
+    6 RETURN 2 0 0k
+      -- R(A): 2
+      -- B:    retn -> set by by the previous instruction (top)
+
+    7 RETURN 2 1 0k
+      -- R(A): 2
+      -- B:    retn -> 0
+#+end_src
