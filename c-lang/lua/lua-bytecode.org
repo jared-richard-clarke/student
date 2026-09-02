@@ -178,6 +178,7 @@
     6    CALL          0 2 2    -- 1 in 1 out
     7    SETTABUP      0 1 0    -- _ENV "total"
     8    RETURN        0 1 1    -- 0 out
+  end
 
   upvalues:
 
