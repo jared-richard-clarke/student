@@ -63,6 +63,7 @@
     19    CALL          0 0 2    -- all in 1 out
     20    SETTABUP      0 5 0    -- _ENV "sum"
     21    RETURN        0 1 1    -- 0 out
+  end
 
   upvalues:
 
@@ -95,6 +96,7 @@
     2    MMBIN     0 1 6    -- __add
     3    RETURN1   2
     4    RETURN0
+  end
 
   locals:
 
@@ -117,6 +119,7 @@
     2    MMBIN     0 1 7    -- __sub
     3    RETURN1   2
     4    RETURN0
+  end
 
   locals:
 
@@ -146,6 +149,15 @@
 #+end_src
 
 *** Byte Code
+
+| property            | value |
+|---------------------+-------|
+| version             | 5.5.0 |
+| standard            |   yes |
+| sizeof(int)         |     4 |
+| sizeof(instruction) |     4 |
+| sizeof(lua_Integer) |     8 |
+| sizeof(lua_Number)  |     8 |
 
 #+begin_src
   === main ===
@@ -197,6 +209,7 @@
     5    TAILCALL    2 3 0k    -- 2 in
     6    RETURN      2 0 0k    -- all out
     7    RETURN      2 1 0k    -- 0 out
+  end
 
   locals:
 
@@ -227,6 +240,7 @@
     10    TAILCALL    2 3  0      -- 2 in
     11    RETURN      2 0  0      -- all out
     12    RETURN0
+  end
 
   locals:
 
@@ -304,6 +318,7 @@
       --
       -- R(A): 0
       -- B:    retn -> 0
+  end
 
   function factorial(x)
 
@@ -343,4 +358,89 @@
     7 RETURN 2 1 0k
       -- R(A): 2
       -- B:    retn -> 0
+  end
+
+  function loop(iter, product)
+
+    1 LTI 0 2 0
+      -- Compares R(A) and integer B for lower than. If the boolean result is not C,
+      -- then skip the next instruction.
+      --
+      -- R(A): 0 -> local iter
+      -- B:    integer -> 2
+      -- C:    boolean -> false
+
+    2 JMP 7
+      -- Performs an unconditional jump with sBx as its signed displacement.
+      --
+      -- A: to pc -> 5
+
+    3 RETURN1 1
+      -- Returns to the calling function with one return value.
+      --
+      -- R(A): 1 -> local product
+
+    4 JMP 7
+      -- A: to pc -> 12
+
+    5 GETUPVAL 2 0
+      -- Copies the upvalue number B into register R(A).
+      --
+      -- R(A): 2
+      -- B:    0 -> upvalue loop, instack true, index: 1, kind: VDKREG
+
+    6 ADDI 3 0 -1
+      -- Performs the addition operation on R(B) and integer C and stores
+      -- the result in R(A).
+      --
+      -- R(A): result -> 3
+      -- R(B): lhs -> 0 -> local iter
+      -- C:    rhs -> -1
+
+    7 MMBINI 0 1 7 0
+      -- Tries to invoke metamethod C (__sub) with R(A) and sB. If successful, puts
+      -- puts the result in R(A) of the previous instruction (ADDI).
+      -- "k" implies that the values R(A) and sB should be flipped when invoking the
+      -- metamethod. This happens when one of the operands is an integer and is on
+      -- the left-hand side of the operation.
+      --
+      -- pi:      prev instr -> ADDI
+      -- R(pi:A): result -> 3
+      -- R(A):    lhs -> 0 -> local iter
+      -- sB:      rhs -> 1
+      -- C:       method -> 7 -> __sub
+      -- k:       flip -> 0 -> false
+
+    8 MUL 4 0 1
+      -- Performs the multiplication operation on RK(B) and RK(C) and stores
+      -- the result in R(A).
+      --
+      -- R(A):  result -> 4
+      -- RK(B): lhs -> 0 -> local iter
+      -- RK(C): rhs -> 1 -> local product
+
+    9 MMBIN 0 1 8
+      -- Tries to invoke the metamethod C (__mul) with R(A) and R(B). If successful, puts
+      -- the result in R(A) of the previous instruction (MUL).
+      --
+      -- pi:      prev instr -> MUL
+      -- R(pi:A): result -> 4
+      -- R(A):    lhs -> 0 -> local iter
+      -- R(B):    rhs -> 1 -> local product
+      -- C:       method -> 8 -> __mul
+
+    10 TAILCALL 2 3 0
+       -- R(A):     func -> 2
+       -- R(A + 1): arg #1 -> 3
+       -- R(A + 2): arg #2 -> 4
+       -- B:        args -> 2
+       -- C:        retn -> LUA_MULTRET (top)
+
+    11 RETURN 2 0 0
+       -- R(A): 2
+       -- B:    retn -> set by previous instruction (top)
+
+    12 RETURN0
+       -- Returns to the calling function without a return value.
+  end
 #+end_src
