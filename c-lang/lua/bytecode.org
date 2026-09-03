@@ -367,7 +367,6 @@
   - functions:  0
 
   function main(...)
-
     1   VARARGPREP  0       - (adjust varargs)
 
     2   NEWTABLE    0 2 0   - R[A] := {}
@@ -413,7 +412,6 @@
     17  CLOSE       0       - close all upvalues >= R[A]
 
     18  RETURN      0 1 1k  - 0 out: return R[A]...R[A+B-2]
-
   end
 
   locals:
