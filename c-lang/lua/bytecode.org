@@ -36,7 +36,7 @@
 
   - parameters: 0+
   - slots:      5
-  - upvalue:    1
+  - upvalues:   1
   - locals:     0
   - constants:  6
   - functions:  2
@@ -116,7 +116,7 @@
 
   - parameters: 2
   - slots:      3
-  - upvalue:    0
+  - upvalues:   0
   - locals:     2
   - constants:  0
   - functions:  0
@@ -143,7 +143,7 @@
 
   - parameters: 2
   - slots:      3
-  - upvalue:    0
+  - upvalues:   0
   - locals:     2
   - constants:  0
   - functions:  0
@@ -202,7 +202,7 @@
 
   - parameters: 0+
   - slots:      2
-  - upvalue:    1
+  - upvalues:   1
   - locals:     0
   - constants:  2
   - functions:  1
@@ -248,7 +248,7 @@
 
   - parameters: 1
   - slots:      5
-  - upvalue:    0
+  - upvalues:   0
   - locals:     2
   - constants:  0
   - functions:  1
@@ -284,7 +284,7 @@
 
   - parameters: 2
   - slots:      5
-  - upvalue:    1
+  - upvalues:   1
   - locals:     2
   - constants:  0
   - functions:  0
@@ -361,7 +361,7 @@
 
   - parameters: 0+
   - slots:      8
-  - upvalue:    1
+  - upvalues:   1
   - locals:     5
   - constants:  7
   - functions:  0
