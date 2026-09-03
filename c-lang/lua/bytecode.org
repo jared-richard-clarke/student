@@ -316,7 +316,7 @@
     11  RETURN    2 0  0    - all out:
                               return R[A]...R[A+B-2]
 
-    12  RETURN0             - rerturn
+    12  RETURN0             - return
   end
 
   locals:
