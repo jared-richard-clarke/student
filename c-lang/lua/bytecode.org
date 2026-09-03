@@ -332,3 +332,115 @@
   |-------+------+---------+-----+------------------|
   | 0     | loop | true    | 1   | VDKREG (regular) |
 #+end_src
+
+** Dictionary For Loop
+
+*** Source Code
+
+#+begin_src lua
+  dictionary = { x = 3, y = 4 }
+
+  for key, value in pairs(dictionary) do
+      print(key, value)
+  end
+#+end_src
+
+*** Byte Code
+
+| property            | value |
+|---------------------+-------|
+| version             | 5.5.0 |
+| standard            |   yes |
+| sizeof(int)         |     4 |
+| sizeof(instruction) |     4 |
+| sizeof(lua_Integer) |     8 |
+| sizeof(lua_Number)  |     8 |
+
+#+begin_src
+  === main ===
+
+  - parameters: 0+
+  - slots:      8
+  - upvalue:    1
+  - locals:     5
+  - constants:  7
+  - functions:  0
+
+  function main(...)
+
+    1   VARARGPREP  0       - (adjust varargs)
+
+    2   NEWTABLE    0 2 0   - R[A] := {}
+
+    3   EXTRAARG    0       - Extra (larger) argument for previous opcode (NEWTABLE)
+
+    4   SETFIELD    0 1 2k  - "x" 3:
+                              R[A][K[B]:shortstring] := RK(C)
+
+    5   SETFIELD    0 3 4k  - "y" 4:
+                              R[A][K[B]:shortstring] := RK(C)
+
+    6   SETTABUP    0 0 0   - _ENV "dictionary":
+                              UpValue[A][K[B]:shortstring] := RK(C)
+
+    7   GETTABUP    0 0 5   - _ENV "pairs":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+    8   GETTABUP    1 0 0   - _ENV "dictionary":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+    9   CALL        0 2 5   - 1 in 4 out:
+                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+
+    10  TFORPREP    0 4     - to pc 15:
+                              create upvalue for R[A+3]; pc+=Bx
+
+    11  GETTABUP    5 0 6   - _ENV "print":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+    12  MOV         6 3     - R[A] := R[B]
+
+    13  MOV         7 4     - R[A] := R[B]
+
+    14  CALL        5 3 1   - 2 in 0 out:
+                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+
+    15  TFORCALL    0 2     - R[A+4]...R[A+3+C] := R[A](R[A+1], R[A+2]);
+
+    16  TFORLOOP    0 6     - to pc 11:
+                              if (R[A+2] ~= nil) then { R[A] = R[A+2]; pc -= Bx }
+
+    17  CLOSE       0       - close all upvalues >= R[A]
+
+    18  RETURN      0 1 1k  - 0 out: return R[A]...R[A+B-2]
+
+  end
+
+  locals:
+
+    | index | name        | startpc | endpc |
+    |-------+-------------+---------+-------|
+    | 0     | (for state) | 10      | 18    |
+    | 1     | (for state) | 10      | 18    |
+    | 2     | (for state) | 10      | 18    |
+    | 3     | key         | 11      | 15    |
+    | 4     | value       | 11      | 15    |
+
+  upvalues:
+
+    | index | name | instack | idx | kind   |
+    |-------+------+---------+-----+--------|
+    | 0     | _ENV | true    | 0   | VDKREG |
+
+  constants:
+
+    | index | type    | value        |
+    |-------+---------+--------------|
+    | 0     | string  | "dictionary" |
+    | 1     | string  | "x"          |
+    | 2     | integer | 3            |
+    | 3     | string  | "y"          |
+    | 4     | integer | 4            |
+    | 5     | string  | "pairs"      |
+    | 6     | string  | "print"      |
+#+end_src
