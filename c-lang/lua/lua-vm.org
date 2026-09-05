@@ -230,15 +230,6 @@ instructions for implementing control flow.
 
 *** ByteCode
 
-| property            | value |
-|---------------------+-------|
-| version             | 5.5.0 |
-| standard            |   yes |
-| sizeof(int)         |     4 |
-| sizeof(instruction) |     4 |
-| sizeof(lua_Integer) |     8 |
-| sizeof(lua_Number)  |     8 |
-
 #+begin_src
   === main ===
 
@@ -423,15 +414,6 @@ instructions for implementing control flow.
 
 *** ByteCode
 
-| property            | value |
-|---------------------+-------|
-| version             | 5.5.0 |
-| standard            |   yes |
-| sizeof(int)         |     4 |
-| sizeof(instruction) |     4 |
-| sizeof(lua_Integer) |     8 |
-| sizeof(lua_Number)  |     8 |
-
 #+begin_src
   === main ===
 
@@ -607,15 +589,6 @@ instructions for implementing control flow.
 #+end_src
 
 *** ByteCode
-
-| property            | value |
-|---------------------+-------|
-| version             | 5.5.0 |
-| standard            |   yes |
-| sizeof(int)         |     4 |
-| sizeof(instruction) |     4 |
-| sizeof(lua_Integer) |     8 |
-| sizeof(lua_Number)  |     8 |
 
 #+begin_src
   === main ===
