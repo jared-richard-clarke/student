@@ -8,11 +8,6 @@
 | *Lua Source Code*, 5.5          | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes Filho |
 | *Crafting Interpreters*         | Robert Nystrom                                                               |
 
-As of version 5.5, there are 85 instructions in Lua's virtual machine. Most instructions
-correspond directly to language constructs, such as arithmetic, table creation and indexing,
-function and method calls, setting variables and getting values. There are also jump
-instructions for implementing control flow.
-
 ** Notational Conventions
 
 - ~R[x]~: ~xth~ register.
@@ -22,6 +17,11 @@ instructions for implementing control flow.
 - ~RK[x]~: if ~k(i)~ then ~K[x]~ else ~R[x]~.
 
 ** Instruction Set
+
+As of version 5.5, there are 85 instructions in Lua's virtual machine. Most instructions
+correspond directly to language constructs, such as arithmetic, table creation and indexing,
+function and method calls, setting variables and getting values. There are also jump
+instructions for implementing control flow.
 
 | opcode     | operands  | description                                                      |
 |------------+-----------+------------------------------------------------------------------|
@@ -214,531 +214,510 @@ instructions for implementing control flow.
   POS_sJ  = POS_A
 #+end_example
 
-** Lua Function to Bytecode
+** Arithmetic Table
+
+*** Source Code
 
 #+begin_src lua
-  -- === Lua Function ===
+  Library = {
+      add = function (x, y) return x + y end,
+      sub = function (x, y) return x - y end,
+      PI  = 3.14159
+  }
 
-  function max(a, b)
-      local m = a
-      if b > a then
-          m = b
-      end
-      return m
+  sum = Library.add(Library.PI, Library.sub(11, 10))
+#+end_src
+
+*** ByteCode
+
+| property            | value |
+|---------------------+-------|
+| version             | 5.5.0 |
+| standard            |   yes |
+| sizeof(int)         |     4 |
+| sizeof(instruction) |     4 |
+| sizeof(lua_Integer) |     8 |
+| sizeof(lua_Number)  |     8 |
+
+#+begin_src
+  === main ===
+
+  - parameters: 0+
+  - slots:      5
+  - upvalues:   1
+  - locals:     0
+  - constants:  6
+  - functions:  2
+
+  function main(...)
+                    A
+    1   VARARGPREP  0       - (adjust varargs)
+
+                    A B Ck
+    2   NEWTABLE    0 3 0   - R[A] := {}
+
+                    Ax
+    3   EXTRAARG    0       - extra (larger) argument for previous opcode
+
+                    A Bx
+    4   CLOSURE     1 0     - function add(x, y):
+                              R[A] := closure(KPROTO[Bx])
+
+                    A B C
+    5   SETFIELD    0 1 1   - "add": R[A][K[B]:shortstring] := RK(C)
+
+                    A Bx
+    6   CLOSURE     1 1     - function sub(x, y):
+                              R[A] := closure(KPROTO[Bx])
+
+                    A B C
+    7   SETFIELD    0 2 1   - "sub": R[A][K[B]:shortstring] := RK(C)
+
+                    A B C
+    8   SETFIELD    0 3 4k  - "PI" 3.14159:
+                              R[A][K[B]:shortstring] := RK(C)
+
+                    A B C
+    9   SETTABUP    0 0 0   - _ENV "Library"
+                              UpValue[A][K[B]:shortstring] := RK(C)
+
+                    A B C
+    10  GETTABUP    0 0 0   - _ENV "Library":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+                    A B C
+    11  GETFIELD    0 0 1   - "add": R[A] := R[B][K[C]:shortstring]
+
+                    A B C
+    12  GETTABUP    1 0 0   - _ENV "Library":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+                    A B C
+    13  GETFIELD    1 1 3   - "PI": R[A] := R[B][K[C]:shortstring]
+
+                    A B C
+    14  GETTABUP    2 0 0   - _ENV "Library":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+                    A B C
+    15  GETFIELD    2 2 2   - "sub": R[A] := R[B][K[C]:shortstring]
+
+                    A sBx
+    16  LOADI       3 11    - R[A] := sBx
+
+                    A sBx
+    17  LOADI       4 10    - R[A] := sBx
+
+                    A B C
+    18  CALL        2 3 0   - 2 in all out:
+                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+
+                    A B C
+    19  CALL        0 0 2   - all in 1 out:
+                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+
+                    A B C
+    20  SETTABUP    0 5 0   - _ENV "sum":
+                              UpValue[A][K[B]:shortstring] := RK(C)
+
+                    A B Ck
+    21  RETURN      0 1 1   - 0 out: return R[A]...R[A+B-2]
   end
 
-  -- === Bytecode: 5.5 ===
-  --
-  --   Op      | A | B | C |
-  --  ----------------------
-  -- 1 MOVE      2   0        ; R(A) := R(B) local a
-  -- 2 LT        0   1   0    ; RK(A) local a < RK(B) local b, where C = false
-  -- 3 JMP       1            ; A to pc -> 5
-  -- 4 MOVE      2   1        ; R(A) local m := R(B) local b
-  -- 5 RETURN1   2            ; return R(A) local m
-  -- 6 RETURN0                ; return
-  --
-  -- | index | name | startpc | endpc |
-  -- |-------+------+---------+-------|
-  -- | 0     | a    | 1       | 7     |
-  -- | 1     | b    | 1       | 7     |
-  -- | 2     | m    | 2       | 7     |
+  upvalues:
+
+  | index | name | instack | idx | kind             |
+  |-------+------+---------+-----+------------------|
+  | 0     | _ENV | true    | 0   | VDKREG (regular) |
+
+  constants:
+
+  | index | type   | value     |
+  |-------+--------+-----------|
+  | 0     | string | "Library" |
+  | 1     | string | "add"     |
+  | 2     | string | "sub"     |
+  | 3     | string | "PI"      |
+  | 4     | number | 3.14159   |
+  | 5     | string | "sum"     |
+
+  === add ===
+
+  - parameters: 2
+  - slots:      3
+  - upvalues:   0
+  - locals:     2
+  - constants:  0
+  - functions:  0
+
+  function add(x, y)
+                A B C
+    1  ADD      2 0 1    - R[A] := R[B] + R[C]
+
+                A sB Ck
+    2  MMBIN    0 1  6   - __add:
+                           call C metamethod over R[A] and R[B]
+
+                A
+    3  RETURN1  2        - return R[A]
+
+    4  RETURN0           - return
+  end
+
+  locals:
+
+  | index | name | startpc | endpc |
+  |-------+------+---------+-------|
+  | 0     | x    | 1       | 5     |
+  | 1     | y    | 1       | 5     |
+
+  === sub ===
+
+  - parameters: 2
+  - slots:      3
+  - upvalues:   0
+  - locals:     2
+  - constants:  0
+  - functions:  0
+
+  function sub(x, y)
+                A B C
+    1  SUB      2 0 1    - R[A] := R[B] + R[C]
+
+                A sB Ck
+    2  MMBIN    0 1  7   - __sub:
+                           call C metamethod over R[A] and R[B]
+
+                A
+    3  RETURN1  2        - return R[A]
+
+    4  RETURN0           - return
+  end
+
+  locals:
+
+  | index | name | startpc | endpc |
+  |-------+------+---------+-------|
+  | 0     | x    | 1       | 5     |
+  | 1     | y    | 1       | 5     |
 #+end_src
 
-** Runtime
+** Factorial Tail Call
 
-*** Global State
+*** Source Code
 
-#+begin_src c
-  // === Global State ===
-  // State shared by all threads.
+#+begin_src lua
+  function factorial(x)
+      local function loop(iter, product)
+          if iter < 2 then
+              return product
+          else
+              return loop(iter - 1, iter * product)
+          end
+      end
+      return loop(x, 1)
+  end
 
-  typedef struct global_State {
-    // Function to reallocate memory.
-    lua_Alloc frealloc;
-    // Auxiliary data to "frealloc".
-    void *ud;
-    // Number of bytes currently allocated + debt.
-    l_mem GCtotalbytes;
-    // Bytes counted but not yet allocated.
-    l_mem GCdebt;
-    // Number of objects marked in a GC cycle.
-    l_mem GCmarked;
-    // Auxiliary counter to control major-minor shifts.
-    l_mem GCmajorminor;
-    // Hash table for strings.
-    stringtable strt;
-    TValue l_registry;
-    // Bottom value, nil.
-    TValue nilvalue;
-    // Randomized seed for hashes.
-    unsigned int seed;
-    lu_byte gcparams[LUA_GCPN];
-    lu_byte currentwhite;
-    // State of garbage collector.
-    lu_byte gcstate;
-    // Kind of garbage collection.
-    lu_byte gckind;
-    // Stops emergency collections.
-    lu_byte gcstopem;
-    // Control whether GC is running.
-    lu_byte gcstp;
-    // True for emergency collections.
-    lu_byte gcemergency;
-    // List of all collectable objects.
-    GCObject *allgc;
-    // Current position in sweep list.
-    GCObject **sweepgc;
-    // List of collectable objects with finalizers.
-    GCObject *finobj;
-    // List of gray objects.
-    GCObject *gray;
-    // List of objects to be traversed atomically.
-    GCObject *grayagain;
-    // List of tables with weak values.
-    GCObject *weak;
-    // List of ephemeron tables (weak keys).
-    GCObject *ephemeron;
-    // List of all-weak tables.
-    GCObject *allweak;
-    // List of userdata to be garbage collected.
-    GCObject *tobefnz;
-    // List of objects not to be collected.
-    GCObject *fixedgc;
-    // --- Fields for Generational Collector ---
-    // Objects that survived one GC cycle.
-    GCObject *survival;
-    GCObject *old1;
-    // Objects more than one cycle old.
-    GCObject *reallyold;
-    GCObject *firstold1;
-    // --- List of Objects with Finalizers ---
-    GCObject *finobjsur;
-    GCObject *finobjold1;
-    GCObject *finobjrold;
-    // List of threads with open upvalues.
-    struct lua_State *twups;
-    // Function to be called for unprotected errors.
-    lua_CFunction panic;
-    // Message for memory-allocation errors.
-    TString *memerrmsg;
-    // Array with tag-method names.
-    TString *tmname[TM_N];
-    // Metatables for basic types.
-    struct Table *mt[LUA_NUMTYPES];
-    // Cache for strings in API.
-    TString *strcache[STRCACHE_N][STRCACHE_M];
-    // Warning function.
-    lua_WarnFunction warnf;
-    // Auxiliary data for warning function.
-    void *ud_warn;
-    // Main thread of this state.
-    LX mainth;
-  } global_State;
-
-  // === Thread State + Extra Space ===
-
-  typedef struct LX {
-    lu_byte extra_[LUA_EXTRASPACE];
-    lua_State l;
-  } LX;
+  total = factorial(4)
 #+end_src
 
-*** Thread State
+*** ByteCode
 
-#+begin_src c
-  // === Per Thread State ===
+| property            | value |
+|---------------------+-------|
+| version             | 5.5.0 |
+| standard            |   yes |
+| sizeof(int)         |     4 |
+| sizeof(instruction) |     4 |
+| sizeof(lua_Integer) |     8 |
+| sizeof(lua_Number)  |     8 |
 
-  struct lua_State {
-    // CommonHeader -----------+
-    struct GCObject *next; //  |
-    lu_byte tt;            //  |
-    lu_byte marked;        // <+
-    // Type for thread status/error codes.
-    TStatus status;
-    // First free slot in the stack.
-    StkIdRel top;
-    // Reference to state shared by all threads. Contains mostly data
-    // for memory allocation and garbage collection.
-    struct global_State *l_G;
-    // Call information for current function.
-    CallInfo *ci;
-    // End of stack (last element + 1)
-    StkIdRel stack_last;
-    // Stack base.
-    StkIdRel stack;
-    // List of open upvalues in this stack.
-    UpVal *openupval;
-    // List of to-be-closed variables.
-    StkIdRel tbclist;
-    // List of garbage-collectable objects.
-    GCObject *gclist;
-    // List of threads with open upvalues.
-    struct lua_State *twups;
-    // Current errory recovery point.
-    struct lua_longjmp *errorJmp;
-    // Call information for first level (C host).
-    CallInfo base_ci;
-    // Function to be called by the debugger.
-    volatile lua_Hook hook;
-    // Current error handling function (stack index).
-    ptrdiff_t errfunc;
-    // Number of nested, (non-yieldable | C) calls.
-    l_uint32 nCcalls;
-    // Last program counter traced.
-    int oldpc;
-    // Number of items in call information list.
-    int nci;
-    int basehookcount;
-    int hookcount;
-    volatile l_signalT hookmask;
-    // Information about transferred values for (call | return) hooks.
-    struct {
-      // Offset of first value transferred.
-      int ftransfer;
-      // Number of values transferred.
-      int ntransfer;
-    } transferinfo;
-  };
+#+begin_src
+  === main ===
 
-  // === Function Call Information ===
+  - parameters: 0+
+  - slots:      2
+  - upvalue:    1
+  - locals:     0
+  - constants:  2
+  - functions:  1
 
-  struct CallInfo {
-    // Function index in the stack.
-    StkIdRel func;
-    // Top index for this function.
-    StkIdRel top;
-    // Dynamic call link.
-    struct CallInfo *previous, *next;
-    union {
-      // === Lua Function ===
-      struct {
-        // Saved pointer to bytecode instruction.
-        const Instruction *savedpc;
-        // Function tracing lines/counts.
-        volatile l_signalT trap;
-        // Number of extra arguments in variable-argument functions.
-        int nextraargs;
-      } l;
-      // === C Function ===
-      struct {
-        // Continuation in case of yields.
-        lua_KFunction k;
-        ptrdiff_t old_errfunc;
-        // Context information in case of yields.
-        lua_KContext ctx;
-      } c;
-    } u;
-    union {
-      // Called function index. Used only by C functions during
-      // a protected call.
-      int funcidx;
-      // Number of values yielded. Used only by functions
-      // that are yielding.
-      int nyield;
-      // Number of values returned.
-      int nres;
-    } u2;
-    // Bit mask denoting function status.
-    // - number of results.
-    // - metamethod?
-    // - etc.
-    l_uint32 callstatus;
-  };
+  function main(...)
+                   A
+    1  VARARGPREP  0       - (adjust varargs)
 
-  // === Lua Stack ===
+                   A Bx
+    2  CLOSURE     0 0     - function factorial(x):
+                             R[A] := closure(KPROTO[Bx])
 
-  // Lua stack entries. Field "tbclist" forms a list of all
-  // to-be-closed variables active in this stack. Dummy entries are
-  // used when the distance between two tbc variables does not fit
-  // in an unsigned short. They are represented by delta == 0.
-  // Their real delta is always the maximum value that fits in
-  // that field.
-  typedef union StackValue {
-    TValue val;
-    struct {
-      // Lua value.
-      Value value_;
-      // Type tag.
-      lu_byte tt_;
-      unsigned short delta;
-    } tbclist;
-  } StackValue;
+                   A B C
+    3  SETTABUP    0 0 0   - _ENV "factorial":
+                             UpValue[A][K[B]:shortstring] := RK(C)
 
-  // Index to stack elements.
-  typedef StackValue *StkId;
+                   A B C
+    4  GETTABUP    0 0 0   - _ENV "factorial":
+                             R[A] := UpValue[B][K[C]:shortstring]
 
-  // === Stack Pointers ===
-  typedef union {
-    // Pointer
-    StkId p;
-    // Offset used during stack reallocation.
-    ptrdiff_t offset;
-  } StkIdRel;
+                   A sBx
+    5  LOADI       1 4     - R[A] := sBx
+
+                   A B C
+    6  CALL        0 2 2   - 1 in 1 out:
+                             R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+
+                   A B C
+    7  SETTABUP    0 1 0   - _ENV "total":
+                             UpValue[A][K[B]:shortstring] := RK(C)
+
+                   A B Ck
+    8  RETURN      0 1 1   - 0 out:
+                             return R[A]...R[A+B-2]
+  end
+
+  upvalues:
+
+  | index | name | instack | idx | kind             |
+  |-------+------+---------+-----+------------------|
+  | 0     | _ENV | true    | 0   | VDKREG (regular) |
+
+  constants:
+
+  | index | type   | value       |
+  |-------+--------+-------------|
+  | 0     | string | "factorial" |
+  | 1     | string | "total"     |
+
+  === factorial ===
+
+  - parameters: 1
+  - slots:      5
+  - upvalues:   0
+  - locals:     2
+  - constants:  0
+  - functions:  1
+
+  function factorial(x)
+                 A Bx
+    1  CLOSURE   1 0     - function loop(iter, product):
+                           R[A] := closure(KPROTO[Bx])
+
+                 A B
+    2  MOVE      2 1     - R[A] := R[B]
+
+                 A B
+    3  MOVE      3 0     - R[A] := R[B]
+
+                 A sBx
+    4  LOADI     4 1     - R[A] := sBx
+
+                 A B Ck
+    5  TAILCALL  2 3 0k  - 2 in:
+                           return R[A](R[A+1]...R[A+B-1])
+
+                 A B Ck
+    6  RETURN    2 0 0k  - all out:
+                           return R[A]...R[A+B-2]
+
+                 A B Ck
+    7  RETURN    2 1 0k  - 0 out:
+                           return R[A]...R[A+B-2]
+  end
+
+  locals:
+
+  | index | name | startpc | endpc |
+  |-------+------+---------+-------|
+  | 0     | x    | 1       | 8     |
+  | 1     | loop | 2       | 8     |
+
+  === loop ===
+
+  - parameters: 2
+  - slots:      5
+  - upvalues:   1
+  - locals:     2
+  - constants:  0
+  - functions:  0
+
+  function loop(iter, product)
+                  A sB k
+    1   LTI       0 2  0    - if ((R[A] < sB) ~= k) then pc++
+
+                  sJ
+    2   JMP       2         - to pc 5: pc += sJ
+
+                  A
+    3   RETURN1   1         - return R[A]
+
+                  sJ
+    4   JMP       7         - to pc 12: pc += sJ
+
+                  A B
+    5   GETUPVAL  2 0       - loop: R[A] := UpValue[B]
+
+                  A B sC
+    6   ADDI      3 0 -1    - R[A] := R[B] + sC
+
+                  A sB C k
+    7   MMBINI    0 1  7 0  - __sub:
+                              call C metamethod over R[A] and sB
+
+                  A B  C
+    8   MUL       4 0  1    - R[A] := R[B] * R[C]
+
+                  A B  C
+    9   MMBIN     0 1  8    - __mul:
+                              call C metamethod over R[A] and R[B]
+
+                  A B  Ck
+    10  TAILCALL  2 3  0    - 2 in:
+                              return R[A](R[A+1]...R[A+B-1])
+
+                  A B  Ck
+    11  RETURN    2 0  0    - all out:
+                              return R[A]...R[A+B-2]
+
+    12  RETURN0             - return
+  end
+
+  locals:
+
+  | index | name    | startpc | endpc |
+  |-------+---------+---------+-------|
+  | 0     | iter    | 1       | 13    |
+  | 1     | product | 1       | 13    |
+
+  upvalues:
+
+  | index | name | instack | idx | kind             |
+  |-------+------+---------+-----+------------------|
+  | 0     | loop | true    | 1   | VDKREG (regular) |
 #+end_src
 
-*** Data Types
+** Dictionary For Loop
 
-#+begin_src c
-  // === Values ===
+*** Source Code
 
-  typedef union Value {
-    // Garbage-collectable objects.
-    struct GCObject *gc;
-    // Light userdata.
-    void *p;
-    // Light C functions.
-    lua_CFunction f;
-    // Integers.
-    lua_Integer i;
-    // Floats.
-    lua_Number n;
-    // Not used. May avoid warnings for uninitialized values.
-    lu_byte ub;
-  } Value;
+#+begin_src lua
+  dictionary = { x = 3, y = 4 }
 
-  // tagged union (value_, tt_)
-  // where value_ = the union of C types that implement a Lua value
-  //       tt_    = the type tag: an unsigned char that identifies the Lua value
-  typedef struct TValue {
-    Value value_;
-    lu_byte tt_;
-  } TValue;
-
-  // === Collectable Objects ===
-  // Type shared by all collectable objects:
-  // Tables, strings, functions, threads, and full userdata.
-
-  typedef struct GCObject {
-    struct GCObject *next;
-    lu_byte tt;
-    lu_byte marked;
-  } GCObject;
+  for key, value in pairs(dictionary) do
+      print(key, value)
+  end
 #+end_src
 
-*** Tables
+*** ByteCode
 
-#+begin_src c
-  // === Lua Table ===
+| property            | value |
+|---------------------+-------|
+| version             | 5.5.0 |
+| standard            |   yes |
+| sizeof(int)         |     4 |
+| sizeof(instruction) |     4 |
+| sizeof(lua_Integer) |     8 |
+| sizeof(lua_Number)  |     8 |
 
-  typedef struct Table {
-    // CommonHeader -----------+
-    struct GCObject *next; //  |
-    lu_byte tt;            //  |
-    lu_byte marked;        // <+
-    // 1 << p means tagmethod(p) is not present.
-    lu_byte flags;
-    // log2 of number of slots in "node" array.
-    lu_byte lsizenode;
-    // Number of slots in "array" array.
-    unsigned int asize;
-    // Array part.
-    Value *array;
-    // Hash table nodes.
-    Node *node;
-    struct Table *metatable;
-    GCObject *gclist;
-  } Table;
+#+begin_src
+  === main ===
 
-  // === Hash Table Node ===
-  // A key-value pair plus a "next" field to link colliding entries.
-  // The separation of "key_tt" and "key_val" shrinks the memory
-  // footprint for 4-byte and 8-byte alignments.
+  - parameters: 0+
+  - slots:      8
+  - upvalues:   1
+  - locals:     5
+  - constants:  7
+  - functions:  0
 
-  typedef union Node {
-    struct NodeKey {
-      // Fields for value -+
-      Value value_; //     |
-      lu_byte tt_;  // <---+
-      // Key type.
-      lu_byte key_tt;
-      int next;
-      // Key value.
-      Value key_val;
-    } u;
-    // Direct access to node as a proper "TValue".
-    TValue i_val;
-  } Node;
+  function main(...)
+                    A
+    1   VARARGPREP  0       - (adjust varargs)
+
+                    A B Ck
+    2   NEWTABLE    0 2 0   - R[A] := {}
+
+                    Ax
+    3   EXTRAARG    0       - Extra (larger) argument for previous opcode (NEWTABLE)
+
+                    A B C
+    4   SETFIELD    0 1 2k  - "x" 3:
+                              R[A][K[B]:shortstring] := RK(C)
+
+                    A B C
+    5   SETFIELD    0 3 4k  - "y" 4:
+                              R[A][K[B]:shortstring] := RK(C)
+
+                    A B C
+    6   SETTABUP    0 0 0   - _ENV "dictionary":
+                              UpValue[A][K[B]:shortstring] := RK(C)
+
+                    A B C
+    7   GETTABUP    0 0 5   - _ENV "pairs":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+                    A B C
+    8   GETTABUP    1 0 0   - _ENV "dictionary":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+                    A B C
+    9   CALL        0 2 5   - 1 in 4 out:
+                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+
+                    A Bx
+    10  TFORPREP    0 4     - to pc 15:
+                              create upvalue for R[A+3]; pc+=Bx
+
+                    A B C
+    11  GETTABUP    5 0 6   - _ENV "print":
+                              R[A] := UpValue[B][K[C]:shortstring]
+
+                    A B
+    12  MOV         6 3     - R[A] := R[B]
+
+                    A B
+    13  MOV         7 4     - R[A] := R[B]
+
+                    A B C
+    14  CALL        5 3 1   - 2 in 0 out:
+                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+
+                    A C
+    15  TFORCALL    0 2     - R[A+4]...R[A+3+C] := R[A](R[A+1], R[A+2]);
+
+                    A Bx
+    16  TFORLOOP    0 6     - to pc 11:
+                              if (R[A+2] ~= nil) then { R[A] = R[A+2]; pc -= Bx }
+
+                    A
+    17  CLOSE       0       - close all upvalues >= R[A]
+
+                    A B Ck
+    18  RETURN      0 1 1k  - 0 out: return R[A]...R[A+B-2]
+  end
+
+  locals:
+
+    | index | name        | startpc | endpc |
+    |-------+-------------+---------+-------|
+    | 0     | (for state) | 10      | 18    |
+    | 1     | (for state) | 10      | 18    |
+    | 2     | (for state) | 10      | 18    |
+    | 3     | key         | 11      | 15    |
+    | 4     | value       | 11      | 15    |
+
+  upvalues:
+
+    | index | name | instack | idx | kind   |
+    |-------+------+---------+-----+--------|
+    | 0     | _ENV | true    | 0   | VDKREG |
+
+  constants:
+
+    | index | type    | value        |
+    |-------+---------+--------------|
+    | 0     | string  | "dictionary" |
+    | 1     | string  | "x"          |
+    | 2     | integer | 3            |
+    | 3     | string  | "y"          |
+    | 4     | integer | 4            |
+    | 5     | string  | "pairs"      |
+    | 6     | string  | "print"      |
 #+end_src
-
-*** Functions, Closures, and UpValues
-
-#+begin_quote
-  "When Lua compiles a function it generates a *prototype* containing the virtual machine
-   instructions for the function, its constant values (numbers, literal strings, etc.),
-   and some debug information. At run time, whenever Lua executes a ~function...end~
-   expression, it creates a new closure. Each closure has a reference to its corresponding
-   prototype, a reference to its environment (a table wherein it looks for global variables),
-   and an array of references to upvalues, which are used to access outer local variables...
-
-   Lua uses a structure called an *upvalue* to implement closures. Any outer local variable
-   is accessed indirectly through an upvalue. The upvalue originally points to the stack
-   slot wherein the variable lives. When the variable goes out of scope, it migrates into
-   a slot inside the upvalue itself...
-
-   Unlike its inner functions, the function that declares the variable accesses [that variable]
-   as it accesses its own local variables: directly in the stack."
-
-  — *The Implementation of Lua 5.0*
-#+end_quote
-
-#+begin_src c
-  // === Function Prototype ===
-
-  typedef struct Proto {
-    // CommonHeader -----------+
-    struct GCObject *next; //  |
-    lu_byte tt;            //  |
-    lu_byte marked;        // <+
-    // Number of fixed (named) parameters.
-    lu_byte numparams;
-    lu_byte flag;
-    // Number of Registers needed by this function.
-    lu_byte maxstacksize;
-    int sizeupvalues;
-    int sizek;
-    int sizecode;
-    int sizelineinfo;
-    int sizep;
-    int sizelocvars;
-    int sizeabslineinfo;
-    // Debug information.
-    int linedefined;
-    int lastlinedefined;
-    // Constants used by function.
-    TValue *k;
-    // Opcodes.
-    Instruction *code;
-    // Functions defined inside function.
-    struct Proto **p;
-    // upvalue information.
-    Upvaldesc *upvalues;
-    // Debug information.
-    ls_byte *lineinfo;
-    AbsLineInfo *abslineinfo;
-    // Debug information: local variables.
-    LocVar *locvars;
-    // Debug information: source string.
-    TString  *source;
-    GCObject *gclist;
-  } Proto;
-
-  // === Upvalues ===
-
-  typedef struct UpVal {
-    // CommonHeader -----------+
-    struct GCObject *next; //  |
-    lu_byte tt;            //  |
-    lu_byte marked;        // <+
-    union {
-      // Pointer to stack or upvalue
-      TValue *p;
-      // Offset for stack reallocation
-      ptrdiff_t offset;
-    } v;
-    union {
-      // Open upvalue
-      struct {
-        // Linked list
-        struct UpVal *next;
-        struct UpVal **previous;
-      } open;
-      // Closed upvalue
-      TValue value;
-    } u;
-  } UpVal;
-
-  // Closures for C functions registered with Lua.
-
-  typedef struct CClosure {
-    ClosureHeader;
-    // typedef int (*lua_CFunction) (lua_State *L);
-    lua_CFunction f;
-    // List of upvalues
-    TValue upvalue[1];
-  } CClosure;
-
-  // Closures for function defined in Lua.
-
-  typedef struct LClosure {
-    // ClosureHeader -------------+
-    // CommonHeader -----------+  |
-    struct GCObject *next; //  |  |
-    lu_byte tt;            //  |  |
-    lu_byte marked;        // <+  |
-    lu_byte nupvalues;     //     |
-    GCObject *gclist       // <---+
-    struct Proto *p;
-    // List of upvalues
-    UpVal *upvals[1];
-  } LClosure;
-
-  typedef union Closure {
-    CClosure c;
-    LClosure l;
-  } Closure;
-#+end_src
-
-#+begin_example
-  === Closures ===
-
-  1. Resolves local variables that are declared in surrounding functions.
-  2. Capture variables that have already left the stack.
-
-  === Open Upvalues ===
-
-   function f(x, y)
-       function g(z)
-           return x + y + z
-       end
-       return g
-   end
-
-   sum = f(7, 11)
-
-                            Open Upvalue         Open Upvalue
-                           +-------------+      +-------------+
-        Open Upvalues <----| next        |<-----| next        |
-                           +-------------+      +-------------+
-                           | location    |--+   | location    |--+
-                           +-------------+  |   +-------------+  |
-                           | closed      |  |   | closed      |  |
-                           +-------------+  |   +-------------+  |
-                                            |                    |
-        +-----------------------------------+                    |
-        |    +---------------------------------------------------+
-        V    V
-  +---+---+---->
-  | f | 7 | 11 | <-- Stack
-  +---+---+---->
-
-  === Closed Upvalues ===
-
-  sum(1)
-
-                           Function Prototype
-                          +-------------+
-         Closure      +-->| chunk       |--> Bytecode Array
-        +----------+  |   |-------------|
-    +-->| function |--+   | constants   |--> Value Array
-    |   |----------|      +-------------+
-    |   | upvalues |--+
-    |   +----------+  |    Upvalue Pointer Array
-    |                 |   +-------------+-------------+
-    |                 +-->| index 0     | index 1     |
-    |                     +-------------+-------------+
-    |                            |           |
-    |                  +---------+           |
-    |                  |   Closed Upvalue    |   Closed Upvalue
-    |                  |  +-------------+    |  +-------------+
-    |  Open Upvalues <----| next        |<------| next        |
-    |                  |  +-------------+    |  +-------------+
-    |                  +->| location    |--+ +->| location    |--+
-    |                     +-------------+  |    +-------------+  |
-    |                     | closed 7    |<-+    | closed 11   |<-+
-    |                     +-------------+       +-------------+
-    |
-  +------->
-  | g | 1 | <-- Stack
-  +------->
-#+end_example
