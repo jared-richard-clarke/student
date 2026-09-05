@@ -45,7 +45,7 @@
 
 - Parsing and Compilation
   - ~llex.c~ and ~llex.h~: lexical analyzer
-  - ~lparser.c~ and ~lparser.h~: recursive descent parser
+  - ~lparser.c~ and ~lparser.h~: recursive descent and precedence climbing
   - ~lcode.c~ and ~lcode.h~: bytecode generation
   - ~ldump.c~ and ~ldump.h~: saves precompiled Lua chunks
   - ~lundump.c~ and ~lundump.h~: loads precompiled Lua chunks
@@ -598,3 +598,19 @@
   | g | 1 | <-- Stack
   +------->
 #+end_example
+
+** Parsing and Compilation
+
+1. Lua Source Text
+   
+2. Input Stream/Buffering
+
+3. Lexer
+
+4. Parser
+
+5. Code Generator
+
+6. Function Prototype — Bytecode and Metadata
+
+7. Virtual Machine — Bytecode Dispatch
