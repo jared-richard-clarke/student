@@ -1,11 +1,11 @@
-* Lua Architecture
+* Lua's Architecture
 
 ** Sources
 
-| source           | author                                                                 |
-|------------------+------------------------------------------------------------------------|
-| Lua Manual 5.5   | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
-| Lua Repo: Github | Roberto Ierusalimschy                                                  |
+| source          | author                                                                 |
+|-----------------+------------------------------------------------------------------------|
+| Lua Manual 5.5  | Roberto Ierusalimschy, Luiz Henrique de Figueiredo, and Waldemar Celes |
+| Lua Source Code | Roberto Ierusalimschy                                                  |
 
 ** Overview
 
@@ -66,6 +66,11 @@
 ** Runtime State
 
 #+begin_example
+  === Runtime State ===
+
+  A two-level state management design that separates shared global resources
+  from per-thread execution state.
+
                                                +----------------------+
                                          +---->| Base Type Metatables |
                                          |     +----------------------+
@@ -99,6 +104,60 @@
   | | StackValue |  | | | CallInfo | |
   | +------------+  | | +----------+ |
   +-----------------+ +--------------+
+
+  === Execution Stack ===
+
+  A resizable array of StackValue objects. Serves as both the operand stack
+  for the VM and storage for function arguments, local variables,
+  and return values
+
+  0                        1        2        3     n             m
+  +------------------------+--------+--------+-----+-------------+
+  | Slot 0 (base function) | Slot 1 | Slot 2 | ... | EXTRA_STACK |
+  +------------------------+--------+--------+-----+-------------+
+
+  === Call Frames ===
+
+  CallInfo represents a single call frame. Each active function has one
+  CallInfo node in the call chain. A series of call frames forms
+  a doubly-linked list.
+
+  +----------+
+  | base_ci  |
+  |----------|-------------------------------------------------------------------+
+  | Embedded |                                                                   |
+  +----------+                                                                   V
+  +---------------+   +------------+             +------------+             +----------+
+  | ci            |   | CallInfo   |- previous ->| CallInfo   |- previous ->| CallInfo |
+  |---------------|-->|------------|             |------------|             |----------|
+  | Current Frame | +-| function 2 |<- next -----| function 1 |<- next -----| C Host   |
+  +---------------+ | +------------+             +------------+             +----------+
+                    |         +------+
+                    +- next ->| NULL |
+                              +------+
+
+  === Call Frame ===
+
+  +-----------------+------------+------------+-----+------------+
+  | Function Object | Argument 1 | Argument 2 |     | Argument N |
+  |-----------------|------------|------------| ... |------------|
+  | ci->func.p      | func + 1   | func + 2   |     | func + N   |
+  +-----------------+------------+------------+-----+------------+
+  +------------------+-----+------------------+--------------------------+----------+-----+
+  | Local Variable 1 |     | Local Variable N |                          | Top      |     |
+  |------------------| ... |------------------| ... Temporary Values ... |----------| ... |
+  |                  |     |                  |                          | L->top.p |     |
+  +------------------+-----+------------------+--------------------------+----------+-----+
+                                                                         ^-- Free Space --^
+
+  === Register-Based Layout ===
+
+  Lua's VM uses a register-based model, where each function has a set
+  of virtual registers — in reality, stack positions.
+
+  | Base           | Register 0               | Register 1 | Register N  | Unused   |
+  |----------------|--------------------------|------------|-------------|----------|
+  | ci->func.p + 1 | Fixed Arguments / Locals | Locals     | Temporaries | L->top.p |
 #+end_example
 
 *** Global State
@@ -602,7 +661,7 @@
 ** Parsing and Compilation
 
 1. Lua Source Text
-   
+
 2. Input Stream/Buffering
 
 3. Lexer
@@ -614,3 +673,55 @@
 6. Function Prototype — Bytecode and Metadata
 
 7. Virtual Machine — Bytecode Dispatch
+
+** Execution
+
+#+begin_example
+         +---------------------+ +-------------+ +---------------+
+         | C API               | | VM Bytecode | | Coroutine API |
+         |---------------------| |-------------| |---------------|
+         | lua_call, lua_pcall | | OP_CALL ... | | lua_resume    |
+         +---------------------+ +-------------+ +---------------+
+                    |                  |                |
+                    +------+   +-------+                |
+                           |   |                        |
+                           V   V                        |
+                    +-----------------+                 |
+                    | ccall           |<----------------+
+                    |-----------------|
+                    | Core Call Logic |
+                    +-----------------+
+                             |
+                             V
+                    +------------------+
+                    | luaD_precall     |
+                    |------------------|
+                    | Setup Call Frame |
+                    +------------------+
+                           | | | ^
+           +---------------+ | | |
+           |                 | | +----------------------------+
+           |                 | +----------------------------+ |
+           V                 V                              | |
+  +-----------------+ +------------+ +-------------------+  | |
+  | Lua Function    | | C Function | | __call Metamethod |<-+ |
+  |-----------------| |------------| |-------------------|----+
+  | Return Callinfo | | Execute    | | tryfuncTM         |
+  +-----------------+ +------------+ +-------------------+
+           |                 |
+           V                 V
+  +--------------+  +-----------------+
+  | luaV_execute |  | C Function Body |
+  |--------------|  |-----------------|
+  | Run bytecode |  | Direct call     |
+  +--------------+  +-----------------+
+           |                 |
+           +----+      +-----+
+                |      |
+                V      V
+          +-------------------+
+          | luaD_poscall      |
+          |-------------------|
+          | Cleanup / Results |
+          +-------------------+
+#+end_example
