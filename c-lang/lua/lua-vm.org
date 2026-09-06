@@ -299,7 +299,7 @@ Below is an abbreviated version of Lua's virtual machine.
 
       /* --- VM: Main Loop --- */
       for (;;) {
-          /* Instruction being executed. */
+          /* Instruction to be executed. */
           Instruction i;
           vmfetch();
 
@@ -418,8 +418,7 @@ Below is an abbreviated version of Lua's virtual machine.
                   docondjump();
                   vmbreak;
               }
-              /* CALL A B C | R[A], ... , R[A+C-2] := R[A](R[A+1], ... , R[A+B-1])
-               */
+              /* CALL A B C | R[A], ... , R[A+C-2] := R[A](R[A+1], ... , R[A+B-1]) */
               vmcase(OP_CALL) {
                   StkId ra = RA(i);
                   CallInfo* newci;
@@ -492,8 +491,7 @@ Below is an abbreviated version of Lua's virtual machine.
                   updatetrap(ci);
                   vmbreak;
               }
-              /* FORPREP A Bx | Check values. Prepare counters. If break, then
-               * pc+=Bx+1 */
+              /* FORPREP A Bx | Check values. Prepare counters. If break, then pc+=Bx+1 */
               vmcase(OP_FORPREP) {
                   StkId ra = RA(i);
                   savestate(L, ci);
@@ -552,8 +550,7 @@ Below is an abbreviated version of Lua's virtual machine.
                       goto l_tforloop;
                   }
               }
-              /* TFORLOOP A Bx | if R[A+2] ~= nil then { R[A] = R[A+2]; pc -= Bx }
-               */
+              /* TFORLOOP A Bx | if R[A+2] ~= nil then { R[A] = R[A+2]; pc -= Bx } */
               vmcase(OP_TFORLOOP) {
               l_tforloop:
                   {
