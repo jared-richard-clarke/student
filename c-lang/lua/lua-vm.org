@@ -704,18 +704,18 @@ Below is an abbreviated version of Lua's virtual machine.
 
                     A B C
     18  CALL        2 3 0   - 2 in all out:
-                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+                              R[A], ... , R[A+C-2] := R[A](R[A+1], ... , R[A+B-1])
 
                     A B C
     19  CALL        0 0 2   - all in 1 out:
-                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+                              R[A], ... , R[A+C-2] := R[A](R[A+1], ... , R[A+B-1])
 
                     A B C
     20  SETTABUP    0 5 0   - _ENV "sum":
                               UpValue[A][K[B]:shortstring] := RK(C)
 
                     A B Ck
-    21  RETURN      0 1 1   - 0 out: return R[A]...R[A+B-2]
+    21  RETURN      0 1 1   - 0 out: return R[A], ... , R[A+B-2]
   end
 
   upvalues:
@@ -848,7 +848,7 @@ Below is an abbreviated version of Lua's virtual machine.
 
                    A B C
     6  CALL        0 2 2   - 1 in 1 out:
-                             R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+                             R[A], ... , R[A+C-2] := R[A](R[A+1], ... , R[A+B-1])
 
                    A B C
     7  SETTABUP    0 1 0   - _ENV "total":
@@ -856,7 +856,7 @@ Below is an abbreviated version of Lua's virtual machine.
 
                    A B Ck
     8  RETURN      0 1 1   - 0 out:
-                             return R[A]...R[A+B-2]
+                             return R[A], ... , R[A+B-2]
   end
 
   upvalues:
@@ -897,15 +897,15 @@ Below is an abbreviated version of Lua's virtual machine.
 
                  A B Ck
     5  TAILCALL  2 3 0k  - 2 in:
-                           return R[A](R[A+1]...R[A+B-1])
+                           return R[A](R[A+1], ... , R[A+B-1])
 
                  A B Ck
     6  RETURN    2 0 0k  - all out:
-                           return R[A]...R[A+B-2]
+                           return R[A], ... , R[A+B-2]
 
                  A B Ck
     7  RETURN    2 1 0k  - 0 out:
-                           return R[A]...R[A+B-2]
+                           return R[A], ... , R[A+B-2]
   end
 
   locals:
@@ -956,11 +956,11 @@ Below is an abbreviated version of Lua's virtual machine.
 
                   A B  Ck
     10  TAILCALL  2 3  0    - 2 in:
-                              return R[A](R[A+1]...R[A+B-1])
+                              return R[A](R[A+1], ... , R[A+B-1])
 
                   A B  Ck
     11  RETURN    2 0  0    - all out:
-                              return R[A]...R[A+B-2]
+                              return R[A], ... , R[A+B-2]
 
     12  RETURN0             - return
   end
@@ -1035,7 +1035,7 @@ Below is an abbreviated version of Lua's virtual machine.
 
                     A B C
     9   CALL        0 2 5   - 1 in 4 out:
-                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+                              R[A], ... , R[A+C-2] := R[A](R[A+1], ... , R[A+B-1])
 
                     A Bx
     10  TFORPREP    0 4     - to pc 15:
@@ -1053,10 +1053,10 @@ Below is an abbreviated version of Lua's virtual machine.
 
                     A B C
     14  CALL        5 3 1   - 2 in 0 out:
-                              R[A]...R[A+C-2] := R[A](R[A+1]...R[A+B-1])
+                              R[A], ... , R[A+C-2] := R[A](R[A+1], ... , R[A+B-1])
 
                     A C
-    15  TFORCALL    0 2     - R[A+4]...R[A+3+C] := R[A](R[A+1], R[A+2]);
+    15  TFORCALL    0 2     - R[A+4], ... , R[A+3+C] := R[A](R[A+1], R[A+2]);
 
                     A Bx
     16  TFORLOOP    0 6     - to pc 11:
@@ -1066,7 +1066,7 @@ Below is an abbreviated version of Lua's virtual machine.
     17  CLOSE       0       - close all upvalues >= R[A]
 
                     A B Ck
-    18  RETURN      0 1 1k  - 0 out: return R[A]...R[A+B-2]
+    18  RETURN      0 1 1k  - 0 out: return R[A], ... , R[A+B-2]
   end
 
   locals:
