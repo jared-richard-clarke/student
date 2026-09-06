@@ -221,23 +221,27 @@ Below is an abbreviated version of Lua's virtual machine.
 #+begin_src c
   /* === Control Flow and State Management === */
 
-  #define updatetrap(ci)  (trap = ci->u.l.trap)
+  #define updatetrap(ci)    (trap = ci->u.l.trap)
 
-  #define updatebase(ci)  (base = ci->func.p + 1)
+  #define updatebase(ci)    (base = ci->func.p + 1)
 
-  #define updatestack(ci) { if (l_unlikely(trap)) { updatebase(ci); ra = RA(i); } }
+  #define updatestack(ci)   { if (l_unlikely(trap)) { updatebase(ci); ra = RA(i); } }
 
-  #define dojump(ci,i,e)  { pc += GETARG_sJ(i) + e; updatetrap(ci); }
+  #define dojump(ci,i,e)    { pc += GETARG_sJ(i) + e; updatetrap(ci); }
 
-  #define donextjump(ci)  { Instruction ni = *pc; dojump(ci, ni, 1); }
+  #define donextjump(ci)    { Instruction ni = *pc; dojump(ci, ni, 1); }
 
-  #define docondjump()    if (cond != GETARG_k(i)) pc++; else donextjump(ci);
+  #define docondjump()      if (cond != GETARG_k(i)) pc++; else donextjump(ci);
 
-  #define savepc(ci)      (ci->u.l.savedpc = pc)
+  #define savepc(ci)        (ci->u.l.savedpc = pc)
 
-  #define savestate(L,ci) (savepc(ci), L->top.p = ci->top.p)
+  #define savestate(L,ci)   (savepc(ci), L->top.p = ci->top.p)
 
-  #define Protect(exp)    (savestate(L,ci), (exp), updatetrap(ci))
+  #define Protect(exp)      (savestate(L,ci), (exp), updatetrap(ci))
+
+  #define ProtectNT(exp)    (savepc(ci), (exp), updatetrap(ci))
+
+  #define halfProtect(exp)  (savestate(L,ci), (exp))
 
   /* === Register Access === */
 
@@ -250,6 +254,41 @@ Below is an abbreviated version of Lua's virtual machine.
   #define vRC(i) s2v(RC(i))
   #define KC(i)  (k+GETARG_C(i))
   #define RKC(i) ((TESTARG_k(i)) ? k + GETARG_C(i) : s2v(base + GETARG_C(i)))
+
+  /* === Arithmetic Operations === */
+
+  #define op_arithf_aux(L, v1, v2, fop)                   \
+      {                                                   \
+          lua_Number n1;                                  \
+          lua_Number n2;                                  \
+          if (tonumberns(v1, n1) && tonumberns(v2, n2)) { \
+              StkId ra = RA(i);                           \
+              pc++;                                       \
+              setfltvalue(s2v(ra), fop(L, n1, n2));       \
+          }                                               \
+      }
+
+  #define op_arith_aux(L, v1, v2, iop, fop)         \
+      {                                             \
+          if (ttisinteger(v1) && ttisinteger(v2)) { \
+              StkId ra = RA(i);                     \
+              lua_Integer i1 = ivalue(v1);          \
+              lua_Integer i2 = ivalue(v2);          \
+              pc++;                                 \
+              setivalue(s2v(ra), iop(L, i1, i2));   \
+          } else {                                  \
+              op_arithf_aux(L, v1, v2, fop);        \
+          }
+      }
+
+  #define op_arith(L, iop, fop)              \
+      {                                      \
+          TValue* v1 = vRB(i);               \
+          TValue* v2 = vRC(i);               \
+          op_arith_aux(L, v1, v2, iop, fop); \
+      }
+
+  /* === Instruction Access and Control Flow === */
 
   /* Fetch an instruction and prepare its execution. */
   #define vmfetch()  {                 \
@@ -267,7 +306,7 @@ Below is an abbreviated version of Lua's virtual machine.
   #define vmcase(l)     case l:
   #define vmbreak       break
 
-  /* === Bytecode Dispatch Loop === */
+  /* === Bytecode Dispatch === */
 
   void luaV_execute(lua_State* L, CallInfo* ci) {
       LClosure* cl;
@@ -561,6 +600,14 @@ Below is an abbreviated version of Lua's virtual machine.
                       }
                       vmbreak;
                   }
+              }
+              /* CLOSURE  A Bx | R[A] := closure(KPROTO[Bx]) */
+              vmcase(OP_CLOSURE) {
+                  StkId ra = RA(i);
+                  Proto *p = cl->p->p[GETARG_Bx(i)];
+                  halfProtect(pushclosure(L, p, cl->upvals, base, ra));
+                  checkGC(L, ra + 1);
+                  vmbreak;
               }
           }
       }
