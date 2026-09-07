@@ -584,7 +584,7 @@
       lu_byte marked;         // <+  |
       lu_byte nupvalues;      //     |
       GCObject* gclist        // <---+
-          struct Proto* p;
+      struct Proto* p;
       // List of upvalues
       UpVal* upvals[1];
   } LClosure;
