@@ -1,4 +1,5 @@
 * Lua's Architecture
+#+date: 2026-09-06
 
 ** Sources
 
@@ -16,7 +17,7 @@
 
 - Standard Libraries: ~lualib.h~
    - ~lauxlib.c~ and ~lauxlib.h~: auxiliary
-   - ~lbaselib.c~: base
+   - ~lbaselib.c~: base — populates global environment
    - ~lcorolib.c~: coroutine
    - ~ldblib.c~: debug
    - ~liolib.c~: IO
@@ -42,8 +43,10 @@
   - ~lobject.c~ and ~lobject.h~: functions over Lua objects
   - ~lstring.c~ and ~lstring.h~: string table and string cache
   - ~ltable.c~ and ~ltable.h~: Lua table implementation
+  - ~ltm.c~ and ~ltm.h~: tag methods
 
 - Parsing and Compilation
+  - ~lzio.c~ and ~lzio.h~: buffered IO streams
   - ~llex.c~ and ~llex.h~: lexical analyzer
   - ~lparser.c~ and ~lparser.h~: recursive descent with precedence climbing
   - ~lcode.c~ and ~lcode.h~: bytecode generation
@@ -60,8 +63,6 @@
 - Other
   - ~ldebug.c~ and ~ldebug.h~: debug interface
   - ~lprefix.h~: definitions that must come before any other header file
-  - ~ltm.c~ and ~ltm.h~: tag methods
-  - ~lzio.c~ and ~lzio.h~: buffered IO streams
 
 ** Runtime State
 
@@ -660,19 +661,219 @@
 
 ** Parsing and Compilation
 
-1. Lua Source Text
+The Lua compiler uses a single-pass, recursive descent and Pratt parser with interleaving
+syntax analysis and code generation. The compiler outputs ~Proto~ — the static compilation
+of a Lua function, containing metadata and executable bytecode.
 
-2. Input Stream/Buffering
+1. Lua Source Code: ~.lua~ files
 
-3. Lexer
+2. Buffered IO: ~lzio.c~
 
-4. Parser
+3. Lexer: ~llex.c~
 
-5. Code Generator
+4. Parser: ~lparser.c~
 
-6. Function Prototype — Bytecode and Metadata
+5. Code Generation: ~lcode.c~
 
-7. Virtual Machine — Bytecode Dispatch
+6. Function Prototype: bytecode + metadata
+
+7. Virtual Machine: wraps function prototypes in closures, executes bytecode
+
+#+begin_src c
+  LClosure* luaY_parser(lua_State* L, ZIO* z, Table* anchor, Mbuffer* buff,
+                        Dyndata* dyd, const char* name, int firstchar) {
+      LexState lexstate;
+      FuncState funcstate;
+      LClosure* cl;
+      /* Scanner Table */
+      lexstate.h = anchor;
+      /* Create main closure. */
+      cl = luaF_newLclosure(L, 1);
+      /* Anchor closure in scanner table. */
+      luaD_anchorobj(L, anchor, obj2gco(cl));
+      funcstate.f = cl->p = luaF_newproto(L);
+      luaC_objbarrier(L, cl, cl->p);
+      /* Create and anchor TString. */
+      funcstate.f->source = luaS_new(L, name);
+      luaC_objbarrier(L, funcstate.f, funcstate.f->source);
+      lexstate.buff = buff;
+      lexstate.dyd = dyd;
+      dyd->actvar.n = dyd->gt.n = dyd->label.n = 0;
+      luaX_setinput(L, &lexstate, z, funcstate.f->source, firstchar);
+      /* Parse source code. */
+      mainfunc(&lexstate, &funcstate);
+      lua_assert(!funcstate.prev && funcstate.nups == 1 && !lexstate.fs);
+      lua_assert(dyd->actvar.n == 0 && dyd->gt.n == 0 && dyd->label.n == 0);
+      return cl;
+  }
+#+end_src
+
+*** State
+
+#+begin_example
+                                 +--------+
+                                 | Parser |
+                                 +--------+
+                                     |
+                                     V
+                    +----+    +-------------+
+                    | IO |<---| Lexer State |
+                    +----+    +-------------+
+                                  |     |
+                             +----+     +-----+
+                             |                |
+                             V                V
+                    +----------------+ +--------------+
+                    | Function State | | Dynamic Data |
+                    +----------------+ +--------------+
+                           | | |                 +----------------+
+          +----------------+ | +---- parent ---->| Function State |
+          |                  |                   +----------------+
+          V                  V
+  +---------------+ +--------------------+
+  | Block Control | | Function Prototype |
+  +---------------+ +--------------------+
+         |
+       parent
+         |
+         V
+  +---------------+
+  | Block Control |
+  +---------------+
+#+end_example
+
+- *IO*: ~struct ZIO~ buffers input to lexer.
+
+- *Lexer State*: ~struct LexState~ maintains lexical analysis state across the entire compilation,
+  including IO, current token, and lookahead information.
+
+- *Dynamic Data*: ~struct Dyndata~ tracks dynamic data structures used by the parser. These include
+  active local variables and pending gotos and labels.
+
+- *Function State*: ~struct FuncState~ represents the current function being compiled, tracking
+  register allocation, constants, and upvalues. A series of these nodes creates a stack
+  tracking lexical scope for nested function definitions.
+
+- *Block Control*: ~struct BlockCnt~ tracks state for a syntactic block (function body, loops, if statement).
+   A series of these nodes creates a stack, tracking variable visibility and pending jumps. Generates
+   close instructions for pending upvalues.
+
+#+begin_src c
+  typedef struct LexState {
+      /* Current Character (charint) */
+      int current;
+      /* Input Line Counter */
+      int linenumber;
+      /* Line of Last Token Consumed */
+      int lastline;
+      /* Current Token */
+      Token t;
+      /* Look Ahead Token */
+      Token lookahead;
+      /* Current Function (parser) */
+      struct FuncState* fs;
+      /* Thread state */
+      struct lua_State* L;
+      /* Input Stream */
+      ZIO* z;
+      /* Token Buffer */
+      Mbuffer* buff;
+      /* String Internment */
+      Table* h;
+      /* Dynamic Data Used by Parser*/
+      struct Dyndata* dyd;
+      /* Name of Current Source */
+      TString* source;
+      /* Environment Variable */
+      TString* envn;
+      /* "break" label */
+      TString* brkn;
+      /* "global" name (when not reserved) */
+      TString* glbn;
+  } LexState;
+
+  typedef struct FuncState {
+      /* Current Function Header */
+      Proto* f;
+      /* Enclosing Function */
+      struct FuncState* prev;
+      /* Lexical State */
+      struct LexState* ls;
+      /* Chain of Current Blocks */
+      struct BlockCnt* bl;
+      /* Constant Cache */
+      Table* kcache;
+      /* Program Counter */
+      int pc;
+      /* Last Jump Label */
+      int lasttarget;
+      int previousline;
+      int nk;
+      int np;
+      int nabslineinfo;
+      /* Index of First Local Var in Dyndata Array */
+      int firstlocal;
+      /* Index of First Label in Dyndata Array */
+      int firstlabel;
+      short ndebugvars;
+      /* Number of Active Variable Declarations */
+      short nactvar;
+      /* Number of Upvalues */
+      lu_byte nups;
+      /* First Free Register */
+      lu_byte freereg;
+      lu_byte iwthabs;
+      lu_byte needclose;
+  } FuncState;
+#+end_src
+
+*** Control Flow
+
+#+begin_example
+                            +-------------+
+                            | luaY_parser |
+                            |-------------|
+                            | Entry Point |
+                            +-------------+
+                                   |
+                                   V
+                        +---------------------+
+                        | mainfunc            |
+                        |---------------------|
+                        | Parse Main Function |
+                        +---------------------+
+                                   |
+                                   V
+                        +----------------------+
+                        | open_func            |
+                        |----------------------|
+                        | Initialize FuncState |
+                        +----------------------+
+                                   |
+                                   V
+                        +----------------------+
+                        | statlist             |
+                        |----------------------|
+                        | Parse Statement List |
+                        +----------------------+
+                             | ^         |
+                    +--------+ |         |
+                    | +--------+         |
+                    | |                  |
+                    V |                  V
+           +-----------------+ +-------------------+
+           | statement       | | close_func        |
+           |-----------------| |-------------------|
+           | Parse Statement | | Finalize Function |
+           +-----------------+ +-------------------+
+                    |
+   +-------+--------+-+--------+--------+----------+------------+-----------+
+   |       |          |        |        |          |            |           |
+   V       V          V        V        V          V            V           V
++----+ +-------+ +--------+ +-----+ +-------+ +----------+ +--------+ +------------+
+| if | | while | | repeat | | for | | local | | function | | return | | expression |
++----+ +-------+ +--------+ +-----+ +-------+ +----------+ +--------+ +------------+
+#+end_example
 
 ** Execution
 
