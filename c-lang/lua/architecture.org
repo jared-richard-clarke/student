@@ -711,9 +711,9 @@ of a Lua function, containing metadata and executable bytecode.
 *** State
 
 #+begin_example
-                                 +--------+
-                                 | Parser |
-                                 +--------+
+                                +--------+
+                                | Parser |
+                                +--------+
                                      |
                                      V
                     +----+    +-------------+
