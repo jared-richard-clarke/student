@@ -807,14 +807,19 @@ of a Lua function, containing metadata and executable bytecode.
       int pc;
       /* Last Jump Label */
       int lasttarget;
+      /* Last Line Saved in lineinfo */
       int previousline;
+      /* Number of Elements in k */
       int nk;
+      /* Number of Elements in p */
       int np;
+      /* Number of Elements in abslineinfo */
       int nabslineinfo;
       /* Index of First Local Var in Dyndata Array */
       int firstlocal;
       /* Index of First Label in Dyndata Array */
       int firstlabel;
+      /* Number of Elements in f->locvars */
       short ndebugvars;
       /* Number of Active Variable Declarations */
       short nactvar;
@@ -822,9 +827,12 @@ of a Lua function, containing metadata and executable bytecode.
       lu_byte nups;
       /* First Free Register */
       lu_byte freereg;
+      /* Instructions Issued Since Absolute Line Info */
       lu_byte iwthabs;
+      /* Function Needs to Close Upvalues */
       lu_byte needclose;
   } FuncState;
+#+end_src
 #+end_src
 
 *** Control Flow
