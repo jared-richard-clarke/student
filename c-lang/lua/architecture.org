@@ -661,9 +661,9 @@
 
 ** Parsing and Compilation
 
-The Lua compiler uses a single-pass, recursive descent and Pratt parser with interleaving
-syntax analysis and code generation. The compiler outputs ~Proto~ — the static compilation
-of a Lua function, containing metadata and executable bytecode.
+The Lua compiler uses a single-pass, recursive descent, operator precedence climbing parser
+with interleaving syntax analysis and code generation. The compiler outputs ~Proto~ —
+the static compilation of a Lua function, containing metadata and executable bytecode.
 
 1. Lua Source Code: ~.lua~ files
 
