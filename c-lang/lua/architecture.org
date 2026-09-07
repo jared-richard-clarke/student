@@ -883,6 +883,70 @@ the static compilation of a Lua function, containing metadata and executable byt
   +----+ +-------+ +--------+ +-----+ +-------+ +----------+ +--------+ +------------+
 #+end_example
 
+*** Expression Parsing and Operator Precedence
+
+#+begin_src c
+  /* Priority table for binary operators. */
+  static const struct {
+      lu_byte left;
+      lu_byte right;
+  } priority[] = {
+      {10, 10}, {10, 10},         /* '+' '-' */
+      {11, 11}, {11, 11},         /* '*' '%' */
+      {14, 13},                   /* '^' (right associative) */
+      {11, 11}, {11, 11},         /* '/' '//' */
+      {6, 6},   {4, 4},   {5, 5}, /* '&' '|' '~' */
+      {7, 7},   {7, 7},           /* '<<' '>>' */
+      {9, 8},                     /* '..' (right associative) */
+      {3, 3},   {3, 3},   {3, 3}, /* ==, <, <= */
+      {3, 3},   {3, 3},   {3, 3}, /* ~=, >, >= */
+      {2, 2},   {1, 1}            /* and, or */
+  };
+
+  /* Priority for unary operators */
+  #define UNARY_PRIORITY 12
+
+  /*
+    sub-expression -> (simple expression | unary operation) { binary operation }
+    where binary operation is any binary operator with a priority higher than limit.
+  */
+  static BinOpr subexpr(LexState* ls, expdesc* v, int limit) {
+      BinOpr op;
+      UnOpr uop;
+      enterlevel(ls);
+      uop = getunopr(ls->t.token);
+      /* prefix (unary) operator? */
+      if (uop != OPR_NOUNOPR) {
+          int line = ls->linenumber;
+          /* Skip operator. */
+          luaX_next(ls);
+          subexpr(ls, v, UNARY_PRIORITY);
+          luaK_prefix(ls->fs, uop, v, line);
+      } else {
+          simpleexp(ls, v);
+      }
+      /* Expand while operators have priorities higher than "limit". */
+      op = getbinopr(ls->t.token);
+      while (op != OPR_NOBINOPR && priority[op].left > limit) {
+          expdesc v2;
+          BinOpr nextop;
+          int line = ls->linenumber;
+          /* Skip operator. */
+          luaX_next(ls);
+          luaK_infix(ls->fs, op, v);
+          /* Read sub-expression with higher priority. */
+          nextop = subexpr(ls, &v2, priority[op].right);
+          luaK_posfix(ls->fs, op, v, &v2, line);
+          op = nextop;
+      }
+      leavelevel(ls);
+      /* Return first untreated operator. */
+      return op;
+  }
+
+  static void expr(LexState* ls, expdesc* v) { subexpr(ls, v, 0); }
+#+end_src
+
 ** Execution
 
 #+begin_example
