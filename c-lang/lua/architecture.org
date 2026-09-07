@@ -949,6 +949,8 @@ the static compilation of a Lua function, containing metadata and executable byt
 
 ** Execution
 
+*** Function Call Protocol
+
 #+begin_example
          +---------------------+ +-------------+ +---------------+
          | C API               | | VM Bytecode | | Coroutine API |
