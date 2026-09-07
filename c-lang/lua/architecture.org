@@ -925,7 +925,7 @@ the static compilation of a Lua function, containing metadata and executable byt
       } else {
           simpleexp(ls, v);
       }
-      /* Expand while operators have priorities higher than "limit". */
+      /* Expand while operators have priorities higher than limit. */
       op = getbinopr(ls->t.token);
       while (op != OPR_NOBINOPR && priority[op].left > limit) {
           expdesc v2;
