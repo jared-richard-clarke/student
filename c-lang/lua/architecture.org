@@ -1,5 +1,4 @@
 * Lua's Architecture
-#+date: 2026-09-06
 
 ** Sources
 
@@ -72,9 +71,11 @@
   A two-level state management design that separates shared global resources
   from per-thread execution state.
 
-                                               +----------------------+
-                                         +---->| Base Type Metatables |
-                                         |     +----------------------+
+
+  +-----------------------+                    +----------------------+
+  | lua_State (coroutine) |-----+        +---->| Base Type Metatables |
+  +-----------------------+     |        |     +----------------------+
+                                V        |
                             +--------------+   +-------------------+
   +------------------------>| Global State |-->| Bottom Value: nil |
   |                         +--------------+   +-------------------+
@@ -156,9 +157,11 @@
   Lua's VM uses a register-based model, where each function has a set
   of virtual registers — in reality, stack positions.
 
+  +----------------+--------------------------+------------+-------------+----------+
   | Base           | Register 0               | Register 1 | Register N  | Unused   |
   |----------------|--------------------------|------------|-------------|----------|
   | ci->func.p + 1 | Fixed Arguments / Locals | Locals     | Temporaries | L->top.p |
+  +----------------+--------------------------+------------+-------------+----------+
 #+end_example
 
 *** Global State
@@ -390,6 +393,49 @@
       ptrdiff_t offset;
   } StkIdRel;
 #+end_src
+
+*** Memory Management
+
+#+begin_example
+  === State ===
+                      +--------------+
+                      | Global State |
+                      +--------------+
+                          | | | |
+  +-----------------------+ | | +----------------------+
+  |        +----------------+ |                        |
+  |        |                  |                        |
+  |        V                  V                        V
+  |  +-----------+ +--------------------+ +---------------------------+
+  |  | Allocator | | Gray List          | | Memory Accounting         |
+  |  |-----------| |--------------------| |---------------------------|
+  |  | lua_Alloc | | - Gray Objects     | | - Allocated + Debt        |
+  |  +-----------+ | - Atomic Revisits  | | - Debt Counter            |
+  |       | |      | - Weak Value Tables| | - Bytes Marked in a Cycle |
+  |       | |      | - Weak Key Tables  | +---------------------------+
+  |       | |      | - Weak KV Tables   |
+  |       | |      +--------------------+
+  |       | |      +---------------------------+
+  |       | |      | Object Lists              |
+  |       | |      |---------------------------|   +-----------------------+
+  |       +-+--+-->| - Collectable Objects     |-->| Generational Pointers |
+  |            |   |---------------------------|   +-----------------------+
+  |            |-->| - Finalizer Objects       |
+  +------------+-->| - Finalizers Ready        |
+               +-->| - Non-Collectable Objects |
+                   +---------------------------+
+
+  === Collectable Objects ===
+
+                                   +-------------+        +---------+        +--------------+
+                                   | g->survival |        | g->old1 |        | g->reallyold |
+                                   +-------------+        +---------+        +--------------+
+                                          |                    |                    |
+                                          V                    V                    V
+  +----------+   +-------------+   +------------------+   +--------------+   +-------------+
+  | g->allgc |-->| New Objects |-->| Survival Objects |-->| Old1 Objects |-->| Old Objects |
+  +----------+   +-------------+   +------------------+   +--------------+   +-------------+
+#+end_example
 
 ** Foundation
 
@@ -833,7 +879,6 @@ the static compilation of a Lua function, containing metadata and executable byt
       lu_byte needclose;
   } FuncState;
 #+end_src
-#+end_src
 
 *** Control Flow
 
@@ -883,7 +928,7 @@ the static compilation of a Lua function, containing metadata and executable byt
   +----+ +-------+ +--------+ +-----+ +-------+ +----------+ +--------+ +------------+
 #+end_example
 
-*** Expression Parsing and Operator Precedence
+** Expression Parsing and Operator Precedence
 
 #+begin_src c
   /* Priority table for binary operators. */
@@ -999,6 +1044,156 @@ the static compilation of a Lua function, containing metadata and executable byt
           |-------------------|
           | Cleanup / Results |
           +-------------------+
+#+end_example
+
+*** Coroutines
+
+Coroutines, or threads, are represented by ~lua_State~ structures, where each coroutine
+maintains its own stack and call chain. Shares global state with the main thread
+and other coroutines.
+
+| state           | description                            |
+|-----------------+----------------------------------------|
+| ~LUA_OK~        | Ready to run or has finished executing |
+| ~LUA_YIELD~     | Suspended via ~lua_yieldk~             |
+| ~LUA_ERRRUN~    | Runtime error occurred                 |
+| ~LUA_ERRSYNTAX~ | Syntax error during parsing            |
+| ~LUA_ERRMEM~    | Memory allocation error                |
+| ~LUA_ERRERR~    | Error while running error handler      |
+
+#+begin_example
+              Start
+                |
+                V
+          +------------+
+          | New Thread |
+          +------------+
+                |
+                V
+             +----+
+      +------| OK |-----------------------+
+      |      +----+                       |
+      |         ^                         |
+      |         |                         |
+  +--------+ +--------+                   |
+  | Resume | | Return |                   |
+  +--------+ +--------+                   |
+      |       |                           |
+      |   +---------+                     |
+      +-->| Running |                     |
+          +---------+                     |
+              | ^ |                       |
+      +-------+ | +--------+              |
+      |         |          |              |
+  +-------+ +--------+ +-----------+ +----------+
+  | Yield | | Resume | | Exception | | Finished |
+  +-------+ +--------+ +-----------+ +----------+
+      |         ^          |              |
+      V         |          V              |
+  +-------+     |      +-------+          |
+  | YIELD |-----+      | ERROR |          |
+  +-------+            +-------+          |
+                           |              |
+                       +------+           |
+                       | Dead |           |
+                       +------+           |
+                           |              |
+                           +---> End <----+
+#+end_example
+
+*** Exception Handling
+
+Exception handling is a chain of ~lua_longjmp~ structures that form a stack of recovery points.
+Each protected call inserts a new node in the chain. The function ~luaD_throw~ propagates errors.
+
+Exception handling is specific to the given platform:
+
+- *C++*: ~throw~, ~try~, and ~catch~
+
+- *POSIX*: ~_longjmp~ and ~_setjmp~ — more efficient than ~_longjmp~ and ~setjmp~
+
+-- *ISO C*: ~longjmp~ and ~setjmp~
+
+#+begin_example
+  === State ===
+
+  +----------------------------+
+  | lua_State                  |
+  |----------------------------|
+  | errorJmp (current handler) |
+  +----------------------------+
+                |
+                V
+        +----------------+
+        | lua_longjmp: 2 |
+        |----------------|
+        | Status: LUA_OK |
+        +----------------+
+                |
+                V
+        +----------------+
+        | lua_longjmp: 1 |
+        |----------------|
+        | Status: LUA_OK |
+        +----------------+
+                |
+                V
+            +------+
+            | NULL |
+            +------+
+
+  === Propagation ===
+
+                         +------------------------+
+                         | luaD_throw(L, errcode) |
+                         +------------------------+
+                                    |
+                                    V
+                          +---------------------+
+                          | L->errorJmp exists? |
+                          +---------------------+
+                                    | |
+                  +------ yes ------+ +----- no ----+
+                  |                                 |
+                  V                                 V
+   +--------------------------------+ +---------------------------+
+   | Set errorJmp->status = errcode | | mainth = mainthread(G(L)) |
+   +--------------------------------+ +---------------------------+
+                  |                                 |
+                  V                                 V
+     +-------------------------+     +------------------------------+
+     | LUAI_THROW(L, errorJmp) |     | luaE_resetthread(L, errcode) |
+     +-------------------------+     |------------------------------|
+                                     | Close all upvalues           |
+                                     +------------------------------+
+                                                    |
+                                                    V
+                                       +--------------------------+
+                                       | mainth->errorJmp exists? |
+                                       +--------------------------+
+                                                   | |
+                                        +----------+ +--------------+
+                                        |                           |
+                                       yes                          no
+                                        |                           |
+                                        V                           V
+                              +-------------------+      +---------------------+
+                              | Copy error object |      | G(L)->panic exists? |
+                              | to main thread    |      +---------------------+
+                              +-------------------+                | |
+                                        |                  +- yes -+ +- no -+
+                                        |                  |                |
+                               +--------+                  |                |
+                               V                           V                |
+                +-----------------------------+ +---------------------+     |
+                | luaD_throw(mainth, errcode) | | G(L)->panic(L)      |     |
+                +-----------------------------+ |---------------------|     |
+                                                | Last chance handler |     |
+                                                +---------------------+     |
+                                                           |                |
+                                                           |  +---------+   |
+                                                           +->| abort() |<--+
+                                                              +---------+
 #+end_example
 
 *** Virtual Machine
