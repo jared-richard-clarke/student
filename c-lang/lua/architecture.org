@@ -1110,7 +1110,7 @@ Exception handling is specific to the given platform:
 
 - *C++*: ~throw~, ~try~, and ~catch~
 
-- *POSIX*: ~_longjmp~ and ~_setjmp~ — more efficient than ~_longjmp~ and ~setjmp~
+- *POSIX*: ~_longjmp~ and ~_setjmp~ — more efficient than ~longjmp~ and ~setjmp~
 
 - *ISO C*: ~longjmp~ and ~setjmp~
 
