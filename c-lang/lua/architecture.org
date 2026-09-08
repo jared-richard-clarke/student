@@ -418,9 +418,9 @@
   |       | |      +---------------------------+
   |       | |      | Object Lists              |
   |       | |      |---------------------------|   +-----------------------+
-  |       +-+--+-->| - Collectable Objects     |-->| Generational Pointers |
-  |            |   |---------------------------|   +-----------------------+
-  |            |-->| - Finalizer Objects       |
+  |       | +--+-->| - Collectable Objects     |-->| Generational Pointers |
+  |       |    |   |---------------------------|   +-----------------------+
+  |       +----+-->| - Finalizer Objects       |
   +------------+-->| - Finalizers Ready        |
                +-->| - Non-Collectable Objects |
                    +---------------------------+
