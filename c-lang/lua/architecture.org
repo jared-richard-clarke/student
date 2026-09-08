@@ -928,7 +928,7 @@ the static compilation of a Lua function, containing metadata and executable byt
   +----+ +-------+ +--------+ +-----+ +-------+ +----------+ +--------+ +------------+
 #+end_example
 
-** Expression Parsing and Operator Precedence
+*** Expression Parsing and Operator Precedence
 
 #+begin_src c
   /* Priority table for binary operators. */
