@@ -63,6 +63,93 @@
   - ~ldebug.c~ and ~ldebug.h~: debug interface
   - ~lprefix.h~: definitions that must come before any other header file
 
+** C API
+
+Lua's primary interface for embedding and extension are stack-based functions,
+which enable the type-safe exchange of data between C and Lua.
+
+*** System Bridge
+
+#+begin_example
+                     +---------------------------------------------------+
+                     | API Boundary                                      |
+                     |---------------------------------------------------|
+  +---------------+  |  +-----------------+  +-------------+  +-------+  |  +-----------+
+  | C Application |--|->| lua_* Functions |--| index2value |->| Stack |--|->| Lua State |
+  +---------------+  |  +-----------------+  +-------------+  +-------+  |  +-----------+
+                     +---------------------------------------------------+
+#+end_example
+
+*** Index Resolution
+
+#+begin_example
+              +------------------+ +------------------+ +---------------------+
+              | Positive Indices | | Negative Indices | | Pseudo Indices      |
+              |------------------| |------------------| |---------------------|
+              | Function Base -> | | <- Stack Top     | | - LUA_REGISTRYINDEX |
+              +------------------+ +------------------+ | - Upvalues          |
+                       |                    |           +---------------------+
+                       |                    V                     |
+                       |          +---------------------+         |
+                       +--------->| index2value(L, idx) |<--------+
+                                  +---------------------+
+                                         | | | |
+           +-----------------------------+ | | +------------------------------------+
+           |                   +-----------+ +----------+                           |
+           |                   |                        |                           |
+           V                   V                        V                           V
+  +------------------+ +----------------+ +---------------------------+ +-------------------------+
+  | idx > 0          | | idx < 0        | | idx === LUA_REGISTRYINDEX | | idx < LUA_REGISTRYINDEX |
+  |------------------| |----------------| |---------------------------| |-------------------------|
+  | ci->func.p + idx | | L->top.p + idx | | G(L)->l_registry          | | C Closure Upvalue       |
+  +------------------+ +----------------+ +---------------------------+ +-------------------------+
+       ^     |              ^     |             |                            |
+       |     |              |     |             |                            |
+       |     +--------------|-+   |             |                            |
+  +--------------+          | |   |             |                            |
+  | Call Frame   |----------+ |   |             |                            |
+  |--------------|            |   |             |                            |
+  | CallInfo* ci |            |   |             |                            |
+  +--------------+            V   V             |                            |
+  +----------------+    +--------------+        |                            |
+  | Stack Array    |    | Tagged Value |<-------+                            |
+  |----------------|--->|--------------|<------------------------------------+
+  | Stkid(TValue*) |    | TValue*      |
+  +----------------+    +--------------+
+#+end_example
+
+*** Categories
+
+#+begin_example
+  +--------------------+ +-----------------+ +-------------------+ +-----------------+ +-----------------+ +-------------+
+  | State              | | Access          | | Push              | | Get             | | Set             | | Call        |
+  |--------------------| |-----------------| |-------------------| |-----------------| |-----------------| |-------------|
+  | - lua_newstate     | | - lua_type      | | - lua_pushnil     | | - lua_getglobal | | - lua_setglobal | | - lua_call  |
+  | - lua_close        | | - lua_tonumberx | | - lua_pushnumber  | | - lua_gettable  | | - lua_settable  | | - lua_pcall |
+  | - lua_newthread    | | - lua_tolstring | | - lua_pushstring  | | - lua_getfield  | | - lua_setfield  | | - lua_load  |
+  +--------------------+ +-----------------+ | - lua_pushclosure | | - lua_rawget    | | - lua_rawset    | +-------------+
+            |                     |          +-------------------+ +-----------------+ +-----------------+        |
+            |                     |                    |                    |                  |                  |
+            +----------+ +--------+             +------+                    |                  |                  |
+                       | |                      |                           |                  |                  |
+                       V V                      V                           V                  |                  |
+              +------------------+     +-------------------+     +-----------------+           |                  |
+              | Index Resolution |     | Validation        |     | Virtual Machine |<----------+                  |
+              |------------------|     |-------------------|     |-----------------|<-----------------------------+
+              | - index2value    |     | - api_check       |     | - luaV_fastget  |
+              | - index2stack    |     | - api_checkpop    |     | - luaV_fastset  |
+              +------------------+     | - api_checknelems |     | - luaD_call     |
+                        |              +-------------------+     +-----------------+
+                        |                       |                        |
+                        |                       V                        |
+                        |               +---------------+                |
+                        +-------------->| Thread Safety |<---------------+
+                                        |---------------|
+                                        | - lua_lock    |
+                                        | - lua_unlock  |
+                                        +---------------+
+#+end_example
+
 ** Runtime State
 
 #+begin_example
