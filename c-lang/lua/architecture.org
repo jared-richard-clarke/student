@@ -121,25 +121,25 @@ which enable the type-safe exchange of data between C and Lua.
 *** Categories
 
 #+begin_example
-  +--------------------+ +-----------------+ +-------------------+ +-----------------+ +-----------------+ +-------------+
-  | State              | | Access          | | Push              | | Get             | | Set             | | Call        |
-  |--------------------| |-----------------| |-------------------| |-----------------| |-----------------| |-------------|
-  | - lua_newstate     | | - lua_type      | | - lua_pushnil     | | - lua_getglobal | | - lua_setglobal | | - lua_call  |
-  | - lua_close        | | - lua_tonumberx | | - lua_pushnumber  | | - lua_gettable  | | - lua_settable  | | - lua_pcall |
-  | - lua_newthread    | | - lua_tolstring | | - lua_pushstring  | | - lua_getfield  | | - lua_setfield  | | - lua_load  |
-  +--------------------+ +-----------------+ | - lua_pushclosure | | - lua_rawget    | | - lua_rawset    | +-------------+
-            |                     |          +-------------------+ +-----------------+ +-----------------+        |
-            |                     |                    |                    |                  |                  |
-            +----------+ +--------+             +------+                    |                  |                  |
-                       | |                      |                           |                  |                  |
-                       V V                      V                           V                  |                  |
-              +------------------+     +-------------------+     +-----------------+           |                  |
-              | Index Resolution |     | Validation        |     | Virtual Machine |<----------+                  |
-              |------------------|     |-------------------|     |-----------------|<-----------------------------+
-              | - index2value    |     | - api_check       |     | - luaV_fastget  |
-              | - index2stack    |     | - api_checkpop    |     | - luaV_fastset  |
-              +------------------+     | - api_checknelems |     | - luaD_call     |
-                        |              +-------------------+     +-----------------+
+  +--------------------+ +-----------------+ +-------------------+ +-----------------+ +-----------------+
+  | State              | | Access          | | Push              | | Get             | | Set             |
+  |--------------------| |-----------------| |-------------------| |-----------------| |-----------------|
+  | - lua_newstate     | | - lua_type      | | - lua_pushnil     | | - lua_getglobal | | - lua_setglobal |
+  | - lua_close        | | - lua_tonumberx | | - lua_pushnumber  | | - lua_gettable  | | - lua_settable  |
+  | - lua_newthread    | | - lua_tolstring | | - lua_pushstring  | | - lua_getfield  | | - lua_setfield  |
+  +--------------------+ +-----------------+ | - lua_pushclosure | | - lua_rawget    | | - lua_rawset    |
+            |                     |          +-------------------+ +-----------------+ +-----------------+
+            |                     |                    |                    |                  |
+            +----------+ +--------+             +------+                    |                  |
+                       | |                      |                           |                  |
+                       V V                      V                           V                  |
+              +------------------+     +-------------------+     +-----------------+           |  +-------------+
+              | Index Resolution |     | Validation        |     | Virtual Machine |<----------+  | Call        |
+              |------------------|     |-------------------|     |-----------------|<-------------|-------------|
+              | - index2value    |     | - api_check       |     | - luaV_fastget  |              | - lua_call  |
+              | - index2stack    |     | - api_checkpop    |     | - luaV_fastset  |              | - lua_pcall |
+              +------------------+     | - api_checknelems |     | - luaD_call     |              | - lua_load  |
+                        |              +-------------------+     +-----------------+              +-------------+
                         |                       |                        |
                         |                       V                        |
                         |               +---------------+                |
