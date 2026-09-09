@@ -65,8 +65,8 @@
 
 ** C API
 
-Lua's primary interface for embedding and extension are stack-based functions,
-which enable the type-safe exchange of data between C and Lua.
+Lua's primary interface for embedding and extension are stack-based functions —
+functions that enable the type-safe exchange of data between C and Lua.
 
 *** System Bridge
 
