@@ -656,8 +656,8 @@ Below is an abbreviated version of Lua's virtual machine.
     3   EXTRAARG    0       - extra (larger) argument for previous opcode
 
                               When EXTRAARG follows NEWTABLE, multiply EXTRAARG's operand
-                              by 256 (MAXARG_C + 1) and add to the array size operand of
-                              the NEWTABLE instruction.
+                              by 256 (MAXARG_C + 1) and add it to the array size operand
+                              of the NEWTABLE instruction.
 
                     A Bx
     4   CLOSURE     1 0     - function add(x, y):
