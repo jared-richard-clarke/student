@@ -485,7 +485,8 @@ Below is an abbreviated version of Lua's virtual machine.
               /* RETURN A B C k | return R[A], ... , R[A+B-2] */
               vmcase(OP_RETURN) {
                   StkId ra = RA(i);
-                  int n = GETARG_B(i) - 1; /* number of results */
+                  /* The number of results. */
+                  int n = GETARG_B(i) - 1;
                   int nparams1 = GETARG_C(i);
                   if (n < 0) {
                       n = cast_int(L->top.p - ra);
