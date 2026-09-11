@@ -762,7 +762,7 @@ Below is an abbreviated version of Lua's virtual machine.
                 A
     3  RETURN1  2        - return R[A]
 
-    4  RETURN0           - return
+    4  RETURN0           - return (implicit default)
   end
 
   locals:
@@ -792,7 +792,7 @@ Below is an abbreviated version of Lua's virtual machine.
                 A
     3  RETURN1  2        - return R[A]
 
-    4  RETURN0           - return
+    4  RETURN0           - return (implicit default)
   end
 
   locals:
@@ -969,7 +969,7 @@ Below is an abbreviated version of Lua's virtual machine.
     11  RETURN    2 0  0    - all out:
                               return R[A], ... , R[A+B-2]
 
-    12  RETURN0             - return
+    12  RETURN0             - return (implicit default)
   end
 
   locals:
