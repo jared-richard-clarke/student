@@ -912,7 +912,7 @@ Below is an abbreviated version of Lua's virtual machine.
 
                  A B Ck
     7  RETURN    2 1 0k  - 0 out:
-                           return R[A], ... , R[A+B-2]
+                           return R[A], ... , R[A+B-2] (implicit default)
   end
 
   locals:
