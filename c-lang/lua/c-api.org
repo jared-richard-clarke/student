@@ -458,67 +458,101 @@ as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
   // Portions from "linit.c".
 
   static const luaL_Reg stdlibs[] = {
-    { LUA_GNAME,       luaopen_base },
-    { LUA_LOADLIBNAME, luaopen_package },
-    { LUA_COLIBNAME,   luaopen_coroutine },
-    { LUA_DBLIBNAME,   luaopen_debug },
-    { LUA_IOLIBNAME,   luaopen_io },
-    { LUA_MATHLIBNAME, luaopen_math },
-    { LUA_OSLIBNAME,   luaopen_os },
-    { LUA_STRLIBNAME,  luaopen_string },
-    { LUA_TABLIBNAME,  luaopen_table },
-    { LUA_UTF8LIBNAME, luaopen_utf8 },
-    { NULL,            NULL}
+      { LUA_GNAME,       luaopen_base },
+      { LUA_LOADLIBNAME, luaopen_package },
+      { LUA_COLIBNAME,   luaopen_coroutine },
+      { LUA_DBLIBNAME,   luaopen_debug },
+      { LUA_IOLIBNAME,   luaopen_io },
+      { LUA_MATHLIBNAME, luaopen_math },
+      { LUA_OSLIBNAME,   luaopen_os },
+      { LUA_STRLIBNAME,  luaopen_string },
+      { LUA_TABLIBNAME,  luaopen_table },
+      { LUA_UTF8LIBNAME, luaopen_utf8 },
+      { NULL,            NULL }
   };
 
   #define luai_openlibs(L) luaL_openselectedlibs(L, ~0, 0)
 
-  LUALIB_API void luaL_openselectedlibs (lua_State *L, int load, int preload) {
-    int mask;
-    const luaL_Reg *lib;
-    luaL_getsubtable(L, LUA_REGISTRYINDEX, LUA_PRELOAD_TABLE);
-    for (lib = stdlibs, mask = 1; lib->name != NULL; lib++, mask <<= 1) {
-      // Load library.
-      if (load & mask) {
-        luaL_requiref(L, lib->name, lib->func, 1);
-        lua_pop(L, 1);
+  LUALIB_API void luaL_openselectedlibs(lua_State* L, int load, int preload) {
+      int mask;
+      const luaL_Reg* lib;
+      luaL_getsubtable(L, LUA_REGISTRYINDEX, LUA_PRELOAD_TABLE);
+      for (lib = stdlibs, mask = 1; lib->name != NULL; lib++, mask <<= 1) {
+          // Load library.
+          if (load & mask) {
+              luaL_requiref(L, lib->name, lib->func, 1);
+              lua_pop(L, 1);
+          }
+          // Add library to PRELOAD table.
+          else if (preload & mask) {
+              lua_pushcfunction(L, lib->func);
+              lua_setfield(L, -2, lib->name);
+          }
       }
-      // Add library to PRELOAD table.
-      else if (preload & mask) {
-        lua_pushcfunction(L, lib->func);
-        lua_setfield(L, -2, lib->name);
-      }
-    }
-    lua_assert((mask >> 1) == LUA_UTF8LIBK);
-    // Remove PRELOAD table.
-    lua_pop(L, 1);
+      lua_assert((mask >> 1) == LUA_UTF8LIBK);
+      // Remove PRELOAD table.
+      lua_pop(L, 1);
   }
 
-  LUALIB_API void luaL_requiref (lua_State *L, const char *modname, lua_CFunction openf, int glb) {
-    // Get LOADED table.
-    luaL_getsubtable(L, LUA_REGISTRYINDEX, LUA_LOADED_TABLE);
-    // LOADED[modname]
-    lua_getfield(L, -1, modname);
-    // Load module if not already loaded.
-    if (!lua_toboolean(L, -1)) {
-      lua_pop(L, 1);
-      lua_pushcfunction(L, openf);
-      lua_pushstring(L, modname);
-      // Open module with "openf"
-      lua_call(L, 1, 1);
-      // Make copy of module (call result).
-      lua_pushvalue(L, -1);
-      // LOADED[modname] = module
-      lua_setfield(L, -3, modname);
-    }
-    // Remove LOADED table.
-    lua_remove(L, -2);
-    // If glb = true, register module in global table.
-    if (glb) {
-      lua_pushvalue(L, -1);
-      // _G[modname] = module
-      lua_setglobal(L, modname);
-    }
+  LUALIB_API void luaL_requiref(lua_State* L, const char* modname,
+                                lua_CFunction openf, int glb) {
+      // Get LOADED table.
+      luaL_getsubtable(L, LUA_REGISTRYINDEX, LUA_LOADED_TABLE);
+      // LOADED[modname]
+      lua_getfield(L, -1, modname);
+      // Load module if not already loaded.
+      if (!lua_toboolean(L, -1)) {
+          lua_pop(L, 1);
+          lua_pushcfunction(L, openf);
+          lua_pushstring(L, modname);
+          // Open module with "openf"
+          lua_call(L, 1, 1);
+          // Make copy of module (call result).
+          lua_pushvalue(L, -1);
+          // LOADED[modname] = module
+          lua_setfield(L, -3, modname);
+      }
+      // Remove LOADED table.
+      lua_remove(L, -2);
+      // If glb = true, register module in global table.
+      if (glb) {
+          lua_pushvalue(L, -1);
+          // _G[modname] = module
+          lua_setglobal(L, modname);
+      }
+  }
+
+  /* Read, Evaluate,, Print, and Loop */
+  static void doREPL(lua_State* L) {
+      int status;
+      const char* oldprogname = progname;
+      /* Omit program name for errors in interactive mode. */
+      progname = NULL;
+      /* Initializes the readline system if available. */
+      lua_initreadline(L);
+      /*
+        While there is input from the terminal, parse, compile, evaluate,
+        and print.
+      */
+      while ((status = loadline(L)) != -1) {
+          if (status == LUA_OK) {
+              /* Evaluate. */
+              status = docall(L, 0, LUA_MULTRET);
+          }
+          /* Success: Print contents of stack */
+          if (status == LUA_OK) {
+              l_print(L);
+          } else {
+              /* Failure: Print error message on top of stack */
+              report(L, status);
+          }
+      }
+      /* Clear stack. */
+      lua_settop(L, 0);
+      /* Insert a newline. */
+      lua_writeline();
+      /* Reset program name. */
+      progname = oldprogname;
   }
 
   // === Lua Standalone Interpreter ===
@@ -526,105 +560,106 @@ as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
 
   // Main body of the Lua stand-alone intepreter. Called in protected mode.
   // Parses and handles all arguments to the main program.
-  static int pmain (lua_State *L) {
-    int argc = (int)lua_tointeger(L, 1);
-    char **argv = (char **)lua_touserdata(L, 2);
-    // error = argument index | no name = -1 | no script name = 0 | script name = index
-    int script;
-    // Traverses all arguments from "argv" and returns a mask of those
-    // arguments before running any Lua code. Returns an error code if it
-    // finds any invalid arguments.
-    int args = collectargs(argv, &script);
-    // First argument is not an option.
-    int optlim = (script > 0) ? script : argc;
-    // Check whether the program and the Lua library being called
-    // are using the same version of Lua and the same numeric types.
-    luaL_checkversion(L);
-    // If "collectargs" returns an error code, print usage information
-    // along with the incorrect argument.
-    if (args == has_error) {
-      print_usage(argv[script]);
-      return 0;
-    }
-    // If option -v, print Lua version.
-    if (args & has_v) {
-      print_version();
-    }
-    // If option -E, signal for libraries to ignore environment variables.
-    if (args & has_E) {
+  static int pmain(lua_State* L) {
+      int argc = (int)lua_tointeger(L, 1);
+      char** argv = (char**)lua_touserdata(L, 2);
+      // error = argument index | no name = -1 | no script name = 0 | script name
+      // = index
+      int script;
+      // Traverses all arguments from "argv" and returns a mask of those
+      // arguments before running any Lua code. Returns an error code if it
+      // finds any invalid arguments.
+      int args = collectargs(argv, &script);
+      // First argument is not an option.
+      int optlim = (script > 0) ? script : argc;
+      // Check whether the program and the Lua library being called
+      // are using the same version of Lua and the same numeric types.
+      luaL_checkversion(L);
+      // If "collectargs" returns an error code, print usage information
+      // along with the incorrect argument.
+      if (args == has_error) {
+          print_usage(argv[script]);
+          return 0;
+      }
+      // If option -v, print Lua version.
+      if (args & has_v) {
+          print_version();
+      }
+      // If option -E, signal for libraries to ignore environment variables.
+      if (args & has_E) {
+          lua_pushboolean(L, 1);
+          lua_setfield(L, LUA_REGISTRYINDEX, "LUA_NOENV");
+      }
+      // Open standard libraries.
+      luai_openlibs(L);
+      // Create a table of command-line arguments.
+      createargtable(L, argv, argc, script);
+      // Start garbage collector in generational mode.
+      lua_gc(L, LUA_GCRESTART);
+      lua_gc(L, LUA_GCGEN);
+      // If not option -E, run LUA_INIT.
+      if (!(args & has_E)) {
+          if (handle_luainit(L) != LUA_OK) {
+              return 0;
+          }
+      }
+      // Execute arguments -e, -l, and -W.
+      if (!runargs(L, argv, optlim)) {
+          return 0;
+      }
+      // Execute main script (if there is one).
+      if (script > 0) {
+          if (handle_script(L, argv + script) != LUA_OK) {
+              return 0;
+          }
+      }
+      // If -i option, run read-eval-print loop.
+      if (args & has_i) {
+          doREPL(L);
+      }
+      // If no active option and output is a terminal,
+      // print version and run read-eval-print loop.
+      else if (script < 1 && !(args & (has_e | has_v))) {
+          if (lua_stdin_is_tty()) {
+              print_version();
+              doREPL(L);
+          } else {
+              // Execute stdin as file.
+              dofile(L, NULL);
+          }
+      }
+      // Signal no errors.
       lua_pushboolean(L, 1);
-      lua_setfield(L, LUA_REGISTRYINDEX, "LUA_NOENV");
-    }
-    // Open standard libraries.
-    luai_openlibs(L);
-    // Create a table of command-line arguments.
-    createargtable(L, argv, argc, script);
-    // Start garbage collector in generational mode.
-    lua_gc(L, LUA_GCRESTART);
-    lua_gc(L, LUA_GCGEN);
-    // If not option -E, run LUA_INIT.
-    if (!(args & has_E)) {
-      if (handle_luainit(L) != LUA_OK) {
-        return 0;
-      }
-    }
-    // Execute arguments -e, -l, and -W.
-    if (!runargs(L, argv, optlim)) {
-      return 0;
-    }
-    // Execute main script (if there is one).
-    if (script > 0) {
-      if (handle_script(L, argv + script) != LUA_OK) {
-        return 0;
-      }
-    }
-    // If -i option, run read-eval-print loop.
-    if (args & has_i) {
-      doREPL(L);
-    }
-    // If no active option and output is a terminal,
-    // print version and run read-eval-print loop.
-    else if (script < 1 && !(args & (has_e | has_v))) {
-      if (lua_stdin_is_tty()) {
-        print_version();
-        doREPL(L);
-      } else {
-        // Execute stdin as file.
-        dofile(L, NULL);
-      }
-    }
-    // Signal no errors.
-    lua_pushboolean(L, 1);
-    return 1;
+      return 1;
   }
 
   // The requisite main program as implemented in the Lua stand-alone interpreter.
-  int main (int argc, char *argv[]) {
-    int status, result;
-    // Open Lua state.
-    lua_State *L = luaL_newstate();
-    if (L == NULL) {
-      l_message(argv[0], "cannot create state: not enough memory");
-      return EXIT_FAILURE;
-    }
-    // Stop garbage collection while building state
-    lua_gc(L, LUA_GCSTOP);
-    // Prepare call to 'pmain' in protected mode.
-    lua_pushcfunction(L, &pmain);
-    // 1st argument as integer.
-    lua_pushinteger(L, argc);
-    // 2nd argument userdata.
-    lua_pushlightuserdata(L, argv);
-    // Call "pmain".
-    status = lua_pcall(L, 2, 1, 0);
-    // Get result.
-    result = lua_toboolean(L, -1);
-    // Check status. If error message on top of stack,
-    // print to stderror.
-    report(L, status);
-    // Close Lua state.
-    lua_close(L);
-    return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+  int main(int argc, char* argv[]) {
+      int status, result;
+      // Open Lua state.
+      lua_State* L = luaL_newstate();
+      if (L == NULL) {
+          l_message(argv[0], "cannot create state: not enough memory");
+          return EXIT_FAILURE;
+      }
+      // Stop garbage collection while building state
+      lua_gc(L, LUA_GCSTOP);
+      // Prepare call to 'pmain' in protected mode.
+      lua_pushcfunction(L, &pmain);
+      // 1st argument as integer.
+      lua_pushinteger(L, argc);
+      // 2nd argument userdata.
+      lua_pushlightuserdata(L, argv);
+      // Call "pmain".
+      status = lua_pcall(L, 2, 1, 0);
+      // Get result.
+      result = lua_toboolean(L, -1);
+      // Check status. If error message on top of stack,
+      // print to stderror.
+      report(L, status);
+      // Close Lua state.
+      lua_close(L);
+      return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
   }
 #+end_src
 
