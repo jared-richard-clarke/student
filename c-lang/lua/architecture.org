@@ -1080,6 +1080,31 @@ the static compilation of a Lua function, containing metadata and executable byt
   static void expr(LexState* ls, expdesc* v) { subexpr(ls, v, 0); }
 #+end_src
 
+*** Code Generation
+
+#+begin_example
++------------------+
+| luaK_codeABC     |
+|------------------|- CREATE_ABC(op,a,b,c,k) -+
+| A, B, C operands |                          |
++------------------+                          |                       +-----------------------+
++------------------+                          |                       | fs->f->code[fs->pc++] |
+| luaK_codeABx     |                          |                    +->|-----------------------|
+|------------------|- CREATE_ABx(op,a,bx) ----|  +---------------+ |  | Instruction Array     |
+| A, Bx operands   |                          |  | luaK_code     | |  +-----------------------+
++------------------+                          +->|---------------|-+
++------------------+                          |  | Instruction i | |  +-----------------------+
+| codeAsBx         |                          |  +---------------+ |  | fs->f->lineinfo[...]  |
+|------------------|- CREATE_ABx with offset -|                    +->|-----------------------|
+| A, signed Bx     |                          |                       | Debug Line Info       |
++------------------+                          |                       +-----------------------+
++------------------+                          |
+| codesJ           |                          |
+|------------------|- CREATE_sJ(op,sj,k)------+
+| signed J operand |
++------------------+
+#+end_example
+
 ** Execution
 
 *** Function Call Protocol
