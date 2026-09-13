@@ -273,6 +273,8 @@ functions that enable the type-safe exchange of data between C and Lua.
       l_mem GCmajorminor;
       // Hash table for strings.
       stringtable strt;
+      // The registry: a pre-defined, global table, which is used to safely
+      // store Lua values outside the standard execution stack.
       TValue l_registry;
       // Bottom value, nil.
       TValue nilvalue;
