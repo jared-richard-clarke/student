@@ -331,7 +331,7 @@ functions that enable the type-safe exchange of data between C and Lua.
       TString* memerrmsg;
       // Array with tag-method names.
       TString* tmname[TM_N];
-      // Metatables for basic types.
+      // Metatables for Lua's base types.
       struct Table* mt[LUA_NUMTYPES];
       // Cache for strings in API.
       TString* strcache[STRCACHE_N][STRCACHE_M];
