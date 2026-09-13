@@ -1399,3 +1399,64 @@ Exception handling is specific to the given platform:
                                 +------------------+
 
 #+end_example
+
+** Debugger
+
+*** Debug Library
+
+#+begin_example
+                                +-------------+
+                                | Debug Table |
+                                +-------------+
+                                    | | | |
+        +---------------------------+ | | +------------------------------+
+        |                   +---------+ +----------+                     |
+        |                   |                      |                     |
+        V                   V                      V                     V
++---------------+ +-------------------+ +----------------------+ +----------------+
+| Hook System   | | Introspection API | | Upvalue Manipulation | | Error Handling |
+|---------------| |-------------------| |----------------------| |----------------|
+| - db_sethook  | | - db_getinfo      | | - db_setupvalue      | | - db_traceback |
+| - db_gethook  | | - db_getlocal     | | - db_getupvalue      | | - db_debug     |
++---------------+ | - db_setlocal     | | - db_upvalueid       | +----------------+
+                  | - db_getregistry  | | - db_upvaluejoin     |
+                  | - db_setmetatable | +----------------------+
+                  | - db_getmetatable |
+                  | - db_setuservalue |
+                  | - db_getuservalue |
+                  +-------------------+
+#+end_example
+
+*** Debug Hook System
+
+Allows Lua code to register callback functions that execute at specific points during program
+execution, allowing the implementation of debuggers, profilers, and coverage analyzers.
+
+Lua supports four types of hooks:
+
+| Type   | Mask            | Description                                               |
+|--------+-----------------+-----------------------------------------------------------|
+| Call   | ~LUA_MASKCALL~  | Called when a function is called.                         |
+| Return | ~LUA_MASKRET~   | Called when a function returns.                           |
+| Line   | ~LUA_MASKLINE~  | Called when Lua moves to a new line of code.              |
+| Count  | ~LUA_MASKCOUNT~ | Called after executing a specified number of instruction. |
+
+#+begin_example
+                         +--------------+   +--------------+  +--------+
+                         | Lua Registry |-->| Hook Storage |--| Thread |--+
+                         +--------------+   +--------------+  +--------+  |
+                                                                          V
+                                                                    +----------+
+                                                                    | Lua Hook |
+            +-----------+                                           +----------+
+        +-->| Hook Mask |                                                ^
+        |   +-----------+                                                |
+  +-----------+                      +--------------------+              |
+  | Lua State |--------------------->| hookf (C Function) |--------------+
+  +-----------+                      +--------------------+
+        |                                      ^
+        |                                      |
+        |   +-----------+   +------+   +----------------+
+        +-->| Call Info |-->| Trap |-->| luaG_traceexec |
+            +-----------+   +------+   +----------------+
+#+end_example
