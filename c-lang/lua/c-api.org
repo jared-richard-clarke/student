@@ -46,55 +46,55 @@ to Lua values, and place them on a virtual stack.
   // === Per Thread State ===
 
   struct lua_State {
-    // CommonHeader -----------+
-    struct GCObject *next; //  |
-    lu_byte tt;            //  |
-    lu_byte marked;        // <+
-    // Type for thread status/error codes.
-    TStatus status;
-    // First free slot in the stack.
-    StkIdRel top;
-    // Reference to state shared by all threads. Contains mostly data
-    // for memory allocation and garbage collection.
-    struct global_State *l_G;
-    // Call information for current function.
-    CallInfo *ci;
-    // End of stack (last element + 1)
-    StkIdRel stack_last;
-    // Stack base.
-    StkIdRel stack;
-    // List of open upvalues in this stack.
-    UpVal *openupval;
-    // List of to-be-closed variables.
-    StkIdRel tbclist;
-    // List of garbage-collectable objects.
-    GCObject *gclist;
-    // List of threads with open upvalues.
-    struct lua_State *twups;
-    // Current errory recovery point.
-    struct lua_longjmp *errorJmp;
-    // Call information for first level (C host).
-    CallInfo base_ci;
-    // Function to be called by the debugger.
-    volatile lua_Hook hook;
-    // Current error handling function (stack index).
-    ptrdiff_t errfunc;
-    // Number of nested, (non-yieldable | C) calls.
-    l_uint32 nCcalls;
-    // Last program counter traced.
-    int oldpc;
-    // Number of items in call information list.
-    int nci;
-    int basehookcount;
-    int hookcount;
-    volatile l_signalT hookmask;
-    // Information about transferred values for (call | return) hooks.
-    struct {
-      // Offset of first value transferred.
-      int ftransfer;
-      // Number of values transferred.
-      int ntransfer;
-    } transferinfo;
+      // CommonHeader ------------+
+      struct GCObject* next;  //  |
+      lu_byte tt;             //  |
+      lu_byte marked;         // <+
+      // Type for thread status/error codes.
+      TStatus status;
+      // First free slot in the stack.
+      StkIdRel top;
+      // Reference to state shared by all threads. Contains mostly data
+      // for memory allocation and garbage collection.
+      struct global_State* l_G;
+      // Call information for current function.
+      CallInfo* ci;
+      // End of stack (last element + 1)
+      StkIdRel stack_last;
+      // Stack base.
+      StkIdRel stack;
+      // List of open upvalues in this stack.
+      UpVal* openupval;
+      // List of to-be-closed variables.
+      StkIdRel tbclist;
+      // List of garbage-collectable objects.
+      GCObject* gclist;
+      // List of threads with open upvalues.
+      struct lua_State* twups;
+      // Current errory recovery point.
+      struct lua_longjmp* errorJmp;
+      // Call information for first level (C host).
+      CallInfo base_ci;
+      // Function to be called by the debugger.
+      volatile lua_Hook hook;
+      // Current error handling function (stack index).
+      ptrdiff_t errfunc;
+      // Number of nested, (non-yieldable | C) calls.
+      l_uint32 nCcalls;
+      // Last program counter traced.
+      int oldpc;
+      // Number of items in call information list.
+      int nci;
+      int basehookcount;
+      int hookcount;
+      volatile l_signalT hookmask;
+      // Information about transferred values for (call | return) hooks.
+      struct {
+          // Offset of first value transferred.
+          int ftransfer;
+          // Number of values transferred.
+          int ntransfer;
+      } transferinfo;
   };
 #+end_src
 
@@ -128,44 +128,49 @@ The API has a dedicated push function for each Lua type with a direct representa
   // === Example Implementations ===
 
   // Push float of value "n" onto the stack.
-  LUA_API void lua_pushnumber (lua_State *L, lua_Number n) {
-    // "lua_lock" and "lua_unlock" are placeholders for what
-    // would be a mutex in multi-threaded environments.
-    lua_lock(L);
-    // Set the top of the stack to the given value "n".
-    setfltvalue(s2v(L->top.p), n);
-    // Increment the top of the stack, checking for overflow.
-    api_incr_top(L);
-    lua_unlock(L);
+  LUA_API void lua_pushnumber(lua_State* L, lua_Number n) {
+      // "lua_lock" and "lua_unlock" are placeholders for what
+      // would be a mutex in multi-threaded environments.
+      lua_lock(L);
+      // Set the top of the stack to the given value "n".
+      setfltvalue(s2v(L->top.p), n);
+      // Increment the top of the stack, checking for overflow.
+      api_incr_top(L);
+      lua_unlock(L);
   }
 
   // Convert StackValue to TValue.
   #define s2v(o) (&(o)->val)
   // Set type tag.
-  #define settt_(o,t) ((o)->tt_=(t))
+  #define settt_(o, t) ((o)->tt_ = (t))
   // Set Lua value of type float.
-  #define setfltvalue(obj,x) { TValue *io=(obj); val_(io).n=(x); settt_(io, LUA_VNUMFLT); }
+  #define setfltvalue(obj, x)      \
+      {                            \
+          TValue* io = (obj);      \
+          val_(io).n = (x);        \
+          settt_(io, LUA_VNUMFLT); \
+      }
 
   // Ensures stack has space for at least "n" extra elements.
-  LUA_API int lua_checkstack (lua_State *L, int n) {
-    int res;
-    CallInfo *ci;
-    lua_lock(L);
-    // Call information for current function.
-    ci = L->ci;
-    api_check(L, n >= 0, "negative 'n'");
-    // If more space is needed, grow call stack.
-    if (L->stack_last.p - L->top.p > n) {
-      res = 1;
-    } else {
-      res = luaD_growstack(L, n, 0);
-    }
-    // Adjust call frame.
-    if (res && ci->top.p < L->top.p + n) {
-      ci->top.p = L->top.p + n;
-    }
-    lua_unlock(L);
-    return res;
+  LUA_API int lua_checkstack(lua_State* L, int n) {
+      int res;
+      CallInfo* ci;
+      lua_lock(L);
+      // Call information for current function.
+      ci = L->ci;
+      api_check(L, n >= 0, "negative 'n'");
+      // If more space is needed, grow call stack.
+      if (L->stack_last.p - L->top.p > n) {
+          res = 1;
+      } else {
+          res = luaD_growstack(L, n, 0);
+      }
+      // Adjust call frame.
+      if (res && ci->top.p < L->top.p + n) {
+          ci->top.p = L->top.p + n;
+      }
+      lua_unlock(L);
+      return res;
   }
 #+end_src
 
@@ -180,40 +185,40 @@ The API has a dedicated push function for each Lua type with a direct representa
 #+end_quote
 
 #+begin_src c
-  static void dump_stack (lua_State *L) {
-    int i;
-    // Stack depth
-    int top = lua_gettop(L);
-    // Traverse stack, bottom to top.
-    for (i = 1; i <= top; i += 1) {
-      int t = lua_type(L, i);
-      switch (t) {
-        case LUA_TSTRING: {
-          printf("'%s'", lua_tostring(L, i));
-          break;
-        }
-        case LUA_TBOOLEAN: {
-          printf(lua_toboolean(L, i) ? "true" : "false");
-          break;
-        }
-        case LUA_TNUMBER: {
-          if (lua_isinteger(L, i)) {
-            printf("%lld", lua_tointeger(L, i));
-          } else {
-            printf("%g", lua_tonumber(L, i));
+  static void dump_stack(lua_State* L) {
+      int i;
+      // Stack depth
+      int top = lua_gettop(L);
+      // Traverse stack, bottom to top.
+      for (i = 1; i <= top; i += 1) {
+          int t = lua_type(L, i);
+          switch (t) {
+              case LUA_TSTRING: {
+                  printf("'%s'", lua_tostring(L, i));
+                  break;
+              }
+              case LUA_TBOOLEAN: {
+                  printf(lua_toboolean(L, i) ? "true" : "false");
+                  break;
+              }
+              case LUA_TNUMBER: {
+                  if (lua_isinteger(L, i)) {
+                      printf("%lld", lua_tointeger(L, i));
+                  } else {
+                      printf("%g", lua_tonumber(L, i));
+                  }
+                  break;
+              }
+              default: {
+                  printf("%s", lua_typename(L, t));
+                  break;
+              }
           }
-          break;
-        }
-        default: {
-          printf("%s", lua_typename(L, t));
-          break;
-        }
+          // Separator
+          printf(" ");
       }
-      // Separator
-      printf(" ");
-    }
-    // End
-    printf("\n");
+      // End
+      printf("\n");
   }
 #+end_src
 
@@ -251,40 +256,40 @@ The API has a dedicated push function for each Lua type with a direct representa
 
   // === Example Implementations ===
 
-  LUA_API int lua_gettop (lua_State *L) {
-    return cast_int(L->top.p - (L->ci->func.p + 1));
+  LUA_API int lua_gettop(lua_State* L) {
+      return cast_int(L->top.p - (L->ci->func.p + 1));
   }
 
-  LUA_API void lua_settop (lua_State *L, int idx) {
-    CallInfo *ci;
-    StkId func, newtop;
-    ptrdiff_t diff;
-    lua_lock(L);
-    // Function call information.
-    ci = L->ci;
-    // Function pointer.
-    func = ci->func.p;
-    if (idx >= 0) {
-      api_check(L, idx <= ci->top.p - (func + 1), "new top too large");
-      // Offset from top of stack.
-      diff = ((func + 1) + idx) - L->top.p;
-      for (; diff > 0; diff--) {
-        // Clear new slots. Set to nil value
-        setnilvalue(s2v(L->top.p++));
+  LUA_API void lua_settop(lua_State* L, int idx) {
+      CallInfo* ci;
+      StkId func, newtop;
+      ptrdiff_t diff;
+      lua_lock(L);
+      // Function call information.
+      ci = L->ci;
+      // Function pointer.
+      func = ci->func.p;
+      if (idx >= 0) {
+          api_check(L, idx <= ci->top.p - (func + 1), "new top too large");
+          // Offset from top of stack.
+          diff = ((func + 1) + idx) - L->top.p;
+          for (; diff > 0; diff--) {
+              // Clear new slots. Set to nil value
+              setnilvalue(s2v(L->top.p++));
+          }
+      } else {
+          api_check(L, -(idx + 1) <= (L->top.p - (func + 1)), "invalid new top");
+          diff = idx + 1;
       }
-    } else {
-      api_check(L, -(idx+1) <= (L->top.p - (func + 1)), "invalid new top");
-      diff = idx + 1;
-    }
-    api_check(L, L->tbclist.p < L->top.p, "previous pop of an unclosed slot");
-    newtop = L->top.p + diff;
-    if (diff < 0 && L->tbclist.p >= newtop) {
-      lua_assert(ci->callstatus & CIST_TBC);
-      newtop = luaF_close(L, newtop, CLOSEKTOP, 0);
-    }
-    // Adjust stack only after closing any upvalues.
-    L->top.p = newtop;
-    lua_unlock(L);
+      api_check(L, L->tbclist.p < L->top.p, "previous pop of an unclosed slot");
+      newtop = L->top.p + diff;
+      if (diff < 0 && L->tbclist.p >= newtop) {
+          lua_assert(ci->callstatus & CIST_TBC);
+          newtop = luaF_close(L, newtop, CLOSEKTOP, 0);
+      }
+      // Adjust stack only after closing any upvalues.
+      L->top.p = newtop;
+      lua_unlock(L);
   }
 #+end_src
 
@@ -321,25 +326,26 @@ Lua application.
 
 #+begin_src c
   // "lua_newstate" takes two arguments: an allocation function and a user data.
-  lua_State *lua_newstate(lua_Alloc f, void *ud);
+  lua_State* lua_newstate(lua_Alloc f, void* ud);
 
   // All allocation functions must match the "lua_Alloc" type signature.
   // where ud    = user data
   //       ptr   = memory block address
   //       osize = original block size
   //       nsize = requested block size
-  typedef void * (*lua_Alloc) (void *ud, void *ptr, size_t osize, size_t nsize);
+  typedef void* (*lua_Alloc)(void* ud, void* ptr, size_t osize, size_t nsize);
 
   // "luaL_newstate" as defined in "lauxlib.c".
-  void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize) {
-    // Not used.
-    (void)ud; (void)osize;
-    if (nsize == 0) {
-      free(ptr);
-      return NULL;
-    } else {
-      return realloc(ptr, nsize);
-    }
+  void* l_alloc(void* ud, void* ptr, size_t osize, size_t nsize) {
+      // Not used.
+      (void)ud;
+      (void)osize;
+      if (nsize == 0) {
+          free(ptr);
+          return NULL;
+      } else {
+          return realloc(ptr, nsize);
+      }
   }
 #+end_src
 
@@ -372,34 +378,35 @@ Lua application.
 
   // === Definition: lua_call ===
 
-  #define lua_call(L, n , r) lua_callk(L, (n), (r), 0, NULL)
+  #define lua_call(L, n, r) lua_callk(L, (n), (r), 0, NULL)
 
-  LUA_API void lua_callk (lua_State *L, int nargs, int nresults,
-                          lua_KContext ctx, lua_KFunction k) {
-    StkId func;
-    lua_lock(L);
-    api_check(L, k == NULL || !isLua(L->ci), "cannot use continuations inside hooks");
-    // Ensure the stack has at least "n" elements.
-    api_checknelems(L, nargs+1);
-    api_check(L, L->status == LUA_OK, "cannot do calls on non-normal thread");
-    // Ensure function results do not overflow current stack size.
-    checkresults(L, nargs, nresults);
-    func = L->top.p - (nargs+1);
-    // Need to prepare continuation?
-    if (k != NULL && yieldable(L)) {
-      // Save continuation.
-      L->ci->u.c.k = k;
-      // Save context.
-      L->ci->u.c.ctx = ctx;
-      // Call function. Allow yields.
-      luaD_call(L, func, nresults);
-    } else {
-      // Call function. Disallow yields.
-      luaD_callnoyield(L, func, nresults);
-    }
-    // Adjust the callee's stack space to accomodate results.
-    adjustresults(L, nresults);
-    lua_unlock(L);
+  LUA_API void lua_callk(lua_State* L, int nargs, int nresults, lua_KContext ctx,
+                         lua_KFunction k) {
+      StkId func;
+      lua_lock(L);
+      api_check(L, k == NULL || !isLua(L->ci),
+                "cannot use continuations inside hooks");
+      // Ensure the stack has at least "n" elements.
+      api_checknelems(L, nargs + 1);
+      api_check(L, L->status == LUA_OK, "cannot do calls on non-normal thread");
+      // Ensure function results do not overflow current stack size.
+      checkresults(L, nargs, nresults);
+      func = L->top.p - (nargs + 1);
+      // Need to prepare continuation?
+      if (k != NULL && yieldable(L)) {
+          // Save continuation.
+          L->ci->u.c.k = k;
+          // Save context.
+          L->ci->u.c.ctx = ctx;
+          // Call function. Allow yields.
+          luaD_call(L, func, nresults);
+      } else {
+          // Call function. Disallow yields.
+          luaD_callnoyield(L, func, nresults);
+      }
+      // Adjust the callee's stack space to accomodate results.
+      adjustresults(L, nresults);
+      lua_unlock(L);
   }
 #+end_src
 
@@ -676,36 +683,36 @@ stack, also in direct order, and returns in C the number of results.
 #+begin_src c
   // === C API ===
 
-  #include "lua.h"
   #include "lauxlib.h"
+  #include "lua.h"
 
-  lua_State *L = luaL_newstate();
+  lua_State* L = luaL_newstate();
   luaL_openlibs(L);
 
-  int f_map (lua_State *L) {
-    int i, n;
+  int f_map(lua_State* L) {
+      int i, n;
 
-    // 1st argument must be a table (t).
-    luaL_checktype(L, 1, LUA_TTABLE);
+      // 1st argument must be a table (t).
+      luaL_checktype(L, 1, LUA_TTABLE);
 
-    // 2nd argument must be a function (f).
-    luaL_checktype(L, 2, LUA_TFUNCTION);
+      // 2nd argument must be a function (f).
+      luaL_checktype(L, 2, LUA_TFUNCTION);
 
-    // Get size of table
-    n = luaL_len(L, 1);
+      // Get size of table
+      n = luaL_len(L, 1);
 
-    for (i = 1; i <= n; i += 1) {
-      // Push f
-      lua_pushvalue(L, 2);
-      // Push t[i]
-      lua_geti(L, 1, i);
-      // Call f(t[i])
-      lua_call(L, 1, 1);
-      // t[i] = result
-      lua_seti(L, 1, i);
-    }
-    // Number of results left on the stack.
-    return 0;
+      for (i = 1; i <= n; i += 1) {
+          // Push f
+          lua_pushvalue(L, 2);
+          // Push t[i]
+          lua_geti(L, 1, i);
+          // Call f(t[i])
+          lua_call(L, 1, 1);
+          // t[i] = result
+          lua_seti(L, 1, i);
+      }
+      // Number of results left on the stack.
+      return 0;
   }
 
   lua_pushfunction(L, f_map);
@@ -725,35 +732,35 @@ stack, also in direct order, and returns in C the number of results.
 
   #include <ctype.h>
 
-  #include "lua.h"
   #include "lauxlib.h"
+  #include "lua.h"
 
-  lua_State *L = luaL_newstate();
+  lua_State* L = luaL_newstate();
   luaL_openlibs(L);
 
   // Uppercase a string, using a buffer.
-  static int f_uppercase (lua_State *L) {
-    size_t l;
-    size_t i;
-    // Declare a buffer.
-    luaL_Buffer b;
+  static int f_uppercase(lua_State* L) {
+      size_t l;
+      size_t i;
+      // Declare a buffer.
+      luaL_Buffer b;
 
-    // Ensure argument is a string.
-    const char *s = luaL_checklstring(L, 1, &l);
+      // Ensure argument is a string.
+      const char* s = luaL_checklstring(L, 1, &l);
 
-    // Initialize buffer.
-    char *p = luaL_buffinitsize(L, &b, l);
+      // Initialize buffer.
+      char* p = luaL_buffinitsize(L, &b, l);
 
-    // For each character in the buffer, uppercase that character.
-    for (i = 0; i < l; i += 1) {
-      p[i] = toupper(uchar(s[i]));
-    }
+      // For each character in the buffer, uppercase that character.
+      for (i = 0; i < l; i += 1) {
+          p[i] = toupper(uchar(s[i]));
+      }
 
-    // Flush buffer. Leave resulting string on the stack.
-    luaL_pushresultsize(&b, l);
+      // Flush buffer. Leave resulting string on the stack.
+      luaL_pushresultsize(&b, l);
 
-    // Number of results left on the stack.
-    return 1;
+      // Number of results left on the stack.
+      return 1;
   }
 
   lua_pushfunction(L, f_uppercase);
@@ -773,14 +780,14 @@ Lua's generic buffer implementation (5.5):
   // LUAI_MAXALIGN -> lua_Number n; double u; void *s; lua_Integer i; long l
 
   struct luaL_Buffer {
-    char *b;      // Buffer address
-    size_t size;  // Buffer size
-    size_t n;     // Number of characters in buffer
-    lua_State *L;
-    union {
-      LUAI_MAXALIGN;            // Ensure maximum alignment for buffer
-      char b[LUAL_BUFFERSIZE];  // Initial buffer
-    } init;
+      char* b;      // Buffer address
+      size_t size;  // Buffer size
+      size_t n;     // Number of characters in buffer
+      lua_State* L;
+      union {
+          LUAI_MAXALIGN;            // Ensure maximum alignment for buffer
+          char b[LUAL_BUFFERSIZE];  // Initial buffer
+      } init;
   };
 #+end_src
 
@@ -805,11 +812,11 @@ Lua's only predefined operations for ~userdata~ are assignment and identity test
 Metatables provide user-defined operations.
 
 #+begin_src c
-  #include <stddef.h>
   #include <limits.h>
+  #include <stddef.h>
 
-  #include "lua.h"
   #include "lauxlib.h"
+  #include "lua.h"
 
   // Boolean arrays where each entry is stored in a single bit.
 
@@ -820,110 +827,112 @@ Metatables provide user-defined operations.
   // Mask to access the correct bit inside the word.
   #define I_BIT(i) (1 << ((unsigned int)(i) % BITS_PER_WORD))
 
-  #define checkarray(L) (BitArray *)luaL_checkudata(L, 1, "LuaBook.array")
+  #define checkarray(L) (BitArray*)luaL_checkudata(L, 1, "LuaBook.array")
 
   typedef struct BitArray {
-    int size;
-    // Variable part. "values[1]" is a placeholder. This is the C89 idiom
-    // for declaring variable-sized arrays inside structs. C99 would declare
-    // "values[]" instead. This syntax is called the "flexible array member".
-    unsigned int values[1];
+      int size;
+      // Variable part. "values[1]" is a placeholder. This is the C89 idiom
+      // for declaring variable-sized arrays inside structs. C99 would declare
+      // "values[]" instead. This syntax is called the "flexible array member".
+      unsigned int values[1];
   } BitArray;
 
-  static int newarray(lua_State *L) {
-    int i;
-    size_t nbytes;
-    BitArray *a;
+  static int newarray(lua_State* L) {
+      int i;
+      size_t nbytes;
+      BitArray* a;
 
-    // Number of bits
-    int n = (int)luaL_checkinteger(L, 1);
-    luaL_argcheck(L, n >= 1, 1, "invalid size");
-    // The size of an array with "n" elements. Subtracts one from "n"
-    // because the original structure already includes space for one
-    // element.
-    nbytes = sizeof(BitArray) + I_WORD(n - 1) * sizeof(unsigned int);
-    a = (BitArray *)lua_newuserdata(L, nbytes);
+      // Number of bits
+      int n = (int)luaL_checkinteger(L, 1);
+      luaL_argcheck(L, n >= 1, 1, "invalid size");
+      // The size of an array with "n" elements. Subtracts one from "n"
+      // because the original structure already includes space for one
+      // element.
+      nbytes = sizeof(BitArray) + I_WORD(n - 1) * sizeof(unsigned int);
+      a = (BitArray*)lua_newuserdata(L, nbytes);
 
-    a->size = n;
-    for (i = 0; i <= I_WORD(n - 1); i++) {
-        // Initialize array.
-        a->values[i] = 0;
-    }
+      a->size = n;
+      for (i = 0; i <= I_WORD(n - 1); i++) {
+          // Initialize array.
+          a->values[i] = 0;
+      }
 
-    luaL_getmetatable(L, "LuaBook.array");
-    lua_setmetatable(L, -2);
+      luaL_getmetatable(L, "LuaBook.array");
+      lua_setmetatable(L, -2);
 
-    // New userdata is already on the stack.
-    return 1;
+      // New userdata is already on the stack.
+      return 1;
   }
 
-  static int getsize(lua_State *L) {
-    BitArray *a = checkarray(L);
-    lua_pushinteger(L, a->size);
-    return 1;
+  static int getsize(lua_State* L) {
+      BitArray* a = checkarray(L);
+      lua_pushinteger(L, a->size);
+      return 1;
   }
 
-  static unsigned int *getparams(lua_State *L, unsigned int *mask) {
-    BitArray *a = checkarray(L);
-    int index = (int)luaL_checkinteger(L, 2) - 1;
+  static unsigned int* getparams(lua_State* L, unsigned int* mask) {
+      BitArray* a = checkarray(L);
+      int index = (int)luaL_checkinteger(L, 2) - 1;
 
-    luaL_argcheck(L, 0 <= index && index < a->size, 2, "index out of range");
+      luaL_argcheck(L, 0 <= index && index < a->size, 2, "index out of range");
 
-    // Mask to access correct bit.
-    *mask = I_BIT(index);
-    // Word address.
-    return &a->values[I_WORD(index)];
+      // Mask to access correct bit.
+      *mask = I_BIT(index);
+      // Word address.
+      return &a->values[I_WORD(index)];
   }
 
-  static int setarray(lua_State *L) {
-    unsigned int mask;
-    unsigned int *entry = getparams(L, &mask);
-    luaL_checkany(L, 3);
-    if (lua_toboolean(L, 3)) {
-      *entry |= mask;
-    } else {
-      *entry &= ~mask;
-    }
-    return 0;
+  static int setarray(lua_State* L) {
+      unsigned int mask;
+      unsigned int* entry = getparams(L, &mask);
+      luaL_checkany(L, 3);
+      if (lua_toboolean(L, 3)) {
+          *entry |= mask;
+      } else {
+          *entry &= ~mask;
+      }
+      return 0;
   }
 
-  static int getarray(lua_State *L) {
-    unsigned int mask;
-    unsigned int *entry = getparams(L, &mask);
-    lua_pushboolean(L, *entry & mask);
-    return 1;
+  static int getarray(lua_State* L) {
+      unsigned int mask;
+      unsigned int* entry = getparams(L, &mask);
+      lua_pushboolean(L, *entry & mask);
+      return 1;
   }
 
-  int array2string(lua_State *L) {
-    BitArray *a = checkarray(L);
-    lua_pushfstring(L, "array(%d)", a->size);
-    return 1;
+  int array2string(lua_State* L) {
+      BitArray* a = checkarray(L);
+      lua_pushfstring(L, "array(%d)", a->size);
+      return 1;
   }
 
   static const struct luaL_Reg arraylib_f[] = {
-    { "new", newarray },
-    { NULL,  NULL }
+      { "new", newarray },
+      { NULL,  NULL }
   };
-  
+
   static const struct luaL_Reg arraylib_m[] = {
-    { "__newindex", setarray },
-    { "__index",    getarray },
-    { "__len",      getsize },
-    { "__tostring", array2string },
-    { NULL,         NULL }
+      { "__newindex", setarray },
+      { "__index",    getarray },
+      { "__len",      getsize },
+      { "__tostring", array2string },
+      { NULL,         NULL }
   };
 
   // "luaopen_<module name>" is a naming convention used by "require"
   // to find loaders for C libraries.
-  int luaopen_array(lua_State *L) {
-    // Creates a metatable registered with "LuaBook.array".
-    luaL_newmetatable(L, "LuaBook.array");
-    // Registers functions with table on top of stack. In this case, a metatable.
-    luaL_setfuncs(L, arraylib_m, 0);
-    // Creates a new table and registers functions from the provided list.
-    // Implemented as the macro "(luaL_newlibtable(L, 1), luaL_setfuncs(L, l, 0))".
-    luaL_newlib(L, arraylib_f);
-    return 1;
+  int luaopen_array(lua_State* L) {
+      // Creates a metatable registered with "LuaBook.array".
+      luaL_newmetatable(L, "LuaBook.array");
+      // Registers functions with table on top of stack. In this case, a
+      // metatable.
+      luaL_setfuncs(L, arraylib_m, 0);
+      // Creates a new table and registers functions from the provided list.
+      // Implemented as the macro "(luaL_newlibtable(L, 1), luaL_setfuncs(L, l,
+      // 0))".
+      luaL_newlib(L, arraylib_f);
+      return 1;
   }
 #+end_src
 
@@ -942,75 +951,75 @@ Metatables provide user-defined operations.
   #include <errno.h>
   #include <string.h>
 
-  #include "lua.h"
   #include "lauxlib.h"
+  #include "lua.h"
 
   // Forward declaration for the iterator function.
-  static int dir_iter (lua_State *L);
+  static int dir_iter(lua_State* L);
 
-  static int lua_dir (lua_State *L) {
-    const char *path = luaL_checkstring(L, 1);
+  static int lua_dir(lua_State* L) {
+      const char* path = luaL_checkstring(L, 1);
 
-    // Create a userdata to store a DIR address.
-    DIR **d = (DIR **)lua_newuserdata(L, sizeof(DIR *));
+      // Create a userdata to store a DIR address.
+      DIR** d = (DIR**)lua_newuserdata(L, sizeof(DIR*));
 
-    // Pre-initialize
-    *d = NULL;
+      // Pre-initialize
+      *d = NULL;
 
-    // Set its metatable.
-    luaL_getmetatable(L, "LuaBook.dir");
-    lua_setmetatable(L, -2);
+      // Set its metatable.
+      luaL_getmetatable(L, "LuaBook.dir");
+      lua_setmetatable(L, -2);
 
-    // Try to open the given directory.
-    *d = opendir(path);
-    // Error opening the directory?
-    if (*d == NULL) {
-      luaL_error(L, "cannot open %s: %s", path, strerror(errno));
-    }
-    // Creates and returns the iterator function. Its sole upvalue,
-    // the directory userdata, is already on the top of the stack.
-    lua_pushcclosure(L, dir_iter, 1);
-    return 1;
+      // Try to open the given directory.
+      *d = opendir(path);
+      // Error opening the directory?
+      if (*d == NULL) {
+          luaL_error(L, "cannot open %s: %s", path, strerror(errno));
+      }
+      // Creates and returns the iterator function. Its sole upvalue,
+      // the directory userdata, is already on the top of the stack.
+      lua_pushcclosure(L, dir_iter, 1);
+      return 1;
   }
 
   // Iterator.
-  static int dir_iter (lua_State *L) {
-    DIR *d = *(DIR **)lua_touserdata(L, lua_upvalueindex(1));
-    struct dirent *entry = readdir(d);
-    if (entry != NULL) {
-      lua_pushstring(L, entry->d_name);
-      return 1;
-    } else {
-      // No more values to return.
-      return 0;
-    }
+  static int dir_iter(lua_State* L) {
+      DIR* d = *(DIR**)lua_touserdata(L, lua_upvalueindex(1));
+      struct dirent* entry = readdir(d);
+      if (entry != NULL) {
+          lua_pushstring(L, entry->d_name);
+          return 1;
+      } else {
+          // No more values to return.
+          return 0;
+      }
   }
 
   // Garbage collection metamethod.
-  static int dir_gc (lua_State *L) {
-    DIR *d = *(DIR **)lua_touserdata(L, 1);
-    if (d) {
-      closedir(d);
-    }
-    return 0;
+  static int dir_gc(lua_State* L) {
+      DIR* d = *(DIR**)lua_touserdata(L, 1);
+      if (d) {
+          closedir(d);
+      }
+      return 0;
   }
 
   // Add function to registry.
-  static const struct luaL_Reg dirlib [] = {
-    { "open", lua_dir },
-    { NULL,   NULL }
+  static const struct luaL_Reg dirlib[] = {
+      { "open", lua_dir },
+      { NULL,   NULL }
   };
 
   // Open one-function library.
-  int luaopen_dir (lua_State *L) {
-    luaL_newmetatable(L, "LuaBook.dir");
+  int luaopen_dir(lua_State* L) {
+      luaL_newmetatable(L, "LuaBook.dir");
 
-    // Set its __gc field.
-    lua_pushcfunction(L, dir_gc);
-    lua_setfield(L, -2, "__gc");
+      // Set its __gc field.
+      lua_pushcfunction(L, dir_gc);
+      lua_setfield(L, -2, "__gc");
 
-    // Create the library.
-    luaL_newlib(L, dirlib);
-    return 1;
+      // Create the library.
+      luaL_newlib(L, dirlib);
+      return 1;
   }
 #+end_src
