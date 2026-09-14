@@ -856,8 +856,8 @@ as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
 
   #else
 
-  /* ISO C definition: Assume stdin is tty. */
-  #define lua_stdin_is_tty()
+  // ISO C definition: Assume stdin is tty.
+  #define lua_stdin_is_tty() 1
 
   #endif
 
