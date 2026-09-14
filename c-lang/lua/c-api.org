@@ -487,7 +487,9 @@ as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
       sigaction(sig, &sa, NULL);
   }
   #else
+
   #define setsignal signal
+
   #endif
 
   static void lstop(lua_State* L, lua_Debug* ar) {
