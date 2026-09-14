@@ -695,11 +695,16 @@ as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
 
   // === Command-Line Flags ====
 
-  #define has_error 1 // invalid flag
-  #define has_i     2 // interactive
-  #define has_v     4 // version
-  #define has_e     8 // environment: yes
-  #define has_E    16 // environment: no
+  // invalid flag
+  #define has_error 1
+  // interactive
+  #define has_i     2
+  // version
+  #define has_v     4
+  // environment: yes
+  #define has_e     8
+   // environment: no
+  #define has_E    16
 
   // Parse command-line flags and compile into bitmask.
   static int collectargs(char** argv, int* first) {
