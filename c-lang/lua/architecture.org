@@ -472,7 +472,7 @@ functions that enable the type-safe exchange of data between C and Lua.
       } tbclist;
   } StackValue;
 
-  // Index to stack elements.
+  // Pointer to stack element.
   typedef StackValue* StkId;
 
   // === Stack Pointers ===
@@ -482,6 +482,9 @@ functions that enable the type-safe exchange of data between C and Lua.
       // Offset used during stack reallocation.
       ptrdiff_t offset;
   } StkIdRel;
+
+  // "StackValue" to a "TValue" conversion.
+  #define s2v(o) (&(o)->val)
 #+end_src
 
 *** Memory Management
@@ -566,6 +569,61 @@ functions that enable the type-safe exchange of data between C and Lua.
       lu_byte tt;
       lu_byte marked;
   } GCObject;
+
+  #define val_(o)   ((o)->value_)
+  #define valraw(o) (val_(o))
+
+  // Raw type tag of a TValue.
+  #define rawtt(o) ((o)->tt_)
+
+  // Tag with no variants (bits 0-3).
+  #define novariant(t) ((t) & 0x0F)
+
+  // Type tag of a TValue (bits 0-3 for tags + variant bits 4-5).
+  #define withvariant(t) ((t) & 0x3F)
+  #define ttypetag(o)    withvariant(rawtt(o))
+
+  // Type of a TValue.
+  #define ttype(o) (novariant(rawtt(o)))
+
+  // Type test.
+  #define checktag(o, t)  (rawtt(o) == (t))
+  #define checktype(o, t) (ttype(o) == (t))
+
+  // Check if collectable object has the same tag as the original value.
+  #define righttt(obj) (ttypetag(obj) == gcvalue(obj)->tt)
+
+  #define checkliveness(L, obj)                       \
+      ((void)L, lua_longassert(!iscollectable(obj) || \
+                               (righttt(obj) &&       \
+                                (L == NULL || !isdead(G(L), gcvalue(obj))))))
+
+  // Set value's type tag.
+  #define settt_(o, t) ((o)->tt_ = (t))
+
+  // Copy values from "obj2" to "obj1".
+  #define setobj(L, obj1, obj2)             \
+      {                                     \
+          TValue* io1       = (obj1);       \
+          const TValue* io2 = (obj2);       \
+          io1->value_       = io2->value_;  \
+          settt_(io1, io2->tt_);            \
+          checkliveness(L, io1);            \
+          lua_assert(!isnonstrictnil(io1)); \
+      }
+
+  // Different types of assignments, according to source and destination.
+
+  // Stack to stack.
+  #define setobjs2s(L, o1, o2) setobj(L, s2v(o1), s2v(o2))
+  // Object to stack.
+  #define setobj2s(L, o1, o2)  setobj(L, s2v(o1), o2)
+  // Table to table .
+  #define setobjt2t            setobj
+  // Object to new object.
+  #define setobj2n             setobj
+  // Object to table.
+  #define setobj2t             setobj
 #+end_src
 
 *** Table
