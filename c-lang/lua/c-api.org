@@ -785,7 +785,7 @@ as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
       return args;
   }
 
-  // Process "-e" and "-l" flags.
+  // Process "-e", "-l", and "-W" flags.
   static int runargs(lua_State* L, char** argv, int n) {
       int i;
       // By default, Lua standalone warnings are off.
@@ -798,7 +798,9 @@ as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
               case 'l': {
                   int status;
                   char* extra = argv[i] + 2;
-                  if (*extra == '\0') extra = argv[++i];
+                  if (*extra == '\0') {
+                      extra = argv[++i];
+                  }
                   lua_assert(extra != NULL);
                   status = (option == 'e') ? dostring(L, extra, "=(command line)")
                                            : dolibrary(L, extra);
@@ -872,10 +874,10 @@ as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
   #include <readline/readline.h>
 
   // The following functions should be provided if "lua_readline" is undefined.
-  #define lua_initreadline(L) ((void)L, rl_readline_name = "lua")
+  #define lua_initreadline(L)        ((void)L, rl_readline_name = "lua")
   #define lua_readline(buff, prompt) ((void)buff, readline(prompt))
-  #define lua_saveline(line) add_history(line)
-  #define lua_freeline(line) free(line)
+  #define lua_saveline(line)         add_history(line)
+  #define lua_freeline(line)         free(line)
 
   // Use dynamically-loaded readline or nothing.
   #else
@@ -1088,16 +1090,13 @@ as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
       progname = NULL;
       // Initializes the readline system if available.
       lua_initreadline(L);
-      /*
-        While there is input from the terminal, parse, compile, evaluate,
-        and print.
-      */
+      // While there is input from the terminal, parse, compile, evaluate, and print.
       while ((status = loadline(L)) != -1) {
           if (status == LUA_OK) {
               // Evaluate.
               status = docall(L, 0, LUA_MULTRET);
           }
-          /* Success: Print contents of stack */
+          // Success: Print contents of stack.
           if (status == LUA_OK) {
               l_print(L);
           } else {
