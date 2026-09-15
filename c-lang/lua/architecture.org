@@ -119,6 +119,8 @@ functions that enable the type-safe exchange of data between C and Lua.
 #+end_example
 
 #+begin_src c
+  // === Index Resolution ===
+
   // Convert an acceptable index to a pointer to its respective value.
   // Non-valid indices return the special nil value "G(L)->nilvalue".
   static TValue* index2value(lua_State* L, int idx) {
