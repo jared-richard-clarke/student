@@ -1555,9 +1555,16 @@ Exception handling is specific to the given platform:
           +------------------+
                    |
                    V
-            +--------------+
-            | Max Tag Loop |
-            +--------------+
+            +---------------+
+            | Maximum Tags? |
+            +---------------+
+                   |
+                  yes
+                   |
+                   V
+               +-------+
+               | Error |
+               +-------+
 #+end_example
 
 ** Debugger
