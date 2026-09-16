@@ -134,9 +134,23 @@ instructions for implementing control flow.
 |------------+-----------+------------------------------------------------------------------|
 | ERRNNIL    | A Bx      | raise error if R[A] ~= nil (K[Bx - 1] is global name)            |
 |------------+-----------+------------------------------------------------------------------|
-| VARARGPREP | A         | (adjust varargs)                                                 |
+| VARARGPREP | A         | adjust call frame for variadic arguments                         |
 |------------+-----------+------------------------------------------------------------------|
 | EXTRAARG   | Ax        | extra (larger) argument for previous opcode                      |
+
+#+begin_example
+  === VARARGPREP ===
+
+  Calculates the number of variadic arguments and shifts the call frame base
+  to the top of the stack.
+
+                       New Base Offset
+                              |
+  V------- VARARGPREP --------V----- Original Call Frame -----V
+  +----------+-----+----------+---------+-------+-----+-------+
+  | Vararg 1 | ... | Vararg N | closure | arg 1 | ... | arg N |
+  +----------+-----+----------+---------+-------+-----+-------+
+#+end_example
 
 ** Instruction Layout
 
