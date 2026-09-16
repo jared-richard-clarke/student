@@ -499,7 +499,7 @@ Below is an abbreviated version of Lua's virtual machine.
               /* RETURN A B C k | return R[A], ... , R[A+B-2] */
               vmcase(OP_RETURN) {
                   StkId ra = RA(i);
-                  /* The number of results. */
+                   /* The number of results. */
                   int n = GETARG_B(i) - 1;
                   int nparams1 = GETARG_C(i);
                   if (n < 0) {
@@ -560,9 +560,9 @@ Below is an abbreviated version of Lua's virtual machine.
               /* TFORPREP A Bx | Create upvalue for R[A + 3]; pc+=Bx */
               vmcase(OP_TFORPREP) {
                   /*
-                    "ra" has the iterator function, "ra + 1" has the state,
-                    "ra + 2" has the initial value for the control variable, and
-                    "ra + 3" has the closing variable. This opcode then swaps the
+                    R[A] has the iterator function, R[A+1] has the state,
+                    R[A+2] has the initial value for the control variable, and
+                    R[A+3] has the closing variable. This opcode then swaps the
                     control and the closing variables and marks the closing
                     variable to-be-closed.
                   */
@@ -585,10 +585,10 @@ Below is an abbreviated version of Lua's virtual machine.
               l_tforcall:
                   {
                       /*
-                        "ra" has the iterator function, "ra + 1" has the state,
-                        "ra + 2" has the closing variable, and "ra + 3" has the
+                        R[A] has the iterator function, R[A+1] has the state,
+                        R[A+2] has the closing variable, and R[A+3] has the
                         control variable. The call will use the stack starting at
-                        "ra + 3", so that it preserves the first three values, and
+                        R[A+3], so that it preserves the first three values, and
                         the first return will be the new value for the control
                         variable.
                       */
