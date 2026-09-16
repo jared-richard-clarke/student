@@ -1521,6 +1521,45 @@ Exception handling is specific to the given platform:
 
 #+end_example
 
+*** Table Access
+
+#+begin_example
+             +------------+
+             | Table[key] |
+             +------------+
+                  | |
+          +- yes -+ +- no ---+
+          |                  |
+          V                  V
+  +---------------+ +-------------------+
+  | Fast Path     | | Metatable Exists? |
+  |---------------| +-------------------+
+  | Direct Access |         | |
+  +---------------+         | |
+                    +- yes -+ +- no ----+
+                    |                   |
+                    V                   V
+             +------------+       +------------+
+             | __index    |       | Get or Set |
+             |------------|- no ->|------------|
+             | __newindex |       | Return nil |
+             +------------+       +------------+
+                    |
+                   yes
+                    |
+                    V
+          +------------------+
+          | Slow Path        |
+          |------------------|
+          | Metamethod Chain |
+          +------------------+
+                   |
+                   V
+            +--------------+
+            | Max Tag Loop |
+            +--------------+
+#+end_example
+
 ** Debugger
 
 *** Debug Library
