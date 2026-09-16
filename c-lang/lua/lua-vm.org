@@ -335,6 +335,16 @@ Below is an abbreviated version of Lua's virtual machine.
   /*
     If compatible, replace vmdispatch, vmcase, and vmbreak
     with jumptable-specific instructions.
+
+    switch:
+      #define vmdispatch(o) switch(o)
+      #define vmcase(op)    case op:
+      #define vmbreak       break
+
+    jumptable:
+      #define vmdispatch(x) goto *disptab[x];
+      #define vmcase(op)    L_##op
+      #define vmbreak       vmfetch; vmdispatch(GET_OPCODE(i))
   */
   #if LUA_USE_JUMPTABLE
   #include "ljumptab.h"
@@ -592,7 +602,7 @@ Below is an abbreviated version of Lua's virtual machine.
                         R[A+1] = state
                         R[A+2] = closing variable
                         R[A+3] = control variable
-  
+
                         The call will use the stack starting at R[A+3], so that
                         it preserves the first three values, and the first return
                         will be the new value for the control variable.
