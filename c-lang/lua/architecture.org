@@ -1476,20 +1476,20 @@ Exception handling is specific to the given platform:
                          +--------------+
                                 |
                                 V
-                      +-------------------+
-                      | Initialize Locals |
-                      |-------------------|
-                      | startfunc:        |
-                      | trap              |
-                      |-------------------|
-                      | returning:        |
-                      | closure           |
-                      | constants         |
-                      | call frame start  |
-                      | program counter   |
-                      +-------------------+
-                               |
-                               V
+                      +--------------------+
+                      | Initialize Locals  |
+                      |--------------------|
+                      | startfunc:         |
+                      | - trap             |
+                      |--------------------|
+                      | returning:         |
+                      | - closure          |
+                      | - constants        |
+                      | - call frame start |
+                      | - program counter  |
+                      +--------------------+
+                                |
+                                V
                             +------+
             +---------------| loop |<--------------+
             |               +------+               |
@@ -1513,12 +1513,12 @@ Exception handling is specific to the given platform:
                    +- Return -+ +- Call -+
                    |                     |
                    V                     V
-          +----------------+    +------------------+
-          | Update ci      |    | goto returning:  |
-          | goto startfunc |    | Update ci        |
-          +----------------+    | Continue or exit |
-                                +------------------+
-
+          +-----------------+    +--------------------+
+          | - Update ci     |    | goto returning:    |
+          |-----------------|    |--------------------|
+          | goto startfunc: |    | - Update ci        |
+          +-----------------+    | - Continue or exit |
+                                 +--------------------+
 #+end_example
 
 *** Table Access
