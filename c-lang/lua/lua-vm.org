@@ -660,7 +660,7 @@ Below is an abbreviated version of Lua's virtual machine.
 
   function main(...)
                     A
-    1   VARARGPREP  0       - (adjust varargs)
+    1   VARARGPREP  0       - Adjust call frame for variadic arguments.
 
                     A B Ck
     2   NEWTABLE    0 3 0   - R[A] := {}
@@ -850,7 +850,7 @@ Below is an abbreviated version of Lua's virtual machine.
 
   function main(...)
                    A
-    1  VARARGPREP  0       - (adjust varargs)
+    1  VARARGPREP  0       - Adjust call frame for variadic arguments.
 
                    A Bx
     2  CLOSURE     0 0     - function factorial(x):
@@ -1026,7 +1026,7 @@ Below is an abbreviated version of Lua's virtual machine.
 
   function main(...)
                     A
-    1   VARARGPREP  0       - (adjust varargs)
+    1   VARARGPREP  0       - Adjust call frame for variadic arguments.
 
                     A B Ck
     2   NEWTABLE    0 2 0   - R[A] := {}
