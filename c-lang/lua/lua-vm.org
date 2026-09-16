@@ -550,6 +550,7 @@ Below is an abbreviated version of Lua's virtual machine.
               }
               /* FORPREP A Bx | Check values. Prepare counters. If break, then pc+=Bx+1 */
               vmcase(OP_FORPREP) {
+                  /* R[A] = start, R[A+1] = stop, R[A+2] = step */
                   StkId ra = RA(i);
                   savestate(L, ci);
                   if (forprep(L, ra)) {
@@ -560,11 +561,13 @@ Below is an abbreviated version of Lua's virtual machine.
               /* TFORPREP A Bx | Create upvalue for R[A + 3]; pc+=Bx */
               vmcase(OP_TFORPREP) {
                   /*
-                    R[A] has the iterator function, R[A+1] has the state,
-                    R[A+2] has the initial value for the control variable, and
-                    R[A+3] has the closing variable. This opcode then swaps the
-                    control and the closing variables and marks the closing
-                    variable to-be-closed.
+                    R[A]   = iterator function
+                    R[A+1] = state
+                    R[A+2] = initial control variable
+                    R[A+3] = closing variable
+
+                    This opcode swaps the control and the closing variables and marks
+                    the closing variable to-be-closed.
                   */
                   StkId ra = RA(i);
                   /* Swap control and closing variables. */
@@ -585,12 +588,14 @@ Below is an abbreviated version of Lua's virtual machine.
               l_tforcall:
                   {
                       /*
-                        R[A] has the iterator function, R[A+1] has the state,
-                        R[A+2] has the closing variable, and R[A+3] has the
-                        control variable. The call will use the stack starting at
-                        R[A+3], so that it preserves the first three values, and
-                        the first return will be the new value for the control
-                        variable.
+                        R[A]   = iterator function
+                        R[A+1] = state
+                        R[A+2] = closing variable
+                        R[A+3] = control variable
+  
+                        The call will use the stack starting at R[A+3], so that
+                        it preserves the first three values, and the first return
+                        will be the new value for the control variable.
                       */
                       StkId ra = RA(i);
                       /* Copy the control variable. */
