@@ -304,7 +304,7 @@ functions that enable the type-safe exchange of data between C and Lua.
   === Register-Based Layout ===
 
   Lua's VM uses a register-based model, where each function has a set
-  of virtual registers — in reality, stack positions.
+  of virtual registers — registers implemented as offsets in an array.
 
   +----------------+--------------------------+------------+-------------+----------+
   | Base           | Register 0               | Register 1 | Register N  | Unused   |
