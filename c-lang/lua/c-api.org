@@ -1123,8 +1123,7 @@ as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
   static int pmain(lua_State* L) {
       int argc = (int)lua_tointeger(L, 1);
       char** argv = (char**)lua_touserdata(L, 2);
-      // error = argument index | no name = -1 | no script name = 0 | script name
-      // = index
+      // error = argument index | no name = -1 | no script name = 0 | script name = index
       int script;
       // Traverses all arguments from "argv" and returns a mask of those
       // arguments before running any Lua code. Returns an error code if it
