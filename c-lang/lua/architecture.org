@@ -631,6 +631,25 @@ functions that enable the type-safe exchange of data between C and Lua.
       lu_byte marked;
   } GCObject;
 
+  // As part of ISO C99, if a union contains several structures that
+  // share a common initial sequence, inspecting that shared part via
+  // any one of those structure members is fully permitted when the
+  // union type is visible.
+  //
+  // Allows the manipulation of a specific object through a common header.
+  union GCUnion {
+      // Common Header.
+      GCObject gc;
+      struct TString ts;
+      struct Udata u;
+      union Closure cl;
+      struct Table h;
+      struct Proto p;
+      // Thread.
+      struct lua_State th;
+      struct UpVal upv;
+  };
+
   #define val_(o)   ((o)->value_)
   #define valraw(o) (val_(o))
 
@@ -730,6 +749,77 @@ functions that enable the type-safe exchange of data between C and Lua.
       // Direct access to node as a proper "TValue".
       TValue i_val;
   } Node;
+#+end_src
+
+*** String
+
+#+begin_src c
+  typedef struct TString {
+      // CommonHeader ------------+
+      struct GCObject* next;  //  |
+      lu_byte tt;             //  |
+      lu_byte marked;         // <+
+      // Reserved words for short strings.
+      lu_byte extra;
+      // Short string length.
+      ls_byte shrlen;
+      // Hash for long string.
+      unsigned int hash;
+      union {
+          // Long string length.
+          size_t lnglen;
+          // Linked list for hash table.
+          struct TString* hnext;
+      } u;
+      // Pointer to long string content.
+      char* contents;
+      // Deallocation function for long string.
+      lua_Alloc falloc;
+      // User data for external string.
+      void* ud;
+  } TString;
+#+end_src
+
+*** User Data
+
+#+begin_src c
+  typedef union UValue {
+      TValue uv;
+      // Ensure maximum alignment for udata bytes.
+      LUAI_MAXALIGN;
+  } UValue;
+
+  // Header for user data with user values.
+  typedef struct Udata {
+      // CommonHeader ------------+
+      struct GCObject* next;  //  |
+      lu_byte tt;             //  |
+      lu_byte marked;         // <+
+      // Number of user values.
+      unsigned short nuvalue;
+      // Number of bytes.
+      size_t len;
+      struct Table* metatable;
+      // Garbage collection list.
+      GCObject* gclist;
+      // Array of user values.
+      UValue uv[1];
+  } Udata;
+
+  // Header for user data with no user values.
+  typedef struct Udata0 {
+      // CommonHeader ------------+
+      struct GCObject* next;  //  |
+      lu_byte tt;             //  |
+      lu_byte marked;         // <+
+      unsigned short nuvalue;
+      size_t len;
+      struct Table* metatable;
+      // Binary data.
+      union {
+          LUAI_MAXALIGN;
+      } bindata;
+  } Udata0;
 #+end_src
 
 *** Functions, Closures, and UpValues
