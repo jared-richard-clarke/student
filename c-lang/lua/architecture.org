@@ -75,7 +75,7 @@ functions that enable the type-safe exchange of data between C and Lua.
                      | API Boundary                                      |
                      |---------------------------------------------------|
   +---------------+  |  +-----------------+  +-------------+  +-------+  |  +-----------+
-  | C Application |--|->| lua_* Functions |--| index2value |->| Stack |--|->| Lua State |
+  | C Application |--|->| lua_* Functions |--| index2value |--| Stack |--|->| Lua State |
   +---------------+  |  +-----------------+  +-------------+  +-------+  |  +-----------+
                      +---------------------------------------------------+
 #+end_example
