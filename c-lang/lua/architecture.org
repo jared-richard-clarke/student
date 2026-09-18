@@ -763,7 +763,7 @@ functions that enable the type-safe exchange of data between C and Lua.
       lu_byte extra;
       // Short string length.
       ls_byte shrlen;
-      // Hash for long string.
+      // String hash.
       unsigned int hash;
       union {
           // Long string length.
