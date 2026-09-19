@@ -1438,6 +1438,49 @@ Exception handling is specific to the given platform:
 
 - *ISO C*: ~longjmp~ and ~setjmp~
 
+#+begin_src c
+  #if !defined(LUAI_THROW)
+
+  // C++ exceptions
+  #if defined(__cplusplus) && !defined(LUA_USE_LONGJMP)
+
+  #define LUAI_THROW(L, c) throw(c)
+
+  static void LUAI_TRY(lua_State* L, lua_longjmp* c, Pfunc f, void* ud) {
+      try {
+          f(L, ud);
+      } catch (lua_longjmp* c1) {
+          if (c1 != c) {
+              throw;
+          }
+      } catch (...) {
+          c->status = -1;
+      }
+  }
+
+  // POSIX
+  #elif defined(LUA_USE_POSIX)
+
+  #define LUAI_THROW(L, c) _longjmp((c)->b, 1)
+
+  #define LUAI_TRY(L, c, f, ud) \
+      if (_setjmp((c)->b) == 0) ((f)(L, ud))
+
+  // ISO C
+  #else
+
+  #define LUAI_THROW(L, c) longjmp((c)->b, 1)
+
+  #define LUAI_TRY(L, c, f, ud)  \
+      if (setjmp((c)->b) == 0) { \
+          ((f)(L, ud))           \
+      }
+
+  #endif
+
+  #endif
+#+end_src
+
 #+begin_example
   === State ===
 
