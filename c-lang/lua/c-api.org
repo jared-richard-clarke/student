@@ -729,7 +729,7 @@ as ~lua -v -i~ when the standard input is a terminal, and as ~lua -~ otherwise.
           // Parse flags.
           switch (argv[i][1]) {
               // "--""
-              case '-': /* '--' */
+              case '-':
                   if (argv[i][2] != '\0') {
                       return has_error;
                   }
