@@ -53,7 +53,7 @@
 
   // warn(message, ...)
   //
-  // Emits a warning message composed by the concatenation of all its arguments.
+  // Emits a warning message composed of the concatenation of all its arguments.
   static int luaB_warn(lua_State* L) {
       // Total arguments.
       int n = lua_gettop(L);
