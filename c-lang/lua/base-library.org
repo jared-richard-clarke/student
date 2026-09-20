@@ -10,6 +10,8 @@
 ** Code
 
 #+begin_src c
+  #include "lprefix.h"
+
   #include <ctype.h>
   #include <stdio.h>
   #include <stdlib.h>
@@ -23,12 +25,12 @@
 
   // print(...)
   //
-  // Receives any number of arguments and prints their values to stdout,
+  // Receives any number of arguments and prints their values to "stdout",
   // converting each argument to a string following the same rules
-  // of tostring.
+  // of "tostring".
   static int luaB_print(lua_State* L) {
       // Total arguments.
-      int n = lua_gettop(L); /* number of arguments */
+      int n = lua_gettop(L);
       int i;
       // For each argument...
       for (i = 1; i <= n; i++) {
@@ -51,8 +53,7 @@
 
   // warn(message, ...)
   //
-  // Emits a warning with a message composed by the concatenation
-  // of all its arguments.
+  // Emits a warning message composed by the concatenation of all its arguments.
   static int luaB_warn(lua_State* L) {
       // Total arguments.
       int n = lua_gettop(L);
@@ -74,7 +75,6 @@
 
   #define SPACECHARS " \f\n\r\t\v"
 
-  // String to Integer
   static const char* b_str2int(const char* s, unsigned base, lua_Integer* pn) {
       lua_Unsigned n = 0;
       int neg = 0;
@@ -94,9 +94,9 @@
       }
       do {
           unsigned digit = cast_uint(isdigit(cast_uchar(*s))
-                                         ? *s - '0'
-                                         : (toupper(cast_uchar(*s)) - 'A') + 10);
-          // Invalid numeral
+                           ? *s - '0'
+                           : (toupper(cast_uchar(*s)) - 'A') + 10);
+          // Invalid numeral.
           if (digit >= base) {
               return NULL;
           }
@@ -105,27 +105,21 @@
       } while (isalnum(cast_uchar(*s)));
       // Skip trailing whitespace.
       s += strspn(s, SPACECHARS);
-      // Handle negative values.
+      // Handle negative integers.
       *pn = (lua_Integer)((neg) ? (0u - n) : n);
       return s;
   }
 
-  // tonumber(expression [, base]) -> number | fail
+  // tonumber(expression [, radix]) -> number | nil
   //
-  // When called with no base, tonumber tries to convert its argument to a number.
-  // If the argument is already a number or a string convertible to a number,
-  // then tonumber returns this number. Otherwise, it returns fail.
+  // Tries to convert its argument to either an integer or float in base 10.
+  // Returns nil if conversion fails.
   //
-  // The conversion of strings can result in integers or floats, according
-  // to the lexical conventions of Lua. The string may have leading and
-  // trailing spaces and a sign.
+  // String conversions follow the lexical conventions of Lua.
   //
-  // When called with base, then e must be a string to be interpreted as an
-  // integer numeral in that base. The base may be any integer between 2 and 36,
-  // inclusive. In bases above 10, the letter 'A' (in either upper or lower case)
-  // represents 10, 'B' represents 11, and so forth, with 'Z' representing 35.
-  // If the string e is not a valid numeral in the given base, the function
-  // returns fail.
+  // If provided with radix, the provided expression must be a string,
+  // which is interpreted as an integer numeral in that base. A radix
+  // must be an integer between 2 to 36 inclusive.
   static int luaB_tonumber(lua_State* L) {
       // Standard conversion?
       if (lua_isnoneornil(L, 2)) {
@@ -167,7 +161,7 @@
   //
   // Raises an error with given message as the error object.
   // This function never returns. The level argument specifies
-  // how to get the error position.
+  // where to target error position.
   static int luaB_error(lua_State* L) {
       int level = (int)luaL_optinteger(L, 2, 1);
       lua_settop(L, 1);
@@ -180,11 +174,13 @@
       return lua_error(L);
   }
 
-  // getmetatable(object) -> table | value | nil
+  // getmetatable(object) -> value | metatable | nil
   //
-  // If object does not have a metatable, returns nil. Otherwise, if the object's
-  // metatable has a __metatable field, returns the associated value. Otherwise,
-  // returns the metatable of the given object.
+  // Attempts to retrieve a metatable from the given object.
+  //
+  // __metatable? -> value
+  // metatable?   -> metatable
+  // otherwise    -> nil
   static int luaB_getmetatable(lua_State* L) {
       luaL_checkany(L, 1);
       if (!lua_getmetatable(L, 1)) {
@@ -214,7 +210,7 @@
 
   // rawequal(x, y) -> boolean
   //
-  // Checks whether x is equal to y, without invoking the __eq metamethod.
+  // Checks whether x is equal to y, without invoking the __eq metamethod for either value.
   // Returns a boolean.
   static int luaB_rawequal(lua_State* L) {
       luaL_checkany(L, 1);
@@ -225,7 +221,7 @@
 
   // rawlen(x) -> integer
   //
-  // Returns the length of the object x, which must be a table or a string,
+  // Returns the length of object x — which must be a table or a string —
   // without invoking the __len metamethod. Returns an integer.
   static int luaB_rawlen(lua_State* L) {
       int t = lua_type(L, 1);
@@ -237,8 +233,8 @@
 
   // rawget(table, index) -> value
   //
-  // Gets the real value of table[index], without using the __index metavalue.
-  // table must be a table. Index may be any value.
+  // Attempts to retrieve table[index], without using the __index metavalue.
+  // The given index may be any value.
   static int luaB_rawget(lua_State* L) {
       luaL_checktype(L, 1, LUA_TTABLE);
       luaL_checkany(L, 2);
@@ -250,8 +246,10 @@
   // rawset(table, index, value) -> table
   //
   // Sets table[index] to value, without using the __newindex metavalue.
-  // table must be a table, index any value different from nil and NaN,
-  // and value any Lua value. Returns a table.
+  // A given index may be any value different from nil and NaN, and
+  // a given value may be any Lua value.
+  //
+  // Returns a table.
   static int luaB_rawset(lua_State* L) {
       luaL_checktype(L, 1, LUA_TTABLE);
       luaL_checkany(L, 2);
@@ -265,22 +263,25 @@
       if (oldmode == -1) {
           luaL_pushfail(L);
       } else {
-          lua_pushstring(L,
-                         (oldmode == LUA_GCINC) ? "incremental" : "generational");
+          lua_pushstring(L, (oldmode == LUA_GCINC)
+                            ? "incremental"
+                            : "generational");
       }
       return 1;
   }
 
-  // Check whether call to "lua_gc" was valid — not inside a finalizer.
-  #define checkvalres(res)      \
-      {                         \
-          if (res == -1) break; \
+  // Check whether a call to lua_gc is valid — not inside a finalizer.
+  #define checkvalres(res) \
+      {                    \
+          if (res == -1) { \
+              break;       \
+          }                \
       }
 
   // collectgarbage([option [, argument]])
   //
-  // This function is a generic interface to the garbage collector. It performs
-  // different functions according to its first argument, option.
+  // A generic interface to the garbage collector. Performs different functions
+  // according to its first argument.
   static int luaB_collectgarbage(lua_State* L) {
       static const char* const opts[] = {
           "stop",      "restart",      "collect",     "count", "step",
@@ -324,10 +325,13 @@
           case LUA_GCPARAM: {
               static const char* const params[] = {
                   "minormul", "majorminor", "minormajor", "pause",
-                  "stepmul",  "stepsize",   NULL};
-              static const char pnum[] = {LUA_GCPMINORMUL,   LUA_GCPMAJORMINOR,
-                                          LUA_GCPMINORMAJOR, LUA_GCPPAUSE,
-                                          LUA_GCPSTEPMUL,    LUA_GCPSTEPSIZE};
+                  "stepmul",  "stepsize",   NULL
+              };
+              static const char pnum[] = {
+                  LUA_GCPMINORMUL,   LUA_GCPMAJORMINOR,
+                  LUA_GCPMINORMAJOR, LUA_GCPPAUSE,
+                  LUA_GCPSTEPMUL,    LUA_GCPSTEPSIZE
+              };
               int p = pnum[luaL_checkoption(L, 2, NULL, params)];
               lua_Integer value = luaL_optinteger(L, 3, -1);
               lua_pushinteger(L, lua_gc(L, o, p, (int)value));
@@ -345,9 +349,9 @@
       return 1;
   }
 
-  // type(x) -> string
+  // type(object) -> string
   //
-  // Returns the type of x, coded as a string.
+  // Returns the type of its given object, encoded as a string.
   static int luaB_type(lua_State* L) {
       int t = lua_type(L, 1);
       luaL_argcheck(L, t != LUA_TNONE, 1, "value expected");
@@ -357,9 +361,8 @@
 
   // next(table [, index]) -> index, value
   //
-  // Allows a program to traverse all fields of a table. Its first argument is a
-  // table and its second argument is an index in this table. A call to next
-  // returns the next index of the table and its associated value.
+  // Allows a program to traverse all the fields of a given table.
+  // Returns the next index of the table and its associated value.
   static int luaB_next(lua_State* L) {
       luaL_checktype(L, 1, LUA_TTABLE);
       // Create a second argument if there isn't one.
@@ -380,13 +383,13 @@
       return 4;
   }
 
-  // pairs(t) -> next, table, nil, nil
+  // pairs(table) -> __pairs(table) | next, table, nil, nil
   //
-  //  If t has a metamethod __pairs, calls it with t as its argument and returns
-  //  the
-  // first four results from the call. Otherwise, returns the next function, the
-  // table t, plus two nil values, so that the construction "for k,v in pairs(t)
-  // do body end" will iterate over all key-value pairs of table t.
+  // for key, value in pairs(table) do body end
+  //
+  // If the given table has a metamethod __pairs, calls __pairs(table) and returns
+  // the first four results from the call. Otherwise, returns function "next",
+  // the given table, plus two nil values.
   static int luaB_pairs(lua_State* L) {
       luaL_checkany(L, 1);
       // No metamethod?
@@ -408,7 +411,7 @@
       return 4;
   }
 
-  // Traversal function for "ipairs"
+  // Traversal function for "ipairs".
   static int ipairsaux(lua_State* L) {
       lua_Integer i = luaL_checkinteger(L, 2);
       i = luaL_intop(+, i, 1);
@@ -416,11 +419,9 @@
       return (lua_geti(L, 1, i) == LUA_TNIL) ? 1 : 2;
   }
 
-  // ipairs(t) -> iterator, t, 0
+  // ipairs(table) -> iterator, table, 0
   //
-  // Returns three values (an iterator function, the value t, and 0) so that
-  // the construction "for i,v in ipairs(t) do body end" will iterate over
-  // the key-value pairs (1, t[1]), (2, t[2]), ..., up to the first absent index.
+  // for index, value in ipairs(table) do body end
   static int luaB_ipairs(lua_State* L) {
       luaL_checkany(L, 1);
       // iteration function
@@ -461,10 +462,10 @@
       return mode;
   }
 
-  // loadfile ([filename [, mode [, env]]])
+  // loadfile ([filename [, mode [, environment]]])
   //
-  // Similar to load, but gets the chunk from file filename or from the standard
-  // input, if no file name is given.
+  // Compiles a chunk from the given file. Defaults to the standard input
+  // if no file name is given.
   static int luaB_loadfile(lua_State* L) {
       const char* fname = luaL_optstring(L, 1, NULL);
       const char* mode = getMode(L, 2);
@@ -475,38 +476,35 @@
 
   // === Generic Read Function ===
 
-  // Reserved slot, above all arguments, to hold a copy of the returned
-  // string to avoid it being collected while parsed. 'load' has four
-  // optional arguments (chunk, source name, mode, and environment).
+  // Reserved slot protects buffered string from garbage collection during parsing.
   #define RESERVEDSLOT 5
 
-  // Reader for generic "load" function: "lua_load" uses the stack for internal
-  // stuff, so the reader cannot change the stack top. Instead, it keeps its
-  // resulting string in a reserved slot inside the stack.
   static const char* generic_reader(lua_State* L, void* ud, size_t* size) {
-      (void)(ud); /* not used */
+      (void)(ud);
       luaL_checkstack(L, 2, "too many nested functions");
-      lua_pushvalue(L, 1); /* get function */
-      lua_call(L, 0, 1);   /* call it */
+      // Get function.
+      lua_pushvalue(L, 1);
+      // Call it.
+      lua_call(L, 0, 1);
       if (lua_isnil(L, -1)) {
-          lua_pop(L, 1); /* pop result */
+          // Pop the result.
+          lua_pop(L, 1);
           *size = 0;
           return NULL;
-      } else if (l_unlikely(!lua_isstring(L, -1)))
+      } else if (l_unlikely(!lua_isstring(L, -1))) {
           luaL_error(L, "reader function must return a string");
-      lua_replace(L, RESERVEDSLOT); /* save string in reserved slot */
+      }
+      // Save string in reserved slot.
+      lua_replace(L, RESERVEDSLOT);
       return lua_tolstring(L, RESERVEDSLOT, size);
   }
 
-  // load(chunk [, chunkname [, mode [, env]]])
+  // load(chunk [, name [, mode [, environment]]]) -> function, nil | nil, error
   //
-  // Loads a chunk. If the chunk is a string, the chunk is this string. If chunk
-  // is a function, load calls it repeatedly to get the chunk pieces. Each call to
-  // chunk must return a string that concatenates with previous results. A return
-  // of an empty string, nil, or no value signals the end of the chunk.
+  // Loads a chunk. A chunk is either a string or a reader function, which provides
+  // a string piecemeal.
   //
-  // If there are no syntactic errors, load returns the compiled chunk as a
-  // function. Otherwise, it returns fail plus the error message.
+  // If successful returns a function. Otherwise, returns nil plus an error message.
   static int luaB_load(lua_State* L) {
       int status;
       size_t l;
@@ -535,11 +533,11 @@
       return lua_gettop(L) - 1;
   }
 
-  // dofile ([filename])
+  // dofile([name]) -> ...
   //
-  // Opens the named file and executes its content as a Lua chunk, returning all
+  // Opens the given file and executes its contents as a Lua chunk. Returns all
   // values returned by the chunk. When called without arguments, dofile executes
-  // the content of the standard input. In case of errors, dofile propagates the
+  // the content of the standard input. In case of errors, propagates the
   // error to its caller.
   static int luaB_dofile(lua_State* L) {
       const char* fname = luaL_optstring(L, 1, NULL);
@@ -551,11 +549,13 @@
       return dofilecont(L, 0, 0);
   }
 
-  // assert (v [, message])
+  // assert(expression [, message]) -> ... | error
   //
-  // Raises an error if the value of its argument v is falsey. Otherwise, returns
-  // all its arguments. In case of error, message is the error object. When
-  // absent, it defaults to "assertion failed!"
+  // Raises an error if the value of its given expression is falsey.
+  // Otherwise, returns all the results of the given expression.
+  //
+  // truthy -> ...
+  // falsey -> error
   static int luaB_assert(lua_State* L) {
       // Condition true? Return all arguments.
       if (l_likely(lua_toboolean(L, 1))) {
@@ -575,11 +575,13 @@
       }
   }
 
-  // select (index, ···) -> ...
+  // select(index, ...) -> ... | number
+  // y, z  = select(2, "x", "y", "z")
+  // three = select("#", "x", "y", "z")
   //
-  // If index is a number, returns all arguments after argument number index. A
-  // negative number indexes from the end. Otherwise, index must be the string
-  // "#", and select returns the total number of extra arguments it received.
+  // If index is a number, returns all arguments after the given index.
+  // A negative number is offset from the end. If index is the string "#",
+  // returns the total number of extra arguments given.
   static int luaB_select(lua_State* L) {
       int n = lua_gettop(L);
       if (lua_type(L, 1) == LUA_TSTRING && *lua_tostring(L, 1) == '#') {
@@ -597,9 +599,7 @@
       }
   }
 
-  // Continuation function for "pcall" and "xpcall". Both functions already pushed
-  // a "true" before doing the call, so in case of success "finishpcall" only has
-  // to return everything in the stack minus "extra" values.
+  // Continuation function for "pcall" and "xpcall".
   static int finishpcall(lua_State* L, int status, lua_KContext extra) {
       // Error?
       if (l_unlikely(status != LUA_OK && status != LUA_YIELD)) {
@@ -615,15 +615,11 @@
       }
   }
 
-  // pcall (function [, arg1, ···])
+  // pcall(function [, argument, ...]) -> true, result, ... | false, error
   //
-  // Calls the function with the given arguments in protected mode. This means
-  // that any error inside the function is not propagated. Instead, pcall catches
-  // the error and returns a status code. Its first result is the status code (a
-  // boolean), which is true if the call succeeds without errors. In such case,
-  // pcall also returns all results from the call, after this first result. In
-  // case of any error, pcall returns false plus the error object. Note that
-  // errors caught by pcall do not call a message handler.
+  // Calls the function with the given arguments in protected mode.
+  // Catches errors inside the given function and returns a status code
+  // alongside either its results or a captured error object.
   static int luaB_pcall(lua_State* L) {
       int status;
       luaL_checkany(L, 1);
@@ -634,9 +630,9 @@
       return finishpcall(L, status, 0);
   }
 
-  // xpcall (function, message-handler [, arg1, ···])
+  // xpcall (function, message-handler [, argument, ...])
   //
-  // This function is similar to pcall, except that it sets a new message handler.
+  // This function is similar to "pcall", except that it sets a new message handler.
   static int luaB_xpcall(lua_State* L) {
       int status;
       int n = lua_gettop(L);
@@ -652,20 +648,20 @@
       return finishpcall(L, status, 2);
   }
 
-  // tostring (v)
+  // tostring(value) -> string
   //
   // Converts a value of any type to a string in a human-readable format.
   //
-  // If the metatable of v has a __tostring field, then tostring calls the
-  // corresponding value with v as argument, and uses the result of the call as
-  // its result. Otherwise, if the metatable of v has a __name field with a string
-  // value, tostring may use that string in its final result.
+  // If the metatable of the given value has a "__tostring field", calls the
+  // corresponding metatable with the given value as argument. May use "__name"
+  // field if the associated value is a string.
   static int luaB_tostring(lua_State* L) {
       luaL_checkany(L, 1);
       luaL_tolstring(L, 1, NULL);
       return 1;
   }
 
+  // === Base Library Functions ===
   static const luaL_Reg base_funcs[] = {
       { "assert",         luaB_assert },
       { "collectgarbage", luaB_collectgarbage },
@@ -696,14 +692,12 @@
       { NULL,             NULL }
   };
 
+  // Populate the global table with Lua's base library.
   LUAMOD_API int luaopen_base(lua_State* L) {
-      // Open library into global table.
       lua_pushglobaltable(L);
       luaL_setfuncs(L, base_funcs, 0);
-      // Set global _G.
       lua_pushvalue(L, -1);
       lua_setfield(L, -2, LUA_GNAME);
-      // Set global _VERSION.
       lua_pushliteral(L, LUA_VERSION);
       lua_setfield(L, -2, "_VERSION");
       return 1;
