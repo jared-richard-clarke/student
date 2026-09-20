@@ -133,7 +133,7 @@
                   // Successful conversion.
                   return 1;
               }
-              // Else not a number (but there must be some parameter)
+              // Else not a number (but there must be a parameter)
               luaL_checkany(L, 1);
           }
       } else {
@@ -207,10 +207,10 @@
       return 1;
   }
 
-  // rawequal(x, y) -> boolean
+  // rawequal(object-x, object-y) -> boolean
   //
-  // Checks whether x is equal to y, without invoking the __eq metamethod for either value.
-  // Returns a boolean.
+  // Checks whether object-x is equal to object-y, without invoking the __eq metamethod
+  // for either value. Returns a boolean.
   static int luaB_rawequal(lua_State* L) {
       luaL_checkany(L, 1);
       luaL_checkany(L, 2);
@@ -218,9 +218,9 @@
       return 1;
   }
 
-  // rawlen(x) -> integer
+  // rawlen(object) -> integer
   //
-  // Returns the length of object x — which must be a table or a string —
+  // Returns the length of the given object — which must be a table or a string —
   // without invoking the __len metamethod. Returns an integer.
   static int luaB_rawlen(lua_State* L) {
       int t = lua_type(L, 1);
@@ -461,7 +461,7 @@
       return mode;
   }
 
-  // loadfile ([filename [, mode [, environment]]])
+  // loadfile([filename [, mode [, environment]]])
   //
   // Compiles a chunk from the given file. Defaults to the standard input
   // if no file name is given.
@@ -629,7 +629,7 @@
       return finishpcall(L, status, 0);
   }
 
-  // xpcall (function, message-handler [, argument, ...])
+  // xpcall(function, message-handler [, argument, ...])
   //
   // This function is similar to "pcall", except that it sets a new message handler.
   static int luaB_xpcall(lua_State* L) {
@@ -647,9 +647,9 @@
       return finishpcall(L, status, 2);
   }
 
-  // tostring(value) -> string
+  // tostring(object) -> string
   //
-  // Converts a value of any type to a string in a human-readable format.
+  // Converts an object of any type to a string in a human-readable format.
   //
   // If the metatable of the given value has a "__tostring field", calls the
   // corresponding metatable with the given value as argument. May use "__name"
