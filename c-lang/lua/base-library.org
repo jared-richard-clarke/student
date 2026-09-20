@@ -105,7 +105,6 @@
       } while (isalnum(cast_uchar(*s)));
       // Skip trailing whitespace.
       s += strspn(s, SPACECHARS);
-      // Handle negative integers.
       *pn = (lua_Integer)((neg) ? (0u - n) : n);
       return s;
   }
