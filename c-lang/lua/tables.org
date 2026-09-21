@@ -225,14 +225,14 @@ called with different environments.
 #+begin_src lua
   function freeze (table)
       local proxy = {}
-      local meta = {
+      local metatable = {
           ["__index"] = table,
           -- Ignore key-value assignments.
           ["__newindex"] = function (table, key, value)
                                return table
                            end
       }
-      setmetatable(proxy, meta)
+      setmetatable(proxy, metatable)
       return proxy
   end
 #+end_src
@@ -337,7 +337,7 @@ called with different environments.
       return self.limit or 0
   end
 
-  account = SpecialAccount:new{ limit = 1000.00 }
+  account = SpecialAccount:new ({ limit = 1000.00 })
 
   function account:getLimit ()
       return self.balance * 0.10
