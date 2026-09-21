@@ -248,9 +248,9 @@ called with different environments.
       -- === private state table ===
       local state = { balance = x }
 
-      local deposit = function (v)
-                          state.balance = state.balance + v
-                      end
+      local deposit  = function (v)
+                           state.balance = state.balance + v
+                       end
 
       local withdraw = function (v)
                            if amount > state.balance then
