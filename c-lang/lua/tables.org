@@ -338,3 +338,31 @@ called with different environments.
     return self.balance * 0.10
   end
 #+end_src
+
+** Strict Global Declarations
+
+#+begin_src lua
+  local declared = {}
+  
+  function declare(name, value)
+      rawset(_G, name, value)
+      declared[name] = true
+  end
+  
+  setmetatable(_G, {
+      __newindex = function (table, name, value)
+          if not declared[name] then
+              error("attempt to write to undeclared variable: " .. name, 2)
+          else
+              rawset(table, name, value)
+          end
+      end,
+      __index = function (_, name)
+          if not declared[name] then
+              error("attempt to read undeclared variable: " .. name, 2)
+          else
+              return nil
+          end
+      end,
+  })
+#+end_src
