@@ -631,12 +631,11 @@ functions that enable the type-safe exchange of data between C and Lua.
       lu_byte marked;
   } GCObject;
 
-  // As part of ISO C99, if a union contains several structures that
-  // share a common initial sequence, inspecting that shared part via
-  // any one of those structure members is fully permitted when the
-  // union type is visible.
+  // Groups disparate objects under the common header, GCObject.
   //
-  // Allows the manipulation of specific objects through a common header.
+  // Because the header of collectable objects like TString map directly
+  // to GCObject, TString and GCObject may be safely type cast between
+  // each other in a process known as type punning.
   union GCUnion {
       // Common Header.
       GCObject gc;
