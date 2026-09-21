@@ -1,4 +1,4 @@
-* Tables
+* Lua Tables
 
 ** Sources
 
@@ -38,7 +38,7 @@
 
 Lua encloses a chunk within the body of an anonymous function. A module is a populated table returned
 by this anonymous function. Lexical scoping ensures only code within this table can access data within
-the lexical environment of its parent function. 
+the lexical environment of its parent function.
 
 *** Tables
 
@@ -46,21 +46,21 @@ the lexical environment of its parent function.
   -- === File: "chunk.lua" ===
 
   -- return function (...)
-       local Module = {}
+         local Module = {}
 
-       function Module.new (x, y)
-         return { ["x"] = x, ["y"] = y }
-       end
+         function Module.new (x, y)
+             return { ["x"] = x, ["y"] = y }
+         end
 
-       function Module.add (v1, v2)
-         return Module.new(v1.x + v2.x, v1.y + v2.y)
-       end
+         function Module.add (v1, v2)
+             return Module.new(v1.x + v2.x, v1.y + v2.y)
+         end
 
-       function Module.magnitude (v)
-         return math.sqrt(v.x ^ 2 + v.y ^ 2)
-       end
+         function Module.magnitude (v)
+             return math.sqrt(v.x ^ 2 + v.y ^ 2)
+         end
 
-       return Module
+         return Module
   -- end
 
   -- local vec = require("chunk")
@@ -78,24 +78,24 @@ called with different environments.
 #+begin_src lua
   -- local _ENV = the global environment
   -- return function (...)
-       local sqrt = math.sqrt
-       local _ENV = {}
+         local sqrt = math.sqrt
+         local _ENV = {}
 
-       -- _ENV["new"]
-       function new (x, y)
-         return { ["x"] = x, ["y"] = y }
-       end
-       -- _ENV["add"]
-       function add (v1, v2)
-         return new(v1.x + v2.x, v1.y + v2.y)
-       end
+         -- _ENV["new"]
+         function new (x, y)
+             return { ["x"] = x, ["y"] = y }
+         end
+         -- _ENV["add"]
+         function add (v1, v2)
+             return new(v1.x + v2.x, v1.y + v2.y)
+         end
 
-       -- _ENV["magnitude"]
-       function magnitude (v)
-         return sqrt(v.x ^ 2 + v.y ^ 2)
-       end
+         -- _ENV["magnitude"]
+         function magnitude (v)
+             return sqrt(v.x ^ 2 + v.y ^ 2)
+         end
 
-       return _ENV
+         return _ENV
   -- end
 #+end_src
 
@@ -114,7 +114,6 @@ called with different environments.
 *** Meta Tables
 
 #+begin_quote
-
   "Metatables allow us to change the behavior of a value when confronted with an unknown operation.
    For instance, using metatables, we can define how Lua computes the expression ~a + b~, where
    ~a~ and ~b~ are tables. Whenever Lua tries to add two tables, it checks whether either of them
@@ -133,14 +132,14 @@ called with different environments.
   local meta = {}
 
   function vector (x, y)
-    local v = { ["x"] = x, ["y"] = y }
-    setmetatable(v, meta)
-    return v
+      local v = { ["x"] = x, ["y"] = y }
+      setmetatable(v, meta)
+      return v
   end
 
   -- Operator overloading through metamethods.
   function meta.__add (v1, v2)
-    return vector(v1.x + v2.x, v1.y + v2.y)
+      return vector(v1.x + v2.x, v1.y + v2.y)
   end
 
   A = vector(1, 2)
@@ -171,34 +170,34 @@ called with different environments.
 
   --       Account.new = function (self)
   function Account:new ()
-    local object = {}
-    setmetatable(object, meta)
-    return object
+      local object = {}
+      setmetatable(object, meta)
+      return object
   end
 
   -- Remove indirection by setting "Account"
   -- to new object's metatable directly.
   function Account:new ()
-    local object = {}
-    self.__index = self
-    setmetatable(object, self)
-    return object
+      local object = {}
+      self.__index = self
+      setmetatable(object, self)
+      return object
   end
 
   --       Account.deposit = function (self, v)
   function Account:deposit (v)
-    self.balance = self.balance + v
+      self.balance = self.balance + v
   end
 
   --       Account.withdraw = function (self, v)
   function Account:withdraw (v)
-    if amount > self.balance then error("insufficient funds") end
-    self.balance = self.balance - v
+      if amount > self.balance then error("insufficient funds") end
+      self.balance = self.balance - v
   end
 
   --       Account.balance = function (self)
   function Account:balance ()
-    return self.balance
+      return self.balance
   end
 
   return Account
@@ -224,17 +223,17 @@ called with different environments.
 **** Read-Only Tables
 
 #+begin_src lua
-  function freeze (t)
-    local proxy = {}
-    local meta = {
-      ["__index"] = t,
-      -- Ignore key-value assignments.
-      ["__newindex"] = function (t, k, v)
-        return t
-      end
-    }
-    setmetatable(proxy, meta)
-    return proxy
+  function freeze (table)
+      local proxy = {}
+      local meta = {
+          ["__index"] = table,
+          -- Ignore key-value assignments.
+          ["__newindex"] = function (table, key, value)
+                               return table
+                           end
+      }
+      setmetatable(proxy, meta)
+      return proxy
   end
 #+end_src
 
@@ -244,26 +243,28 @@ called with different environments.
   -- === Implementation 1: state and interface ===
 
   function new_account (x)
-    -- === private state table ===
-    local state = { balance = x }
+      -- === private state table ===
+      local state = { balance = x }
 
-    local deposit = function (v)
-                      state.balance = state.balance + v
-                    end
+      local deposit = function (v)
+                          state.balance = state.balance + v
+                      end
 
-    local withdraw = function (v)
-                       if amount > state.balance then error("insufficient funds") end
-                       state.balance = state.balance - v
-                     end
+      local withdraw = function (v)
+                           if amount > state.balance then
+                               error("insufficient funds")
+                           end
+                           state.balance = state.balance - v
+                       end
 
-    local get_balance = function () return state.balance end
+      local get_balance = function () return state.balance end
 
-    -- === public interface table ===
-    return {
-      ["withdraw"]    = withdraw,
-      ["deposit"]     = deposit,
-      ["get_balance"] = get_balance
-    }
+      -- === public interface table ===
+      return {
+          ["withdraw"]    = withdraw,
+          ["deposit"]     = deposit,
+          ["get_balance"] = get_balance
+      }
   end
 
   -- === Implementation 2: weak key locks ===
@@ -276,66 +277,70 @@ called with different environments.
   local Account = {}
 
   function Account:new ()
-    local object = {}
-    self.__index = self
-    setmetatable(object, self)
-    balance[object] = 0
-    return object
+      local object = {}
+      self.__index = self
+      setmetatable(object, self)
+      balance[object] = 0
+      return object
   end
 
   function Account:deposit (v)
-    balance[self] = balance[self] + v
+      balance[self] = balance[self] + v
   end
 
   function Account:withdraw (v)
-    if amount > self.balance then error("insufficient funds") end
-    balance[self] = balance[self] - v
+      if amount > self.balance then
+          error("insufficient funds")
+      end
+      balance[self] = balance[self] - v
   end
 
   function Account:balance ()
-    return balance[self]
+      return balance[self]
   end
 
   return Account
 #+end_src
 
-*** Inheritance
+** Inheritance
 
 #+begin_src lua
   Account = { balance = 0 }
 
   function Account:new (object)
-    object = object or {}
-    self.__index = self
-    setmetatable(object, self)
+      object = object or {}
+      self.__index = self
+      setmetatable(object, self)
   end
 
   function Account:deposit (v)
-    self.balance = self.balance + v
+      self.balance = self.balance + v
   end
 
   function Account:withdraw (v)
-    if v > self.balance then error("insufficient funds") end
-    self.balance = self.balance - v
+      if v > self.balance then
+          error("insufficient funds")
+      end
+      self.balance = self.balance - v
   end
 
   SpecialAccount = Account:new()
 
   function SpecialAccount:withdraw (v)
-    if v - self.balance >= self:getLimit() then
-      error("insufficient funds")
-    end
-    self.balance = self.balance - v
+      if v - self.balance >= self:getLimit() then
+          error("insufficient funds")
+      end
+      self.balance = self.balance - v
   end
 
   function SpecialAccount:getLimit ()
-    return self.limit or 0
+      return self.limit or 0
   end
 
   account = SpecialAccount:new{ limit = 1000.00 }
 
   function account:getLimit ()
-    return self.balance * 0.10
+      return self.balance * 0.10
   end
 #+end_src
 
