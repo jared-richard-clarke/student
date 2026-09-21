@@ -191,7 +191,9 @@ called with different environments.
 
   --       Account.withdraw = function (self, v)
   function Account:withdraw (v)
-      if amount > self.balance then error("insufficient funds") end
+      if amount > self.balance then
+          error("insufficient funds")
+      end
       self.balance = self.balance - v
   end
 
@@ -205,7 +207,7 @@ called with different environments.
   -- === In Another File ===
   Account = require("Account")
 
-  account = Account:new()
+  account = Account:new ()
   -- equivalent ->
   account = Account.new(Account)
 
@@ -337,7 +339,7 @@ called with different environments.
       return self.limit or 0
   end
 
-  account = SpecialAccount:new ({ limit = 1000.00 })
+  account = SpecialAccount:new { limit = 1000.00 }
 
   function account:getLimit ()
       return self.balance * 0.10
@@ -349,7 +351,7 @@ called with different environments.
 #+begin_src lua
   local declared = {}
   
-  function declare(name, value)
+  function declare (name, value)
       rawset(_G, name, value)
       declared[name] = true
   end
