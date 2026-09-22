@@ -1193,76 +1193,76 @@ host program.
 
 #+begin_src c
   typedef struct LexState {
-      /* Current Character (charint) */
+      // Current character (charint).
       int current;
-      /* Input Line Counter */
+      // Input line counter.
       int linenumber;
-      /* Line of Last Token Consumed */
+      // Line of last token consumed.
       int lastline;
-      /* Current Token */
+      // Current token.
       Token t;
-      /* Look Ahead Token */
+      // Look ahead token.
       Token lookahead;
-      /* Current Function (parser) */
+      // Current function (parser).
       struct FuncState* fs;
-      /* Thread state */
+      // Thread state.
       struct lua_State* L;
-      /* Input Stream */
+      // Input stream.
       ZIO* z;
-      /* Token Buffer */
+      // Token buffer.
       Mbuffer* buff;
-      /* String Internment */
+      // String internment table.
       Table* h;
-      /* Dynamic Data Used by Parser*/
+      // Dynamic data used by parser.
       struct Dyndata* dyd;
-      /* Name of Current Source */
+      // Name of source string.
       TString* source;
-      /* Environment Variable */
+      // Environment variable.
       TString* envn;
-      /* "break" label */
+      // "break" label.
       TString* brkn;
-      /* "global" name (when not reserved) */
+      // "global" name (when not reserved).
       TString* glbn;
   } LexState;
 
   typedef struct FuncState {
-      /* Current Function Header */
+      // Current function header.
       Proto* f;
-      /* Enclosing Function */
+      // Enclosing function.
       struct FuncState* prev;
-      /* Lexical State */
+      // Lexical state.
       struct LexState* ls;
-      /* Chain of Current Blocks */
+      // Chain of current blocks.
       struct BlockCnt* bl;
-      /* Constant Cache */
+      // Constant cache.
       Table* kcache;
-      /* Program Counter */
+      // Program counter.
       int pc;
-      /* Last Jump Label */
+      // Last jump label.
       int lasttarget;
-      /* Last Line Saved in lineinfo */
+      // Last line saved in lineinfo.
       int previousline;
-      /* Number of Elements in k */
+      // Number of elements in k.
       int nk;
-      /* Number of Elements in p */
+      // Number of elements in p.
       int np;
-      /* Number of Elements in abslineinfo */
+      // Number of elements in abslineinfo.
       int nabslineinfo;
-      /* Index of First Local Var in Dyndata Array */
+      // Index of first local variable in Dyndata array.
       int firstlocal;
-      /* Index of First Label in Dyndata Array */
+      // Index of first label in Dyndata array.
       int firstlabel;
-      /* Number of Elements in f->locvars */
+      // Number of elements in f->locvars.
       short ndebugvars;
-      /* Number of Active Variable Declarations */
+      // Number of active variable declarations.
       short nactvar;
-      /* Number of Upvalues */
+      // Number of upvalues.
       lu_byte nups;
-      /* First Free Register */
+      // First free register.
       lu_byte freereg;
-      /* Instructions Issued Since Absolute Line Info */
+      // Instructions issued since absolute line info.
       lu_byte iwthabs;
-      /* Function Needs to Close Upvalues */
+      // Function needs to close upvalues.
       lu_byte needclose;
   } FuncState;
 #+end_src
