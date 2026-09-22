@@ -1262,7 +1262,7 @@ host program.
       lu_byte freereg;
       // Instructions issued since absolute line info.
       lu_byte iwthabs;
-      // Function needs to close upvalues.
+      // Function needs to close upvalues?
       lu_byte needclose;
   } FuncState;
 #+end_src
