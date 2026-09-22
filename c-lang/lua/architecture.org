@@ -1006,8 +1006,7 @@ functions that enable the type-safe exchange of data between C and Lua.
 ** Parsing and Compilation
 
 The Lua compiler uses a single-pass, recursive descent, operator precedence climbing parser
-with interleaving syntax analysis and code generation. The compiler outputs ~Proto~ —
-the static compilation of a Lua function, containing metadata and executable bytecode.
+with interleaving syntax analysis and code generation. The compiler outputs a closure.
 
 1. Lua Source Code: ~.lua~ files
 
@@ -1019,9 +1018,13 @@ the static compilation of a Lua function, containing metadata and executable byt
 
 5. Code Generation: ~lcode.c~
 
-6. Function Prototype: bytecode + metadata
+6. Closure:
+   
+   - Function Prototype: bytecode + metadata
+     
+   - Upvalue _ENV: external environment
 
-7. Virtual Machine: wraps function prototypes in closures, executes bytecode
+7. Virtual Machine: bytecode execution
 
 *** Chunks
 
