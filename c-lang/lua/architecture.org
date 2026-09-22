@@ -1023,31 +1023,117 @@ the static compilation of a Lua function, containing metadata and executable byt
 
 7. Virtual Machine: wraps function prototypes in closures, executes bytecode
 
+*** Chunks
+
+The unit of compilation in Lua is called a chunk. A chunk is compiled into a variadic function,
+wrapped in a closure. Chunks can define local variables, receive arguments, and return values.
+A compiled chunk closes over of an external local variable called ~_ENV~, which acts as the
+chunk's external environment. A chunk can be stored in either a file or in a string within the
+host program.
+
+#+begin_example
+       +------+      +----------+   +-----------------+
+       | load |      | loadfile |   | luaL_loadstring |
+       +------+      +----------+   +-----------------+
+          |               |                  |
+          V               V                  V
+    +-----------+ +---------------+ +-----------------+ +---------------+
+    | luaB_load | | luaB_loadfile | | luaL_loadbuffer | | luaL_loadfile |
+    +-----------+ +---------------+ +-----------------+ +---------------+
+          |              |                   |                 |
+          | +------------|-------------------+                 |
+          | |            +-----+ +-----------------------------+
+          | |                  | |
+          V V                  V V
+  +------------------+ +----------------+
+  | luaL_loadbufferx | | luaL_loadfilex |
+  +------------------+ +----------------+
+           |                   |
+           +--------+ +--------+
+                    | |
+                    V V
+                +----------+
+                | lua_load |
+                +----------+
+                     |
+                     V
+          +----------------------+
+          | luaD_protectedparser |
+          +----------------------+
+                     |
+                     V
+               +------------+
+               | lauD_pcall |
+               +------------+
+                     |
+                     V
+                +----------+
+                | f_parser |
+                +----------+
+                     |
+            +--------+--------+
+            |                 |
+            V                 V
+     +-------------+   +-------------+
+     | luaU_undump |   | luaY_parser |
+     +-------------+   +-------------+
+            |                 |
+            +-------+ +-------+
+                    | |
+                    V V
+                 +---------+
+                 | chunk   |
+                 |---------|   +------+
+                 | closure |-->| _ENV |
+                 +---------+   +------+
+#+end_example
+
 #+begin_src c
-  LClosure* luaY_parser(lua_State* L, ZIO* z, Table* anchor, Mbuffer* buff,
-                        Dyndata* dyd, const char* name, int firstchar) {
+  LClosure* luaY_parser(lua_State* L, ZIO* z, Mbuffer* buff, Dyndata* dyd,
+                        const char* name, int firstchar) {
+      // State of the scanner plus state of the parser when
+      // shared by all functions.
       LexState lexstate;
+      // State needed to generate code for the given function.
       FuncState funcstate;
-      LClosure* cl;
-      /* Scanner Table */
-      lexstate.h = anchor;
-      /* Create main closure. */
-      cl = luaF_newLclosure(L, 1);
-      /* Anchor closure in scanner table. */
-      luaD_anchorobj(L, anchor, obj2gco(cl));
+      // Create the main closure.
+      LClosure* cl = luaF_newLclosure(L, 1);
+      // Anchor closure to avoid garbage collection.
+      setclLvalue2s(L, L->top.p, cl);
+      // Increment stack.
+      luaD_inctop(L);
+      // Create table for scanner.
+      lexstate.h = luaH_new(L);
+      // Anchor scanner to avoid garbage collection.
+      sethvalue2s(L, L->top.p, lexstate.h);
+      // Increment stack.
+      luaD_inctop(L);
+      // Create function prototype.
       funcstate.f = cl->p = luaF_newproto(L);
+      // Write barrier preserves tri-color invariant.
       luaC_objbarrier(L, cl, cl->p);
-      /* Create and anchor TString. */
+      // Add source string to function prototype.
       funcstate.f->source = luaS_new(L, name);
+      // Write barrier preserves tri-color invariant.
       luaC_objbarrier(L, funcstate.f, funcstate.f->source);
+      // Set token buffer.
       lexstate.buff = buff;
+      // Set dynamic data container.
       lexstate.dyd = dyd;
+      // Initialize dynamic data.
       dyd->actvar.n = dyd->gt.n = dyd->label.n = 0;
+      // Initialize scanner state.
       luaX_setinput(L, &lexstate, z, funcstate.f->source, firstchar);
-      /* Parse source code. */
+      // Compiles the main function, which is a variadic function
+      // with an upvalue named LUA_ENV.
       mainfunc(&lexstate, &funcstate);
+      // Ensure funcstate is in its final state.
       lua_assert(!funcstate.prev && funcstate.nups == 1 && !lexstate.fs);
+      // Ensure scopes are in their proper state.
       lua_assert(dyd->actvar.n == 0 && dyd->gt.n == 0 && dyd->label.n == 0);
+      // Remove scanner's table.
+      L->top.p--;
+      // Return compiled closure.
       return cl;
   }
 #+end_src
