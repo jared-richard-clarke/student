@@ -1124,7 +1124,7 @@ host program.
       dyd->actvar.n = dyd->gt.n = dyd->label.n = 0;
       // Initialize scanner state.
       luaX_setinput(L, &lexstate, z, funcstate.f->source, firstchar);
-      // Compiles the main function, which is a variadic function
+      // Compile the main function, which is a variadic function
       // with an upvalue named LUA_ENV.
       mainfunc(&lexstate, &funcstate);
       // Ensure funcstate is in its final state.
