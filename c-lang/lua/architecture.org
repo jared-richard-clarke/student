@@ -1026,7 +1026,7 @@ the static compilation of a Lua function, containing metadata and executable byt
 *** Chunks
 
 The unit of compilation in Lua is called a chunk. A chunk is compiled into a variadic function,
-wrapped in a closure. Chunks can define local variables, receive arguments, and return values.
+and then wrapped in a closure. Chunks can define local variables, receive arguments, and return values.
 A compiled chunk closes over of an external local variable called ~_ENV~, which acts as the
 chunk's external environment. A chunk can be stored in either a file or in a string within the
 host program.
