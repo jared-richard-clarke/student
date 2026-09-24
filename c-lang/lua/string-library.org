@@ -10,7 +10,8 @@
 ** Core Functions
 
 #+begin_src c
-  // string.len(string) -> number
+  // string.len(x) -> number
+  //   where x = string-convertible value 
   static int str_len(lua_State* L) {
       size_t l;
       luaL_checklstring(L, 1, &l);
@@ -43,10 +44,10 @@
       }
   }
 
-  // string.sub(text, i [, j]) -> string
-  //   where text = target string
-  //         i    = start index
-  //         j    = end index
+  // string.sub(x, i [, j]) -> string
+  //   where x = string-convertible value
+  //         i = start index
+  //         j = end index
   static int str_sub(lua_State* L) {
       size_t l;
       const char* s = luaL_checklstring(L, 1, &l);
@@ -60,7 +61,8 @@
       return 1;
   }
 
-  // string.reverse(string) -> string
+  // string.reverse(x) -> string
+  //   where x = string-convertible value
   static int str_reverse(lua_State* L) {
       size_t l, i;
       luaL_Buffer b;
@@ -73,7 +75,8 @@
       return 1;
   }
 
-  // string.lower(string) -> string
+  // string.lower(x) -> string
+  //   where x = string-convertible value
   static int str_lower(lua_State* L) {
       size_t l;
       size_t i;
@@ -87,7 +90,8 @@
       return 1;
   }
 
-  // string.upper(string) -> string
+  // string.upper(x) -> string
+  //   where x = string-convertible value
   static int str_upper(lua_State* L) {
       size_t l;
       size_t i;
@@ -101,10 +105,10 @@
       return 1;
   }
 
-  // string.rep(text, n [, separator]) -> string
-  //   where text      = target string
-  //         n         = total copies
-  //         separator = string separator
+  // string.rep(x, n [, s]) -> string
+  //   where x = string-convertible value
+  //         n = total copies
+  //         s = separator
   static int str_rep(lua_State* L) {
       size_t len, lsep;
       const char* s = luaL_checklstring(L, 1, &len);
@@ -136,10 +140,10 @@
       return 1;
   }
 
-  // string.byte(text [, i [, j]]) -> number
-  //   where text = target string
-  //         i    = start index
-  //         j    = end index
+  // string.byte(x [, i [, j]]) -> number
+  //   where x = string-convertible value
+  //         i = start index
+  //         j = end index
   static int str_byte(lua_State* L) {
       size_t l;
       const char* s = luaL_checklstring(L, 1, &l);
@@ -848,17 +852,17 @@
       return 1;
   }
 
-  // string.find(text, pattern [, initial [, plain]]) -> start, end, capture ... | nil
-  //   where text    = target string
-  //         pattern = pattern string
-  //         initial = start index
-  //         plain   = plain string flag
+  // string.find(x, y [, i [, p]]) -> start, end, capture ... | nil
+  //   where x = string-convertible value
+  //         y = string-convertible pattern
+  //         i = start index
+  //         p = plain string flag
   static int str_find(lua_State* L) { return str_find_aux(L, 1); }
 
-  // string.match(text, pattern [, initial]) -> captures | nil
-  //   where text    = target string
-  //         pattern = pattern string
-  //         initial = start index
+  // string.match(x, y [, i) -> captures | nil
+  //   where x = string-convertible value
+  //         y = string-convertible pattern
+  //         i = start index
   static int str_match(lua_State* L) { return str_find_aux(L, 0); }
 
   // state for "gmatch".
@@ -889,10 +893,10 @@
       return 0;
   }
 
-  // string.gmatch(text, pattern [, initial]) -> iterator -> capture
-  //   where text    = target string
-  //         pattern = pattern string
-  //         initial = start index
+  // string.gmatch(x, y [, i]) -> iterator -> capture
+  //   where x = string-convertible value
+  //         y = string-convertible pattern
+  //         i = start index
   static int gmatch(lua_State* L) {
       size_t ls, lp;
       const char* s = luaL_checklstring(L, 1, &ls);
@@ -987,11 +991,11 @@
       }
   }
 
-  // string.gsub(text, pattern, replacement [, count]) -> string | nil
-  //   where text        = target string
-  //         pattern     = pattern string
-  //         replacement = replacement string, table, or function
-  //         count       = replacement limit
+  // string.gsub(x, y, r [, c]) -> string | nil
+  //   where x = string-convertible value
+  //         y = string-convertible pattern
+  //         r = replacement string, table, or function
+  //         c = replacement limit
   static int str_gsub(lua_State* L) {
       size_t srcl, lp;
       // Subject.
