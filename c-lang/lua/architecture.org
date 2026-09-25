@@ -1510,7 +1510,8 @@ host program.
           luaE_checkcstack(L);
       }
       // If a Lua function, mark it as fresh and execute.
-      if ((ci = luaD_precall(L, func, nResults)) != NULL) {
+      ci = luaD_precall(L, func, nResults);
+      if (ci != NULL) {
           ci->callstatus |= CIST_FRESH;
           luaV_execute(L, ci);
       }
