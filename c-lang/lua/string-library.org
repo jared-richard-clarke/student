@@ -306,6 +306,53 @@
 
 ** Pattern Matching
 
+*** Syntax
+
+#+begin_src ebnf
+  Pattern    ::= '^'? Items '$'?
+
+  Items      ::= Item*
+
+  Item       ::= Capture
+               | Repeat
+               | Class
+               | Escape
+               | Any
+               | Literal
+               | Set
+               | Balanced
+               | Frontier
+
+  Repeat     ::= Zero | One
+
+  Capture    ::= '(' Items ')'
+
+  Class      ::= '%' ID
+
+  Escape     ::= '%' Magic | ¬ ID
+
+  Any        ::= '.'
+
+  Literal    ::= ¬ Magic
+
+  Set        ::= '[' '^'? ( Literal | Escape )* ']'
+
+  Balanced   ::= '%' 'b' Literal Literal
+
+  Frontier   ::= '%' 'f' Set
+
+  Zero       ::= Item '*'
+
+  One        ::= Item '+'
+
+  Magic      ::= '^'|'$'|'('|')'|'%'|'.'|'['|']'|'*'|'+'|'-'|'?'
+
+  ID         ::= 'a'|'c'|'d'|'g'|'l'|'u'|'p'|'s'|'w'|'x'|
+                 'A'|'C'|'D'|'G'|'L'|'U'|'P'|'S'|'W'|'X'
+#+end_src
+
+*** Code
+
 #+begin_src c
   #define CAP_UNFINISHED (-1)
   #define CAP_POSITION (-2)
