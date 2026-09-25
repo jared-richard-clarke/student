@@ -1456,6 +1456,113 @@ host program.
           +-------------------+
 #+end_example
 
+#+begin_src c
+  // Call function without continuation.
+  #define lua_call(L, n, r) lua_callk(L, (n), (r), 0, NULL)
+
+  // Call either yieldable or non-yieldable function.
+  LUA_API void lua_callk(lua_State* L, int nargs, int nresults, lua_KContext ctx,
+                         lua_KFunction k) {
+      StkId func;
+      lua_lock(L);
+      api_check(L, k == NULL || !isLua(L->ci),
+                "cannot use continuations inside hooks");
+      // Ensure the stack has at least "n" elements.
+      api_checknelems(L, nargs + 1);
+      api_check(L, L->status == LUA_OK, "cannot do calls on non-normal thread");
+      // Ensure function results do not overflow current stack size.
+      checkresults(L, nargs, nresults);
+      func = L->top.p - (nargs + 1);
+      // Need to prepare continuation?
+      if (k != NULL && yieldable(L)) {
+          // Save continuation.
+          L->ci->u.c.k = k;
+          // Save context.
+          L->ci->u.c.ctx = ctx;
+          // Call function. Allow yields.
+          luaD_call(L, func, nresults);
+      } else {
+          // Call function. Disallow yields.
+          luaD_callnoyield(L, func, nresults);
+      }
+      // Adjust the callee's stack space to accomodate results.
+      adjustresults(L, nresults);
+      lua_unlock(L);
+  }
+
+  void luaD_call(lua_State* L, StkId func, int nResults) {
+      ccall(L, func, nResults, 1);
+  }
+
+  void luaD_callnoyield(lua_State* L, StkId func, int nResults) {
+      ccall(L, func, nResults, nyci);
+  }
+
+  // Call either Lua or C function through C.
+  // where inc = 1    (function call increment)
+  //           = nyci (function call increment + non-yieldable metadata)
+  l_sinline void ccall(lua_State* L, StkId func, int nResults, l_uint32 inc) {
+      CallInfo* ci;
+      L->nCcalls += inc;
+      // If limit met or exceeded, free any use of EXTRA_STACK.
+      if (l_unlikely(getCcalls(L) >= LUAI_MAXCCALLS)) {
+          checkstackp(L, 0, func);
+          luaE_checkcstack(L);
+      }
+      // If a Lua function, mark it as fresh and execute.
+      if ((ci = luaD_precall(L, func, nResults)) != NULL) {
+          ci->callstatus |= CIST_FRESH;
+          luaV_execute(L, ci);
+      }
+      L->nCcalls -= inc;
+  }
+
+  // Prepares call to function. If C function, execute directly.
+  // If Lua function, return call frame to be executed by virtual machine.
+  // If not a function, find metamethod __call and try again.
+  CallInfo* luaD_precall(lua_State* L, StkId func, int nresults) {
+      unsigned status = cast_uint(nresults + 1);
+      lua_assert(status <= MAXRESULTS + 1);
+  retry:
+      switch (ttypetag(s2v(func))) {
+          // C closure.
+          case LUA_VCCL:
+              precallC(L, func, status, clCvalue(s2v(func))->f);
+              return NULL;
+          // Light C function.
+          case LUA_VLCF:
+              precallC(L, func, status, fvalue(s2v(func)));
+              return NULL;
+          // Lua function.
+          case LUA_VLCL: {
+              CallInfo* ci;
+              Proto* p = clLvalue(s2v(func))->p;
+              // Number of real arguments.
+              int narg = cast_int(L->top.p - func) - 1;
+              int nfixparams = p->numparams;
+              // Frame size.
+              int fsize = p->maxstacksize;
+              checkstackp(L, fsize, func);
+              L->ci = ci = prepCallInfo(L, func, status, func + 1 + fsize);
+              // Starting point.
+              ci->u.l.savedpc = p->code;
+              // Complete missing arguments.
+              for (; narg < nfixparams; narg++) {
+                  setnilvalue(s2v(L->top.p++));
+              }
+              lua_assert(ci->top.p <= L->stack_last.p);
+              return ci;
+          }
+          // If not a function, try again with metamethod __call.
+          default: {
+              checkstackp(L, 1, func);
+              status = tryfuncTM(L, func, status);
+              goto retry;
+          }
+      }
+  }
+#+end_src
+
 *** Coroutines
 
 Coroutines, or threads, are represented by ~lua_State~ structures, where each coroutine
