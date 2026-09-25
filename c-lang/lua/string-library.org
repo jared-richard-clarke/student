@@ -323,7 +323,7 @@
                | Balanced
                | Frontier
 
-  Repeat     ::= Zero | One
+  Repeat     ::= Zero | One | Lazy
 
   Capture    ::= '(' Items ')'
 
@@ -335,7 +335,7 @@
 
   Literal    ::= ¬ Magic
 
-  Set        ::= '[' '^'? ( Literal | Escape )* ']'
+  Set        ::= '[' '^'? ( Literal | Escape | Range )+ ']'
 
   Balanced   ::= '%' 'b' Literal Literal
 
@@ -344,6 +344,10 @@
   Zero       ::= Item '*'
 
   One        ::= Item '+'
+
+  Lazy       ::= Item '-'
+
+  Range      ::= Literal '-' Literal
 
   Magic      ::= '^'|'$'|'('|')'|'%'|'.'|'['|']'|'*'|'+'|'-'|'?'
 
