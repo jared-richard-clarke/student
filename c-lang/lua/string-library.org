@@ -1352,7 +1352,7 @@ follows the form ~%[flags][width][.precision][length]specifier~.
   }
 
   // string.format(pattern, ...) -> string
-  //   where pattern = format string
+  //   where pattern = format string: [flags][width][.precision][length]specifier
   //        ...      = Lua values
   static int str_format(lua_State* L) {
       int top = lua_gettop(L);
