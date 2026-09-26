@@ -1109,6 +1109,10 @@
 
 ** Formatting
 
+The format string for ~string.format~ follows the same rules as ISO C function ~sprintf~
+plus a non-C specifier ~%q~ for formatting Lua-specific values. A format string generally
+follows the form ~%[flags][width][.precision][length]specifier~.
+
 #+begin_src c
   #if !defined(lua_number2strx)
 
