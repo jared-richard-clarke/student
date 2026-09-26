@@ -1498,18 +1498,18 @@ host program.
       ccall(L, func, nResults, nyci);
   }
 
-  // Call either Lua or C function through C.
+  // Core call logic for both C and Lua functions.
   // where inc = 1    (function call increment)
   //           = nyci (function call increment + non-yieldable metadata)
   l_sinline void ccall(lua_State* L, StkId func, int nResults, l_uint32 inc) {
       CallInfo* ci;
       L->nCcalls += inc;
-      // If limit met or exceeded, free any use of EXTRA_STACK.
+      // If call limit met or exceeded, free any use of EXTRA_STACK.
       if (l_unlikely(getCcalls(L) >= LUAI_MAXCCALLS)) {
           checkstackp(L, 0, func);
           luaE_checkcstack(L);
       }
-      // If a Lua function, mark it as fresh and execute.
+      // If a Lua function, mark call frame as fresh and execute.
       ci = luaD_precall(L, func, nResults);
       if (ci != NULL) {
           ci->callstatus |= CIST_FRESH;
