@@ -1192,6 +1192,30 @@ host program.
    close instructions for pending upvalues.
 
 #+begin_src c
+  // Compiles the main function, a closure over a variadic function
+  // with an upvalue of LUA_ENV.
+  static void mainfunc(LexState* ls, FuncState* fs) {
+      BlockCnt bl;
+      Upvaldesc* env;
+      open_func(ls, fs, &bl);
+      // Main function is always vararg.
+      setvararg(fs);
+      // Set environment upvalue.
+      env = allocupvalue(fs);
+      env->instack = 1;
+      env->idx = 0;
+      env->kind = VDKREG;
+      env->name = ls->envn;
+      // Write barrier for tri-color invariant.
+      luaC_objbarrier(ls->L, fs->f, env->name);
+      // Read the first token.
+      luaX_next(ls);
+      // Parse the main body.
+      statlist(ls);
+      check(ls, TK_EOS);
+      close_func(ls);
+  }
+
   typedef struct LexState {
       // Current character (charint).
       int current;
