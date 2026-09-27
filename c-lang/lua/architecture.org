@@ -1192,11 +1192,11 @@ host program.
    close instructions for pending upvalues.
 
 #+begin_src c
-  // Compiles the main function, a closure over a variadic function
-  // with an upvalue of LUA_ENV.
+  // Compiles main — a variadic function with an upvalue of LUA_ENV.
   static void mainfunc(LexState* ls, FuncState* fs) {
       BlockCnt bl;
       Upvaldesc* env;
+      // Open function state.
       open_func(ls, fs, &bl);
       // Main function is always vararg.
       setvararg(fs);
@@ -1212,7 +1212,9 @@ host program.
       luaX_next(ls);
       // Parse the main body.
       statlist(ls);
+      // Check for end of string.
       check(ls, TK_EOS);
+      // Close function state.
       close_func(ls);
   }
 
