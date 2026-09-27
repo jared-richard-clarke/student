@@ -160,26 +160,28 @@ to ensure all ~ptr~ objects are properly garbage collected.
 
 #+begin_src c
   FILE* fp = fopen("script.fe", "rb");
-  int gc   = fe_savegc(ctx);
+  int gc = fe_savegc(ctx);
 
   /*
-     Read and evaluate in a loop if the script contains two or more
+     Read, evaluate, and loop if the script contains two or more
      Root-level expressions.
   */
   for (;;) {
-    fe_Object* object = fe_readfp(ctx, fp);
+      fe_Object* object = fe_readfp(ctx, fp);
 
-    /* Break if no more objects. */
-    if (!object) { break; }
+      /* Break if no more objects. */
+      if (!object) {
+          break;
+      }
 
-    /* Evaluate read object. */
-    fe_eval(ctx, object);
+      /* Evaluate read object. */
+      fe_eval(ctx, object);
 
-    /*
-       The GC stack now contains both a read object and an evaluated
-       expression. Restore stack to its original state.
-    */
-    fe_restore_gc(ctx, gc);
+      /*
+         The GC stack now contains both a read object and an evaluated
+         expression. Restore stack to its original state.
+      */
+      fe_restore_gc(ctx, gc);
   }
 #+end_src
 
@@ -211,9 +213,9 @@ A Fe function can be called by creating a list and evaluating it.
   #include <math.h>
 
   static fe_Object* f_pow(fe_Context* ctx, fe_Object* arg) {
-    float x = fe_tonumber(ctx, fe_nextarg(ctx, &arg));
-    float y = fe_tonumber(ctx, fe_nextarg(ctx, &arg));
-    return fe_number(ctx, pow(x, y));
+      float x = fe_tonumber(ctx, fe_nextarg(ctx, &arg));
+      float y = fe_tonumber(ctx, fe_nextarg(ctx, &arg));
+      return fe_number(ctx, pow(x, y));
   }
 
   fe_set(ctx, fe_symbol(ctx, "pow"), fe_cfunc(ctx, f_pow));
@@ -241,13 +243,15 @@ A Fe function can be called by creating a list and evaluating it.
 
   #define FE_VERSION "1.0"
 
-  typedef float fe_Number;
-  typedef struct fe_Object fe_Object;
+  typedef float             fe_Number;
+  typedef struct fe_Object  fe_Object;
   typedef struct fe_Context fe_Context;
-  typedef fe_Object* (*fe_CFunc)(fe_Context* ctx, fe_Object* args);
-  typedef void (*fe_ErrorFn)(fe_Context* ctx, const char* err, fe_Object* cl);
-  typedef void (*fe_WriteFn)(fe_Context* ctx, void* udata, char chr);
-  typedef char (*fe_ReadFn)(fe_Context* ctx, void* udata);
+
+  typedef fe_Object* (*fe_CFunc)   (fe_Context* ctx, fe_Object* args);
+  typedef void       (*fe_ErrorFn) (fe_Context* ctx, const char* err, fe_Object* cl);
+  typedef void       (*fe_WriteFn) (fe_Context* ctx, void* udata, char chr);
+  typedef char       (*fe_ReadFn)  (fe_Context* ctx, void* udata);
+
   typedef struct {
       fe_ErrorFn error;
       fe_CFunc mark, gc;
@@ -281,8 +285,8 @@ A Fe function can be called by creating a list and evaluating it.
   #define cfunc(x)      ((x)->cdr.f)
   #define strbuf(x)     (&(x)->car.c + 1)
 
-  #define STRBUFSIZE ((int)sizeof(fe_Object*) - 1)
-  #define GCMARKBIT (0x2)
+  #define STRBUFSIZE  ((int)sizeof(fe_Object*) - 1)
+  #define GCMARKBIT   (0x2)
   #define GCSTACKSIZE (256)
 
   /* === Fe Primitive Tags === */
