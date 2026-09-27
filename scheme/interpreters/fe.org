@@ -235,8 +235,8 @@ A Fe function can be called by creating a list and evaluating it.
      === created by rxi ===
   */
 
-  #include <stdlib.h>
   #include <stdio.h>
+  #include <stdlib.h>
   #include <string.h>
 
   #define FE_VERSION "1.0"
@@ -244,53 +244,89 @@ A Fe function can be called by creating a list and evaluating it.
   typedef float fe_Number;
   typedef struct fe_Object fe_Object;
   typedef struct fe_Context fe_Context;
-  typedef fe_Object* (*fe_CFunc)(fe_Context *ctx, fe_Object *args);
-  typedef void (*fe_ErrorFn)(fe_Context *ctx, const char *err, fe_Object *cl);
-  typedef void (*fe_WriteFn)(fe_Context *ctx, void *udata, char chr);
-  typedef char (*fe_ReadFn)(fe_Context *ctx, void *udata);
-  typedef struct { fe_ErrorFn error; fe_CFunc mark, gc; } fe_Handlers;
+  typedef fe_Object* (*fe_CFunc)(fe_Context* ctx, fe_Object* args);
+  typedef void (*fe_ErrorFn)(fe_Context* ctx, const char* err, fe_Object* cl);
+  typedef void (*fe_WriteFn)(fe_Context* ctx, void* udata, char chr);
+  typedef char (*fe_ReadFn)(fe_Context* ctx, void* udata);
+  typedef struct {
+      fe_ErrorFn error;
+      fe_CFunc mark, gc;
+  } fe_Handlers;
 
   /* === Fe Type Tags === */
   enum {
-    FE_TPAIR, FE_TFREE, FE_TNIL, FE_TNUMBER, FE_TSYMBOL, FE_TSTRING,
-    FE_TFUNC, FE_TMACRO, FE_TPRIM, FE_TCFUNC, FE_TPTR
+      FE_TPAIR,
+      FE_TFREE,
+      FE_TNIL,
+      FE_TNUMBER,
+      FE_TSYMBOL,
+      FE_TSTRING,
+      FE_TFUNC,
+      FE_TMACRO,
+      FE_TPRIM,
+      FE_TCFUNC,
+      FE_TPTR
   };
 
   /* Macros for manipulating Fe objects. */
-  #define unused(x)     ( (void) (x) )
-  #define car(x)        ( (x)->car.o )
-  #define cdr(x)        ( (x)->cdr.o )
-  #define tag(x)        ( (x)->car.c )
-  #define isnil(x)      ( (x) == &nil )
-  #define type(x)       ( tag(x) & 0x1 ? tag(x) >> 2 : FE_TPAIR )
-  #define settype(x,t)  ( tag(x) = (t) << 2 | 1 )
-  #define number(x)     ( (x)->cdr.n )
-  #define prim(x)       ( (x)->cdr.c )
-  #define cfunc(x)      ( (x)->cdr.f )
-  #define strbuf(x)     ( &(x)->car.c + 1 )
+  #define unused(x)     ((void)(x))
+  #define car(x)        ((x)->car.o)
+  #define cdr(x)        ((x)->cdr.o)
+  #define tag(x)        ((x)->car.c)
+  #define isnil(x)      ((x) == &nil)
+  #define type(x)       (tag(x) & 0x1 ? tag(x) >> 2 : FE_TPAIR)
+  #define settype(x, t) (tag(x) = (t) << 2 | 1)
+  #define number(x)     ((x)->cdr.n)
+  #define prim(x)       ((x)->cdr.c)
+  #define cfunc(x)      ((x)->cdr.f)
+  #define strbuf(x)     (&(x)->car.c + 1)
 
-  #define STRBUFSIZE    ( (int) sizeof(fe_Object*) - 1 )
-  #define GCMARKBIT     ( 0x2 )
-  #define GCSTACKSIZE   ( 256 )
+  #define STRBUFSIZE ((int)sizeof(fe_Object*) - 1)
+  #define GCMARKBIT (0x2)
+  #define GCSTACKSIZE (256)
 
   /* === Fe Primitive Tags === */
   enum {
-   P_LET, P_SET, P_IF, P_FN, P_MAC, P_WHILE, P_QUOTE, P_AND, P_OR, P_DO, P_CONS,
-   P_CAR, P_CDR, P_SETCAR, P_SETCDR, P_LIST, P_NOT, P_IS, P_ATOM, P_PRINT, P_LT,
-   P_LTE, P_ADD, P_SUB, P_MUL, P_DIV, P_MAX
+      P_LET,
+      P_SET,
+      P_IF,
+      P_FN,
+      P_MAC,
+      P_WHILE,
+      P_QUOTE,
+      P_AND,
+      P_OR,
+      P_DO,
+      P_CONS,
+      P_CAR,
+      P_CDR,
+      P_SETCAR,
+      P_SETCDR,
+      P_LIST,
+      P_NOT,
+      P_IS,
+      P_ATOM,
+      P_PRINT,
+      P_LT,
+      P_LTE,
+      P_ADD,
+      P_SUB,
+      P_MUL,
+      P_DIV,
+      P_MAX
   };
 
   /* === Fe Primitive Name List === */
-  static const char *primnames[] = {
-    "let", "=", "if", "fn", "mac", "while", "quote", "and", "or", "do", "cons",
-    "car", "cdr", "setcar", "setcdr", "list", "not", "is", "atom", "print", "<",
-    "<=", "+", "-", "*", "/"
+  static const char* primnames[] = {
+      "let",  "=",     "if",  "fn",  "mac",    "while",  "quote", "and", "or",
+      "do",   "cons",  "car", "cdr", "setcar", "setcdr", "list",  "not", "is",
+      "atom", "print", "<",   "<=",  "+",      "-",      "*",     "/"
   };
 
   /* === Fe Type Name List === */
-  static const char *typenames[] = {
-    "pair", "free", "nil", "number", "symbol", "string",
-    "func", "macro", "prim", "cfunc", "ptr"
+  static const char* typenames[] = {
+      "pair",   "free",   "nil",  "number", "symbol", "string", "func", "macro",
+      "prim",   "cfunc",  "ptr"
   };
 
   /*
@@ -323,10 +359,10 @@ A Fe function can be called by creating a list and evaluating it.
 
   /* Value (size: 8 bytes, alignment: 8 bytes) */
   typedef union {
-    fe_Object *o; /* (size: 8 bytes, alignment: 8 bytes) */
-    fe_CFunc   f; /* (size: 8 bytes, alignment: 8 bytes) */
-    fe_Number  n; /* (size: 4 bytes, alignment: 4 bytes, padding: 4 bytes) */
-    char       c; /* (size: 1 byte,  alignment: 1 byte,  padding: 7 bytes) */
+      fe_Object* o; /* (size: 8 bytes, alignment: 8 bytes) */
+      fe_CFunc f;   /* (size: 8 bytes, alignment: 8 bytes) */
+      fe_Number n;  /* (size: 4 bytes, alignment: 4 bytes, padding: 4 bytes) */
+      char c;       /* (size: 1 byte,  alignment: 1 byte,  padding: 7 bytes) */
   } Value;
 
   /*
@@ -344,7 +380,9 @@ A Fe function can be called by creating a list and evaluating it.
        |
        +- (type, GC, pair)
   */
-  struct fe_Object { Value car, cdr; };
+  struct fe_Object {
+      Value car, cdr;
+  };
 
   /*
      The collective state and runtime environment of a Fe program.
@@ -352,46 +390,44 @@ A Fe function can be called by creating a list and evaluating it.
      that memory stores the context. The tail stores the objects.
   */
   struct fe_Context {
-    /*
-       struct { error, mark, gc }
-       Each field is a function either provided by the runtime or the user.
-    */
-    fe_Handlers handlers;
-    /* Stack protects reachable objects from garbage collection. */
-    fe_Object *gcstack[GCSTACKSIZE];
-    /* Stack top. */
-    int gcstack_idx;
-    /* Fixed block of Fe objects. Allocated at program start. */
-    fe_Object *objects;
-    /* Total allocated objects. */
-    int object_count;
-    /*
-       A Fe program is a list of cons cells. The instruction pointer
-       is a pointer to a Fe object within that list of cons cells.
-    */
-    fe_Object *calllist;
-    /* Linked list of unused objects. */
-    fe_Object *freelist;
-    /*
-       Interned symbols and identifiers. A symbol represents itself,
-       whereas an identifier is a symbol that points to a value.
-    */
-    fe_Object *symlist;
-    /* The universal truth value within Fe. */
-    fe_Object *t;
-    /* Tracks textual position within the Fe reader. */
-    int nextchr;
+      /*
+         struct { error, mark, gc }
+         Each field is a function either provided by the runtime or the user.
+      */
+      fe_Handlers handlers;
+      /* Stack protects reachable objects from garbage collection. */
+      fe_Object* gcstack[GCSTACKSIZE];
+      /* Stack top. */
+      int gcstack_idx;
+      /* Fixed block of Fe objects. Allocated at program start. */
+      fe_Object* objects;
+      /* Total allocated objects. */
+      int object_count;
+      /*
+         A Fe program is a list of cons cells. The instruction pointer
+         is a pointer to a Fe object within that list of cons cells.
+      */
+      fe_Object* calllist;
+      /* Linked list of unused objects. */
+      fe_Object* freelist;
+      /*
+         Interned symbols and identifiers. A symbol represents itself,
+         whereas an identifier is a symbol that points to a value.
+      */
+      fe_Object* symlist;
+      /* The universal truth value within Fe. */
+      fe_Object* t;
+      /* Tracks textual position within the Fe reader. */
+      int nextchr;
   };
 
   /*
     === nil: Bottom Value for all Fe Objects ===
     Only one nil exists in memory. Persists for the duration of a Fe program.
   */
-  static fe_Object nil = {{ (void*) (FE_TNIL << 2 | 1) }, { NULL }};
+  static fe_Object nil = {{(void*)(FE_TNIL << 2 | 1)}, {NULL}};
 
-  fe_Handlers* fe_handlers(fe_Context *ctx) {
-    return &ctx->handlers;
-  }
+  fe_Handlers* fe_handlers(fe_Context* ctx) { return &ctx->handlers; }
 
   /*
      === Error Handling ===
@@ -402,184 +438,209 @@ A Fe function can be called by creating a list and evaluating it.
      The user can provide custom error handlers. "longjmp" can be used
      to exit said handlers and re-enter the program context in a safe state.
   */
-  void fe_error(fe_Context *ctx, const char *msg) {
-    fe_Object *cl = ctx->calllist;
-    /* Reset context state. */
-    ctx->calllist = &nil;
-    /* Handle error. */
-    if (ctx->handlers.error) { ctx->handlers.error(ctx, msg, cl); }
-    /* If error handler returns, print error, print stack trace, and exit. */
-    fprintf(stderr, "error: %s\n", msg);
-    for (; !isnil(cl); cl = cdr(cl)) {
-      char buf[64];
-      fe_tostring(ctx, car(cl), buf, sizeof(buf));
-      fprintf(stderr, "=> %s\n", buf);
-    }
-    exit(EXIT_FAILURE);
+  void fe_error(fe_Context* ctx, const char* msg) {
+      fe_Object* cl = ctx->calllist;
+      /* Reset context state. */
+      ctx->calllist = &nil;
+      /* Handle error. */
+      if (ctx->handlers.error) {
+          ctx->handlers.error(ctx, msg, cl);
+      }
+      /* If error handler returns, print error, print stack trace, and exit. */
+      fprintf(stderr, "error: %s\n", msg);
+      for (; !isnil(cl); cl = cdr(cl)) {
+          char buf[64];
+          fe_tostring(ctx, car(cl), buf, sizeof(buf));
+          fprintf(stderr, "=> %s\n", buf);
+      }
+      exit(EXIT_FAILURE);
   }
 
   /* Return the next argument of a function call. */
-  fe_Object* fe_nextarg(fe_Context *ctx, fe_Object **arg) {
-    fe_Object *a = *arg;
-    if (type(a) != FE_TPAIR) {
-      if (isnil(a)) { fe_error(ctx, "too few arguments"); }
-      fe_error(ctx, "dotted pair in argument list");
-    }
-    *arg = cdr(a);
-    return car(a);
+  fe_Object* fe_nextarg(fe_Context* ctx, fe_Object** arg) {
+      fe_Object* a = *arg;
+      if (type(a) != FE_TPAIR) {
+          if (isnil(a)) {
+              fe_error(ctx, "too few arguments");
+          }
+          fe_error(ctx, "dotted pair in argument list");
+      }
+      *arg = cdr(a);
+      return car(a);
   }
 
   /*
      Dynamic type checking. Throws error if current type does not match
      expected type.
   */
-  static fe_Object* checktype(fe_Context *ctx, fe_Object *obj, int type) {
-    char buf[64];
-    if (type(obj) != type) {
-      sprintf(buf, "expected %s, got %s", typenames[type], typenames[type(obj)]);
-      fe_error(ctx, buf);
-    }
-    return obj;
+  static fe_Object* checktype(fe_Context* ctx, fe_Object* obj, int type) {
+      char buf[64];
+      if (type(obj) != type) {
+          sprintf(buf, "expected %s, got %s", typenames[type],
+                  typenames[type(obj)]);
+          fe_error(ctx, buf);
+      }
+      return obj;
   }
 
   /* Extracts the type tag from a Fe object. */
-  int fe_type(fe_Context *ctx, fe_Object *obj) {
-    unused(ctx);
-    return type(obj);
+  int fe_type(fe_Context* ctx, fe_Object* obj) {
+      unused(ctx);
+      return type(obj);
   }
 
   /* Checks if an object is "nil". */
-  int fe_isnil(fe_Context *ctx, fe_Object *obj) {
-    unused(ctx);
-    return isnil(obj);
+  int fe_isnil(fe_Context* ctx, fe_Object* obj) {
+      unused(ctx);
+      return isnil(obj);
   }
 
   /* Pushes a pointer to a Fe object onto "gcstack". Checks for overflow. */
-  void fe_pushgc(fe_Context *ctx, fe_Object *obj) {
-    if (ctx->gcstack_idx == GCSTACKSIZE) {
-      fe_error(ctx, "gc stack overflow");
-    }
-    ctx->gcstack[ctx->gcstack_idx++] = obj;
+  void fe_pushgc(fe_Context* ctx, fe_Object* obj) {
+      if (ctx->gcstack_idx == GCSTACKSIZE) {
+          fe_error(ctx, "gc stack overflow");
+      }
+      ctx->gcstack[ctx->gcstack_idx++] = obj;
   }
 
   /* Sets the top of "gcstack" to the provided index. */
-  void fe_restoregc(fe_Context *ctx, int idx) {
-    ctx->gcstack_idx = idx;
-  }
+  void fe_restoregc(fe_Context* ctx, int idx) { ctx->gcstack_idx = idx; }
 
   /* Returns the top of the "gcstack". */
-  int fe_savegc(fe_Context *ctx) {
-    return ctx->gcstack_idx;
-  }
+  int fe_savegc(fe_Context* ctx) { return ctx->gcstack_idx; }
 
   /* Marks objects for garbage collection. */
-  void fe_mark(fe_Context *ctx, fe_Object *obj) {
-    fe_Object *car;
+  void fe_mark(fe_Context* ctx, fe_Object* obj) {
+      fe_Object* car;
   begin:
-    if (tag(obj) & GCMARKBIT) { return; }
-    /* Store car before modifying it with GCMARKBIT. */
-    car = car(obj);
-    tag(obj) |= GCMARKBIT;
+      if (tag(obj) & GCMARKBIT) {
+          return;
+      }
+      /* Store car before modifying it with GCMARKBIT. */
+      car = car(obj);
+      tag(obj) |= GCMARKBIT;
 
-    switch (type(obj)) {
-      case FE_TPAIR:
-        /* Recursion here may cause overflow. */
-        fe_mark(ctx, car);
-        /* Fall through. */
-      case FE_TFUNC: case FE_TMACRO: case FE_TSYMBOL: case FE_TSTRING:
-        obj = cdr(obj);
-        goto begin;
-      /*
-          For "ptr" types - user-provided, custom objects -
-          An optional, user-provided "mark" function can be
-          called to mark any additional resources used
-          by custom objects.
-      */
-      case FE_TPTR:
-        if (ctx->handlers.mark) { ctx->handlers.mark(ctx, obj); }
-        break;
-    }
+      switch (type(obj)) {
+          case FE_TPAIR:
+              /* Recursion here may cause overflow. */
+              fe_mark(ctx, car);
+              /* Fall through. */
+          case FE_TFUNC:
+          case FE_TMACRO:
+          case FE_TSYMBOL:
+          case FE_TSTRING:
+              obj = cdr(obj);
+              goto begin;
+          /*
+              For "ptr" types - user-provided, custom objects -
+              An optional, user-provided "mark" function can be
+              called to mark any additional resources used
+              by custom objects.
+          */
+          case FE_TPTR:
+              if (ctx->handlers.mark) {
+                  ctx->handlers.mark(ctx, obj);
+              }
+              break;
+      }
   }
 
   /* Mark and sweep garbage collection. */
-  static void collectgarbage(fe_Context *ctx) {
-    int i;
-    /* Mark objects protected by "gcstack". */
-    for (i = 0; i < ctx->gcstack_idx; i++) {
-      fe_mark(ctx, ctx->gcstack[i]);
-    }
-    fe_mark(ctx, ctx->symlist);
-    /* Sweep unmarked objects. Unmark protected objects. */
-    for (i = 0; i < ctx->object_count; i++) {
-      fe_Object *obj = &ctx->objects[i];
-      if (type(obj) == FE_TFREE) { continue; }
-      if (~tag(obj) & GCMARKBIT) {
-        /*
-          For "ptr" types - user-provided, custom objects -
-          An optional, user-provided "gc" function can be
-          called to free any additional resources used
-          by custom objects.
-        */
-        if (type(obj) == FE_TPTR && ctx->handlers.gc) {
-          ctx->handlers.gc(ctx, obj);
-        }
-        settype(obj, FE_TFREE);
-        cdr(obj) = ctx->freelist;
-        ctx->freelist = obj;
-      } else {
-        tag(obj) &= ~GCMARKBIT;
+  static void collectgarbage(fe_Context* ctx) {
+      int i;
+      /* Mark objects protected by "gcstack". */
+      for (i = 0; i < ctx->gcstack_idx; i++) {
+          fe_mark(ctx, ctx->gcstack[i]);
       }
-    }
+      fe_mark(ctx, ctx->symlist);
+      /* Sweep unmarked objects. Unmark protected objects. */
+      for (i = 0; i < ctx->object_count; i++) {
+          fe_Object* obj = &ctx->objects[i];
+          if (type(obj) == FE_TFREE) {
+              continue;
+          }
+          if (~tag(obj) & GCMARKBIT) {
+              /*
+                For "ptr" types - user-provided, custom objects -
+                An optional, user-provided "gc" function can be
+                called to free any additional resources used
+                by custom objects.
+              */
+              if (type(obj) == FE_TPTR && ctx->handlers.gc) {
+                  ctx->handlers.gc(ctx, obj);
+              }
+              settype(obj, FE_TFREE);
+              cdr(obj) = ctx->freelist;
+              ctx->freelist = obj;
+          } else {
+              tag(obj) &= ~GCMARKBIT;
+          }
+      }
   }
 
   /* General equality for Fe values. */
-  static int equal(fe_Object *a, fe_Object *b) {
-    if (a == b) { return 1; }
-    if (type(a) != type(b)) { return 0; }
-    if (type(a) == FE_TNUMBER) { return number(a) == number(b); }
-    /* Because Fe strings are interned, they need only be compared by address. */
-    if (type(a) == FE_TSTRING) {
-      for (; !isnil(a); a = cdr(a), b = cdr(b)) {
-        if (car(a) != car(b)) { return 0; }
+  static int equal(fe_Object* a, fe_Object* b) {
+      if (a == b) {
+          return 1;
       }
-      return a == b;
-    }
-    return 0;
+      if (type(a) != type(b)) {
+          return 0;
+      }
+      if (type(a) == FE_TNUMBER) {
+          return number(a) == number(b);
+      }
+      /* Because Fe strings are interned, they need only be compared by address.
+       */
+      if (type(a) == FE_TSTRING) {
+          for (; !isnil(a); a = cdr(a), b = cdr(b)) {
+              if (car(a) != car(b)) {
+                  return 0;
+              }
+          }
+          return a == b;
+      }
+      return 0;
   }
 
   /* Prior to internment, strings must be compared char by char. */
-  static int streq(fe_Object *obj, const char *str) {
-    while (!isnil(obj)) {
-      int i;
-      for (i = 0; i < STRBUFSIZE; i++) {
-        if (strbuf(obj)[i] != *str) { return 0; }
-        if (*str) { str++; }
+  static int streq(fe_Object* obj, const char* str) {
+      while (!isnil(obj)) {
+          int i;
+          for (i = 0; i < STRBUFSIZE; i++) {
+              if (strbuf(obj)[i] != *str) {
+                  return 0;
+              }
+              if (*str) {
+                  str++;
+              }
+          }
+          obj = cdr(obj);
       }
-      obj = cdr(obj);
-    }
-    return *str == '\0';
+      return *str == '\0';
   }
 
   /*
      Pops an object from "freelist" for use in a program.
      Runs garbage collection if "freelist" is empty.
   */
-  static fe_Object* object(fe_Context *ctx) {
-    fe_Object *obj;
-    /* Collects garbage if free list has no more objects. */
-    if (isnil(ctx->freelist)) {
-      collectgarbage(ctx);
-      /*
-        If, after garbage collection, there is still no memory
-        to allocate, throw an error.
-      */
-      if (isnil(ctx->freelist)) { fe_error(ctx, "out of memory"); }
-    }
-    /* Gets object from "freelist" and pushes said object to "gcstack". */
-    obj = ctx->freelist;
-    ctx->freelist = cdr(obj);
-    fe_pushgc(ctx, obj);
-    return obj;
+  static fe_Object* object(fe_Context* ctx) {
+      fe_Object* obj;
+      /* Collects garbage if free list has no more objects. */
+      if (isnil(ctx->freelist)) {
+          collectgarbage(ctx);
+          /*
+            If, after garbage collection, there is still no memory
+            to allocate, throw an error.
+          */
+          if (isnil(ctx->freelist)) {
+              fe_error(ctx, "out of memory");
+          }
+      }
+      /* Gets object from "freelist" and pushes said object to "gcstack". */
+      obj = ctx->freelist;
+      ctx->freelist = cdr(obj);
+      fe_pushgc(ctx, obj);
+      return obj;
   }
 
   /*
@@ -597,17 +658,15 @@ A Fe function can be called by creating a list and evaluating it.
      | ● | ● |
      +---+---+
   */
-  fe_Object* fe_cons(fe_Context *ctx, fe_Object *car, fe_Object *cdr) {
-    fe_Object *obj = object(ctx);
-    car(obj) = car;
-    cdr(obj) = cdr;
-    return obj;
+  fe_Object* fe_cons(fe_Context* ctx, fe_Object* car, fe_Object* cdr) {
+      fe_Object* obj = object(ctx);
+      car(obj) = car;
+      cdr(obj) = cdr;
+      return obj;
   }
 
   /* Evaluates the truth value of a C data type within the context of Fe. */
-  fe_Object* fe_bool(fe_Context *ctx, int b) {
-    return b ? ctx->t : &nil;
-  }
+  fe_Object* fe_bool(fe_Context* ctx, int b) { return b ? ctx->t : &nil; }
 
   /*
      Creates a number literal. By default, Number is a float,
@@ -618,30 +677,30 @@ A Fe function can be called by creating a list and evaluating it.
      | Number | float |
      +--------+-------+
   */
-  fe_Object* fe_number(fe_Context *ctx, fe_Number n) {
-    fe_Object *obj = object(ctx);
-    settype(obj, FE_TNUMBER);
-    number(obj) = n;
-    return obj;
+  fe_Object* fe_number(fe_Context* ctx, fe_Number n) {
+      fe_Object* obj = object(ctx);
+      settype(obj, FE_TNUMBER);
+      number(obj) = n;
+      return obj;
   }
 
-  static fe_Object* buildstring(fe_Context *ctx, fe_Object *tail, int chr) {
-    if (!tail || strbuf(tail)[STRBUFSIZE - 1] != '\0') {
-      fe_Object *obj = fe_cons(ctx, NULL, &nil);
-      settype(obj, FE_TSTRING);
-      if (tail) {
-        cdr(tail) = obj;
-        ctx->gcstack_idx--;
+  static fe_Object* buildstring(fe_Context* ctx, fe_Object* tail, int chr) {
+      if (!tail || strbuf(tail)[STRBUFSIZE - 1] != '\0') {
+          fe_Object* obj = fe_cons(ctx, NULL, &nil);
+          settype(obj, FE_TSTRING);
+          if (tail) {
+              cdr(tail) = obj;
+              ctx->gcstack_idx--;
+          }
+          tail = obj;
       }
-      tail = obj;
-    }
-    strbuf(tail)[strlen(strbuf(tail))] = chr;
-    return tail;
+      strbuf(tail)[strlen(strbuf(tail))] = chr;
+      return tail;
   }
 
   /*
      Creates a string literal. Strings are stored in a list of cons cells.
-  
+
      +------------------+---+  +------------------+---+
      | String | char[7] | ●-|->| String | char[7] | ●-| ...
      +------------------+---+  +------------------+---+
@@ -649,19 +708,19 @@ A Fe function can be called by creating a list and evaluating it.
      | String | char[7] | ●-|-> nil
      +------------------+---+
   */
-  fe_Object* fe_string(fe_Context *ctx, const char *str) {
-    fe_Object *obj = buildstring(ctx, NULL, '\0');
-    fe_Object *tail = obj;
-    while (*str) {
-      tail = buildstring(ctx, tail, *str++);
-    }
-    return obj;
+  fe_Object* fe_string(fe_Context* ctx, const char* str) {
+      fe_Object* obj = buildstring(ctx, NULL, '\0');
+      fe_Object* tail = obj;
+      while (*str) {
+          tail = buildstring(ctx, tail, *str++);
+      }
+      return obj;
   }
 
   /*
      Either returns an existing symbol from "symlist" or creates a new symbol
      and appends it to "symlist" before returning said symbol to caller.
-  
+
      +---+---+
      | ● | ●-|-> nil | Symbol
      +-|-+---+
@@ -671,23 +730,23 @@ A Fe function can be called by creating a list and evaluating it.
      | Symbol | ●-|->| String | ●-|-> nil | Value
      +--------+---+  +--------+---+
   */
-  fe_Object* fe_symbol(fe_Context *ctx, const char *name) {
-    fe_Object *obj;
-    // Try to find symbol in "symlist".
-    for (obj = ctx->symlist; !isnil(obj); obj = cdr(obj)) {
-      if (streq(car(cdr(car(obj))), name)) {
-        return car(obj);
+  fe_Object* fe_symbol(fe_Context* ctx, const char* name) {
+      fe_Object* obj;
+      // Try to find symbol in "symlist".
+      for (obj = ctx->symlist; !isnil(obj); obj = cdr(obj)) {
+          if (streq(car(cdr(car(obj))), name)) {
+              return car(obj);
+          }
       }
-    }
-    /*
-      Creates new symbol object. Pushes symbol object onto "symlist".
-      Returns symbol object to caller.
-    */
-    obj = object(ctx);
-    settype(obj, FE_TSYMBOL);
-    cdr(obj) = fe_cons(ctx, fe_string(ctx, name), &nil);
-    ctx->symlist = fe_cons(ctx, obj, ctx->symlist);
-    return obj;
+      /*
+        Creates new symbol object. Pushes symbol object onto "symlist".
+        Returns symbol object to caller.
+      */
+      obj = object(ctx);
+      settype(obj, FE_TSYMBOL);
+      cdr(obj) = fe_cons(ctx, fe_string(ctx, name), &nil);
+      ctx->symlist = fe_cons(ctx, obj, ctx->symlist);
+      return obj;
   }
 
   /*
@@ -698,11 +757,11 @@ A Fe function can be called by creating a list and evaluating it.
      | C Function | ●-|-> function
      +------------+---+
   */
-  fe_Object* fe_cfunc(fe_Context *ctx, fe_CFunc fn) {
-    fe_Object *obj = object(ctx);
-    settype(obj, FE_TCFUNC);
-    cfunc(obj) = fn;
-    return obj;
+  fe_Object* fe_cfunc(fe_Context* ctx, fe_CFunc fn) {
+      fe_Object* obj = object(ctx);
+      settype(obj, FE_TCFUNC);
+      cfunc(obj) = fn;
+      return obj;
   }
 
   /*
@@ -714,11 +773,11 @@ A Fe function can be called by creating a list and evaluating it.
      | Pointer | ●-|-> void
      +---------+---+
   */
-  fe_Object* fe_ptr(fe_Context *ctx, void *ptr) {
-    fe_Object *obj = object(ctx);
-    settype(obj, FE_TPTR);
-    cdr(obj) = ptr;
-    return obj;
+  fe_Object* fe_ptr(fe_Context* ctx, void* ptr) {
+      fe_Object* obj = object(ctx);
+      settype(obj, FE_TPTR);
+      cdr(obj) = ptr;
+      return obj;
   }
 
   /*
@@ -728,37 +787,41 @@ A Fe function can be called by creating a list and evaluating it.
 
      +---+---+  +---+---+
      | ● | ●-|->| ● | ●-| ... nil
-     +-|-+---+  +-|-+---+ 
+     +-|-+---+  +-|-+---+
        |          |
        V          V
      +---+---+  +---+---+
      | ● | ● |  | ● | ● |
      +---+---+  +---+---+
   */
-  fe_Object* fe_list(fe_Context *ctx, fe_Object **objs, int n) {
-    fe_Object *res = &nil;
-    while (n--) {
-      res = fe_cons(ctx, objs[n], res);
-    }
-    return res;
+  fe_Object* fe_list(fe_Context* ctx, fe_Object** objs, int n) {
+      fe_Object* res = &nil;
+      while (n--) {
+          res = fe_cons(ctx, objs[n], res);
+      }
+      return res;
   }
 
   /*
      (car (car cdr)) -> car | nil
      Returns the "car" of a cons list. Returns "nil" if the list is empty.
   */
-  fe_Object* fe_car(fe_Context *ctx, fe_Object *obj) {
-    if (isnil(obj)) { return obj; }
-    return car(checktype(ctx, obj, FE_TPAIR));
+  fe_Object* fe_car(fe_Context* ctx, fe_Object* obj) {
+      if (isnil(obj)) {
+          return obj;
+      }
+      return car(checktype(ctx, obj, FE_TPAIR));
   }
 
   /*
      (cdr (car cdr)) -> cdr | nil
      Returns the "cdr" of a cons list. Returns "nil" if the list is empty.
   */
-  fe_Object* fe_cdr(fe_Context *ctx, fe_Object *obj) {
-    if (isnil(obj)) { return obj; }
-    return cdr(checktype(ctx, obj, FE_TPAIR));
+  fe_Object* fe_cdr(fe_Context* ctx, fe_Object* obj) {
+      if (isnil(obj)) {
+          return obj;
+      }
+      return cdr(checktype(ctx, obj, FE_TPAIR));
   }
 
   /*
@@ -767,139 +830,161 @@ A Fe function can be called by creating a list and evaluating it.
   */
 
   /* Writes a string to a given buffer via the provided write function. */
-  static void writestr(fe_Context *ctx, fe_WriteFn fn, void *udata, const char *s) {
-    while (*s) { fn(ctx, udata, *s++); }
+  static void writestr(fe_Context* ctx, fe_WriteFn fn, void* udata,
+                       const char* s) {
+      while (*s) {
+          fn(ctx, udata, *s++);
+      }
   }
 
   /*
-    Transforms a Fe expression into string data, which it writes to the given buffer
-    via the provided write function.
+    Transforms a Fe expression into string data, which it writes to the given
+    buffer via the provided write function.
   */
-  void fe_write(fe_Context *ctx, fe_Object *obj, fe_WriteFn fn, void *udata, int qt) {
-    /*
-      ctx     = Fe context
-      obj     = Fe object
-      fn      = write function
-      udata   = user data | buffer
-      qt      = add quotes?
-      buf[32] = 32-byte buffer
-    */
-    char buf[32];
+  void fe_write(fe_Context* ctx, fe_Object* obj, fe_WriteFn fn, void* udata,
+                int qt) {
+      /*
+        ctx     = Fe context
+        obj     = Fe object
+        fn      = write function
+        udata   = user data | buffer
+        qt      = add quotes?
+        buf[32] = 32-byte buffer
+      */
+      char buf[32];
 
-    switch (type(obj)) {
-      /* Writes Fe's bottom value, nil. */
-      case FE_TNIL:
-        writestr(ctx, fn, udata, "nil");
-        break;
-      /*
-         Writes a Fe number (floating point) in its most compact representation
-         — either fixed point or scientific notation — with a precision of
-         seven significant digits.
-      */
-      case FE_TNUMBER:
-        sprintf(buf, "%.7g", number(obj));
-        writestr(ctx, fn, udata, buf);
-        break;
-      /*
-        Writes a Fe list. Starts at an open parenthesis and both loops and recurses
-        to print its contents. Terminates with a closing parenthesis.
-      */
-      case FE_TPAIR:
-        fn(ctx, udata, '(');
-        for (;;) {
-          fe_write(ctx, car(obj), fn, udata, 1);
-          obj = cdr(obj);
-          if (type(obj) != FE_TPAIR) { break; }
-          fn(ctx, udata, ' ');
-        }
-        /* Writes a dotted list if the final element is NOT nil. */
-        if (!isnil(obj)) {
-          writestr(ctx, fn, udata, " . ");
-          fe_write(ctx, obj, fn, udata, 1);
-        }
-        fn(ctx, udata, ')');
-        break;
-      /* Writes a Fe symbol. */
-      case FE_TSYMBOL:
-        fe_write(ctx, car(cdr(obj)), fn, udata, 0);
-        break;
-      /* Writes a Fe string. If "qt" is set to true, writes a string wrapped in quotes. */
-      case FE_TSTRING:
-        if (qt) { fn(ctx, udata, '"'); }
-        while (!isnil(obj)) {
-          int i;
-          for (i = 0; i < STRBUFSIZE && strbuf(obj)[i]; i++) {
-            if (qt && strbuf(obj)[i] == '"') { fn(ctx, udata, '\\'); }
-            fn(ctx, udata, strbuf(obj)[i]);
-          }
-          obj = cdr(obj);
-        }
-        if (qt) { fn(ctx, udata, '"'); }
-        break;
-      /* For all other Fe objects, writes both type name and object pointer. */
-      default:
-        sprintf(buf, "[%s %p]", typenames[type(obj)], (void*) obj);
-        writestr(ctx, fn, udata, buf);
-        break;
-    }
+      switch (type(obj)) {
+          /* Writes Fe's bottom value, nil. */
+          case FE_TNIL:
+              writestr(ctx, fn, udata, "nil");
+              break;
+          /*
+             Writes a Fe number (floating point) in its most compact
+             representation — either fixed point or scientific notation — with a
+             precision of seven significant digits.
+          */
+          case FE_TNUMBER:
+              sprintf(buf, "%.7g", number(obj));
+              writestr(ctx, fn, udata, buf);
+              break;
+          /*
+            Writes a Fe list. Starts at an open parenthesis and both loops and
+            recurses to print its contents. Terminates with a closing parenthesis.
+          */
+          case FE_TPAIR:
+              fn(ctx, udata, '(');
+              for (;;) {
+                  fe_write(ctx, car(obj), fn, udata, 1);
+                  obj = cdr(obj);
+                  if (type(obj) != FE_TPAIR) {
+                      break;
+                  }
+                  fn(ctx, udata, ' ');
+              }
+              /* Writes a dotted list if the final element is NOT nil. */
+              if (!isnil(obj)) {
+                  writestr(ctx, fn, udata, " . ");
+                  fe_write(ctx, obj, fn, udata, 1);
+              }
+              fn(ctx, udata, ')');
+              break;
+          /* Writes a Fe symbol. */
+          case FE_TSYMBOL:
+              fe_write(ctx, car(cdr(obj)), fn, udata, 0);
+              break;
+          /* Writes a Fe string. If "qt" is set to true, writes a string wrapped
+           * in quotes. */
+          case FE_TSTRING:
+              if (qt) {
+                  fn(ctx, udata, '"');
+              }
+              while (!isnil(obj)) {
+                  int i;
+                  for (i = 0; i < STRBUFSIZE && strbuf(obj)[i]; i++) {
+                      if (qt && strbuf(obj)[i] == '"') {
+                          fn(ctx, udata, '\\');
+                      }
+                      fn(ctx, udata, strbuf(obj)[i]);
+                  }
+                  obj = cdr(obj);
+              }
+              if (qt) {
+                  fn(ctx, udata, '"');
+              }
+              break;
+          /* For all other Fe objects, writes both type name and object pointer.
+           */
+          default:
+              sprintf(buf, "[%s %p]", typenames[type(obj)], (void*)obj);
+              writestr(ctx, fn, udata, buf);
+              break;
+      }
   }
 
   /*
      Function wraps "fputc", which writes a character (unsigned char)
      to a stream and advances the position indicator.
   */
-  static void writefp(fe_Context *ctx, void *udata, char chr) {
-    unused(ctx);
-    fputc(chr, udata);
+  static void writefp(fe_Context* ctx, void* udata, char chr) {
+      unused(ctx);
+      fputc(chr, udata);
   }
 
   /* Writes a Fe expression to a file object using the function "writefp". */
-  void fe_writefp(fe_Context *ctx, fe_Object *obj, FILE *fp) {
-    fe_write(ctx, obj, writefp, fp, 0);
+  void fe_writefp(fe_Context* ctx, fe_Object* obj, FILE* fp) {
+      fe_write(ctx, obj, writefp, fp, 0);
   }
 
   /*
     CharPtrInt: A utility data structure for tracking both a string's
     pointer and length.
   */
-  typedef struct { char *p; int n; } CharPtrInt;
+  typedef struct {
+      char* p;
+      int n;
+  } CharPtrInt;
 
   /* Function writes a char datum to a string using "CharPtrInt". */
-  static void writebuf(fe_Context *ctx, void *udata, char chr) {
-    CharPtrInt *x = udata;
-    unused(ctx);
-    if (x->n) { *x->p++ = chr; x->n--; }
+  static void writebuf(fe_Context* ctx, void* udata, char chr) {
+      CharPtrInt* x = udata;
+      unused(ctx);
+      if (x->n) {
+          *x->p++ = chr;
+          x->n--;
+      }
   }
 
   /* Writes a Fe expression to a string using the function "writebuf". */
-  int fe_tostring(fe_Context *ctx, fe_Object *obj, char *dst, int size) {
-    CharPtrInt x;
-    x.p = dst;
-    x.n = size - 1;
-    fe_write(ctx, obj, writebuf, &x, 0);
-    *x.p = '\0';
-    return size - x.n - 1;
+  int fe_tostring(fe_Context* ctx, fe_Object* obj, char* dst, int size) {
+      CharPtrInt x;
+      x.p = dst;
+      x.n = size - 1;
+      fe_write(ctx, obj, writebuf, &x, 0);
+      *x.p = '\0';
+      return size - x.n - 1;
   }
 
   /* Extract a number — by default, a C float — from a Fe number object. */
-  fe_Number fe_tonumber(fe_Context *ctx, fe_Object *obj) {
-    return number(checktype(ctx, obj, FE_TNUMBER));
+  fe_Number fe_tonumber(fe_Context* ctx, fe_Object* obj) {
+      return number(checktype(ctx, obj, FE_TNUMBER));
   }
 
   /* Extract a pointer from a Fe ptr object. */
-  void* fe_toptr(fe_Context *ctx, fe_Object *obj) {
-    return cdr(checktype(ctx, obj, FE_TPTR));
+  void* fe_toptr(fe_Context* ctx, fe_Object* obj) {
+      return cdr(checktype(ctx, obj, FE_TPTR));
   }
 
   /* Find bound value, where "sym" = global and "env" = local. */
-  static fe_Object* getbound(fe_Object *sym, fe_Object *env) {
-    /* Check local environment. */
-    for (; !isnil(env); env = cdr(env)) {
-      fe_Object *x = car(env);
-      if (car(x) == sym) { return x; }
-    }
-    /* If not in local environment, return global value. */
-    return cdr(sym);
+  static fe_Object* getbound(fe_Object* sym, fe_Object* env) {
+      /* Check local environment. */
+      for (; !isnil(env); env = cdr(env)) {
+          fe_Object* x = car(env);
+          if (car(x) == sym) {
+              return x;
+          }
+      }
+      /* If not in local environment, return global value. */
+      return cdr(sym);
   }
 
   /*
@@ -910,9 +995,9 @@ A Fe function can be called by creating a list and evaluating it.
      | Symbol | ●-|->| String | ●-|-> value
      +--------+---+  +--------+---+
   */
-  void fe_set(fe_Context *ctx, fe_Object *sym, fe_Object *v) {
-    unused(ctx);
-    cdr(getbound(sym, &nil)) = v;
+  void fe_set(fe_Context* ctx, fe_Object* sym, fe_Object* v) {
+      unused(ctx);
+      cdr(getbound(sym, &nil)) = v;
   }
 
   static fe_Object rparen;
@@ -923,127 +1008,145 @@ A Fe function can be called by creating a list and evaluating it.
      Transforms a stream of character data into Fe data,
      data that can later be evaluated as a Fe program.
   */
-  static fe_Object* read_(fe_Context *ctx, fe_ReadFn fn, void *udata) {
-    /*
-      ctx       = Fe context
-      fn        = read function
-      udata     = user data
-      delimiter = delimiters
-      v         = value
-      res       = result
-      tail      = list
-      n         = number
-      chr       = character
-      gc        = GC index
-      buf[64]   = 64-byte buffer
-      p         = buffer pointer
-    */
-    const char *delimiter = " \n\t\r();";
-    fe_Object *v, *res, **tail;
-    fe_Number n;
-    int chr, gc;
-    char buf[64], *p;
+  static fe_Object* read_(fe_Context* ctx, fe_ReadFn fn, void* udata) {
+      /*
+        ctx       = Fe context
+        fn        = read function
+        udata     = user data
+        delimiter = delimiters
+        v         = value
+        res       = result
+        tail      = list
+        n         = number
+        chr       = character
+        gc        = GC index
+        buf[64]   = 64-byte buffer
+        p         = buffer pointer
+      */
+      const char* delimiter = " \n\t\r();";
+      fe_Object *v, *res, **tail;
+      fe_Number n;
+      int chr, gc;
+      char buf[64], *p;
 
-    /* === next character === */
-    chr = ctx->nextchr ? ctx->nextchr : fn(ctx, udata);
-    ctx->nextchr = '\0';
+      /* === next character === */
+      chr = ctx->nextchr ? ctx->nextchr : fn(ctx, udata);
+      ctx->nextchr = '\0';
 
-    /* === skip whitespace === */
-    while (chr && strchr(" \n\t\r", chr)) {
-      chr = fn(ctx, udata);
-    }
-  
-    switch (chr) {
-      /* === end of string === */
-      case '\0':
-        return NULL;
-  
-      /* === line comment === */
-      case ';':
-        while (chr && chr != '\n') { chr = fn(ctx, udata); }
-        return read_(ctx, fn, udata);
-  
-      /* === closing parenthesis === */
-      case ')':
-        return &rparen;
-
-      /* === cons list === */
-      case '(':
-        res = &nil;
-        tail = &res;
-        gc = fe_savegc(ctx);
-        /* Can cause overflow on deeply nested cons lists. */
-        fe_pushgc(ctx, res);
-        while ( (v = read_(ctx, fn, udata)) != &rparen ) {
-          if (v == NULL) { fe_error(ctx, "unclosed list"); }
-          if (type(v) == FE_TSYMBOL && streq(car(cdr(v)), ".")) {
-            /* Dotted pair. */
-            *tail = fe_read(ctx, fn, udata);
-          } else {
-            /* Proper pair. */
-            *tail = fe_cons(ctx, v, &nil);
-            tail = &cdr(*tail);
-          }
-          fe_restoregc(ctx, gc);
-          fe_pushgc(ctx, res);
-        }
-        return res;
-
-      /* === quote form === */
-      case '\'':
-        v = fe_read(ctx, fn, udata);
-        if (!v) { fe_error(ctx, "stray '''"); }
-        return fe_cons(ctx, fe_symbol(ctx, "quote"), fe_cons(ctx, v, &nil));
-
-      /* === string === */
-      case '"':
-        res = buildstring(ctx, NULL, '\0');
-        v = res;
-        chr = fn(ctx, udata);
-        while (chr != '"') {
-          if (chr == '\0') { fe_error(ctx, "unclosed string"); }
-          if (chr == '\\') {
-            chr = fn(ctx, udata);
-            if (strchr("nrt", chr)) { chr = strchr("n\nr\rt\t", chr)[1]; }
-          }
-          v = buildstring(ctx, v, chr);
+      /* === skip whitespace === */
+      while (chr && strchr(" \n\t\r", chr)) {
           chr = fn(ctx, udata);
-        }
-        return res;
+      }
 
-      /* === number | symbol | nil === */
-      default:
-        p = buf;
-        do {
-          if (p == buf + sizeof(buf) - 1) { fe_error(ctx, "symbol too long"); }
-          *p++ = chr;
-          chr = fn(ctx, udata);
-        } while (chr && !strchr(delimiter, chr));
-        *p = '\0';
-        ctx->nextchr = chr;
-        /* Try to read as number. */
-        n = strtod(buf, &p);
-        if (p != buf && strchr(delimiter, *p)) { return fe_number(ctx, n); }
-        if (!strcmp(buf, "nil")) { return &nil; }
-        return fe_symbol(ctx, buf);
-    }
+      switch (chr) {
+          /* === end of string === */
+          case '\0':
+              return NULL;
+
+          /* === line comment === */
+          case ';':
+              while (chr && chr != '\n') {
+                  chr = fn(ctx, udata);
+              }
+              return read_(ctx, fn, udata);
+
+          /* === closing parenthesis === */
+          case ')':
+              return &rparen;
+
+          /* === cons list === */
+          case '(':
+              res = &nil;
+              tail = &res;
+              gc = fe_savegc(ctx);
+              /* Can cause overflow on deeply nested cons lists. */
+              fe_pushgc(ctx, res);
+              while ((v = read_(ctx, fn, udata)) != &rparen) {
+                  if (v == NULL) {
+                      fe_error(ctx, "unclosed list");
+                  }
+                  if (type(v) == FE_TSYMBOL && streq(car(cdr(v)), ".")) {
+                      /* Dotted pair. */
+                      *tail = fe_read(ctx, fn, udata);
+                  } else {
+                      /* Proper pair. */
+                      *tail = fe_cons(ctx, v, &nil);
+                      tail = &cdr(*tail);
+                  }
+                  fe_restoregc(ctx, gc);
+                  fe_pushgc(ctx, res);
+              }
+              return res;
+
+          /* === quote form === */
+          case '\'':
+              v = fe_read(ctx, fn, udata);
+              if (!v) {
+                  fe_error(ctx, "stray '''");
+              }
+              return fe_cons(ctx, fe_symbol(ctx, "quote"), fe_cons(ctx, v, &nil));
+
+          /* === string === */
+          case '"':
+              res = buildstring(ctx, NULL, '\0');
+              v = res;
+              chr = fn(ctx, udata);
+              while (chr != '"') {
+                  if (chr == '\0') {
+                      fe_error(ctx, "unclosed string");
+                  }
+                  if (chr == '\\') {
+                      chr = fn(ctx, udata);
+                      if (strchr("nrt", chr)) {
+                          chr = strchr("n\nr\rt\t", chr)[1];
+                      }
+                  }
+                  v = buildstring(ctx, v, chr);
+                  chr = fn(ctx, udata);
+              }
+              return res;
+
+          /* === number | symbol | nil === */
+          default:
+              p = buf;
+              do {
+                  if (p == buf + sizeof(buf) - 1) {
+                      fe_error(ctx, "symbol too long");
+                  }
+                  *p++ = chr;
+                  chr = fn(ctx, udata);
+              } while (chr && !strchr(delimiter, chr));
+              *p = '\0';
+              ctx->nextchr = chr;
+              /* Try to read as number. */
+              n = strtod(buf, &p);
+              if (p != buf && strchr(delimiter, *p)) {
+                  return fe_number(ctx, n);
+              }
+              if (!strcmp(buf, "nil")) {
+                  return &nil;
+              }
+              return fe_symbol(ctx, buf);
+      }
   }
 
-  fe_Object* fe_read(fe_Context *ctx, fe_ReadFn fn, void *udata) {
-    fe_Object* obj = read_(ctx, fn, udata);
-    if (obj == &rparen) { fe_error(ctx, "stray ')'"); }
-    return obj;
+  fe_Object* fe_read(fe_Context* ctx, fe_ReadFn fn, void* udata) {
+      fe_Object* obj = read_(ctx, fn, udata);
+      if (obj == &rparen) {
+          fe_error(ctx, "stray ')'");
+      }
+      return obj;
   }
 
-  static char readfp(fe_Context *ctx, void *udata) {
-    int chr;
-    unused(ctx);
-    return (chr = fgetc(udata)) == EOF ? '\0' : chr;
+  static char readfp(fe_Context* ctx, void* udata) {
+      int chr;
+      unused(ctx);
+      return (chr = fgetc(udata)) == EOF ? '\0' : chr;
   }
 
   /* Convenience function for reading from a file pointer. */
-  fe_Object* fe_readfp(fe_Context *ctx, FILE *fp) {
-    return fe_read(ctx, readfp, fp);
+  fe_Object* fe_readfp(fe_Context* ctx, FILE* fp) {
+      return fe_read(ctx, readfp, fp);
   }
 
   /*
@@ -1051,393 +1154,427 @@ A Fe function can be called by creating a list and evaluating it.
 
      Interprets Fe data as a Fe program.
   */
-  static fe_Object* eval(fe_Context *ctx, fe_Object *obj, fe_Object *env, fe_Object **bind);
+  static fe_Object* eval(fe_Context* ctx, fe_Object* obj, fe_Object* env,
+                         fe_Object** bind);
 
-  static fe_Object* evallist(fe_Context *ctx, fe_Object *lst, fe_Object *env) {
-    fe_Object *res = &nil;
-    fe_Object **tail = &res;
-    while (!isnil(lst)) {
-      *tail = fe_cons(ctx, eval(ctx, fe_nextarg(ctx, &lst), env, NULL), &nil);
-      tail = &cdr(*tail);
-    }
-    return res;
-  }
-
-  static fe_Object* dolist(fe_Context *ctx, fe_Object *lst, fe_Object *env) {
-    fe_Object *res = &nil;
-    int save = fe_savegc(ctx);
-    while (!isnil(lst)) {
-      fe_restoregc(ctx, save);
-      fe_pushgc(ctx, lst);
-      fe_pushgc(ctx, env);
-      res = eval(ctx, fe_nextarg(ctx, &lst), env, &env);
-    }
-    return res;
-  }
-
-  static fe_Object* argstoenv(fe_Context *ctx, fe_Object *prm, fe_Object *arg, fe_Object *env) {
-    while (!isnil(prm)) {
-      if (type(prm) != FE_TPAIR) {
-        env = fe_cons(ctx, fe_cons(ctx, prm, arg), env);
-        break;
+  static fe_Object* evallist(fe_Context* ctx, fe_Object* lst, fe_Object* env) {
+      fe_Object* res = &nil;
+      fe_Object** tail = &res;
+      while (!isnil(lst)) {
+          *tail = fe_cons(ctx, eval(ctx, fe_nextarg(ctx, &lst), env, NULL), &nil);
+          tail = &cdr(*tail);
       }
-      env = fe_cons(ctx, fe_cons(ctx, car(prm), fe_car(ctx, arg)), env);
-      prm = cdr(prm);
-      arg = fe_cdr(ctx, arg);
-    }
-    return env;
+      return res;
+  }
+
+  static fe_Object* dolist(fe_Context* ctx, fe_Object* lst, fe_Object* env) {
+      fe_Object* res = &nil;
+      int save = fe_savegc(ctx);
+      while (!isnil(lst)) {
+          fe_restoregc(ctx, save);
+          fe_pushgc(ctx, lst);
+          fe_pushgc(ctx, env);
+          res = eval(ctx, fe_nextarg(ctx, &lst), env, &env);
+      }
+      return res;
+  }
+
+  static fe_Object* argstoenv(fe_Context* ctx, fe_Object* prm, fe_Object* arg,
+                              fe_Object* env) {
+      while (!isnil(prm)) {
+          if (type(prm) != FE_TPAIR) {
+              env = fe_cons(ctx, fe_cons(ctx, prm, arg), env);
+              break;
+          }
+          env = fe_cons(ctx, fe_cons(ctx, car(prm), fe_car(ctx, arg)), env);
+          prm = cdr(prm);
+          arg = fe_cdr(ctx, arg);
+      }
+      return env;
   }
 
   #define evalarg() eval(ctx, fe_nextarg(ctx, &arg), env, NULL)
 
-  #define arithop(op) {                             \
-      fe_Number x = fe_tonumber(ctx, evalarg());    \
-      while (!isnil(arg)) {                         \
-        x = x op fe_tonumber(ctx, evalarg());       \
-      }                                             \
-      res = fe_number(ctx, x);                      \
-    }
+  #define arithop(op)                                \
+      {                                              \
+          fe_Number x = fe_tonumber(ctx, evalarg()); \
+          while (!isnil(arg)) {                      \
+              x = x op fe_tonumber(ctx, evalarg());  \
+          }                                          \
+          res = fe_number(ctx, x);                   \
+      }
 
-  #define numcmpop(op) {                            \
-      va = checktype(ctx, evalarg(), FE_TNUMBER);   \
-      vb = checktype(ctx, evalarg(), FE_TNUMBER);   \
-      res = fe_bool(ctx, number(va) op number(vb)); \
-    }
+  #define numcmpop(op)                                  \
+      {                                                 \
+          va = checktype(ctx, evalarg(), FE_TNUMBER);   \
+          vb = checktype(ctx, evalarg(), FE_TNUMBER);   \
+          res = fe_bool(ctx, number(va) op number(vb)); \
+      }
 
-  static fe_Object* eval(fe_Context *ctx, fe_Object *obj, fe_Object *env, fe_Object **newenv) {
-    /*
-      fn  = operation
-      arg = arguments
-      res = result
-      cl  = call list
-      va  = variable a
-      vb  = variable b
-      n   = saved index into GC stack
-      gc  = saved index into GC stack
-    */
-    fe_Object *fn, *arg, *res;
-    fe_Object cl, *va, *vb;
-    int n, gc;
+  static fe_Object* eval(fe_Context* ctx, fe_Object* obj, fe_Object* env,
+                         fe_Object** newenv) {
+      /*
+        fn  = operation
+        arg = arguments
+        res = result
+        cl  = call list
+        va  = variable a
+        vb  = variable b
+        n   = saved index into GC stack
+        gc  = saved index into GC stack
+      */
+      fe_Object *fn, *arg, *res;
+      fe_Object cl, *va, *vb;
+      int n, gc;
 
-    /* Find symbol in environment and return associated value. */
-    if (type(obj) == FE_TSYMBOL) { return cdr(getbound(obj, env)); }
-    /* Return literals, which evaluate to themselves. */
-    if (type(obj) != FE_TPAIR) { return obj; }
+      /* Find symbol in environment and return associated value. */
+      if (type(obj) == FE_TSYMBOL) {
+          return cdr(getbound(obj, env));
+      }
+      /* Return literals, which evaluate to themselves. */
+      if (type(obj) != FE_TPAIR) {
+          return obj;
+      }
 
-    car(&cl) = obj, cdr(&cl) = ctx->calllist;
-    ctx->calllist = &cl;
+      car(&cl) = obj, cdr(&cl) = ctx->calllist;
+      ctx->calllist = &cl;
 
-    gc = fe_savegc(ctx);
-    fn = eval(ctx, car(obj), env, NULL);
-    arg = cdr(obj);
-    res = &nil;
+      gc = fe_savegc(ctx);
+      fn = eval(ctx, car(obj), env, NULL);
+      arg = cdr(obj);
+      res = &nil;
 
-    switch (type(fn)) {
-      /* Primitive Fe functions and forms. */
-      case FE_TPRIM:
-        switch (prim(fn)) {
-          /*
-            === (let symbol value) ===
-            Binds a value to a symbol in the current lexical environment.
-          */
-          case P_LET:
-            va = checktype(ctx, fe_nextarg(ctx, &arg), FE_TSYMBOL);
-            if (newenv) {
-              *newenv = fe_cons(ctx, fe_cons(ctx, va, evalarg()), env);
-            }
-            break;
-          /*
-            === (= symbol value) ===
-            Either binds a symbol to a new value or creates a global variable.
-          */
-          case P_SET:
-            va = checktype(ctx, fe_nextarg(ctx, &arg), FE_TSYMBOL);
-            cdr(getbound(va, env)) = evalarg();
-            break;
-          /*
-            === (if condition then else+) ===
-            If condition evaluates true, form evaluates the then expression,
-            otherwise evaluates else, which is either an alternative expression
-            or a chain of one or more condition-then expressions.
-          */
-          case P_IF:
-            while (!isnil(arg)) {
-              va = evalarg();
-              if (!isnil(va)) {
-                res = isnil(arg) ? va : evalarg();
-                break;
+      switch (type(fn)) {
+          /* Primitive Fe functions and forms. */
+          case FE_TPRIM:
+              switch (prim(fn)) {
+                  /*
+                    === (let symbol value) ===
+                    Binds a value to a symbol in the current lexical environment.
+                  */
+                  case P_LET:
+                      va = checktype(ctx, fe_nextarg(ctx, &arg), FE_TSYMBOL);
+                      if (newenv) {
+                          *newenv =
+                              fe_cons(ctx, fe_cons(ctx, va, evalarg()), env);
+                      }
+                      break;
+                  /*
+                    === (= symbol value) ===
+                    Either binds a symbol to a new value or creates a global
+                    variable.
+                  */
+                  case P_SET:
+                      va = checktype(ctx, fe_nextarg(ctx, &arg), FE_TSYMBOL);
+                      cdr(getbound(va, env)) = evalarg();
+                      break;
+                  /*
+                    === (if condition then else+) ===
+                    If condition evaluates true, form evaluates the then
+                    expression, otherwise evaluates else, which is either an
+                    alternative expression or a chain of one or more
+                    condition-then expressions.
+                  */
+                  case P_IF:
+                      while (!isnil(arg)) {
+                          va = evalarg();
+                          if (!isnil(va)) {
+                              res = isnil(arg) ? va : evalarg();
+                              break;
+                          }
+                          if (isnil(arg)) {
+                              break;
+                          }
+                          arg = cdr(arg);
+                      }
+                      break;
+                  /*
+                    === (fn symbol* expression+) ===
+                    Defines a function abstraction, a Fe program that can be
+                    called within another Fe program. Arguments are bound to their
+                    corresponding symbols. Free variables, variables defined
+                    outside a given function, are lexically scoped.
+
+                    === (mac symbol* expression+) ===
+                    Defines a macro, a Fe program that transforms the syntactic
+                    structure of a Fe expression. Macros in Fe work similarly to
+                    functions, but receive their arguments unevaluated, returning
+                    code that is evaluated in the scope of the caller. Fe macros
+                    are called only once. Afterward, only their generated code is
+                    run.
+                  */
+                  case P_FN:
+                  case P_MAC:
+                      va = fe_cons(ctx, env, arg);
+                      fe_nextarg(ctx, &arg);
+                      res = object(ctx);
+                      settype(res, prim(fn) == P_FN ? FE_TFUNC : FE_TMACRO);
+                      cdr(res) = va;
+                      break;
+                  /*
+                    === (while condition expression+) ===
+                    While condition ≠ nil, evaluates a sequence of one or more
+                    expressions.
+                  */
+                  case P_WHILE:
+                      va = fe_nextarg(ctx, &arg);
+                      n = fe_savegc(ctx);
+                      while (!isnil(eval(ctx, va, env, NULL))) {
+                          dolist(ctx, arg, env);
+                          fe_restoregc(ctx, n);
+                      }
+                      break;
+                  /*
+                    === (quote expression) ===
+                    Returns expression unevaluated — essentially data.
+                  */
+                  case P_QUOTE:
+                      res = fe_nextarg(ctx, &arg);
+                      break;
+                  /*
+                    === (and expression*) ===
+                    Evaluates a sequence of zero or more expressions.
+                    Short-circuits on nil, returning nil. If all expressions
+                    evaluate not nil, form returns the last evaluated expression.
+                  */
+                  case P_AND:
+                      while (!isnil(arg) && !isnil(res = evalarg()));
+                      break;
+                  /*
+                    === (or expression*) ===
+                    Evaluates a sequence of zero or more expressions.
+                    Short-circuits on not nil, returning the value of the current
+                    expression. If all expression evaluate nil, form returns nil.
+                  */
+                  case P_OR:
+                      while (!isnil(arg) && isnil(res = evalarg()));
+                      break;
+                  /*
+                    === (do expression+) ===
+                    Evaluates one or more expressions, returning the last as its
+                    value.
+                  */
+                  case P_DO:
+                      res = dolist(ctx, arg, env);
+                      break;
+                  /*
+                    === (cons car cdr) -> (car cdr) ===
+                    Combines two values to create a pair.
+                  */
+                  case P_CONS:
+                      va = evalarg();
+                      res = fe_cons(ctx, va, evalarg());
+                      break;
+                  /*
+                    === (car (car cdr)) -> car | nil ===
+                    Returns the car of a pair, or nil if the pair is nil.
+                  */
+                  case P_CAR:
+                      res = fe_car(ctx, evalarg());
+                      break;
+                  /*
+                    === (cdr (car cdr)) -> cdr | nil ===
+                    Returns the cdr of a pair, or nil if the pair is nil.
+                  */
+                  case P_CDR:
+                      res = fe_cdr(ctx, evalarg());
+                      break;
+                  /*
+                    === (setcar (car cdr) value) ===
+                    Sets the car of a pair to value.
+                  */
+                  case P_SETCAR:
+                      va = checktype(ctx, evalarg(), FE_TPAIR);
+                      car(va) = evalarg();
+                      break;
+                  /*
+                    === (setcdr (car cdr) value) ===
+                    Sets the cdr of a pair to value.
+                  */
+                  case P_SETCDR:
+                      va = checktype(ctx, evalarg(), FE_TPAIR);
+                      cdr(va) = evalarg();
+                      break;
+                  /*
+                    === (list value*) -> (value*) ===
+                    Creates a list of zero or more values. The bottom value
+                    of a proper list is nil.
+                  */
+                  case P_LIST:
+                      res = evallist(ctx, arg, env);
+                      break;
+                  /*
+                    === (not value) -> true | nil ===
+                    Returns true if value is nil, otherwise returns nil.
+                  */
+                  case P_NOT:
+                      res = fe_bool(ctx, isnil(evalarg()));
+                      break;
+                  /*
+                    === (is value value) -> true | nil ===
+                    Checks strings and numbers for equivalency. Identity checks
+                    objects.
+                  */
+                  case P_IS:
+                      va = evalarg();
+                      res = fe_bool(ctx, equal(va, evalarg()));
+                      break;
+                  /*
+                    === (atom value) -> true | nil ===
+                    Returns true if value is not a pair. Otherwise returns nil.
+                  */
+                  case P_ATOM:
+                      res = fe_bool(ctx, fe_type(ctx, evalarg()) != FE_TPAIR);
+                      break;
+                  /*
+                    === (print value+) ===
+                    Prints one or more values to the standard output.
+                  */
+                  case P_PRINT:
+                      while (!isnil(arg)) {
+                          fe_writefp(ctx, evalarg(), stdout);
+                          if (!isnil(arg)) {
+                              printf(" ");
+                          }
+                      }
+                      printf("\n");
+                      break;
+                  /*
+                    === (< number number) -> true | nil ===
+                    Returns true if the first number is less than the second
+                    number. Returns nil otherwise.
+                  */
+                  case P_LT:
+                      numcmpop(<);
+                      break;
+                  /*
+                    === (<= number number) -> true | nil ===
+                    Returns true if the first number is less than or equal to the
+                    second number. Returns nil otherwise.
+                  */
+                  case P_LTE:
+                      numcmpop(<=);
+                      break;
+                  /*
+                    === (+ number+) -> number ===
+                    Adds one or more numbers.
+                  */
+                  case P_ADD:
+                      arithop(+);
+                      break;
+                  /*
+                    === (- number+) -> number ===
+                    Subtracts one or more numbers, left to right.
+                  */
+                  case P_SUB:
+                      arithop(-);
+                      break;
+                  /*
+                    === (* number+) -> number ===
+                    Multiplies one or more numbers.
+                  */
+                  case P_MUL:
+                      arithop(*);
+                      break;
+                  /*
+                    === (/ number+) -> number ===
+                    Divides one or more numbers, left to right.
+                  */
+                  case P_DIV:
+                      arithop(/);
+                      break;
               }
-              if (isnil(arg)) { break; }
-              arg = cdr(arg);
-            }
-            break;
-          /*
-            === (fn symbol* expression+) ===
-            Defines a function abstraction, a Fe program that can be called within
-            another Fe program. Arguments are bound to their corresponding symbols.
-            Free variables, variables defined outside a given function, are
-            lexically scoped.
-  
-            === (mac symbol* expression+) ===
-            Defines a macro, a Fe program that transforms the syntactic structure
-            of a Fe expression. Macros in Fe work similarly to functions, but
-            receive their arguments unevaluated, returning code that is evaluated
-            in the scope of the caller. Fe macros are called only once. Afterward,
-            only their generated code is run.
-          */
-          case P_FN: case P_MAC:
-            va = fe_cons(ctx, env, arg);
-            fe_nextarg(ctx, &arg);
-            res = object(ctx);
-            settype(res, prim(fn) == P_FN ? FE_TFUNC : FE_TMACRO);
-            cdr(res) = va;
-            break;
-          /*
-            === (while condition expression+) ===
-            While condition ≠ nil, evaluates a sequence of one or more expressions.
-          */
-          case P_WHILE:
-            va = fe_nextarg(ctx, &arg);
-            n = fe_savegc(ctx);
-            while (!isnil(eval(ctx, va, env, NULL))) {
-              dolist(ctx, arg, env);
-              fe_restoregc(ctx, n);
-            }
-            break;
-          /*
-            === (quote expression) ===
-            Returns expression unevaluated — essentially data.
-          */
-          case P_QUOTE:
-            res = fe_nextarg(ctx, &arg);
-            break;
-          /*
-            === (and expression*) ===
-            Evaluates a sequence of zero or more expressions. Short-circuits on nil,
-            returning nil. If all expressions evaluate not nil, form returns the last
-            evaluated expression.
-          */
-          case P_AND:
-            while (!isnil(arg) && !isnil(res = evalarg()));
-            break;
-          /*
-            === (or expression*) ===
-            Evaluates a sequence of zero or more expressions. Short-circuits on not nil,
-            returning the value of the current expression. If all expression evaluate nil,
-            form returns nil.
-          */
-          case P_OR:
-            while (!isnil(arg) && isnil(res = evalarg()));
-            break;
-          /*
-            === (do expression+) ===
-            Evaluates one or more expressions, returning the last as its value.
-          */
-          case P_DO:
-            res = dolist(ctx, arg, env);
-            break;
-          /*
-            === (cons car cdr) -> (car cdr) ===
-            Combines two values to create a pair.
-          */
-          case P_CONS:
-            va = evalarg();
-            res = fe_cons(ctx, va, evalarg());
-            break;
-          /*
-            === (car (car cdr)) -> car | nil ===
-            Returns the car of a pair, or nil if the pair is nil.
-          */
-          case P_CAR:
-            res = fe_car(ctx, evalarg());
-            break;
-          /*
-            === (cdr (car cdr)) -> cdr | nil ===
-            Returns the cdr of a pair, or nil if the pair is nil.
-          */
-          case P_CDR:
-            res = fe_cdr(ctx, evalarg());
-            break;
-          /*
-            === (setcar (car cdr) value) ===
-            Sets the car of a pair to value.
-          */
-          case P_SETCAR:
-            va = checktype(ctx, evalarg(), FE_TPAIR);
-            car(va) = evalarg();
-            break;
-          /*
-            === (setcdr (car cdr) value) ===
-            Sets the cdr of a pair to value.
-          */
-          case P_SETCDR:
-            va = checktype(ctx, evalarg(), FE_TPAIR);
-            cdr(va) = evalarg();
-            break;
-          /*
-            === (list value*) -> (value*) ===
-            Creates a list of zero or more values. The bottom value
-            of a proper list is nil.
-          */
-          case P_LIST:
-            res = evallist(ctx, arg, env);
-            break;
-          /*
-            === (not value) -> true | nil ===
-            Returns true if value is nil, otherwise returns nil.
-          */
-          case P_NOT:
-            res = fe_bool(ctx, isnil(evalarg()));
-            break;
-          /*
-            === (is value value) -> true | nil ===
-            Checks strings and numbers for equivalency. Identity checks objects.
-          */
-          case P_IS:
-            va = evalarg();
-            res = fe_bool(ctx, equal(va, evalarg()));
-            break;
-          /*
-            === (atom value) -> true | nil ===
-            Returns true if value is not a pair. Otherwise returns nil.
-          */
-          case P_ATOM:
-            res = fe_bool(ctx, fe_type(ctx, evalarg()) != FE_TPAIR);
-            break;
-          /*
-            === (print value+) ===
-            Prints one or more values to the standard output.
-          */
-          case P_PRINT:
-            while (!isnil(arg)) {
-              fe_writefp(ctx, evalarg(), stdout);
-              if (!isnil(arg)) { printf(" "); }
-            }
-            printf("\n");
-            break;
-          /*
-            === (< number number) -> true | nil ===
-            Returns true if the first number is less than the second number.
-            Returns nil otherwise.
-          */
-          case P_LT: numcmpop(<); break;
-          /*
-            === (<= number number) -> true | nil ===
-            Returns true if the first number is less than or equal to the second number.
-            Returns nil otherwise.
-          */
-          case P_LTE: numcmpop(<=); break;
-          /*
-            === (+ number+) -> number ===
-            Adds one or more numbers.
-          */
-          case P_ADD: arithop(+); break;
-          /*
-            === (- number+) -> number ===
-            Subtracts one or more numbers, left to right.
-          */
-          case P_SUB: arithop(-); break;
-          /*
-            === (* number+) -> number ===
-            Multiplies one or more numbers.
-          */
-          case P_MUL: arithop(*); break;
-          /*
-            === (/ number+) -> number ===
-            Divides one or more numbers, left to right.
-          */
-          case P_DIV: arithop(/); break;
-        }
-        break;
-  
-      /* Evaluate embedded C functions. */
-      case FE_TCFUNC:
-        res = cfunc(fn)(ctx, evallist(ctx, arg, env));
-        break;
-      /* Evaluate Fe functions. */
-      case FE_TFUNC:
-        arg = evallist(ctx, arg, env);
-        /* Environment parameters. */
-        va = cdr(fn);
-        /* Parameters. */
-        vb = cdr(va);
-        res = dolist(ctx, cdr(vb), argstoenv(ctx, car(vb), arg, car(va)));
-        break;
-      /* Evaluate Fe macros. */
-      case FE_TMACRO:
-        /* Environment parameters. */
-        va = cdr(fn);
-        /* Parameters. */
-        vb = cdr(va);
-        /* Replace caller object with code generated by macro and re-evaluate. */
-        *obj = *dolist(ctx, cdr(vb), argstoenv(ctx, car(vb), arg, car(va)));
-        fe_restoregc(ctx, gc);
-        ctx->calllist = cdr(&cl);
-        return eval(ctx, obj, env, NULL);
-      /* Throw error on undefined operation. */
-      default:
-        fe_error(ctx, "tried to call non-callable value");
-    }
+              break;
 
-    fe_restoregc(ctx, gc);
-    fe_pushgc(ctx, res);
-    ctx->calllist = cdr(&cl);
-    return res;
+          /* Evaluate embedded C functions. */
+          case FE_TCFUNC:
+              res = cfunc(fn)(ctx, evallist(ctx, arg, env));
+              break;
+          /* Evaluate Fe functions. */
+          case FE_TFUNC:
+              arg = evallist(ctx, arg, env);
+              /* Environment parameters. */
+              va = cdr(fn);
+              /* Parameters. */
+              vb = cdr(va);
+              res = dolist(ctx, cdr(vb), argstoenv(ctx, car(vb), arg, car(va)));
+              break;
+          /* Evaluate Fe macros. */
+          case FE_TMACRO:
+              /* Environment parameters. */
+              va = cdr(fn);
+              /* Parameters. */
+              vb = cdr(va);
+              /* Replace caller object with code generated by macro and
+               * re-evaluate. */
+              *obj = *dolist(ctx, cdr(vb), argstoenv(ctx, car(vb), arg, car(va)));
+              fe_restoregc(ctx, gc);
+              ctx->calllist = cdr(&cl);
+              return eval(ctx, obj, env, NULL);
+          /* Throw error on undefined operation. */
+          default:
+              fe_error(ctx, "tried to call non-callable value");
+      }
+
+      fe_restoregc(ctx, gc);
+      fe_pushgc(ctx, res);
+      ctx->calllist = cdr(&cl);
+      return res;
   }
 
-  fe_Object* fe_eval(fe_Context *ctx, fe_Object *obj) {
-    return eval(ctx, obj, &nil, NULL);
+  fe_Object* fe_eval(fe_Context* ctx, fe_Object* obj) {
+      return eval(ctx, obj, &nil, NULL);
   }
 
-  fe_Context* fe_open(void *ptr, int size) {
-    int i, save;
-    fe_Context *ctx;
+  fe_Context* fe_open(void* ptr, int size) {
+      int i, save;
+      fe_Context* ctx;
 
-    /* Initialize context. */
-    ctx = ptr;
-    memset(ctx, 0, sizeof(fe_Context));
-    ptr = (char*) ptr + sizeof(fe_Context);
-    size -= sizeof(fe_Context);
+      /* Initialize context. */
+      ctx = ptr;
+      memset(ctx, 0, sizeof(fe_Context));
+      ptr = (char*)ptr + sizeof(fe_Context);
+      size -= sizeof(fe_Context);
 
-    /* Initialize objects in memory region. */
-    ctx->objects = (fe_Object*) ptr;
-    ctx->object_count = size / sizeof(fe_Object);
+      /* Initialize objects in memory region. */
+      ctx->objects = (fe_Object*)ptr;
+      ctx->object_count = size / sizeof(fe_Object);
 
-    /* Initialize lists. */
-    ctx->calllist = &nil;
-    ctx->freelist = &nil;
-    ctx->symlist = &nil;
+      /* Initialize lists. */
+      ctx->calllist = &nil;
+      ctx->freelist = &nil;
+      ctx->symlist = &nil;
 
-    /* Populate freelist. */
-    for (i = 0; i < ctx->object_count; i++) {
-      fe_Object *obj = &ctx->objects[i];
-      settype(obj, FE_TFREE);
-      cdr(obj) = ctx->freelist;
-      ctx->freelist = obj;
-    }
+      /* Populate freelist. */
+      for (i = 0; i < ctx->object_count; i++) {
+          fe_Object* obj = &ctx->objects[i];
+          settype(obj, FE_TFREE);
+          cdr(obj) = ctx->freelist;
+          ctx->freelist = obj;
+      }
 
-    /* Initialize objects. */
-    ctx->t = fe_symbol(ctx, "t");
-    fe_set(ctx, ctx->t, ctx->t);
+      /* Initialize objects. */
+      ctx->t = fe_symbol(ctx, "t");
+      fe_set(ctx, ctx->t, ctx->t);
 
-    /* Register built-in primitives. */
-    save = fe_savegc(ctx);
-    for (i = 0; i < P_MAX; i++) {
-      fe_Object *v = object(ctx);
-      settype(v, FE_TPRIM);
-      prim(v) = i;
-      fe_set(ctx, fe_symbol(ctx, primnames[i]), v);
-      fe_restoregc(ctx, save);
-    }
+      /* Register built-in primitives. */
+      save = fe_savegc(ctx);
+      for (i = 0; i < P_MAX; i++) {
+          fe_Object* v = object(ctx);
+          settype(v, FE_TPRIM);
+          prim(v) = i;
+          fe_set(ctx, fe_symbol(ctx, primnames[i]), v);
+          fe_restoregc(ctx, save);
+      }
 
-    return ctx;
+      return ctx;
   }
 
-  void fe_close(fe_Context *ctx) {
-    /* Clear "gcstack" and "symlist". Make all objects unreachable. */
-    ctx->gcstack_idx = 0;
-    ctx->symlist = &nil;
-    collectgarbage(ctx);
+  void fe_close(fe_Context* ctx) {
+      /* Clear "gcstack" and "symlist". Make all objects unreachable. */
+      ctx->gcstack_idx = 0;
+      ctx->symlist = &nil;
+      collectgarbage(ctx);
   }
 
   #ifdef FE_STANDALONE
@@ -1456,40 +1593,51 @@ A Fe function can be called by creating a list and evaluating it.
   */
   static char buf[64000];
 
-  static void onerror(fe_Context *ctx, const char *msg, fe_Object *cl) {
-    unused(ctx), unused(cl);
-    fprintf(stderr, "error: %s\n", msg);
-    longjmp(toplevel, -1);
+  static void onerror(fe_Context* ctx, const char* msg, fe_Object* cl) {
+      unused(ctx), unused(cl);
+      fprintf(stderr, "error: %s\n", msg);
+      longjmp(toplevel, -1);
   }
 
-  int main(int argc, char **argv) {
-    int gc;
-    fe_Object *obj;
-    FILE *volatile fp = stdin;
-    fe_Context *ctx = fe_open(buf, sizeof(buf));
+  int main(int argc, char** argv) {
+      int gc;
+      fe_Object* obj;
+      FILE* volatile fp = stdin;
+      fe_Context* ctx = fe_open(buf, sizeof(buf));
 
-    if (argc > 1) {
-      fp = fopen(argv[1], "rb");
-      if (!fp) { fe_error(ctx, "could not open input file"); }
-    }
+      if (argc > 1) {
+          fp = fopen(argv[1], "rb");
+          if (!fp) {
+              fe_error(ctx, "could not open input file");
+          }
+      }
 
-    if (fp == stdin) { fe_handlers(ctx)->error = onerror; }
-    gc = fe_savegc(ctx);
-    /*
-      Saves the current execution environment in "toplevel".
-      On errors, Fe will return to this state.
-    */
-    setjmp(toplevel);
-    /* REPL */
-    for (;;) {
-      fe_restoregc(ctx, gc);
-      if (fp == stdin) { printf("> "); }
-      if (!(obj = fe_readfp(ctx, fp))) { break; }
-      obj = fe_eval(ctx, obj);
-      if (fp == stdin) { fe_writefp(ctx, obj, stdout); printf("\n"); }
-    }
+      if (fp == stdin) {
+          fe_handlers(ctx)->error = onerror;
+      }
+      gc = fe_savegc(ctx);
+      /*
+        Saves the current execution environment in "toplevel".
+        On errors, Fe will return to this state.
+      */
+      setjmp(toplevel);
+      /* REPL */
+      for (;;) {
+          fe_restoregc(ctx, gc);
+          if (fp == stdin) {
+              printf("> ");
+          }
+          if (!(obj = fe_readfp(ctx, fp))) {
+              break;
+          }
+          obj = fe_eval(ctx, obj);
+          if (fp == stdin) {
+              fe_writefp(ctx, obj, stdout);
+              printf("\n");
+          }
+      }
 
-    return EXIT_SUCCESS;
+      return EXIT_SUCCESS;
   }
 
   #endif
