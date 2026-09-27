@@ -1577,7 +1577,7 @@ host program.
           luaD_hook(L, LUA_HOOKCALL, -1, 1, narg);
       }
       lua_unlock(L);
-      // C function call.
+      // C function call: int (*lua_CFunction) (lua_State *L);
       n = (*f)(L);
       lua_lock(L);
       api_checknelems(L, n);
