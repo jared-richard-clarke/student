@@ -2004,3 +2004,94 @@ Lua supports four types of hooks:
         +-->| Call Info |-->| Trap |-->| luaG_traceexec |
             +-----------+   +------+   +----------------+
 #+end_example
+
+** Module System
+
+*** Require
+
+- ~require(module-name)~ :: Lua's primary interface for loading modules.
+
+  1. Cache lookup: ~LOADED[name]~
+
+  2. Find loader: ~findloader()~
+
+  3. Execute loader: ~loader(name, data)~
+
+  4. Cache result: ~LOADED[name] = non-nil or true~
+
+  5. Return module result and loader data.
+
+#+begin_src c
+  // require(name)
+  //   where name = module name
+  static int ll_require(lua_State* L) {
+      const char* name = luaL_checkstring(L, 1);
+      // LOADED table will be at index 2.
+      lua_settop(L, 1);
+      lua_getfield(L, LUA_REGISTRYINDEX, LUA_LOADED_TABLE);
+      // LOADED[name]
+      lua_getfield(L, 2, name);
+      // If in cache, package is already loaded.
+      if (lua_toboolean(L, -1)) {
+          return 1;
+      }
+      // If cache miss, package must be loaded.
+      lua_pop(L, 1);
+      // Search chain.
+      findloader(L, name);
+      // Swap function and loader data.
+      lua_rotate(L, -2, 1);
+      // module name
+      lua_pushvalue(L, 1);
+      // loader data
+      lua_pushvalue(L, -3);
+      // stack: [..., data, loader, name, data]
+      // loader(name, data)
+      lua_call(L, 2, 1);
+      // stack: [..., data, result]
+      // If non-nil result, LOADED[name] = result
+      if (!lua_isnil(L, -1)) {
+          lua_setfield(L, 2, name);
+      } else {
+          lua_pop(L, 1);
+      }
+      // If module sets no value, set module to true in cache.
+      if (lua_getfield(L, 2, name) == LUA_TNIL) {
+          // LOADED[name] = true
+          lua_pushboolean(L, 1);
+          lua_copy(L, -1, -2);
+          lua_setfield(L, 2, name);
+      }
+      // Swap loader data and module result.
+      lua_rotate(L, -2, 1);
+      return 2;
+  }
+#+end_src
+
+*** Search Chain
+
+1. *Preload Searcher*: Checks ~package.preload~, a table for a pre-registered
+   loader function. Useful for embedding modules or providing built-in modules
+   without file access.
+
+2. *Lua File Searcher*: Searches for a Lua source file using ~package.path~.
+   Replaces dots in module name with system-specific path separators.
+
+3. *C Library Searcher*: Searches for a C library using ~package.cpath~.
+   Loads the library and looks for a ~luaopen_<name>~ function.
+
+4. *C Root Searcher*: Searches for the root module's C library and within that
+   looks for the full submodule function name.
+
+*** Package Table
+
+| field        | type     | description                          |
+|--------------+----------+--------------------------------------|
+| ~path~       | string   | Search paths for Lua files.          |
+| ~cpath~      | string   | Search paths for C libraries.        |
+| ~loaded~     | table    | Cache of loaded modules in registry. |
+| ~preload~    | table    | Pre-registered modules loaders.      |
+| ~searchers~  | table    | Array of searcher functions.         |
+| ~config~     | string   | Platform information.                |
+| ~loadlib~    | function | Manual library-loading function.     |
+| ~searchpath~ | function | Path-searching utility.              |
