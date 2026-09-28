@@ -2070,8 +2070,8 @@ Lua supports four types of hooks:
 
 *** Search Chain
 
-1. *Preload Searcher*: Checks ~package.preload~, a table for a pre-registered
-   loader function. Useful for embedding modules or providing built-in modules
+1. *Preload Searcher*: Checks ~package.preload~, a table for pre-registered
+   loader functions. Useful for embedding modules or providing built-in modules
    without file access.
 
 2. *Lua File Searcher*: Searches for a Lua source file using ~package.path~.
