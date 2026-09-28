@@ -655,7 +655,7 @@
               case L_ESC: {
                   switch (*(p + 1)) {
                       // Balanced string?
-                      case 'b': { /* balanced string? */
+                      case 'b': {
                           s = matchbalance(ms, s, p + 2);
                           if (s != NULL) {
                               p += 4;
