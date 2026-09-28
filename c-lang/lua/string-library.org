@@ -140,7 +140,7 @@
       return 1;
   }
 
-  // string.byte(x [, i [, j]]) -> number
+  // string.byte(x [, i [, j]]) -> number, ...
   //   where x = string-convertible value
   //         i = start index
   //         j = end index
