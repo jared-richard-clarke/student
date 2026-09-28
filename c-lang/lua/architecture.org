@@ -2090,7 +2090,7 @@ Lua supports four types of hooks:
 | ~path~       | string   | Search paths for Lua files.          |
 | ~cpath~      | string   | Search paths for C libraries.        |
 | ~loaded~     | table    | Cache of loaded modules in registry. |
-| ~preload~    | table    | Pre-registered modules loaders.      |
+| ~preload~    | table    | Pre-registered module loaders.       |
 | ~searchers~  | table    | Array of searcher functions.         |
 | ~config~     | string   | Platform information.                |
 | ~loadlib~    | function | Manual library-loading function.     |
