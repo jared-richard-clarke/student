@@ -713,8 +713,9 @@
                   break;
               }
               default:
+              // Pattern class plus optional suffix.
               dflt:
-                  {  // Pattern class plus optional suffix.
+                  {   // Class endpoint.
                       const char* ep = classend(ms, p);
                       // No match?
                       if (!singlematch(ms, s, p, ep)) {
