@@ -552,6 +552,8 @@
       return NULL;
   }
 
+  // Eager or greedy match. Matches the preceding pattern as many times as possible.
+  // match("(.*)", "(first) and (second)") -> "(first) and (second)"
   static const char* max_expand(MatchState* ms, const char* s, const char* p,
                                 const char* ep) {
       ptrdiff_t i = 0;
@@ -570,6 +572,8 @@
       return NULL;
   }
 
+  // Lazy or non-greedy match. Matches the preceding pattern as few times as possible.
+  // match("(.*)", "(first) and (second)") -> "(first)"
   static const char* min_expand(MatchState* ms, const char* s, const char* p,
                                 const char* ep) {
       for (;;) {
