@@ -534,6 +534,10 @@
       } else {
           int b = *p;
           int e = *(p + 1);
+          // Balance counter for %bxy:
+          //   symbol  = x, counter + 1
+          //   symbol  = y, counter - 1
+          //   counter = 0, match
           int cont = 1;
           while (++s < ms->src_end) {
               if (*s == e) {
