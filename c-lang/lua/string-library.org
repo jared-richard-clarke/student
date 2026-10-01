@@ -323,7 +323,7 @@
                | Balanced
                | Frontier
 
-  Repeat     ::= Zero | One | Lazy
+  Repeat     ::= Eager | Lazy
 
   Capture    ::= '(' Items ')'
 
@@ -340,6 +340,8 @@
   Balanced   ::= '%' 'b' Literal Literal
 
   Frontier   ::= '%' 'f' Set
+
+  Eager      ::= Zero | One
 
   Zero       ::= Item '*'
 
