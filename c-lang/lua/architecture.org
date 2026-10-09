@@ -158,7 +158,7 @@ functions that enable the type-safe exchange of data between C and Lua.
           // Light C function or Lua function.
           else {
               api_check(L, ttislcf(s2v(ci->func.p)), "caller not a C function");
-              return &G(L)->nilvalue; /* no upvalues */
+              return &G(L)->nilvalue;
           }
       }
   }
@@ -1005,8 +1005,9 @@ functions that enable the type-safe exchange of data between C and Lua.
 
 ** Parsing and Compilation
 
-The Lua compiler uses a single-pass, recursive descent, operator precedence climbing parser
-with interleaving syntax analysis and code generation. The compiler outputs a closure.
+The Lua compiler uses a single-pass, recursive descent, precedence-climbing parser,
+which interleaves syntax analysis, parsing, and code generation. The compiler inputs
+text and outputs a closure.
 
 1. Lua Source Code: ~.lua~ files
 
