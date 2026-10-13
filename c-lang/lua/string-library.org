@@ -343,11 +343,11 @@
 
   Eager      ::= Zero | One
 
+  Lazy       ::= Item '-'
+
   Zero       ::= Item '*'
 
   One        ::= Item '+'
-
-  Lazy       ::= Item '-'
 
   Range      ::= Literal '-' Literal
 
