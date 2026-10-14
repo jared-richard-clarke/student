@@ -902,9 +902,9 @@
               if ((res = match(&ms, s1, p)) != NULL) {
                   // If "find", track offsets.
                   if (find) {
-                      // Start.
+                      // Start offset.
                       lua_pushinteger(L, ct_diff2S(s1 - s) + 1);
-                      // End.
+                      // End offset.
                       lua_pushinteger(L, ct_diff2S(res - s));
                       return push_captures(&ms, NULL, 0) + 2;
                   } else {
