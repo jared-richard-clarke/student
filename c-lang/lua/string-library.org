@@ -626,6 +626,7 @@
   }
 
   // Delegates pattern matching. Matches a single pattern against the given string.
+  // Recursively examines nested patterns.
   static const char* match(MatchState* ms, const char* s, const char* p) {
       if (l_unlikely(ms->matchdepth-- == 0)) {
           luaL_error(ms->L, "pattern too complex");
