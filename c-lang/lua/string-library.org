@@ -389,7 +389,9 @@
   #define MAXCCALLS 200
   #endif
 
+  // Escape character. Denotes character classes or escapes special characters.
   #define L_ESC    '%'
+  // Special characters. Denote non-literal patterns.
   #define SPECIALS "^$*+?.([%-"
 
   static int check_capture(MatchState* ms, int l) {
