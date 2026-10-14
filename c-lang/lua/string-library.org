@@ -361,7 +361,7 @@
 
 #+begin_src c
   #define CAP_UNFINISHED (-1)
-  #define CAP_POSITION (-2)
+  #define CAP_POSITION   (-2)
 
   typedef struct MatchState {
       // Start of source string.
@@ -394,8 +394,7 @@
 
   static int check_capture(MatchState* ms, int l) {
       l -= '1';
-      if (l_unlikely(l < 0 || l >= ms->level ||
-                     ms->capture[l].len == CAP_UNFINISHED)) {
+      if (l_unlikely(l < 0 || l >= ms->level || ms->capture[l].len == CAP_UNFINISHED)) {
           return luaL_error(ms->L, "invalid capture index %%%d", l + 1);
       }
       return l;
@@ -506,8 +505,7 @@
       return !sig;
   }
 
-  static int singlematch(MatchState* ms, const char* s, const char* p,
-                         const char* ep) {
+  static int singlematch(MatchState* ms, const char* s, const char* p, const char* ep) {
       if (s >= ms->src_end) {
           return 0;
       } else {
@@ -554,8 +552,7 @@
 
   // Eager or greedy match. Matches the preceding pattern as many times as possible.
   // match("(.*)", "(first) and (second)") -> "(first) and (second)"
-  static const char* max_expand(MatchState* ms, const char* s, const char* p,
-                                const char* ep) {
+  static const char* max_expand(MatchState* ms, const char* s, const char* p, const char* ep) {
       ptrdiff_t i = 0;
       while (singlematch(ms, s + i, p, ep)) {
           i++;
@@ -566,7 +563,7 @@
           if (res) {
               return res;
           }
-          // No match. Reduce by one. Try again.
+          // No match. Backtrack.
           i--;
       }
       return NULL;
@@ -574,8 +571,7 @@
 
   // Lazy or non-greedy match. Matches the preceding pattern as few times as possible.
   // match("(.*)", "(first) and (second)") -> "(first)"
-  static const char* min_expand(MatchState* ms, const char* s, const char* p,
-                                const char* ep) {
+  static const char* min_expand(MatchState* ms, const char* s, const char* p, const char* ep) {
       for (;;) {
           const char* res = match(ms, s, ep + 1);
           if (res != NULL) {
@@ -588,8 +584,7 @@
       }
   }
 
-  static const char* start_capture(MatchState* ms, const char* s, const char* p,
-                                   int what) {
+  static const char* start_capture(MatchState* ms, const char* s, const char* p, int what) {
       const char* res;
       int level = ms->level;
       if (level >= LUA_MAXCAPTURES) {
@@ -680,13 +675,11 @@
                           char previous;
                           p += 2;
                           if (l_unlikely(*p != '[')) {
-                              luaL_error(ms->L,
-                                         "missing '[' after '%%f' in pattern");
+                              luaL_error(ms->L, "missing '[' after '%%f' in pattern");
                           }
                           ep = classend(ms, p);
                           previous = (s == ms->src_init) ? '\0' : *(s - 1);
-                          if (!matchbracketclass(cast_uchar(previous), p,
-                                                 ep - 1) &&
+                          if (!matchbracketclass(cast_uchar(previous), p, ep - 1) &&
                               matchbracketclass(cast_uchar(*s), p, ep - 1)) {
                               p = ep;
                               // return match(ms, s, ep);
@@ -779,8 +772,9 @@
       return s;
   }
 
-  static const char* lmemfind(const char* s1, size_t l1, const char* s2,
-                              size_t l2) {
+  // Quickly match string literals via byte-by-byte comparison.
+  // Find the first byte with "memchr". Match the rest with "memcmp".
+  static const char* lmemfind(const char* s1, size_t l1, const char* s2, size_t l2) {
       if (l2 == 0) {
           return s1;
       } else if (l2 > l1) {
@@ -802,8 +796,7 @@
       }
   }
 
-  static ptrdiff_t get_onecapture(MatchState* ms, int i, const char* s,
-                                  const char* e, const char** cap) {
+  static ptrdiff_t get_onecapture(MatchState* ms, int i, const char* s, const char* e, const char** cap) {
       if (i >= ms->level) {
           if (l_unlikely(i != 0)) {
               luaL_error(ms->L, "invalid capture index %%%d", i + 1);
@@ -816,15 +809,13 @@
           if (l_unlikely(capl == CAP_UNFINISHED)) {
               luaL_error(ms->L, "unfinished capture");
           } else if (capl == CAP_POSITION) {
-              lua_pushinteger(ms->L,
-                              ct_diff2S(ms->capture[i].init - ms->src_init) + 1);
+              lua_pushinteger(ms->L, ct_diff2S(ms->capture[i].init - ms->src_init) + 1);
           }
           return capl;
       }
   }
 
-  static void push_onecapture(MatchState* ms, int i, const char* s,
-                              const char* e) {
+  static void push_onecapture(MatchState* ms, int i, const char* s, const char* e) {
       const char* cap;
       ptrdiff_t l = get_onecapture(ms, i, s, e, &cap);
       if (l != CAP_POSITION) {
@@ -853,8 +844,7 @@
       return 1;
   }
 
-  static void prepstate(MatchState* ms, lua_State* L, const char* s, size_t ls,
-                        const char* p, size_t lp) {
+  static void prepstate(MatchState* ms, lua_State* L, const char* s, size_t ls, const char* p, size_t lp) {
       ms->L = L;
       ms->matchdepth = MAXCCALLS;
       ms->src_init = s;
@@ -979,8 +969,7 @@
       return 1;
   }
 
-  static void add_s(MatchState* ms, luaL_Buffer* b, const char* s,
-                    const char* e) {
+  static void add_s(MatchState* ms, luaL_Buffer* b, const char* s, const char* e) {
       size_t l;
       lua_State* L = ms->L;
       const char* news = lua_tolstring(L, 3, &l);
@@ -1010,8 +999,7 @@
   }
 
   // Add replacement value to string buffer "b".
-  static int add_value(MatchState* ms, luaL_Buffer* b, const char* s,
-                       const char* e, int tr) {
+  static int add_value(MatchState* ms, luaL_Buffer* b, const char* s, const char* e, int tr) {
       lua_State* L = ms->L;
       switch (tr) {
           // Function call.
@@ -1079,9 +1067,9 @@
       MatchState ms;
       luaL_Buffer b;
       luaL_argexpected(L,
-                       tr == LUA_TNUMBER || tr == LUA_TSTRING ||
-                           tr == LUA_TFUNCTION || tr == LUA_TTABLE,
-                       3, "string/function/table");
+                       tr == LUA_TNUMBER || tr == LUA_TSTRING || tr == LUA_TFUNCTION || tr == LUA_TTABLE,
+                       3,
+                       "string/function/table");
       luaL_buffinit(L, &b);
       if (anchor) {
           p++;
