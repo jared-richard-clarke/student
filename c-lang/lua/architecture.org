@@ -119,8 +119,6 @@ functions that enable the type-safe exchange of data between C and Lua.
 #+end_example
 
 #+begin_src c
-  // === Index Resolution ===
-
   // Convert an acceptable index to a pointer to its respective value.
   // Non-valid indices return the special nil value "G(L)->nilvalue".
   static TValue* index2value(lua_State* L, int idx) {
@@ -176,6 +174,100 @@ functions that enable the type-safe exchange of data between C and Lua.
           api_check(L, !ispseudo(idx), "invalid index");
           return L->top.p + idx;
       }
+  }
+#+end_src
+
+*** Basic Stack Manipulation
+
+#+begin_src c
+  // Removes element at given index, shifting elements above it to fill in the gap.
+  #define lua_remove(L, idx)  (lua_rotate(L, (idx), -1), lua_pop(L, 1))
+
+  // Inserts top element into given index, shifting elements above to open space.
+  #define lua_insert(L, idx)  lua_rotate(L, (idx), 1)
+
+  // Pops an element and sets it at the given index.
+  #define lua_replace(L, idx) (lua_copy(L, -1, (idx)), lua_pop(L, 1))
+
+  // Pops n elements from the stack.
+  #define lua_pop(L, n)       lua_settop(L, -(n) - 1)
+
+  LUA_API int lua_gettop(lua_State* L) {
+      return cast_int(L->top.p - (L->ci->func.p + 1));
+  }
+
+  LUA_API void lua_settop(lua_State* L, int idx) {
+      CallInfo* ci;
+      StkId func, newtop;
+      ptrdiff_t diff;
+      lua_lock(L);
+      // Function call information.
+      ci = L->ci;
+      // Function pointer.
+      func = ci->func.p;
+      if (idx >= 0) {
+          api_check(L, idx <= ci->top.p - (func + 1), "new top too large");
+          // Offset from top of stack.
+          diff = ((func + 1) + idx) - L->top.p;
+          // Clear new slots. Set to nil value
+          for (; diff > 0; diff--) {
+              setnilvalue(s2v(L->top.p++));
+          }
+      } else {
+          api_check(L, -(idx + 1) <= (L->top.p - (func + 1)), "invalid new top");
+          diff = idx + 1;
+      }
+      api_check(L, L->tbclist.p < L->top.p, "previous pop of an unclosed slot");
+      newtop = L->top.p + diff;
+      if (diff < 0 && L->tbclist.p >= newtop) {
+          lua_assert(ci->callstatus & CIST_TBC);
+          newtop = luaF_close(L, newtop, CLOSEKTOP, 0);
+      }
+      // Adjust stack only after closing any upvalues.
+      L->top.p = newtop;
+      lua_unlock(L);
+  }
+
+  static void reverse(lua_State* L, StkId from, StkId to) {
+      for (; from < to; from++, to--) {
+          TValue temp;
+          setobj(L, &temp, s2v(from));
+          setobjs2s(L, from, to);
+          setobj2s(L, to, &temp);
+      }
+  }
+
+  LUA_API void lua_rotate(lua_State* L, int idx, int n) {
+      StkId p, t, m;
+      lua_lock(L);
+      // End of stack segment being rotated.
+      t = L->top.p - 1;
+      // Start of stack segment being rotated.
+      p = index2stack(L, idx);
+      api_check(L, L->tbclist.p < p, "moving a to-be-closed slot");
+      api_check(L, (n >= 0 ? n : -n) <= (t - p + 1), "invalid 'n'");
+      // End of prefix.
+      m = (n >= 0 ? t - n : p - n - 1);
+      // Reverse prefix with length "n".
+      reverse(L, p, m);
+      // Reverse suffix.
+      reverse(L, m + 1, t);
+      // Reverse entire segment.
+      reverse(L, p, t);
+      lua_unlock(L);
+  }
+
+  LUA_API void lua_copy(lua_State* L, int fromidx, int toidx) {
+      TValue *fr, *to;
+      lua_lock(L);
+      fr = index2value(L, fromidx);
+      to = index2value(L, toidx);
+      api_check(L, isvalid(L, to), "invalid index");
+      setobj(L, to, fr);
+      if (isupvalue(toidx)) {
+          luaC_barrier(L, clCvalue(s2v(L->ci->func.p)), fr);
+      }
+      lua_unlock(L);
   }
 #+end_src
 
