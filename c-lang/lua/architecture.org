@@ -177,7 +177,7 @@ functions that enable the type-safe exchange of data between C and Lua.
   }
 #+end_src
 
-*** Basic Stack Manipulation
+*** Stack Manipulation
 
 #+begin_src c
   // Removes element at given index, shifting elements above it to fill in the gap.
