@@ -237,6 +237,22 @@ functions that enable the type-safe exchange of data between C and Lua.
       }
   }
 
+  // Example: Rotate 5 by 2.
+  // +---------------+-------+
+  // | 1 | 2 | 3 | 4 | 5 | 6 |
+  // +---------------+-------+
+  // ^-------+-------^---+---^
+  //         |           |
+  //         V           V
+  // +---------------+-------+
+  // | 4 | 3 | 2 | 1 | 6 | 5 |
+  // +---------------+-------+
+  //  suffix     |    prefix
+  //             V
+  // +-------+---------------+
+  // | 5 | 6 | 1 | 2 | 3 | 4 |
+  // +-------+---------------+
+  //  segment
   LUA_API void lua_rotate(lua_State* L, int idx, int n) {
       StkId p, t, m;
       lua_lock(L);
