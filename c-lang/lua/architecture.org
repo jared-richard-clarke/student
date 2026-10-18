@@ -180,22 +180,29 @@ functions that enable the type-safe exchange of data between C and Lua.
 *** Stack Manipulation
 
 #+begin_src c
-  // Removes element at given index, shifting elements above it to fill in the gap.
+  // Removes the element at the given index, shifting elements above
+  // it down to fill in the gap.
   #define lua_remove(L, idx)  (lua_rotate(L, (idx), -1), lua_pop(L, 1))
 
-  // Inserts top element into given index, shifting elements above to open space.
+  // Inserts the top element into the given index, shifting elements
+  // previously below it into spaces above it.
   #define lua_insert(L, idx)  lua_rotate(L, (idx), 1)
 
-  // Pops an element and sets it at the given index.
+  // Pops the top element and sets it at the given index.
   #define lua_replace(L, idx) (lua_copy(L, -1, (idx)), lua_pop(L, 1))
 
-  // Pops n elements from the stack.
+  // Pops "n" elements from the stack.
   #define lua_pop(L, n)       lua_settop(L, -(n) - 1)
 
+  // Returns the distance between the bottom and top of the stack.
   LUA_API int lua_gettop(lua_State* L) {
       return cast_int(L->top.p - (L->ci->func.p + 1));
   }
 
+  // Resizes the stack to the given index. Either expands the stack,
+  // filling vacant slots with "nil", or shrinks the stack, discarding
+  // elements past the given index. Ensures upvalues are closed prior
+  // to being removed from the stack.
   LUA_API void lua_settop(lua_State* L, int idx) {
       CallInfo* ci;
       StkId func, newtop;
@@ -237,22 +244,11 @@ functions that enable the type-safe exchange of data between C and Lua.
       }
   }
 
-  // Example: Rotate 5 by 2.
-  // +---------------+-------+
-  // | 1 | 2 | 3 | 4 | 5 | 6 |
-  // +---------------+-------+
-  // ^-------+-------^---+---^
-  //         |           |
-  //         V           V
-  // +---------------+-------+
-  // | 4 | 3 | 2 | 1 | 6 | 5 |
-  // +---------------+-------+
-  //  suffix     |    prefix
-  //             V
-  // +-------+---------------+
-  // | 5 | 6 | 1 | 2 | 3 | 4 |
-  // +-------+---------------+
-  //  segment
+  // Rotates stack elements between the top of the stack and
+  // a given index by integer "n".
+  //
+  // Example: [ A, B, C, TOP ] - rotate(B,  1) -> [ A, TOP, B, C ]
+  //          [ A, B, C, TOP ] - rotate(B, -1) -> [ A, C, TOP, B ]
   LUA_API void lua_rotate(lua_State* L, int idx, int n) {
       StkId p, t, m;
       lua_lock(L);
@@ -262,9 +258,9 @@ functions that enable the type-safe exchange of data between C and Lua.
       p = index2stack(L, idx);
       api_check(L, L->tbclist.p < p, "moving a to-be-closed slot");
       api_check(L, (n >= 0 ? n : -n) <= (t - p + 1), "invalid 'n'");
-      // End of prefix.
+      // Prefix end.
       m = (n >= 0 ? t - n : p - n - 1);
-      // Reverse prefix with length "n".
+      // Reverse prefix.
       reverse(L, p, m);
       // Reverse suffix.
       reverse(L, m + 1, t);
