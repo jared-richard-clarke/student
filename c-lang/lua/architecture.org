@@ -283,7 +283,7 @@ functions that enable the type-safe exchange of data between C and Lua.
       lua_unlock(L);
   }
 
-  // Duplicates value at the given index and pushes to the top of the stack.
+  // Duplicates value at the given index and pushes it to the top of the stack.
   LUA_API void lua_pushvalue(lua_State* L, int idx) {
       lua_lock(L);
       setobj2s(L, L->top.p, index2value(L, idx));
