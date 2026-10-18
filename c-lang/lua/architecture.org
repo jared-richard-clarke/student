@@ -269,6 +269,7 @@ functions that enable the type-safe exchange of data between C and Lua.
       lua_unlock(L);
   }
 
+  // Overwrites a value at a given index with a value copied from another.
   LUA_API void lua_copy(lua_State* L, int fromidx, int toidx) {
       TValue *fr, *to;
       lua_lock(L);
@@ -279,6 +280,14 @@ functions that enable the type-safe exchange of data between C and Lua.
       if (isupvalue(toidx)) {
           luaC_barrier(L, clCvalue(s2v(L->ci->func.p)), fr);
       }
+      lua_unlock(L);
+  }
+
+  // Duplicates value at the given index and pushes to the top of the stack.
+  LUA_API void lua_pushvalue(lua_State* L, int idx) {
+      lua_lock(L);
+      setobj2s(L, L->top.p, index2value(L, idx));
+      api_incr_top(L);
       lua_unlock(L);
   }
 #+end_src
