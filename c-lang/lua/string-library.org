@@ -11,7 +11,7 @@
 
 #+begin_src c
   // string.len(x) -> number
-  //   where x = string-convertible value 
+  //   where x = string-convertible value
   static int str_len(lua_State* L) {
       size_t l;
       luaL_checklstring(L, 1, &l);
@@ -19,6 +19,7 @@
       return 1;
   }
 
+  // Initial string position: clip [1, infinity)
   static size_t posrelatI(lua_Integer pos, size_t len) {
       if (pos > 0) {
           return (size_t)pos;
@@ -31,6 +32,7 @@
       }
   }
 
+  // Optional end position: clip [0, length]
   static size_t getendpos(lua_State* L, int arg, lua_Integer def, size_t len) {
       lua_Integer pos = luaL_optinteger(L, arg, def);
       if (pos > (lua_Integer)len) {
