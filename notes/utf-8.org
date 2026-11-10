@@ -4,7 +4,7 @@
 
 | source                    | author          |
 |---------------------------+-----------------|
-| *Unicode*                 | unicode.org     |
+| *Unicode* (18.0.0)        | unicode.org     |
 | *UTF-8*                   | wikipedia.org   |
 | *UTF-8, Explained Simply* | Nic Barker      |
 | *UTF-8 Decoder DFA*       | Bjöern Höehrman |
@@ -80,17 +80,17 @@
                                                        codepoint be used.
 #+end_example
 
-** Code Point to UTF-8 Conversion
+** UTF-8 Bit Distribution
 
-| first code point | last code point | byte 1   | byte 2   | byte 3   | byte 4   |
-|------------------+-----------------+----------+----------+----------+----------|
-| U+0000           | U+007F          | 0yyyzzzz |          |          |          |
-|------------------+-----------------+----------+----------+----------+----------|
-| U+0080           | U+07FF          | 110xxxyy | 10yyzzzz |          |          |
-|------------------+-----------------+----------+----------+----------+----------|
-| U+0800           | U+FFFF          | 1110wwww | 10xxxxyy | 10yyzzzz |          |
-|------------------+-----------------+----------+----------+----------+----------|
-| U+010000         | U+10FFFF        | 11110uvv | 10vvwwww | 10xxxxyy | 10yyzzzz |
+| scalar value                 | byte 1     | byte 2     | byte 3     | byte 4     |
+|------------------------------+------------+------------+------------+------------|
+| ~00000000 0xxxxxxx~          | ~0xxxxxxx~ |            |            |            |
+|------------------------------+------------+------------+------------+------------|
+| ~00000yyy yyxxxxxx~          | ~110yyyyy~ | ~10xxxxxx~ |            |            |
+|------------------------------+------------+------------+------------+------------|
+| ~zzzzyyyy yyxxxxxx~          | ~1110zzzz~ | ~10yyyyyy~ | ~10xxxxxx~ |            |
+|------------------------------+------------+------------+------------+------------|
+| ~000uuuuu zzzzyyyy yyxxxxxx~ | ~11110uuu~ | ~10uuzzzz~ | ~10yyyyyy~ | ~10xxxxxx~ |
 
 ** Byte Map
 
